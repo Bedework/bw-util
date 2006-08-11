@@ -17,12 +17,13 @@
   <property name="source.home" location="${this.dir}/src"/>
   <property name="dist.home" location="${this.dir}/dist"/>
   <property name="lib.dir" location="${this.dir}/lib"/>
+  <property name="libapi.dir" location="${this.dir}/libapi"/>
 
   <property name="build.dir" location="${this.dir}/build"/>
   <property name="buildjar" location="${build.dir}/buildjar.xml"/>
 
-  <property name="product.name" value="${edu.rpi.cmt.rpiutil.package.name}"/>
-  <property name="product.version" value="${edu.rpi.cmt.rpiutil.version}"/>
+  <property name="project.name" value="${edu.rpi.cmt.package.name}"/>
+  <property name="project.version" value="${edu.rpi.cmt.version}"/>
 
   <target name="init">
     <mkdir dir="${dist.home}" />
@@ -40,10 +41,10 @@
     <fileset id="base.resource.files" refid="empty.fileset" />
 
     <property name="generated.jar.file"
-              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-${edu.rpi.cmt.rpiutil.version}.jar" />
+              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-${project.version}.jar" />
 
     <property name="test.jar.file"
-              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-test-${edu.rpi.cmt.rpiutil.version}.jar" />
+              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-test-${project.version}.jar" />
 
     <!-- ==================== Compilation Classpath ==================== -->
 
@@ -62,6 +63,7 @@
        ================================================================= -->
   <target name="clean">
     <delete dir="${dist.home}" />
+    <delete dir="${libapi.dir}" />
   </target>
 
   <!-- =================================================================
@@ -85,7 +87,7 @@
   <target name="build" depends="init,build-source,cleanup"
           description="Compile rpiutil classes"/>
 
-  <target name="build-all" depends="init,build-source,javadoc,cleanup"
+  <target name="build-all" depends="init,build-source,cleanup"
           description="Compile rpiutil classes"/>
 
   <target name="build-source">
@@ -106,6 +108,10 @@
       <property name="build.jar.file"
                 location="${generated.jar.file}" />
     </ant>
+
+    <mkdir dir="${libapi.dir}" />
+
+    <copy todir="${libapi.dir}" file="${generated.jar.file}" />
   </target>
 
   <target name="build-test">
@@ -142,9 +148,9 @@
                  author="true"
                 version="true"
           breakiterator="yes"
-            windowtitle="${product.name} ${product.version} API Documentation">
-      <doctitle><![CDATA[${product.name} ${product.version}<br/>API Documentation]]></doctitle>
-      <header><![CDATA[${product.name} ${product.version}<br/>API Documentation]]></header>
+            windowtitle="${project.name} ${project.version} API Documentation">
+      <doctitle><![CDATA[${project.name} ${project.version}<br/>API Documentation]]></doctitle>
+      <header><![CDATA[${project.name} ${project.version}<br/>API Documentation]]></header>
     </javadoc>
   </target>
 
