@@ -361,7 +361,7 @@ public class XmlEmit {
   /* Write out the xml header
    */
   private void writeHeader() throws IOException {
-    wtr.write("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n");
+    wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
   }
 
   private void blanks() throws IOException {
