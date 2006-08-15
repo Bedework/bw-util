@@ -46,6 +46,7 @@ public class XmlEmit {
    * for the generated xml. New set created each request
    */
   private HashMap nsMap;
+  private String defaultNs;
 
   private int nsIndex;
 
@@ -287,7 +288,8 @@ public class XmlEmit {
     wtr.flush();
   }
 
-  /**
+  /** Called before we start to emit any tags.
+   *
    * @param val
    */
   public void addNs(String val) {
@@ -295,7 +297,11 @@ public class XmlEmit {
       return;
     }
 
-    nsMap.put(val, "ns" + nsIndex);
+    String ns = "ns" + nsIndex;
+    if (nsIndex == 0) {
+      defaultNs = ns;
+    }
+    nsMap.put(val, ns);
     nsIndex++;
   }
 
@@ -327,7 +333,7 @@ public class XmlEmit {
     if (ns != null) {
       String abbr = getNsAbbrev(ns);
 
-      if (abbr != null) {
+      if ((abbr != null) && (!abbr.equals(defaultNs))) {
         wtr.write(abbr);
         wtr.write(":");
       }
@@ -336,15 +342,17 @@ public class XmlEmit {
     wtr.write(tag.getLocalPart());
 
     if (!noHeaders && mustEmitNS) {
+      /* First tag so emit the name space declarations.
+       */
       Iterator nss = nsMap.keySet().iterator();
 
       while (nss.hasNext()) {
         wtr.write(" xmlns");
 
         ns = (String)nss.next();
-        String abbr = (String)nsMap.get(ns);
+        String abbr = getNsAbbrev(ns);
 
-        if (abbr != null) {
+        if ((abbr != null) && (!abbr.equals(defaultNs))) {
           wtr.write(":");
           wtr.write(abbr);
         }
@@ -408,4 +416,3 @@ public class XmlEmit {
     }
   }
 }
-
