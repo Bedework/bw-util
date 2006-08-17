@@ -252,6 +252,28 @@ public class XmlEmit {
   }
 
   /** Create the sequence<br>
+   *  <tag>val</tag>
+   *
+   * @param tag
+   * @param val
+   * @throws IOException
+   */
+  public void cdataProperty(QName tag, String val) throws IOException {
+    blanks();
+    openTagSameLine(tag);
+    if (val != null) {
+      if (val.indexOf("]]>") > 0) {
+        throw new IOException("Data contains CDATA end sequence");
+      }
+      wtr.write("<![CDATA[");
+      wtr.write(val);
+      wtr.write("]]>");
+    }
+    closeTagSameLine(tag);
+    newline();
+  }
+
+  /** Create the sequence<br>
    *  <tag>val</tag> where val is represented by a Reader
    *
    * @param tag
