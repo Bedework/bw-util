@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /** Class to emit XML
  *
@@ -45,7 +44,7 @@ public class XmlEmit {
   /** We need to map the namespaces onto a set of reasonable abbreviations
    * for the generated xml. New set created each request
    */
-  private HashMap nsMap;
+  private HashMap<String, String> nsMap;
   private String defaultNs;
 
   private int nsIndex;
@@ -70,7 +69,7 @@ public class XmlEmit {
    * @param noHeaders    boolean true to suppress headers
    */
   public XmlEmit(boolean noHeaders) {
-    nsMap = new HashMap();
+    nsMap = new HashMap<String, String>();
     nsIndex = 0;
     this.noHeaders = noHeaders;
   }
@@ -332,7 +331,7 @@ public class XmlEmit {
    * @return namespace abrev
    */
   public String getNsAbbrev(String ns) {
-    return (String)nsMap.get(ns);
+    return nsMap.get(ns);
   }
 
   /** Write a new line
@@ -366,13 +365,10 @@ public class XmlEmit {
     if (!noHeaders && mustEmitNS) {
       /* First tag so emit the name space declarations.
        */
-      Iterator nss = nsMap.keySet().iterator();
-
-      while (nss.hasNext()) {
+      for (String nsp: nsMap.keySet()) {
         wtr.write(" xmlns");
 
-        ns = (String)nss.next();
-        String abbr = getNsAbbrev(ns);
+        String abbr = getNsAbbrev(nsp);
 
         if ((abbr != null) && (!abbr.equals(defaultNs))) {
           wtr.write(":");

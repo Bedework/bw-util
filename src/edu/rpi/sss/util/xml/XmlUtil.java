@@ -670,8 +670,8 @@ public final class XmlUtil implements Serializable {
    * @return ArrayList   element nodes. Always non-null
    * @throws SAXException
    */
-  public static ArrayList getElements(Node nd) throws SAXException {
-    ArrayList al = new ArrayList();
+  public static ArrayList<Element> getElements(Node nd) throws SAXException {
+    ArrayList<Element> al = new ArrayList<Element>();
 
     NodeList children = nd.getChildNodes();
 
@@ -692,7 +692,7 @@ public final class XmlUtil implements Serializable {
       } else if (curnode.getNodeType() == Node.COMMENT_NODE) {
         // Ignore
       } else if (curnode.getNodeType() == Node.ELEMENT_NODE) {
-        al.add(curnode);
+        al.add((Element)curnode);
       } else {
         throw new SAXException("Unexpected child node " + curnode.getLocalName() +
                                " for " + nd.getLocalName());
@@ -763,7 +763,7 @@ public final class XmlUtil implements Serializable {
    * @throws SAXException
    */
   public static Element[] getElementsArray(Node nd) throws SAXException {
-    ArrayList al = getElements(nd);
+    ArrayList<Element> al = getElements(nd);
 
     return (Element[])al.toArray(new Element[al.size()]);
   }

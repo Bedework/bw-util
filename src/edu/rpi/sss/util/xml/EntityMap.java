@@ -385,10 +385,10 @@ public final class EntityMap implements Serializable {
   };
 
   /* Indexed by code */
-  private static final HashMap emap = new HashMap();
+  private static final HashMap<Integer, Entity> emap = new HashMap<Integer, Entity>();
 
   /* Indexed by name */
-  private static final HashMap enamemap = new HashMap();
+  private static final HashMap<String, Entity> enamemap = new HashMap<String, Entity>();
 
   static {
     for (int i = 0; i < entities.length; i++) {
@@ -456,7 +456,7 @@ public final class EntityMap implements Serializable {
         } else if (ch == ';') {
           String ename = new String(entityBuff, 0, entityI);
 
-          Entity e = (Entity)enamemap.get(ename);
+          Entity e = enamemap.get(ename);
 
           sw.write("&");
           if (e == null) {

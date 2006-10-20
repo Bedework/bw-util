@@ -34,6 +34,8 @@ import edu.rpi.sss.util.servlets.PresentationState;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import javax.servlet.ServletException;
@@ -1110,6 +1112,37 @@ public abstract class UtilAbstractAction extends Action
    */
   protected String getReqPar(HttpServletRequest req, String name) throws Throwable {
     return Util.checkNull(req.getParameter(name));
+  }
+
+  /** Get a multi-valued request parameter stripped of white space.
+   * Return null for zero length.
+   *
+   * @param req
+   * @param name    name of parameter
+   * @return  Collection<String> or null
+   * @throws Throwable
+   */
+  protected Collection<String> getReqPars(HttpServletRequest req,
+                                          String name) throws Throwable {
+    String[] s = req.getParameterValues(name);
+    ArrayList<String> res = null;
+
+    if ((s == null) || (s.length == 0)) {
+      return null;
+    }
+
+    for (String par: s) {
+      par = Util.checkNull(par);
+      if (par != null) {
+        if (res == null) {
+          res = new ArrayList<String>();
+        }
+
+        res.add(par);
+      }
+    }
+
+    return res;
   }
 
   /** Get an Integer request parameter or null.

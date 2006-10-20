@@ -45,7 +45,8 @@ public class SessionListener implements HttpSessionListener {
     long totalSessions = 0;
   }
 
-  private static volatile HashMap countsMap = new HashMap();
+  private static volatile HashMap<String, Counts> countsMap =
+    new HashMap<String, Counts>();
   private static boolean logActive = true;
 
   /** Name of the init parameter holding our name */
@@ -152,7 +153,7 @@ public class SessionListener implements HttpSessionListener {
   private Counts getCounts(String name) {
     try {
       synchronized (countsMap) {
-        Counts c = (Counts)countsMap.get(name);
+        Counts c = countsMap.get(name);
 
         if (c == null) {
           c = new Counts();

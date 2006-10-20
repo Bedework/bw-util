@@ -279,7 +279,7 @@ public class Util {
       return new String[0];
     }
 
-    ArrayList al = new ArrayList();
+    ArrayList<String> al = new ArrayList<String>();
     int i = 0;
 
     while (i < len) {
@@ -386,8 +386,8 @@ public class Util {
    * @return List of elements, never null
    * @throws Throwable for invalid list
    */
-  public static List getList(String val, boolean emptyOk) throws Throwable {
-    List l = new LinkedList();
+  public static List<String> getList(String val, boolean emptyOk) throws Throwable {
+    List<String> l = new LinkedList<String>();
 
     if ((val == null) || (val.length() == 0)) {
       return l;

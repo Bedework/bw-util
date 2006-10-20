@@ -31,10 +31,11 @@ import edu.rpi.sss.util.log.MessageEmit;
 import edu.rpi.sss.util.servlets.PresentationState;
 import edu.rpi.sss.util.Util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -139,10 +140,10 @@ public class UtilActionForm extends ActionForm {
    */
   protected String browserType = "default";
 
-  /** We accumulate errors in this vector as the form is processed.
+  /** We accumulate errors in this Collection as the form is processed.
    * We use processErrors to emit actual messages
    */
-  private Vector valErrors = new Vector();
+  private Collection<IntValError> valErrors = new ArrayList<IntValError>();
 
   /**
    * Value error
@@ -432,13 +433,13 @@ public class UtilActionForm extends ActionForm {
    * @return String[]  values as a String array
    */
   public String[] getVals(String pre, String prop, String post) {
-    Vector v = new Vector();
+    ArrayList<String> al = new ArrayList<String>();
 
     if (pre != null) {
       // Add at the front.
       String s = mres.getMessage(pre);
       if (s != null) {
-        v.addElement(s);
+        al.add(s);
       }
     }
 
@@ -451,7 +452,7 @@ public class UtilActionForm extends ActionForm {
         break;
       }
 
-      v.addElement(u);
+      al.add(u);
       i++;
     }
 
@@ -459,11 +460,11 @@ public class UtilActionForm extends ActionForm {
       // Add at the front.
       String s = mres.getMessage(post);
       if (s != null) {
-        v.addElement(s);
+        al.add(s);
       }
     }
 
-    return (String[])v.toArray(new String[v.size()]);
+    return (String[])al.toArray(new String[al.size()]);
   }
 
   /**
@@ -667,7 +668,7 @@ public class UtilActionForm extends ActionForm {
     try {
       newInt = Integer.parseInt(newVal);
     } catch (Exception e) {
-      valErrors.addElement(new IntValError(name, newVal));
+      valErrors.add(new IntValError(name, newVal));
       newInt = curVal;
     }
 
@@ -687,8 +688,8 @@ public class UtilActionForm extends ActionForm {
       return false;
     }
 
-    for (int i = 0; i < valErrors.size(); i++) {
-      processError(err, (ValError)valErrors.elementAt(i));
+    for (ValError ve: valErrors) {
+      processError(err, ve);
     }
 
     valErrors.clear();
