@@ -65,9 +65,10 @@ public class XSLTFilter extends AbstractFilter {
    * <p>Thsi may not be the actual path as components may be defaulted.
    * pathMap maps the 'ideal' path on to the actual path to the skin.
    */
-  private static HashMap pathMap = new HashMap();
+  private static HashMap<String, String> pathMap = new HashMap<String, String>();
 
-  private static HashMap transformers = new HashMap();
+  private static HashMap<String, Transformer> transformers =
+    new HashMap<String, Transformer>();
 
   /** This can be set in the web.xml configuration to run with a single
    * transformer
@@ -141,7 +142,7 @@ public class XSLTFilter extends AbstractFilter {
    * @return url
    */
   public String lookupPath(String ideal) {
-    return (String)pathMap.get(ideal);
+    return pathMap.get(ideal);
   }
 
   /** Flush all the transformers - for ALL clients
@@ -172,7 +173,7 @@ public class XSLTFilter extends AbstractFilter {
       getLogger().debug("getXmlTransformer: ideal = " + ideal +
                         " actual = " + url);
     }
-    Transformer trans = (Transformer)transformers.get(url);
+    Transformer trans = transformers.get(url);
 
     if (trans != null) {
       return trans;
@@ -206,7 +207,7 @@ public class XSLTFilter extends AbstractFilter {
     }
 
     synchronized (transformers) {
-      Transformer trans2 = (Transformer)transformers.get(url);
+      Transformer trans2 = transformers.get(url);
 
       if (trans2 != null) {
         // somebody beat us to it.

@@ -801,17 +801,18 @@ public abstract class UtilAbstractAction extends Action
    * @param request
    * @return app vars
    */
-  public HashMap getAppVars(HttpServletRequest request) {
+  @SuppressWarnings("unchecked")
+  public HashMap<String, String> getAppVars(HttpServletRequest request) {
     Object o = getSessionAttr(request,
                               "edu.rpi.sss.util.UtilAbstractAction.appVars");
     if ((o == null) || (!(o instanceof HashMap))) {
-      o = new HashMap();
+      o = new HashMap<String, String>();
       setSessionAttr(request,
                      "edu.rpi.sss.util.UtilAbstractAction.appVars",
                      o);
     }
 
-    return (HashMap)o;
+    return (HashMap<String, String>)o;
   }
 
   private static final int maxAppVars = 50; // Stop screwing around.
@@ -836,7 +837,7 @@ public abstract class UtilAbstractAction extends Action
       return null;
     }
 
-    HashMap appVars = getAppVars(request);
+    HashMap<String, String> appVars = getAppVars(request);
 
     for (int i = 0; i < reqvals.length; i++) {
       String reqpar = reqvals[i];
@@ -878,7 +879,8 @@ public abstract class UtilAbstractAction extends Action
    * @param appVars
    * @return  boolean  True if ok - false for too many vars
    */
-  public boolean setAppVar(String name, String val, HashMap appVars) {
+  public boolean setAppVar(String name, String val,
+                           HashMap<String, String> appVars) {
     if (val == null) {
       appVars.remove(name);
       return true;
