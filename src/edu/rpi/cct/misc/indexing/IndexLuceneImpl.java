@@ -14,6 +14,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Timestamp;
@@ -91,6 +92,13 @@ public abstract class IndexLuceneImpl implements Index {
    */
   public boolean getDebug() {
     return debug;
+  }
+
+  /** String appended to basePath
+   * @return String
+   */
+  public static String getPathSuffix() {
+    return indexDir;
   }
 
   /** Called to make or fill in a Key object.
@@ -234,6 +242,13 @@ public abstract class IndexLuceneImpl implements Index {
       checkOpen();
       closeWtr();
       intUnindexRec(rec);
+    } catch (IndexException ie) {
+      if (ie.getCause() instanceof FileNotFoundException) {
+        // Assume not indexed yet
+        throw new IndexException(IndexException.noFiles);
+      } else {
+        throw ie;
+      }
     } finally {
       closeWtr(); // Just in case
       closeRdr();
@@ -545,6 +560,8 @@ public abstract class IndexLuceneImpl implements Index {
       }
 
       updatedIndex = true;
+    } catch (IndexException ie) {
+      throw ie;
     } catch (IOException e) {
       throw new IndexException(e);
     } catch (Throwable t) {

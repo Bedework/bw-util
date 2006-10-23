@@ -12,6 +12,9 @@ public class IndexException extends Exception {
   /** Exception property names.
    */
 
+  /** "No files found - probably needs create" */
+  public final static String noFiles = "edu.rpi.sss.indexing.exc.nofiles";
+
   /** "No base path specified" */
   public final static String noBasePath = "edu.rpi.sss.indexing.exc.nobasepath";
 
