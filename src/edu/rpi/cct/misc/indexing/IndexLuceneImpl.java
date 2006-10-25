@@ -4,11 +4,13 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -16,8 +18,6 @@ import org.apache.lucene.search.Searcher;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringReader;
-import java.sql.Timestamp;
 
 /** This class implements indexing using Lucene.
  * There is an abstract method to create a Lucene Document from an object.
@@ -50,6 +50,87 @@ public abstract class IndexLuceneImpl implements Index {
   Hits lastResult;
 
   private String[] stopWords;
+
+  /** Simple representation of field options */
+  public static class FieldInfo {
+    /** lucene name for field. */
+    String name;
+
+    /** Do w store it? */
+    boolean store;
+
+    /** Do we tokenize it? */
+    boolean tokenized;
+
+    /** boost value for this field */
+    float boost;
+
+    /* Initialised in constructor from store. */
+    Store howStore;
+
+    /* Initialised in constructor from tokenized. */
+    Field.Index howIndexed;
+
+    /** Constructor for unstored, unboosted field
+     *
+     * @param name
+     * @param tokenized
+     */
+    public FieldInfo(String name, boolean tokenized) {
+      this(name, false, tokenized, 1);
+    }
+
+    /** Constructor for unstored field
+     *
+     * @param name
+     * @param tokenized
+     * @param boost
+     */
+    public FieldInfo(String name, boolean tokenized, float boost) {
+      this(name, false, tokenized, boost);
+    }
+
+    /** Constructor allowing full specification
+     *
+     * @param name
+     * @param store
+     * @param tokenized
+     * @param boost
+     */
+    public FieldInfo(String name, boolean store,
+                     boolean tokenized, float boost) {
+      this.name = name;
+      this.store = store;
+      this.tokenized = tokenized;
+      this.boost = boost;
+
+      if (store) {
+        howStore = Store.YES;
+      } else {
+        howStore = Store.NO;
+      }
+
+      if (tokenized) {
+        howIndexed = Field.Index.TOKENIZED;
+      } else {
+        howIndexed = Field.Index.UN_TOKENIZED;
+      }
+    }
+
+    Field makeField(String val) {
+      Field f = new Field(name, val, howStore, howIndexed);
+      f.setBoost(boost);
+
+      return f;
+    }
+
+    /**
+     * @return String field name
+     */
+    public String getName() {
+      return name;
+    }
+  }
 
   /** Create an indexer with the default set of stop words.
    *
@@ -334,6 +415,21 @@ public abstract class IndexLuceneImpl implements Index {
    *                                -1 means indeterminate
    */
   public int search(String query) throws IndexException {
+    return search(query, null);
+  }
+
+  /** Called to find entries that match the search string. This string may
+   * be a simple sequence of keywords or some sort of query the syntax of
+   * which is determined by the underlying implementation.
+   *
+   * @param   query    Query string
+   * @param   filter   Filter tro apply or null
+   * @return  int      Number found. 0 means none found,
+   *                                -1 means indeterminate
+   * @throws IndexException
+   */
+  public int search(String query, Filter filter) throws IndexException {
+
     checkOpen();
 
     try {
@@ -595,141 +691,40 @@ public abstract class IndexLuceneImpl implements Index {
                 Some useful methods
       =================================================================== */
 
-  /** Called to add an array of keys to a document
+  /** Called to add an array of objects to a document
    *
    * @param   doc      Document object
-   * @param   name     String field name
-   * @param   ss       String array of keywords
+   * @param   fld      Field info
+   * @param   os       Object array
    * @throws IndexException
    */
-  protected void addKeyArray(Document doc, String name, String[] ss)
+  protected void addField(Document doc, FieldInfo fld, Object[] os)
       throws IndexException {
-    if (ss == null) {
+    if (os == null) {
       return;
     }
 
-    for (int i = 0; i < ss.length; i++) {
-      if (ss[i] != null) {
-        doc.add(new Field(name, ss[i], Field.Store.YES, Field.Index.UN_TOKENIZED));
+    for (Object o: os) {
+      if (o != null) {
+        doc.add(fld.makeField(String.valueOf(o)));
       }
     }
-  }
-
-  /** Called to add a timestamp date to a document
-   *
-   * @param   doc      The document
-   * @param   name     Field name
-   * @param   dt       The timestamp
-   * @throws IndexException
-   */
-  protected void addTimestamp(Document doc, String name, Timestamp dt)
-      throws IndexException {
-    if (dt == null) {
-      return;
-    }
-
-    doc.add(new Field(name, dt.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
   }
 
   /** Called to add a String val to a document
    *
    * @param   doc      The document
-   * @param   name     Field name
+   * @param   fld      Field info
    * @param   val      The value
    * @throws IndexException
    */
-  protected void addString(Document doc, String name, String val)
+  protected void addField(Document doc, FieldInfo fld, Object val)
       throws IndexException {
     if (val == null) {
       return;
     }
 
-    doc.add(new Field(name, val, Field.Store.YES, Field.Index.TOKENIZED));
-  }
-
-  /** Called to add a cost to a document
-   *
-   * @param   doc      The document
-   * @param   name     Field name
-   * @param   cost     The cost in cents
-   * @throws IndexException
-   */
-  protected void addCost(Document doc, String name, Long cost)
-      throws IndexException {
-    if (cost == null) {
-      return;
-    }
-
-    doc.add(new Field(name, cost.toString(), Field.Store.YES,
-                      Field.Index.UN_TOKENIZED));
-  }
-
-  /** Called to add a long value to a document
-   *
-   * @param   doc      The document
-   * @param   name     Field name
-   * @param   val      The long value
-   */
-  protected void addLong(Document doc, String name, long val) {
-    doc.add(new Field(name, String.valueOf(val), Field.Store.YES, Field.Index.UN_TOKENIZED));
-  }
-
-  /** Called to add an untokenized value to a document
-   *
-   * @param   doc      The document
-   * @param   name     Field name
-   * @param   val      The value
-   */
-  protected void addUntokenized(Document doc, String name, String val) {
-    doc.add(new Field(name, val, Field.Store.YES, Field.Index.UN_TOKENIZED));
-  }
-
-  /** Called to add a keyword val to a document
-   *
-   * @param   doc      The document
-   * @param   name     Field name
-   * @param   val      The value
-   * @throws IndexException
-   */
-  protected void addKey(Document doc, String name, String val)
-      throws IndexException {
-    if (val == null) {
-      return;
-    }
-
-    doc.add(new Field(name, val, Field.Store.YES, Field.Index.UN_TOKENIZED));
-  }
-
-  /** Called to add a long String val to a document
-   *
-   * @param   doc      The document
-   * @param   name     Field name
-   * @param   val      The value
-   * @throws IndexException
-   */
-  protected void addLongStoredString(Document doc, String name, String val)
-      throws IndexException {
-    if (val == null) {
-      return;
-    }
-
-    doc.add(new Field(name, new StringReader(val)));
-  }
-
-  /** Called to add a long String val to a document
-   *
-   * @param   doc      The document
-   * @param   name     Field name
-   * @param   val      The value
-   * @throws IndexException
-   */
-  protected void addLongString(Document doc, String name, String val)
-      throws IndexException {
-    if (val == null) {
-      return;
-    }
-
-    doc.add(new Field(name, val, Field.Store.NO, Field.Index.TOKENIZED));
+    doc.add(fld.makeField(String.valueOf(val)));
   }
 
   protected void log(String msg) {
