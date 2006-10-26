@@ -15,9 +15,11 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
+import org.apache.lucene.store.Directory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.apache.log4j.Logger;
 
 /** This class implements indexing using Lucene.
  * There is an abstract method to create a Lucene Document from an object.
@@ -35,6 +37,10 @@ public abstract class IndexLuceneImpl implements Index {
 
   private boolean updatedIndex;
   private boolean isOpen;
+
+  private boolean cleanLocks;
+
+  private transient Logger log;
 
   /** We try to keep readers and writers open if batchMode is true.
    */
@@ -173,6 +179,14 @@ public abstract class IndexLuceneImpl implements Index {
    */
   public boolean getDebug() {
     return debug;
+  }
+
+  /** Indicate if we shoudkl try to clean locks.
+   *
+   * @param val
+   */
+  public void setCleanLocks(boolean val) {
+    cleanLocks = val;
   }
 
   /** String appended to basePath
@@ -434,13 +448,13 @@ public abstract class IndexLuceneImpl implements Index {
 
     try {
       if (debug) {
-        log("About to search for " + query);
+        trace("About to search for " + query);
       }
 
       Query parsed = queryParser.parse(query);
 
       if (debug) {
-        log("     with parsed query " + parsed.toString(null));
+        trace("     with parsed query " + parsed.toString(null));
       }
 
       if (sch == null) {
@@ -449,7 +463,7 @@ public abstract class IndexLuceneImpl implements Index {
       lastResult = sch.search(parsed);
 
       if (debug) {
-        log("     found " + lastResult.length());
+        trace("     found " + lastResult.length());
       }
 
       return lastResult.length();
@@ -600,14 +614,41 @@ public abstract class IndexLuceneImpl implements Index {
       throw new IndexException(IndexException.noAccess);
     }
 
+    String dirPath = basePath + indexDir;
+
     try {
       if (wtr == null) {
-        wtr = new IndexWriter(basePath + indexDir, defaultAnalyzer, false);
+        wtr = new IndexWriter(dirPath, defaultAnalyzer, false);
       }
 
       return wtr;
     } catch (IOException e) {
-      throw new IndexException(e);
+      if (e instanceof FileNotFoundException) {
+        // Assume not indexed yet
+        throw new IndexException(IndexException.noFiles);
+      }
+
+      if (!cleanLocks) {
+        error(e);
+        throw new IndexException(e);
+      }
+
+      info("Had exception: " + e.getMessage());
+      info("Will try to clean lock");
+
+      try {
+        // There should really be a lucene exception for this one
+        if (IndexReader.isLocked(dirPath)) {
+          Directory d = getRdr().directory();
+          IndexReader.unlock(d);
+        }
+        wtr = new IndexWriter(dirPath, defaultAnalyzer, false);
+        info("Clean lock succeeded");
+        return wtr;
+      } catch (Throwable t) {
+        info("Clean lock failed");
+        throw new IndexException(t);
+      }
     } catch (Throwable t) {
       throw new IndexException(t);
     }
@@ -641,7 +682,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   rec      The record to unindex
    */
-  private void intUnindexRec(Object rec) throws IndexException {
+  private boolean intUnindexRec(Object rec) throws IndexException {
     try {
       Term t = makeKeyTerm(rec);
 
@@ -652,11 +693,16 @@ public abstract class IndexLuceneImpl implements Index {
       }
 
       if (debug) {
-        log("removed " + numDeleted + " entries for " + t);
+        trace("removed " + numDeleted + " entries for " + t);
       }
 
       updatedIndex = true;
+      return true;
     } catch (IndexException ie) {
+      if (ie.getCause() instanceof FileNotFoundException) {
+        // ignore
+        return false;
+      }
       throw ie;
     } catch (IOException e) {
       throw new IndexException(e);
@@ -680,6 +726,8 @@ public abstract class IndexLuceneImpl implements Index {
       getWtr().addDocument(doc);
 
       updatedIndex = true;
+    } catch (IndexException ie) {
+      throw ie;
     } catch (IOException e) {
       throw new IndexException(e);
     } catch (Throwable t) {
@@ -727,8 +775,27 @@ public abstract class IndexLuceneImpl implements Index {
     doc.add(fld.makeField(String.valueOf(val)));
   }
 
-  protected void log(String msg) {
-    System.out.println(getClass().getName() + ": " + msg);
+  protected Logger getLog() {
+    if (log == null) {
+      log = Logger.getLogger(this.getClass());
+    }
+
+    return log;
+  }
+
+  protected void error(Throwable e) {
+    getLog().error(this, e);
+  }
+
+  protected void error(String msg) {
+    getLog().error(msg);
+  }
+
+  protected void info(String msg) {
+    getLog().info(msg);
+  }
+
+  protected void trace(String msg) {
+    getLog().debug(msg);
   }
 }
-
