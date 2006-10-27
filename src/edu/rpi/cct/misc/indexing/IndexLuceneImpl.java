@@ -458,8 +458,18 @@ public abstract class IndexLuceneImpl implements Index {
       }
 
       if (sch == null) {
-        sch = new IndexSearcher(getRdr());
+        IndexReader rdr = getRdr();
+
+        if (rdr != null) {
+          sch = new IndexSearcher(rdr);
+        }
       }
+
+      if (sch == null) {
+        lastResult = null;
+        return 0;
+      }
+
       lastResult = sch.search(parsed);
 
       if (debug) {
@@ -656,7 +666,7 @@ public abstract class IndexLuceneImpl implements Index {
 
   /* Called to obtain the current or a new reader.
    *
-   * @return IndexReader  reader of our index
+   * @return IndexReader  reader of our index or null if no indexes
    */
   private IndexReader getRdr() throws IndexException {
     if (basePath == null) {
@@ -670,6 +680,9 @@ public abstract class IndexLuceneImpl implements Index {
 
       return rdr;
     } catch (IOException e) {
+      if (e instanceof FileNotFoundException) {
+        return null;
+      }
       throw new IndexException(e);
     } catch (Throwable t) {
       throw new IndexException(t);
