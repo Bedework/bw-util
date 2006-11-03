@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
  * localPart.
  * @author Mike Douglass  douglm@rpi.edu
  */
-public class QName {
+public class QName implements Comparable {
   private String namespaceURI;
   private String localPart;
 
@@ -63,6 +63,25 @@ public class QName {
     return localPart;
   }
 
+  public int compareTo(Object o) {
+    if (this == o) {
+      return 0;
+    }
+
+    if (!(o instanceof QName)) {
+      return -1;
+    }
+
+    QName that = (QName)o;
+
+    int res = compareStrings(getNamespaceURI(), that.getNamespaceURI());
+    if (res != 0) {
+      return res;
+    }
+
+    return compareStrings(getLocalPart(), that.getLocalPart());
+  }
+
   public int hashCode() {
     int hc = 1;
 
@@ -80,35 +99,7 @@ public class QName {
   }
 
   public boolean equals(Object o) {
-    if (o == this) {
-      return true;
-    }
-
-    if (!(o instanceof QName)) {
-      return false;
-    }
-
-    QName that = (QName)o;
-
-    String ns = getNamespaceURI();
-    if (ns == null) {
-      if (that.getNamespaceURI() != null) {
-        return false;
-      }
-    } else if (!ns.equals(that.getNamespaceURI())) {
-      return false;
-    }
-
-    String lp = getLocalPart();
-    if (lp == null) {
-      if (that.getLocalPart() != null) {
-        return false;
-      }
-    } else if (!lp.equals(that.getLocalPart())) {
-      return false;
-    }
-
-    return true;
+    return compareTo(o) == 0;
   }
 
   public String toString() {
@@ -152,6 +143,22 @@ public class QName {
     }
 
     return true;
+  }
+
+  private static int compareStrings(String s1, String s2) {
+    if (s1 == null) {
+      if (s2 != null) {
+        return -1;
+      }
+
+      return 0;
+    }
+
+    if (s2 == null) {
+      return 1;
+    }
+
+    return s1.compareTo(s2);
   }
 }
 
