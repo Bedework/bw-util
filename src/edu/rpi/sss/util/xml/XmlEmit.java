@@ -57,7 +57,7 @@ public class XmlEmit {
   private int blankLen = blank.length();
 
   /** construct an object which will be used to collect namespace names
-   * during the first phase and emit xml afetr startEmit is called.
+   * during the first phase and emit xml after startEmit is called.
    */
   public XmlEmit() {
     this(false);
@@ -376,7 +376,7 @@ public class XmlEmit {
         }
 
         wtr.write("=\"");
-        wtr.write(ns);
+        wtr.write(nsp);
         wtr.write("\"");
       }
 
