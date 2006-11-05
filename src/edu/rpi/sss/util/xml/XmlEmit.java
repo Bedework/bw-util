@@ -45,6 +45,7 @@ public class XmlEmit {
    * for the generated xml. New set created each request
    */
   private HashMap<String, String> nsMap;
+  private boolean noDefaultns;
   private String defaultNs;
 
   private int nsIndex;
@@ -60,18 +61,20 @@ public class XmlEmit {
    * during the first phase and emit xml after startEmit is called.
    */
   public XmlEmit() {
-    this(false);
+    this(false, false);
   }
 
   /** construct an object which will be used to collect namespace names
    * during the first phase and emit xml afetr startEmit is called.
    *
    * @param noHeaders    boolean true to suppress headers
+   * @param noDefaultns  boolean true if we don't have a default namespace
    */
-  public XmlEmit(boolean noHeaders) {
+  public XmlEmit(boolean noHeaders, boolean noDefaultns) {
     nsMap = new HashMap<String, String>();
     nsIndex = 0;
     this.noHeaders = noHeaders;
+    this.noDefaultns = noDefaultns;
   }
 
   /** Emit any headers and namespace declarations
@@ -319,7 +322,7 @@ public class XmlEmit {
     }
 
     String ns = "ns" + nsIndex;
-    if (nsIndex == 0) {
+    if (nsIndex == 0 && !noDefaultns) {
       defaultNs = ns;
     }
     nsMap.put(val, ns);
