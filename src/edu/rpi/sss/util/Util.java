@@ -361,7 +361,8 @@ public class Util {
       return null;
     }
 
-    if (val.trim().length() == 0) {
+    val = val.trim();
+    if (val.length() == 0) {
       return null;
     }
 
