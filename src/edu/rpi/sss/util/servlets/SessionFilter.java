@@ -23,7 +23,6 @@
     special, consequential, or incidental damages related to the software,
     to the maximum extent the law permits.
 */
-
 package edu.rpi.sss.util.servlets;
 
 import java.io.IOException;
@@ -53,6 +52,7 @@ import javax.servlet.ServletResponse;
  *
  *   @author Mike Douglass   douglm @ rpi.edu
  */
+@SuppressWarnings("deprecation")
 public class SessionFilter implements Filter {
   private ServletContext ctx;
   private boolean debug = false;

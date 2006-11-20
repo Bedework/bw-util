@@ -55,7 +55,7 @@ public class ErrorEmitSvlt implements MessageEmit {
    * generation.
    */
   public class Msg implements Serializable {
-    private ArrayList params = new ArrayList();
+    private ArrayList<Object> params = new ArrayList<Object>();
     private Object p1;
     private Object p2;
     private Object p3;
@@ -153,7 +153,7 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
   }
 
-  protected ArrayList msgList = new ArrayList();
+  protected ArrayList<Msg> msgList = new ArrayList<Msg>();
 
   /**
    *
@@ -200,7 +200,7 @@ public class ErrorEmitSvlt implements MessageEmit {
   /**
    * @return msg list
    */
-  public ArrayList getMsgList() {
+  public ArrayList<Msg> getMsgList() {
     return msgList;
   }
 
