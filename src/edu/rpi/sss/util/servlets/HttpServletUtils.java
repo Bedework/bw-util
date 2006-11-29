@@ -150,10 +150,16 @@ public class HttpServletUtils {
     }
 
     try {
-      return request.getRequestURL().toString();
+      StringBuffer sb = request.getRequestURL();
+      if (sb != null) {
+        return sb.toString();
+      }
+
+      // Presumably portlet - see what happens with uri
+      return request.getRequestURI();
     } catch (Throwable t) {
       Logger.getLogger(HttpServletUtils.class).warn(
-          "Unable to get url from " + request);
+          "Unable to get url from " + request, t);
       return "BogusURL.this.is.probably.a.portal";
     }
   }
