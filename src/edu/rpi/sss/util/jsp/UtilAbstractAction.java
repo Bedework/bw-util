@@ -28,6 +28,7 @@ package edu.rpi.sss.util.jsp;
 
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.log.HttpAppLogger;
+import edu.rpi.sss.util.log.MessageEmit;
 import edu.rpi.sss.util.servlets.HttpServletUtils;
 import edu.rpi.sss.util.servlets.PresentationState;
 
@@ -1156,13 +1157,41 @@ public abstract class UtilAbstractAction extends Action
    */
   protected Integer getIntReqPar(HttpServletRequest req,
                                  String name) throws Throwable {
-    String reqpar = req.getParameter(name);
+    String reqpar = getReqPar(req, name);
 
     if (reqpar == null) {
       return null;
     }
 
     return Integer.valueOf(reqpar);
+  }
+
+  /** Get an Integer request parameter or null. Emit error for non-null and
+   * non integer
+   *
+   * @param req
+   * @param name    name of parameter
+   * @param err     name of parameter
+   * @param errProp
+   * @return  Integer   value or null
+   * @throws Throwable
+   */
+  protected Integer getIntReqPar(HttpServletRequest req,
+                                 String name,
+                                 MessageEmit err,
+                                 String errProp) throws Throwable {
+    String reqpar = getReqPar(req, name);
+
+    if (reqpar == null) {
+      return null;
+    }
+
+    try {
+      return Integer.valueOf(reqpar);
+    } catch (Throwable t) {
+      err.emit(errProp, reqpar);
+      return null;
+    }
   }
 
   /** Get an integer valued request parameter.
