@@ -246,6 +246,7 @@ public abstract class UtilAbstractAction extends Action
       form.setContext(JspUtil.getContext(request));
       form.setUrlPrefix(JspUtil.getURLPrefix(request));
       form.setActionPath(mapping.getPath());
+      form.setActionParameter(mapping.getParameter());
       form.setErr(err);
       form.setMsg(msg);
       form.assignSessionId(getSessionId(request));
@@ -791,6 +792,50 @@ public abstract class UtilAbstractAction extends Action
       }
       sb.append(refreshAction);
       response.setHeader("Refresh", sb.toString());
+    }
+  }
+
+  private static final String refreshIntervalKey = "refinterval=";
+  protected int getRefreshInt(String par, int val,
+                              UtilActionForm form) {
+    try {
+      int pos = par.indexOf(refreshIntervalKey);
+      if (pos < 0) {
+        return val;
+      }
+
+      pos += refreshIntervalKey.length();
+      int epos = par.indexOf(";", pos);
+      if (epos < 0) {
+        epos = par.length();
+      }
+
+      return Integer.parseInt(par.substring(pos, epos));
+    } catch (Throwable t) {
+      form.getErr().emit("org.bedework.bad.actionparameter", par);
+      return val;
+    }
+  }
+
+  private static final String refreshActionKey = "refaction=";
+  protected String getRefreshAction(String par, String val,
+                                    UtilActionForm form) {
+    try {
+      int pos = par.indexOf(refreshActionKey);
+      if (pos < 0) {
+        return val;
+      }
+
+      pos += refreshActionKey.length();
+      int epos = par.indexOf(";", pos);
+      if (epos < 0) {
+        epos = par.length();
+      }
+
+      return par.substring(pos, epos);
+    } catch (Throwable t) {
+      form.getErr().emit("org.bedework.bad.actionparameter", par);
+      return val;
     }
   }
 

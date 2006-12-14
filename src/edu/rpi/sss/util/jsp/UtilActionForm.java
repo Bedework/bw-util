@@ -106,6 +106,8 @@ public class UtilActionForm extends ActionForm {
 
   protected String actionPath;
 
+  private String actionParameter;
+
   /** The part of the URL that identifies the application -
    * Of the form "/" + name-of-app, e.g. /kiosk
    */
@@ -558,6 +560,21 @@ public class UtilActionForm extends ActionForm {
    */
   public String getActionPath() {
     return actionPath;
+  }
+
+  /** Set the action parameter if any.
+   *
+   * @param val       String action parameter
+   */
+  public void setActionParameter(String val) {
+    actionParameter = val;
+  }
+
+  /**
+   * @return String
+   */
+  public String getActionParameter() {
+    return actionParameter;
   }
 
   /** This should not be setCurrentUser as that exposes it to the incoming
