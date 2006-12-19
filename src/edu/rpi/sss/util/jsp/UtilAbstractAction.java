@@ -812,7 +812,7 @@ public abstract class UtilAbstractAction extends Action
 
       return Integer.parseInt(par.substring(pos, epos));
     } catch (Throwable t) {
-      form.getErr().emit("org.bedework.bad.actionparameter", par);
+      form.getErr().emit("edu.rpi.bad.actionparameter", par);
       return val;
     }
   }
@@ -834,7 +834,7 @@ public abstract class UtilAbstractAction extends Action
 
       return par.substring(pos, epos);
     } catch (Throwable t) {
-      form.getErr().emit("org.bedework.bad.actionparameter", par);
+      form.getErr().emit("edu.rpi.bad.actionparameter", par);
       return val;
     }
   }
