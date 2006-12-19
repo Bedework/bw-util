@@ -1262,6 +1262,24 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
+  /** Get a Long request parameter or null.
+   *
+   * @param req
+   * @param name    name of parameter
+   * @return  Long   value or null
+   * @throws Throwable
+   */
+  protected Long getLongReqPar(HttpServletRequest req,
+                               String name) throws Throwable {
+    String reqpar = getReqPar(req, name);
+
+    if (reqpar == null) {
+      return null;
+    }
+
+    return Long.valueOf(reqpar);
+  }
+
   /** Get an long valued request parameter.
    *
    * @param req
