@@ -28,7 +28,6 @@ package edu.rpi.sss.util.jsp;
 
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.log.HttpAppLogger;
-import edu.rpi.sss.util.log.MessageEmit;
 import edu.rpi.sss.util.servlets.HttpServletUtils;
 import edu.rpi.sss.util.servlets.PresentationState;
 
@@ -161,16 +160,12 @@ public abstract class UtilAbstractAction extends Action
 
   /** This is the routine which does the work.
    *
-   * @param request  Needed to locate session
-   * @param response HttpServletResponse
-   * @param frm      Action form
+   * @param request  Provide http request/response and form
    * @param messages Resources
    * @return String  forward name
    * @throws Throwable
    */
-  public abstract String performAction(HttpServletRequest request,
-                                       HttpServletResponse response,
-                                       UtilActionForm frm,
+  public abstract String performAction(Request request,
                                        MessageResources messages)
                throws Throwable;
 
@@ -258,9 +253,11 @@ public abstract class UtilAbstractAction extends Action
                               "edu.rpi.sss.util.action.contenttype",
                               "text/html");
 
+      Request req = new Request(request, response, form);
+
       /** Set up presentation values from request
        */
-      doPresentation(request, form);
+      doPresentation(req, form);
 
       String contentName = getContentName(form);
 
@@ -301,14 +298,14 @@ public abstract class UtilAbstractAction extends Action
         if (!isPortlet) {
           response.setContentType(defaultContentType);
         }
-        forward = checkVarReq(request, form);
+        forward = checkVarReq(req, form);
 
         if (forward == null) {
           forward = checkForwardto(request);
         }
 
         if (forward == null) {
-          forward = performAction(request, response, form, messages);
+          forward = performAction(req, messages);
         }
       }
 
@@ -848,14 +845,11 @@ public abstract class UtilAbstractAction extends Action
    * @return app vars
    */
   @SuppressWarnings("unchecked")
-  public HashMap<String, String> getAppVars(HttpServletRequest request) {
-    Object o = getSessionAttr(request,
-                              "edu.rpi.sss.util.UtilAbstractAction.appVars");
+  public HashMap<String, String> getAppVars(Request request) {
+    Object o = request.getSessionAttr("edu.rpi.sss.util.UtilAbstractAction.appVars");
     if ((o == null) || (!(o instanceof HashMap))) {
       o = new HashMap<String, String>();
-      setSessionAttr(request,
-                     "edu.rpi.sss.util.UtilAbstractAction.appVars",
-                     o);
+      request.setSessionAttr("edu.rpi.sss.util.UtilAbstractAction.appVars", o);
     }
 
     return (HashMap<String, String>)o;
@@ -876,17 +870,16 @@ public abstract class UtilAbstractAction extends Action
    * @return String  forward to here. null if no error found.
    * @throws Throwable
    */
-  private String checkVarReq(HttpServletRequest request,
+  private String checkVarReq(Request request,
                              UtilActionForm form) throws Throwable {
-    String[] reqvals = request.getParameterValues("setappvar");
-    if (reqvals == null) {
+    Collection<String> avs = request.getReqPars("setappvar");
+    if (avs == null) {
       return null;
     }
 
     HashMap<String, String> appVars = getAppVars(request);
 
-    for (int i = 0; i < reqvals.length; i++) {
-      String reqpar = reqvals[i];
+    for (String reqpar: avs) {
       int start;
 
       if (reqpar.endsWith("}")) {
@@ -1027,7 +1020,7 @@ public abstract class UtilAbstractAction extends Action
    * @param request
    * @param form
    */
-  public void doPresentation(HttpServletRequest request,
+  public void doPresentation(Request request,
                              UtilActionForm form) {
     PresentationState ps = getPresentationState(request, form);
 
@@ -1042,15 +1035,17 @@ public abstract class UtilAbstractAction extends Action
       debugOut("Set presentation state");
     }
 
-    ps.checkBrowserType(request);
-    ps.checkContentType(request);
-    ps.checkContentName(request);
-    ps.checkNoXSLT(request);
-    ps.checkRefreshXslt(request);
-    ps.checkSkinName(request);
+    HttpServletRequest req = request.getRequest();
+
+    ps.checkBrowserType(req);
+    ps.checkContentType(req);
+    ps.checkContentName(req);
+    ps.checkNoXSLT(req);
+    ps.checkRefreshXslt(req);
+    ps.checkSkinName(req);
 
     form.setPresentationState(ps);
-    setSessionAttr(request, getPresentationAttrName(), ps);
+    request.setSessionAttr(getPresentationAttrName(), ps);
 
     if (debug) {
       ps.debugDump("action", getLogger());
@@ -1062,7 +1057,7 @@ public abstract class UtilAbstractAction extends Action
    * @param form
    * @return PresentationState
    */
-  public PresentationState getPresentationState(HttpServletRequest request,
+  public PresentationState getPresentationState(Request request,
                                                 UtilActionForm form) {
     String attrName = getPresentationAttrName();
 
@@ -1070,7 +1065,7 @@ public abstract class UtilAbstractAction extends Action
       return null;
     }
 
-    Object o = getSessionAttr(request, attrName);
+    Object o = request.getSessionAttr(attrName);
 
     if ((o == null) || (!(o instanceof PresentationState))) {
       PresentationState ps = new PresentationState();
@@ -1084,7 +1079,7 @@ public abstract class UtilAbstractAction extends Action
         t.printStackTrace();
       }
 
-      setSessionAttr(request, attrName, ps);
+      request.setSessionAttr(attrName, ps);
 
       return  ps;
     }
@@ -1096,12 +1091,12 @@ public abstract class UtilAbstractAction extends Action
                 Various utility methods
      ================================================================== */
 
-  /** Set the value of a named session attribute.
+  /* * Set the value of a named session attribute.
    *
    * @param request     Needed to locate session
    * @param attrName    Name of the attribute
    * @param val         Object
-   */
+   * /
   public void setSessionAttr(HttpServletRequest request,
                              String attrName,
                              Object val) {
@@ -1114,12 +1109,12 @@ public abstract class UtilAbstractAction extends Action
     sess.setAttribute(attrName, val);
   }
 
-  /** Return the value of a named session attribute.
+  /* * Return the value of a named session attribute.
    *
    * @param request     Needed to locate session
    * @param attrName    Name of the attribute
    * @return Object     Attribute value or null
-   */
+   * /
   public Object getSessionAttr(HttpServletRequest request,
                                String attrName) {
     HttpSession sess = request.getSession(false);
@@ -1129,7 +1124,7 @@ public abstract class UtilAbstractAction extends Action
     }
 
     return sess.getAttribute(attrName);
-  }
+  } */
 
   /** Return the value of a required named resource.
    *
@@ -1193,13 +1188,13 @@ public abstract class UtilAbstractAction extends Action
     return res;
   }
 
-  /** Get an Integer request parameter or null.
+  /* * Get an Integer request parameter or null.
    *
    * @param req
    * @param name    name of parameter
    * @return  Integer   value or null
    * @throws Throwable
-   */
+   * /
   protected Integer getIntReqPar(HttpServletRequest req,
                                  String name) throws Throwable {
     String reqpar = getReqPar(req, name);
@@ -1211,7 +1206,7 @@ public abstract class UtilAbstractAction extends Action
     return Integer.valueOf(reqpar);
   }
 
-  /** Get an Integer request parameter or null. Emit error for non-null and
+  /* * Get an Integer request parameter or null. Emit error for non-null and
    * non integer
    *
    * @param req
@@ -1220,7 +1215,7 @@ public abstract class UtilAbstractAction extends Action
    * @param errProp
    * @return  Integer   value or null
    * @throws Throwable
-   */
+   * /
   protected Integer getIntReqPar(HttpServletRequest req,
                                  String name,
                                  MessageEmit err,
@@ -1239,14 +1234,14 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  /** Get an integer valued request parameter.
+  /* * Get an integer valued request parameter.
    *
    * @param req
    * @param name    name of parameter
    * @param defaultVal
    * @return  int   value
    * @throws Throwable
-   */
+   * /
   protected int getIntReqPar(HttpServletRequest req, String name,
                              int defaultVal) throws Throwable {
     String reqpar = req.getParameter(name);
@@ -1262,13 +1257,13 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  /** Get a Long request parameter or null.
+  /* * Get a Long request parameter or null.
    *
    * @param req
    * @param name    name of parameter
    * @return  Long   value or null
    * @throws Throwable
-   */
+   * /
   protected Long getLongReqPar(HttpServletRequest req,
                                String name) throws Throwable {
     String reqpar = getReqPar(req, name);
@@ -1280,14 +1275,14 @@ public abstract class UtilAbstractAction extends Action
     return Long.valueOf(reqpar);
   }
 
-  /** Get an long valued request parameter.
+  /* * Get an long valued request parameter.
    *
    * @param req
    * @param name    name of parameter
    * @param defaultVal
    * @return  long  value
    * @throws Throwable
-   */
+   * /
   protected long getLongReqPar(HttpServletRequest req, String name,
                              long defaultVal) throws Throwable {
     String reqpar = req.getParameter(name);
@@ -1303,13 +1298,13 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  /** Get a boolean valued request parameter.
+  /* * Get a boolean valued request parameter.
    *
    * @param req
    * @param name    name of parameter
    * @return  Boolean   value or null for absent parameter
    * @throws Throwable
-   */
+   * /
   protected Boolean getBooleanReqPar(HttpServletRequest req, String name)
                throws Throwable {
     String reqpar = req.getParameter(name);
@@ -1325,14 +1320,14 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  /** Get a boolean valued request parameter giving a default value.
+  /* * Get a boolean valued request parameter giving a default value.
    *
    * @param req
    * @param name    name of parameter
    * @param defVal default value for absent parameter
    * @return  boolean   value
    * @throws Throwable
-   */
+   * /
   protected boolean getBooleanReqPar(HttpServletRequest req, String name,
                                      boolean defVal) throws Throwable {
     boolean val = defVal;
@@ -1343,6 +1338,7 @@ public abstract class UtilAbstractAction extends Action
 
     return val;
   }
+  */
 
   /* ==================================================================
                 Private methods

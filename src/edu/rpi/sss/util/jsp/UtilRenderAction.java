@@ -26,8 +26,6 @@
 
 package edu.rpi.sss.util.jsp;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.util.MessageResources;
 
 /** This class is almost a null class to carry out render actions for
@@ -48,9 +46,7 @@ public class UtilRenderAction extends UtilAbstractAction {
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.jsp.UtilAbstractAction#performAction(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, edu.rpi.sss.util.jsp.UtilActionForm, org.apache.struts.util.MessageResources)
    */
-  public String performAction(HttpServletRequest request,
-                              HttpServletResponse response,
-                              UtilActionForm frm,
+  public String performAction(Request request,
                               MessageResources messages)
                throws Throwable {
     return "success";
