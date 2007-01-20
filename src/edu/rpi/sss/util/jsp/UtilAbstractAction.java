@@ -1432,6 +1432,14 @@ public abstract class UtilAbstractAction extends Action
     getLogger().info(msg);
   }
 
+  /** Warning message
+   *
+   * @param msg
+   */
+  public void warn(String msg) {
+    getLogger().warn(msg);
+  }
+
   /**
    * @param msg
    */
