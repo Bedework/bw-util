@@ -429,10 +429,10 @@ public class XSLTFilter extends AbstractFilter {
       /** We're seeing tomcat specific exceptions here when the client aborts.
           Try to detect these without making this code tomcat specific.
        */
-      getLogger().error("Unable to transform document", t);
       if ("org.apache.catalina.connector.ClientAbortException".equals(t.getClass().getName())) {
         getLogger().warn("ClientAbortException: dropping response");
       } else {
+        getLogger().error("Unable to transform document", t);
         throw new ServletException("Unable to transform document", t);
       }
     } finally {
