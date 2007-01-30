@@ -89,7 +89,9 @@ public class SessionListener implements HttpSessionListener {
     }
   }
 
-  /* Session Invalidation Event */
+  /* (non-Javadoc)
+   * @see javax.servlet.http.HttpSessionListener#sessionDestroyed(javax.servlet.http.HttpSessionEvent)
+   */
   public void sessionDestroyed(HttpSessionEvent se) {
     HttpSession session = se.getSession();
     ServletContext sc = session.getServletContext();
