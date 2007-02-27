@@ -734,6 +734,18 @@ public final class XmlUtil implements Serializable {
     return sb.toString().trim();
   }
 
+  /** Return true if the current element has non zero length content.
+   *
+   * @param el
+   * @return boolean
+   * @throws SAXException
+   */
+  public static boolean hasContent(Element el) throws SAXException {
+    String s = getElementContent(el);
+
+    return (s == null) || (s.length() == 0);
+  }
+
   /** See if this node has any children
    *
    * @param el
@@ -756,6 +768,17 @@ public final class XmlUtil implements Serializable {
 
     return false;
   }
+
+  /** See if this node is empty
+   *
+   * @param el
+   * @return boolean   true for empty
+   * @throws SAXException
+   */
+  public static boolean isEmpty(Element el) throws SAXException {
+    return !hasChildren(el) && !hasContent(el);
+  }
+
 
   /**
    * @param nd
