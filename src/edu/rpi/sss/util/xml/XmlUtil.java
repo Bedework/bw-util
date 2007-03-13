@@ -743,7 +743,7 @@ public final class XmlUtil implements Serializable {
   public static boolean hasContent(Element el) throws SAXException {
     String s = getElementContent(el);
 
-    return (s == null) || (s.length() == 0);
+    return (s != null) && (s.length() > 0);
   }
 
   /** See if this node has any children
