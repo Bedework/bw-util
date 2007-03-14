@@ -779,7 +779,6 @@ public final class XmlUtil implements Serializable {
     return !hasChildren(el) && !hasContent(el);
   }
 
-
   /**
    * @param nd
    * @return element array from node
