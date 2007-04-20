@@ -313,6 +313,8 @@ public abstract class UtilAbstractAction extends Action
         getLogger().warn("Forward = null");
         err.emit("edu.rpi.sss.util.nullforward");
         forward = "error";
+      } else if (forward.equals("FORWARD-NULL")) {
+        forward = null;
       }
 
       if (err == null) {
