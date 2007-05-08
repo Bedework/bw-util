@@ -195,6 +195,14 @@ public class XmlEmit {
     quote(attrVal);
   }
 
+  /** End a tag
+   *
+   * @throws IOException
+   */
+  public void endTag() throws IOException {
+    rb();
+  }
+
   /** End an empty tag
    *
    * @throws IOException
