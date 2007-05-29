@@ -358,6 +358,10 @@ public abstract class UtilAbstractAction extends Action
       forward = "error";
     }
 
+    if (forward == null) {
+      return null;
+    }
+
     return (mapping.findForward(forward));
   }
 
