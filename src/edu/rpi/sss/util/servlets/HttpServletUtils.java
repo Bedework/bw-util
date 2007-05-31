@@ -144,12 +144,12 @@ public class HttpServletUtils {
    *  @return  String      url from the request
    */
   public static String getUrl(HttpServletRequest request) {
-    if (request instanceof MultipartRequestWrapper) {
-      return ((MultipartRequestWrapper)request).getRequest().
-                      getRequestURL().toString();
-    }
-
     try {
+      if (request instanceof MultipartRequestWrapper) {
+        return ((MultipartRequestWrapper)request).getRequest().
+        getRequestURL().toString();
+      }
+
       StringBuffer sb = request.getRequestURL();
       if (sb != null) {
         return sb.toString();
