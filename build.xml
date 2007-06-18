@@ -182,7 +182,7 @@
 
   <target name="run-unittest" >
     <!-- ................................................................
-                            unpackthe tests jar
+                            unpack the tests jar
          ............................................................... -->
     <delete dir="${dist.home}/tests" />
     <mkdir dir="${dist.home}/tests" />
