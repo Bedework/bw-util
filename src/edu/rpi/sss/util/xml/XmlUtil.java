@@ -32,6 +32,7 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -667,10 +668,10 @@ public final class XmlUtil implements Serializable {
   /** All the children must be elements or white space text nodes.
    *
    * @param nd
-   * @return ArrayList   element nodes. Always non-null
+   * @return Collection   element nodes. Always non-null
    * @throws SAXException
    */
-  public static ArrayList<Element> getElements(Node nd) throws SAXException {
+  public static Collection<Element> getElements(Node nd) throws SAXException {
     ArrayList<Element> al = new ArrayList<Element>();
 
     NodeList children = nd.getChildNodes();
@@ -785,7 +786,7 @@ public final class XmlUtil implements Serializable {
    * @throws SAXException
    */
   public static Element[] getElementsArray(Node nd) throws SAXException {
-    ArrayList<Element> al = getElements(nd);
+    Collection<Element> al = getElements(nd);
 
     return (Element[])al.toArray(new Element[al.size()]);
   }
