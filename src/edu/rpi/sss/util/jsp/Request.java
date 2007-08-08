@@ -26,6 +26,7 @@
 package edu.rpi.sss.util.jsp;
 
 import edu.rpi.sss.util.Util;
+import edu.rpi.sss.util.log.MessageEmit;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -78,6 +79,21 @@ public class Request implements Serializable {
    */
   public UtilActionForm getForm() {
     return form;
+  }
+
+  /**
+   * @return MessageEmit
+   */
+  public MessageEmit getErr() {
+    errFlag = true;
+    return form.getErr();
+  }
+
+  /**
+   * @return boolean
+   */
+  public boolean getErrorsEmitted() {
+    return errFlag || form.getErrorsEmitted();
   }
 
   /**
@@ -189,8 +205,7 @@ public class Request implements Serializable {
     try {
       return Integer.valueOf(reqpar);
     } catch (Throwable t) {
-      form.getErr().emit(errProp, reqpar);
-      errFlag = true;
+      getErr().emit(errProp, reqpar);
       return null;
     }
   }
