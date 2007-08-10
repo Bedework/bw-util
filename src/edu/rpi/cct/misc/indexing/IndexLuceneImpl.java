@@ -207,7 +207,7 @@ public abstract class IndexLuceneImpl implements Index {
     return debug;
   }
 
-  /** Indicate if we shoudkl try to clean locks.
+  /** Indicate if we should try to clean locks.
    *
    * @param val
    */
