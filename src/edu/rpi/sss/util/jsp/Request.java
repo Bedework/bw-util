@@ -45,6 +45,23 @@ public class Request implements Serializable {
   protected HttpServletResponse response;
   protected UtilActionForm form;
 
+  /** */
+  public final static int actionTypeUnknown = 0;
+  /** */
+  public final static int actionTypeRender = 1;
+  /** */
+  public final static int actionTypeAction = 2;
+  /** */
+  public final static int actionTypeResource = 3;
+
+  /** */
+  public final static String[] actionTypes = {"unknown",
+                                              "render",
+                                              "action",
+                                              "resource"};
+
+  protected int actionType;
+
   protected boolean errFlag;
 
   /**
@@ -108,6 +125,20 @@ public class Request implements Serializable {
    */
   public boolean getErrFlag() {
     return errFlag;
+  }
+
+  /**
+   * @param val
+   */
+  public void setActionType(int val) {
+    actionType = val;
+  }
+
+  /**
+   * @return int
+   */
+  public int getActionType() {
+    return actionType;
   }
 
   /** Get a request parameter stripped of white space. Return null for zero

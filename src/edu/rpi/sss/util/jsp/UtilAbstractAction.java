@@ -139,6 +139,13 @@ import org.apache.struts.util.MessageResources;
  */
 public abstract class UtilAbstractAction extends Action
          implements HttpAppLogger {
+  /** */
+  public static final String refreshIntervalKey = "refinterval=";
+  /** */
+  public static final String refreshActionKey = "refaction=";
+  /** */
+  public static final String actionTypeKey = "actionType=";
+
   /** true for debugging on */
   public boolean debug;
 
@@ -254,6 +261,16 @@ public abstract class UtilAbstractAction extends Action
                               "text/html");
 
       Request req = new Request(request, response, form);
+
+      String actionType = getStringActionPar(actionTypeKey, form);
+      if (actionType != null) {
+        for (int ati = 0; ati < Request.actionTypes.length; ati++) {
+          if (Request.actionTypes[ati].equals(actionType)) {
+          req.setActionType(ati);
+          break;
+          }
+        }
+      }
 
       /** Set up presentation values from request
        */
@@ -785,7 +802,7 @@ public abstract class UtilAbstractAction extends Action
                                  String refreshAction,
                                  UtilActionForm form) {
     if (refreshInterval != 0) {
-      StringBuffer sb = new StringBuffer(250);
+      StringBuilder sb = new StringBuilder(250);
 
       sb.append(refreshInterval);
       sb.append("; URL=");
@@ -798,38 +815,52 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  private static final String refreshIntervalKey = "refinterval=";
-  protected int getRefreshInt(String par, int val,
-                              UtilActionForm form) {
+  protected Integer getRefreshInt(UtilActionForm form) {
+    return getIntActionPar(refreshIntervalKey, form);
+  }
+
+  protected String getRefreshAction(UtilActionForm form) {
+    return getStringActionPar(refreshActionKey, form);
+  }
+
+  protected Integer getIntActionPar(String name, UtilActionForm form) {
+    String par = form.getActionParameter();
+    if (par == null) {
+      return null;
+    }
+
     try {
-      int pos = par.indexOf(refreshIntervalKey);
+      int pos = par.indexOf(name);
       if (pos < 0) {
-        return val;
+        return null;
       }
 
-      pos += refreshIntervalKey.length();
+      pos += name.length();
       int epos = par.indexOf(";", pos);
       if (epos < 0) {
         epos = par.length();
       }
 
-      return Integer.parseInt(par.substring(pos, epos));
+      return Integer.valueOf(par.substring(pos, epos));
     } catch (Throwable t) {
       form.getErr().emit("edu.rpi.bad.actionparameter", par);
-      return val;
+      return null;
     }
   }
 
-  private static final String refreshActionKey = "refaction=";
-  protected String getRefreshAction(String par, String val,
-                                    UtilActionForm form) {
+  protected String getStringActionPar(String name, UtilActionForm form) {
+    String par = form.getActionParameter();
+    if (par == null) {
+      return null;
+    }
+
     try {
-      int pos = par.indexOf(refreshActionKey);
+      int pos = par.indexOf(name);
       if (pos < 0) {
-        return val;
+        return null;
       }
 
-      pos += refreshActionKey.length();
+      pos += name.length();
       int epos = par.indexOf(";", pos);
       if (epos < 0) {
         epos = par.length();
@@ -838,7 +869,7 @@ public abstract class UtilAbstractAction extends Action
       return par.substring(pos, epos);
     } catch (Throwable t) {
       form.getErr().emit("edu.rpi.bad.actionparameter", par);
-      return val;
+      return null;
     }
   }
 
