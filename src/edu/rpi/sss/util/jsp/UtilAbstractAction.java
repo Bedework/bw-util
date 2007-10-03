@@ -49,6 +49,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
+import org.apache.struts.config.ActionConfig;
 import org.apache.struts.util.MessageResources;
 
 /**
@@ -145,6 +146,8 @@ public abstract class UtilAbstractAction extends Action
   public static final String refreshActionKey = "refaction=";
   /** */
   public static final String actionTypeKey = "actionType=";
+  /** */
+  public static final String actionTypeConversation = "conversation=";
 
   /** true for debugging on */
   public boolean debug;
@@ -248,6 +251,7 @@ public abstract class UtilAbstractAction extends Action
       form.setContext(JspUtil.getContext(request));
       form.setUrlPrefix(JspUtil.getURLPrefix(request));
       form.setActionPath(mapping.getPath());
+      form.setMapping(mapping);
       form.setActionParameter(mapping.getParameter());
       form.setErr(err);
       form.setMsg(msg);
@@ -380,6 +384,51 @@ public abstract class UtilAbstractAction extends Action
     }
 
     return (mapping.findForward(forward));
+  }
+
+  protected void traceConfig(Request req) {
+    ActionConfig[] actions = req.getMapping().getModuleConfig().findActionConfigs();
+
+    getLogger().debug("========== Action configs ===========");
+
+    for (ActionConfig aconfig: actions) {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append(aconfig.getPath());
+
+      String param = aconfig.getParameter();
+
+      boolean noActionType = traceConfigParam(sb,
+                                              actionTypeKey,
+                                              param,
+                                              req.getForm()) == null;
+      traceConfigParam(sb, actionTypeConversation, param, req.getForm());
+
+      traceConfigParam(sb, refreshIntervalKey, param, req.getForm());
+      traceConfigParam(sb, refreshActionKey, param, req.getForm());
+
+      getLogger().debug(sb.toString());
+
+      if (noActionType) {
+        getLogger().debug("***** Warning: no action type specified ****");
+      }
+    }
+  }
+
+  private String traceConfigParam(StringBuilder sb,
+                                  String name, String param,
+                                  UtilActionForm form) {
+    String res = getStringActionPar(name, param, form);
+    if (res == null) {
+      return null;
+    }
+
+    sb.append(",\t");
+    sb.append(name);
+
+    sb.append(res);
+
+    return res;
   }
 
   /** Override this to get the contentName from different sources
@@ -824,7 +873,15 @@ public abstract class UtilAbstractAction extends Action
   }
 
   protected Integer getIntActionPar(String name, UtilActionForm form) {
-    String par = form.getActionParameter();
+    return getIntActionPar(name, form.getActionParameter(), form);
+  }
+
+  protected String getStringActionPar(String name, UtilActionForm form) {
+    return getStringActionPar(name, form.getActionParameter(), form);
+  }
+
+  protected Integer getIntActionPar(String name, String par,
+                                    UtilActionForm form) {
     if (par == null) {
       return null;
     }
@@ -848,8 +905,8 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  protected String getStringActionPar(String name, UtilActionForm form) {
-    String par = form.getActionParameter();
+  protected String getStringActionPar(String name, String par,
+                                      UtilActionForm form) {
     if (par == null) {
       return null;
     }

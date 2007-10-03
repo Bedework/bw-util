@@ -28,6 +28,8 @@ package edu.rpi.sss.util.jsp;
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.log.MessageEmit;
 
+import org.apache.struts.action.ActionMapping;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,6 +98,13 @@ public class Request implements Serializable {
    */
   public UtilActionForm getForm() {
     return form;
+  }
+
+  /**
+   * @return ActionMapping
+   */
+  public ActionMapping getMapping() {
+    return form.getMapping();
   }
 
   /**

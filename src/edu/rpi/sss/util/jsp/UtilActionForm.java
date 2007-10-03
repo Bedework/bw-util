@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
 /**
@@ -83,6 +84,8 @@ public class UtilActionForm extends ActionForm {
   /** So we can get hold of properties
    */
   protected MessageResources mres;
+
+  protected ActionMapping mapping;
 
   /** Application variables. These can be set with request parameters and
    * dumped into the page for use by jsp and xslt.
@@ -311,6 +314,20 @@ public class UtilActionForm extends ActionForm {
    */
   public void setMres(MessageResources val) {
     mres = val;
+  }
+
+  /**
+   * @param val ActionMapping
+   */
+  public void setMapping(ActionMapping val) {
+    mapping = val;
+  }
+
+  /**
+   * @return ActionMapping
+   */
+  public ActionMapping getMapping() {
+    return mapping;
   }
 
   /**
