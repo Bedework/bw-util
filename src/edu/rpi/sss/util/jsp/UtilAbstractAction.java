@@ -264,7 +264,7 @@ public abstract class UtilAbstractAction extends Action
                               "edu.rpi.sss.util.action.contenttype",
                               "text/html");
 
-      Request req = new Request(request, response, form);
+      Request req = new Request(request, response, form, this);
 
       String actionType = getStringActionPar(actionTypeKey, form);
       if (actionType != null) {

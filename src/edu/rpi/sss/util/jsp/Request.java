@@ -28,6 +28,7 @@ package edu.rpi.sss.util.jsp;
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.log.MessageEmit;
 
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMapping;
 
 import java.io.Serializable;
@@ -46,6 +47,7 @@ public class Request implements Serializable {
   protected HttpServletRequest request;
   protected HttpServletResponse response;
   protected UtilActionForm form;
+  protected Action action;
 
   /** */
   public final static int actionTypeUnknown = 0;
@@ -70,13 +72,16 @@ public class Request implements Serializable {
    * @param request
    * @param response
    * @param form
+   * @param action
    */
   public Request(HttpServletRequest request,
                  HttpServletResponse response,
-                 UtilActionForm form) {
+                 UtilActionForm form,
+                 Action action) {
     this.request = request;
     this.response = response;
     this.form = form;
+    this.action = action;
   }
 
   /**
@@ -98,6 +103,13 @@ public class Request implements Serializable {
    */
   public UtilActionForm getForm() {
     return form;
+  }
+
+  /**
+   * @return Action
+   */
+  public Action getAction() {
+    return action;
   }
 
   /**
