@@ -399,9 +399,16 @@ public class Request implements Serializable {
   }
 
   /**
-   * @return String remoe host
+   * @return String remote host
    */
   public String getRemoteHost() {
     return request.getRemoteHost();
+  }
+
+  /**
+   * @return int remote port
+   */
+  public int getRemotePort() {
+    return request.getRemotePort();
   }
 }

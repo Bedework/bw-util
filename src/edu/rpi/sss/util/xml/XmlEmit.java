@@ -104,6 +104,20 @@ public class XmlEmit {
     indent += 2;
   }
 
+  /** open with attribute
+   * @param tag
+   * @param attrName
+   * @param attrVal
+   * @throws IOException
+   */
+  public void openTag(QName tag,
+                      String attrName, Object attrVal) throws IOException {
+    blanks();
+    openTagSameLine(tag, attrName, attrVal);
+    newline();
+    indent += 2;
+  }
+
   /**
    * @param tag
    * @throws IOException
@@ -121,6 +135,21 @@ public class XmlEmit {
   public void openTagSameLine(QName tag) throws IOException {
     lb();
     tagname(tag);
+    rb();
+  }
+
+  /**
+   * @param tag
+   * @param attrName
+   * @param attrVal
+   * @throws IOException
+   */
+  public void openTagSameLine(QName tag,
+                              String attrName, Object attrVal) throws IOException {
+    lb();
+    tagname(tag);
+    comma();
+    attr(attrName, attrVal);
     rb();
   }
 
@@ -415,6 +444,17 @@ public class XmlEmit {
 
   private void rb() throws IOException {
     wtr.write(">");
+  }
+
+  private void comma() throws IOException {
+    wtr.write(", ");
+  }
+
+  private void attr(String name, Object val) throws IOException {
+    wtr.write(name);
+    wtr.write("=\"");
+    wtr.write(String.valueOf(val));
+    wtr.write("\"");
   }
 
   /* size of buffer used for copying content to response.
