@@ -145,6 +145,14 @@ public class QName implements Comparable {
     return true;
   }
 
+  /**
+   * @param nd
+   * @return QName
+   */
+  public static QName from(Node nd) {
+    return new QName(nd.getNamespaceURI(), nd.getLocalName());
+  }
+
   private static int compareStrings(String s1, String s2) {
     if (s1 == null) {
       if (s2 != null) {
