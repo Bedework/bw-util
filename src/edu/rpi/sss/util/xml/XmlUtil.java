@@ -791,6 +791,36 @@ public final class XmlUtil implements Serializable {
     return (Element[])al.toArray(new Element[al.size()]);
   }
 
+  /** See if node matches tag
+   *
+   * @param nd
+   * @param tag
+   * @return boolean true for match
+   */
+  public static boolean nodeMatches(Node nd, QName tag) {
+    String ns = nd.getNamespaceURI();
+
+    if (ns == null) {
+      if (tag.getNamespaceURI() != null) {
+        return false;
+      }
+    } else if (!ns.equals(tag.getNamespaceURI())) {
+      return false;
+    }
+
+    String ln = nd.getLocalName();
+
+    if (ln == null) {
+      if (tag.getLocalPart() != null) {
+        return false;
+      }
+    } else if (!ln.equals(tag.getLocalPart())) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * @param nd
    * @return only child node

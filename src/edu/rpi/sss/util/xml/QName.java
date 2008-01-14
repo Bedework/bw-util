@@ -116,35 +116,6 @@ public class QName implements Comparable {
     return sb.toString();
   }
 
-  /** See if node matches tag
-   *
-   * @param nd
-   * @return boolean true for match
-   */
-  public boolean nodeMatches(Node nd) {
-    String ns = nd.getNamespaceURI();
-
-    if (ns == null) {
-      if (getNamespaceURI() != null) {
-        return false;
-      }
-    } else if (!ns.equals(getNamespaceURI())) {
-      return false;
-    }
-
-    String ln = nd.getLocalName();
-
-    if (ln == null) {
-      if (getLocalPart() != null) {
-        return false;
-      }
-    } else if (!ln.equals(getLocalPart())) {
-      return false;
-    }
-
-    return true;
-  }
-
   /**
    * @param nd
    * @return QName
