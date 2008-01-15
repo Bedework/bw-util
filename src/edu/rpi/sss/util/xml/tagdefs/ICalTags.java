@@ -54,7 +54,7 @@
 
 package edu.rpi.sss.util.xml.tagdefs;
 
-import edu.rpi.sss.util.xml.QName;
+import javax.xml.namespace.QName;
 
 /** Define ICal tags for XMlEmit.
  *

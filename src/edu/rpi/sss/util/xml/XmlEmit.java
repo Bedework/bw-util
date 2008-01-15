@@ -31,6 +31,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.HashMap;
 
+import javax.xml.namespace.QName;
+
 /** Class to emit XML
  *
  * @author Mike Douglass  douglm@rpi.edu

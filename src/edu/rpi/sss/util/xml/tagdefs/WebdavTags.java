@@ -25,9 +25,9 @@
 */
 package edu.rpi.sss.util.xml.tagdefs;
 
-import edu.rpi.sss.util.xml.QName;
-
 import java.util.HashMap;
+
+import javax.xml.namespace.QName;
 
 /** Define Webdav tags for XMlEmit
  *
