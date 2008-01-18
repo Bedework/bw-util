@@ -37,6 +37,7 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -238,6 +239,26 @@ public class XSLTFilter extends AbstractFilter {
     ignoreContentType = "true".equals(temp);
   }
 
+    private void injectParametersInto(Transformer xmlt) throws ServletException {
+	if (xmlt == null)
+	    return;
+
+	try {
+	    ResourceBundle bundle = ResourceBundle.getBundle("bedework");
+	    
+	    if(debug)
+		getLogger().debug("Loading ResourceBundle: bedework.properties");
+
+	    Enumeration<String> keys = bundle.getKeys();
+	    while(keys.hasMoreElements()) {
+		String key = keys.nextElement();
+		xmlt.setParameter(key, bundle.getString(key));
+	    }	    
+	} catch (Exception e) {
+	    throw new ServletException(e.toString());
+	}
+    }
+
   public void doFilter(ServletRequest req,
                        ServletResponse response,
                        FilterChain filterChain)
@@ -344,7 +365,8 @@ public class XSLTFilter extends AbstractFilter {
                small proportiuon of the response time. Try synch for now.
              */
             synchronized (xmlt) {
-              xmlt.transform(
+		injectParametersInto(xmlt);
+		xmlt.transform(
                   new StreamSource(
                        new InputStreamReader(new ByteArrayInputStream(bytes),
                                              "UTF-8")),
