@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -55,6 +56,8 @@ public class UtilActionForm extends ActionForm {
   /** Have we initialised?
    */
   protected boolean initialised;
+
+  private Locale currentLocale;
 
   /* ..................... fields associated with locking ............... */
 
@@ -248,6 +251,23 @@ public class UtilActionForm extends ActionForm {
    */
   public boolean getInitialised() {
     return initialised;
+  }
+
+  /**
+   * @param val
+   */
+  public void setCurrentLocale(Locale val) {
+    currentLocale = val;
+  }
+
+  /**
+   * @return current locale
+   */
+  public Locale getCurrentLocale() {
+    if (currentLocale == null) {
+      return Locale.getDefault();
+    }
+    return currentLocale;
   }
 
   /**
@@ -745,35 +765,40 @@ public class UtilActionForm extends ActionForm {
    * @return String
    */
   public String getCurTime() {
-    return new TimeDateFormatter(TimeDateFormatter.time).format(new Date());
+    return new TimeDateFormatter(TimeDateFormatter.time,
+                                 getCurrentLocale()).format(new Date());
   }
 
   /**
    * @return String
    */
   public String getCurDate() {
-    return new TimeDateFormatter(TimeDateFormatter.date).format(new Date());
+    return new TimeDateFormatter(TimeDateFormatter.date,
+                                 getCurrentLocale()).format(new Date());
   }
 
   /**
    * @return String
    */
   public String getCurDateTime() {
-    return new TimeDateFormatter(TimeDateFormatter.timeDate).format(new Date());
+    return new TimeDateFormatter(TimeDateFormatter.timeDate,
+                                 getCurrentLocale()).format(new Date());
   }
 
   /**
    * @return String
    */
   public String getCurShortDate() {
-    return new TimeDateFormatter(TimeDateFormatter.dateShort).format(new Date());
+    return new TimeDateFormatter(TimeDateFormatter.dateShort,
+                                 getCurrentLocale()).format(new Date());
   }
 
   /**
    * @return String
    */
   public String getCurShortDateTime() {
-    return new TimeDateFormatter(TimeDateFormatter.dateTimeShort).format(new Date());
+    return new TimeDateFormatter(TimeDateFormatter.dateTimeShort,
+                                 getCurrentLocale()).format(new Date());
   }
 
   /**
