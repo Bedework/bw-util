@@ -26,12 +26,19 @@
 
 package edu.rpi.sss.util.servlets;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.apache.struts.upload.MultipartRequestWrapper;
 
 /** Package of small useful methods
+ *
+ * @author Mike Douglass
+ *
  */
 public class HttpServletUtils {
   /** Had to have this because it's subclassed.
@@ -257,6 +264,26 @@ public class HttpServletUtils {
       String name = (String) en.nextElement();
       log.debug(name + ": " + req.getHeader(name));
     }
+  }
+
+  /** If there is no Accept-Language header returns null, otherwise returns a
+   * collection of Locales ordered with preferred first.
+   *
+   * @param req
+   * @return Collection of locales or null
+   */
+  public static Collection<Locale> getLocales(HttpServletRequest req) {
+    if (req.getHeader("Accept-Language") == null) {
+      return null;
+    }
+
+    Enumeration<Locale> lcs = req.getLocales();
+    ArrayList<Locale> locales = new ArrayList<Locale>();
+    while (lcs.hasMoreElements()) {
+      locales.add(lcs.nextElement());
+    }
+
+    return locales;
   }
 }
 

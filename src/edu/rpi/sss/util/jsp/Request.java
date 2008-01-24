@@ -27,6 +27,7 @@ package edu.rpi.sss.util.jsp;
 
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.log.MessageEmit;
+import edu.rpi.sss.util.servlets.HttpServletUtils;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMapping;
@@ -34,6 +35,7 @@ import org.apache.struts.action.ActionMapping;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -410,5 +412,14 @@ public class Request implements Serializable {
    */
   public int getRemotePort() {
     return request.getRemotePort();
+  }
+
+  /** If there is no Accept-Language header returns null, otherwise returns a
+   * collection of Locales ordered with preferred first.
+   *
+   * @return Collection of locales or null
+   */
+  public Collection<Locale> getLocales() {
+    return HttpServletUtils.getLocales(request);
   }
 }
