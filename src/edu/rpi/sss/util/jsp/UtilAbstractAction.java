@@ -270,8 +270,8 @@ public abstract class UtilAbstractAction extends Action
       if (actionType != null) {
         for (int ati = 0; ati < Request.actionTypes.length; ati++) {
           if (Request.actionTypes[ati].equals(actionType)) {
-          req.setActionType(ati);
-          break;
+            req.setActionType(ati);
+            break;
           }
         }
       }
