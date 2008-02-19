@@ -68,6 +68,44 @@ public class Request implements Serializable {
 
   protected int actionType;
 
+  /** In the absence of a conversation parameter we assume that a conversation
+   * starts with actionType=action and ends with actionType=render.
+   *
+   * Conversations are related to the persistence framework and allow us to keep
+   * a persistence engine session running until the sequence of actions is
+   * completed.
+   */
+  public final static int conversationTypeUnknown = 0;
+
+  /** start of a multi-request conversation */
+  public final static int conversationTypeStart = 1;
+
+  /** part-way through a multi-request conversation */
+  public final static int conversationTypeContinue = 2;
+
+  /** end of a multi-request conversation */
+  public final static int conversationTypeEnd = 3;
+
+  /** if a conversation is started, end it on entry with no
+   * processing of changes. Start a new conversation which we will end on exit.
+   */
+  public final static int conversationTypeOnly = 4;
+
+  /** If a conversation is already started on entry, process changes and end it.
+   * Start a new conversation which we will end on exit.
+   */
+  public final static int conversationTypeProcessAndOnly = 5;
+
+  /** */
+  public final static String[] conversationTypes = {"unknown",
+                                                    "start",
+                                                    "continue",
+                                                    "end",
+                                                    "only",
+                                                    "processAndOnly"};
+
+  protected int conversationType;
+
   protected boolean errFlag;
 
   /**
@@ -162,6 +200,20 @@ public class Request implements Serializable {
    */
   public int getActionType() {
     return actionType;
+  }
+
+  /**
+   * @param val
+   */
+  public void setConversationType(int val) {
+    conversationType = val;
+  }
+
+  /**
+   * @return int
+   */
+  public int getConversationType() {
+    return conversationType;
   }
 
   /** Get a request parameter stripped of white space. Return null for zero

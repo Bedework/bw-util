@@ -147,7 +147,7 @@ public abstract class UtilAbstractAction extends Action
   /** */
   public static final String actionTypeKey = "actionType=";
   /** */
-  public static final String actionTypeConversation = "conversation=";
+  public static final String conversationKey = "conversation=";
 
   /** true for debugging on */
   public boolean debug;
@@ -271,6 +271,16 @@ public abstract class UtilAbstractAction extends Action
         for (int ati = 0; ati < Request.actionTypes.length; ati++) {
           if (Request.actionTypes[ati].equals(actionType)) {
             req.setActionType(ati);
+            break;
+          }
+        }
+      }
+
+      String convType = getStringActionPar(conversationKey, form);
+      if (convType != null) {
+        for (int ati = 0; ati < Request.conversationTypes.length; ati++) {
+          if (Request.conversationTypes[ati].equals(convType)) {
+            req.setConversationType(ati);
             break;
           }
         }
@@ -402,7 +412,7 @@ public abstract class UtilAbstractAction extends Action
                                               actionTypeKey,
                                               param,
                                               req.getForm()) == null;
-      traceConfigParam(sb, actionTypeConversation, param, req.getForm());
+      traceConfigParam(sb, conversationKey, param, req.getForm());
 
       traceConfigParam(sb, refreshIntervalKey, param, req.getForm());
       traceConfigParam(sb, refreshActionKey, param, req.getForm());
