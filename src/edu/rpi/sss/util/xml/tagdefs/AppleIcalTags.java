@@ -34,9 +34,9 @@ import edu.rpi.sss.util.xml.QName;
  */
 public class AppleIcalTags {
   /** */
-  public static final String appleIcalNamespace = "com.apple.ical:";
+  public static final String appleIcalNamespace = "http://apple.com/ns/ical/";
 
   /**   */
-  public static final QName calendarcolor = new QName(appleIcalNamespace,
-                                                      "calendarcolor");
+  public static final QName calendarColor = new QName(appleIcalNamespace,
+                                                      "calendar-color");
 }
