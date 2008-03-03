@@ -404,6 +404,7 @@ public class XSLTFilter extends AbstractFilter {
         if (debug) {
           getLogger().debug("XML -> HTML conversion completed");
         }
+        xformBytes = null;
       } else {
         if (debug) {
           if (glob.dontFilter) {
@@ -439,12 +440,14 @@ public class XSLTFilter extends AbstractFilter {
       if (wrappedResp != null) {
         wrappedResp.close();
       }
+      wrappedResp = null;
       if (baos != null) {
         try {
           baos.close();
         } catch (Exception bae) {}
       }
 
+      baos = null;
       bytes = null;
     }
 

@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 /** This class provides a useful form of the wrapped response.
  */
 public class ByteArrayWrappedResponse extends WrappedResponse {
-  final ByteArrayPrintWriter pw = new ByteArrayPrintWriter();
+  ByteArrayPrintWriter pw = new ByteArrayPrintWriter();
 
   /** Constructor
    *
@@ -89,5 +89,18 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
     }
 
     return pw.toByteArray();
+  }
+
+  /**
+   *
+   */
+  public void close() {
+    if (pw != null) {
+      try {
+        pw.close();
+      } catch (Exception bae) {}
+    }
+    pw = null;
+    super.close();
   }
 }

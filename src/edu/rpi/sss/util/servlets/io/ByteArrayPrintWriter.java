@@ -99,6 +99,9 @@ public class ByteArrayPrintWriter {
         sos.close();
       } catch (Exception bae) {}
     }
+    baos = null;
+    pw = null;
+    sos = null;
   }
 }
 
