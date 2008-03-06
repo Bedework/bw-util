@@ -219,7 +219,7 @@ public class XmlEmit {
    * @param attrVal
    * @throws IOException
    */
-  public void atribute(String attrName, String attrVal) throws IOException {
+  public void attribute(String attrName, String attrVal) throws IOException {
     wtr.write(" ");
     wtr.write(attrName);
     wtr.write("=");
