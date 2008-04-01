@@ -380,7 +380,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
      * Then set the ideal and actual paths ready for the transform.
      */
 
-    StringBuffer idealPath = new StringBuffer(xcfg.cfg.getAppRoot());
+    StringBuilder idealPath = new StringBuilder(xcfg.cfg.getAppRoot());
 
     idealPath.append("/");
     idealPath.append(xcfg.cfg.getLocaleInfo());
@@ -400,7 +400,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
        * try, locale, browser type and skin name.
        */
 
-      StringBuffer xsltPath = new StringBuffer(xcfg.cfg.getAppRoot());
+      StringBuilder xsltPath = new StringBuilder(xcfg.cfg.getAppRoot());
 
       /* ============== Locale ================= */
 
@@ -534,12 +534,12 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
 
   /** Try a path and see if it exists. If so append the element
    *
-   * @param   prefix    StringBuffer current path prefix
+   * @param   prefix    StringBuilder current path prefix
    * @param   el        String path element to append
    * @param   dir       true if el is a directory
    * @return  boolean   true if path is OK
    */
-  private boolean tryPath(StringBuffer prefix, String el, boolean dir) {
+  private boolean tryPath(StringBuilder prefix, String el, boolean dir) {
     String path = prefix + "/" + el;
 
     if (dir && directoryBrowsingDisallowed) {
