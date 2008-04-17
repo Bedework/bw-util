@@ -803,7 +803,9 @@ public final class XmlUtil implements Serializable {
     String ns = nd.getNamespaceURI();
 
     if (ns == null) {
-      if (tag.getNamespaceURI() != null) {
+      /* It appears a node can have a NULL namespace but a QName has a zero length
+       */
+      if ((tag.getNamespaceURI() != null) && (!"".equals(tag.getNamespaceURI()))) {
         return false;
       }
     } else if (!ns.equals(tag.getNamespaceURI())) {
