@@ -1510,8 +1510,10 @@ public abstract class UtilAbstractAction extends Action
 
       while (names.hasMoreElements()) {
         String key = (String)names.nextElement();
-        String val = req.getParameter(key);
-        log.debug("  " + key + " = \"" + val + "\"");
+        String[] vals = req.getParameterValues(key);
+        for (String val: vals) {
+          log.debug("  " + key + " = \"" + val + "\"");
+        }
       }
     } catch (Throwable t) {
     }
