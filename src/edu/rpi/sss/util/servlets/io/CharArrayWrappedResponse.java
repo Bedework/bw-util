@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
  */
 public class CharArrayWrappedResponse extends WrappedResponse {
   final CharArrayWriter caw = new CharArrayWriter();
+  private boolean usedOutputStream;
 
   /** Constructor
    *
@@ -60,6 +61,13 @@ public class CharArrayWrappedResponse extends WrappedResponse {
     super(response, log, debug);
   }
 
+  /**
+   * @return true if usedOutputStream
+   */
+  public boolean getUsedOutputStream() {
+    return  usedOutputStream;
+  }
+
   /* (non-Javadoc)
    * @see javax.servlet.ServletResponse#getWriter()
    */
@@ -79,7 +87,8 @@ public class CharArrayWrappedResponse extends WrappedResponse {
       getLogger().debug("getOutputStream called");
     }
 
-    throw new IOException("Unsupported operation: getOutputStream()");
+    usedOutputStream = true;
+    return getResponse().getOutputStream();
   }
 
   /* (non-Javadoc)
