@@ -86,6 +86,9 @@ public class WebdavTags {
   public static final QName creationdate = makeQName("creationdate");
 
   /** */
+  public static final QName currentUserPrincipal = makeQName("current-user-principal");
+
+  /** */
   public static final QName currentUserPrivilegeSet = makeQName("current-user-privilege-set");
 
   /** */
