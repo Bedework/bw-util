@@ -11,22 +11,37 @@
 <project name="rpiutil" default="build">
   <property environment="env"/>
   <property name="base.name" value="rpiutil"/>
-  <dirname property="this.dir" file="${ant.file}"/>
+  <dirname property="project.home" file="${ant.file}"/>
 
-  <property file="${this.dir}/build.properties" />
+  <property file="${project.home}/build.properties" />
+  <property name="build.dir" location="${project.home}/build"/>
 
-  <property name="source.home" location="${this.dir}/src"/>
-  <property name="dist.home" location="${this.dir}/dist"/>
-  <property name="lib.dir" location="${this.dir}/lib"/>
-  <property name="libapi.dir" location="${this.dir}/libapi"/>
+  <import file="${build.dir}/getJar.xml"/>
 
-  <property name="build.dir" location="${this.dir}/build"/>
+  <property name="source.home" location="${project.home}/src"/>
+  <property name="dist.home" location="${project.home}/dist"/>
+  <property name="lib.dir" location="${project.home}/lib"/>
+  <property name="libapi.dir" location="${project.home}/libapi"/>
+
+  <property name="build.dir" location="${project.home}/build"/>
   <property name="buildjar" location="${build.dir}/buildjar.xml"/>
 
   <property name="project.name" value="${edu.rpi.cmt.package.name}"/>
   <property name="project.version" value="${edu.rpi.cmt.version}"/>
 
   <target name="init">
+    <mkdir dir="${lib.dir}" />
+
+    <getJar name="avalon" />
+    <getJar name="fop" />
+    <getJar name="jtidy" />
+    <getJar name="junit" version="4.4" />
+    <getJar name="log4j" version="1.2.8" />
+    <getJar name="lucene-core" version="2.0.0" />
+    <getJar name="lucene-misc" version="2.0.0" />
+    <getJar name="servletapi" version="2.4" />
+    <getJar name="struts" version="1.2.9" />
+
     <mkdir dir="${dist.home}" />
 
     <property name="test.data.dir"

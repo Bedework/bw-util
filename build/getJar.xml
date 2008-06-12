@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<!-- ===================================================================
+     Define a macro to fetch jars from the bedework repository or from
+     the generated library in the named project.
+
+     The project will only be used if the property org.bedework.quickstart.build
+     is defined.
+
+     @param name    Name of the jar e.g. junit
+     @param version optional version for the jar
+     @param src     optional url for the get task
+     @param lib     optional destination for the get task
+     @param project optional project name for local fetch from generated quickstart.
+     =================================================================== -->
+<project name="getJar" basedir="." default="">
+  <macrodef name="getJar">
+    <attribute name="name"/>
+    <attribute name="version" default="" />
+    <attribute name="src" default="http://bedework.org/downloads/lib"/>
+    <attribute name="lib" default="${lib.dir}"/>
+    <attribute name="project" default="" />
+    <sequential>
+      <taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+
+      <if>
+        <equals arg1="@{version}" arg2="" />
+        <then>
+          <var name="org.bedework.getjar.jarname" value="@{name}.jar" />
+        </then>
+        <else>
+          <var name="org.bedework.getjar.jarname" value="@{name}-@{version}.jar" />
+       </else>
+      </if>
+
+      <var name="org.bedework.getjar.dest"
+           value="@{lib}/${org.bedework.getjar.jarname}" />
+
+      <if>
+        <or>
+          <equals arg1="@{project}" arg2="" />
+          <not>
+            <isset property="org.bedework.quickstart.build" />
+          </not>
+        </or>
+        <then>
+          <echo message="Fetch ${org.bedework.getjar.jarname} from bedework archive" />
+          <get src="@{src}/${org.bedework.getjar.jarname}"
+               dest="${org.bedework.getjar.dest}"
+               ignoreerrors="true"
+               verbose="true"
+               usetimestamp="true"/>
+        </then>
+        <else>
+          <var name="org.bedework.getjar.project.jar"
+               value="${project.home}/../@{project}/libapi/${org.bedework.getjar.jarname}" />
+          <if>
+            <uptodate srcfile="${org.bedework.getjar.project.jar}"
+                      targetfile="${org.bedework.getjar.dest}" />
+            <then>
+              <echo message="Fetch ${org.bedework.getjar.jarname} from quickstart" />
+              <copy file="${org.bedework.getjar.project.jar}"
+                    todir="@{lib}" overwrite="yes" />
+            </then>
+          </if>
+       </else>
+      </if>
+    </sequential>
+  </macrodef>
+</project>
