@@ -30,6 +30,7 @@
   <property name="project.version" value="${edu.rpi.cmt.version}"/>
 
   <target name="init">
+    <delete dir="${lib.dir}" />
     <mkdir dir="${lib.dir}" />
 
     <getJar name="avalon" />
