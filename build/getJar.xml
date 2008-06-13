@@ -76,7 +76,7 @@
         </not>
         <then>
           <var name="org.bedework.getjar.project.jar"
-               value="${org.bedework.getjar.projecthome}/libapi/${org.bedework.getjar.jarname}" />
+               value="${org.bedework.getjar.projecthome}/dist/${org.bedework.getjar.jarname}" />
           <echo message="check ${org.bedework.getjar.project.jar}" />
 
           <if>
