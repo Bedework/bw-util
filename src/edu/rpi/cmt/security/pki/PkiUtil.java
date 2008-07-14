@@ -1,0 +1,345 @@
+/* **********************************************************************
+    Copyright 2008 Rensselaer Polytechnic Institute. All worldwide rights reserved.
+
+    Redistribution and use of this distribution in source and binary forms,
+    with or without modification, are permitted provided that:
+       The above copyright notice and this permission notice appear in all
+        copies and supporting documentation;
+
+        The name, identifiers, and trademarks of Rensselaer Polytechnic
+        Institute are not used in advertising or publicity without the
+        express prior written permission of Rensselaer Polytechnic Institute;
+
+    DISCLAIMER: The software is distributed" AS IS" without any express or
+    implied warranty, including but not limited to, any implied warranties
+    of merchantability or fitness for a particular purpose or any warrant)'
+    of non-infringement of any current or pending patent rights. The authors
+    of the software make no representations about the suitability of this
+    software for any particular purpose. The entire risk as to the quality
+    and performance of the software is with the user. Should the software
+    prove defective, the user assumes the cost of all necessary servicing,
+    repair or correction. In particular, neither Rensselaer Polytechnic
+    Institute, nor the authors of the software are liable for any indirect,
+    special, consequential, or incidental damages related to the software,
+    to the maximum extent the law permits.
+*/
+package edu.rpi.cmt.security.pki;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
+
+/**
+ * This program helps create keys and encrypt/decrypt data
+ *
+ * @author Mike Douglass
+ */
+public class PkiUtil {
+  private boolean debug = false;
+  private boolean verbose = false;
+
+  protected transient Logger log;
+
+  private boolean genKeys = false; // generate keys
+  private boolean encrypt = false; // Encrypt a file
+  private boolean decrypt = false; // Decrypt a file
+  private boolean dumppublic = false; // Dump the public key as text
+
+  private String privKeyFileName;
+  private String pubKeyFileName;
+  private boolean append = true;
+
+  private String inFileName;
+  private String outFileName;
+
+  //private PropertyUtil pr; // properties used throughout
+  private PKITools pki;
+
+  /** Following is some random text which we encode and decode to ensure
+   *  generated keys work
+   */
+  String testText =
+    "A variable of array type holds a reference to an object. ";/* +
+    "Declaring a variable of array type does not create an array object \n" +
+    "or allocate any space for array components. It creates only the \n" +
+    "variable itself, which can contain a reference to an array. However, \n" +
+    "the initializer part of a declarator (§8.3) may create an array, a \n" +
+    "reference to which then becomes the initial value of the variable.\n";/* +
+    " \n" +
+    "Because an array's length is not part of its type, a single variable \n" +
+    "of array type may contain references to arrays of different lengths.\n" +
+    "\n" +
+    "Here are examples of declarations of array variables that do not \n" +
+    "create arrays:\n" +
+    "\n" +
+    "    int[] ai;    // array of int\n" +
+    "    short[][] as;    // array of array of short\n" +
+    "    Object[]    ao,    // array of Object\n" +
+    "           otherAo;  // array of Object\n" +
+    "    short  s,    // scalar short \n" +
+    "           aas[][];  // array of array of short";
+    */
+
+  String getInFileName() {
+    return inFileName;
+  }
+
+  String getOutFileName() {
+    return outFileName;
+  }
+
+  boolean getDebug() {
+    return debug;
+  }
+
+  boolean getGenKeys() {
+    return genKeys;
+  }
+
+  boolean getEncrypt() {
+    return encrypt;
+  }
+
+  boolean getDecrypt() {
+    return decrypt;
+  }
+
+  void processArgs(String[] args) throws Exception {
+    if (args == null) {
+      return;
+    }
+
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].equals("-genkeys")) {
+        genKeys = true;
+      } else if (args[i].equals("-encrypt")) {
+        encrypt = true;
+        decrypt = false;
+      } else if (args[i].equals("-decrypt")) {
+        encrypt = false;
+        decrypt = true;
+      } else if (args[i].equals("-verbose")) {
+        verbose = true;
+      } else if (args[i].equals("-nverbose")) {
+        verbose = false;
+      } else if (args[i].equals("-append")) {
+        append = true;
+      } else if (args[i].equals("-nappend")) {
+        append= false;
+      } else if (args[i].equals("-debug")) {
+        debug = true;
+      } else if (args[i].equals("-ndebug")) {
+        debug = false;
+      } else if (args[i].equals("-dumppublic")) {
+        dumppublic = true;
+      } else if (argpar("-in", args, i)) {
+        i++;
+        inFileName = args[i];
+      } else if (argpar("-out", args, i)) {
+        i++;
+        outFileName = args[i];
+      } else if (argpar("-key", args, i)) {
+        i++;
+        privKeyFileName = args[i];
+      } else if (argpar("-privkey", args, i)) {
+        i++;
+        privKeyFileName = args[i];
+      } else if (argpar("-pubkey", args, i)) {
+        i++;
+        pubKeyFileName = args[i];
+      }
+    }
+  }
+
+  boolean argpar(String n, String[] args, int i) throws Exception {
+    if (!args[i].equals(n)) {
+      return false;
+    }
+
+    if ((i + 1) == args.length) {
+      throw new Exception("Invalid arguments");
+    }
+
+    return true;
+  }
+
+  boolean doGenKeys() throws Throwable {
+    if (privKeyFileName == null) {
+      error("Must provide a -privkey <file> parameter");
+    }
+
+    if (pubKeyFileName == null) {
+      error("Must provide a -pubkey <file> parameter");
+    }
+
+    PKITools.RSAKeys keys = pki.genRSAKeysIntoFiles(privKeyFileName,
+                                                    pubKeyFileName,
+                                                    append);
+    if (keys == null) {
+      error("Generation of keys failed");
+      return false;
+    }
+
+    if (dumppublic) {
+      if (!dumpKey(keys.publicKey)) {
+        return false;
+      }
+    }
+
+    // Now try the keys on the test text.
+
+    int numKeys = pki.countKeys(privKeyFileName);
+
+    if (debug) {
+      debugMsg("Number of keys: " + numKeys);
+    }
+
+    System.out.println("test with---->" + testText);
+    String etext = pki.encryptWithKeyFile(pubKeyFileName, testText, numKeys - 1);
+    System.out.println("encrypts to-->" + etext);
+    String detext = pki.decryptWithKeyFile(privKeyFileName, etext, numKeys - 1);
+    System.out.println("decrypts to-->" + detext);
+
+    if (!testText.equals(detext)) {
+      error("Validity check failed: encrypt/decrypt failure");
+    }
+
+    return true;
+  }
+
+  boolean doit(String[] args) throws Throwable {
+    processArgs(args);
+
+    pki = new PKITools(verbose, debug);
+
+    if (getGenKeys()) {
+      return doGenKeys();
+    }
+
+    return false;
+  }
+
+  /** Dump a byte array as a base 64 encoded value. We also check that the
+   *  form we emit can be decoded and produce an identical key.
+   *  <p>
+   *  We then go on to encode and decode our testText to see if they match.
+   *
+   * @param key
+   * @return boolean
+   * @throws Exception
+   */
+  private boolean dumpKey(byte[] key) throws Exception {
+    byte[] encoded = Base64.encodeBase64Chunked(key);
+    String encText = new String(encoded);
+
+    System.out.println("Copy the text between the delimiters");
+    System.out.println("Take all below this line ----------------------->");
+    System.out.println(encText);
+    System.out.println("<--------------- up to and not including this line");
+
+    // See if it decodes
+    byte[] decoded = Base64.encodeBase64Chunked(encText.getBytes());
+
+    if (decoded.length != key.length) {
+      error("Validity check failed: lengths not equal " +
+           "(decoded=" + decoded.length + " key=" + key.length + ")");
+      dumpHex(decoded);
+      error(" ");
+      dumpHex(key);
+      return false;
+    }
+
+    for (int i = 0; i < decoded.length; i++) {
+      if (decoded[i] != key[i]) {
+        error("Validity check failed: byte at position " + i + " not equal");
+        dumpHex(decoded);
+        error(" ");
+        dumpHex(key);
+
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private void dumpHex(byte[] hex) {
+    StringBuffer sb = new StringBuffer();
+
+    for (int i = 0; i < hex.length; i++) {
+      sb.append(toHex(hex[i]));
+      // string += toHex(byteArray[i]) + " ";
+    }
+
+    int pos = 0;
+    int seglen = 50;
+    while (pos < sb.length()) {
+      int len = Math.min(seglen, sb.length() - pos);
+
+      error(" " + sb.substring(pos, pos + len));
+
+      pos += len;
+    }
+  }
+
+  private static String toHex(byte b) {
+    int i = (b >> 4) & 0x0F;
+    String tmp;
+
+    if (i < 10) {
+      tmp = Integer.toString(i);
+    } else {
+      tmp = new Character((char)('A'+i-10)).toString();
+    }
+
+    i = b & 0x0F;
+
+    if (i < 10) {
+      tmp += Integer.toString(i);
+    } else {
+      tmp += new Character((char)('A'+(i-10))).toString();
+    }
+
+    return tmp;
+  }
+
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
+    PkiUtil pkiu = new PkiUtil();
+
+    try {
+      pkiu.doit(args);
+    } catch (Throwable t) {
+      t.printStackTrace();
+    }
+  }
+
+  /**
+   * @return Logger
+   */
+  protected Logger getLogger() {
+    if (log == null) {
+      log = Logger.getLogger(this.getClass());
+    }
+
+    return log;
+  }
+
+  protected void debugMsg(String msg) {
+    getLogger().debug(msg);
+  }
+
+  protected void error(Throwable t) {
+    getLogger().error(this, t);
+  }
+
+  protected void error(String msg) {
+    getLogger().error(msg);
+  }
+
+  protected void trace(String msg) {
+    getLogger().debug(msg);
+  }
+}
+
