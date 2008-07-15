@@ -25,6 +25,7 @@
 */
 package edu.rpi.cmt.security.pki;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 // import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -59,6 +60,7 @@ import javax.crypto.Cipher;
 public class PKITools {
   private boolean debug;
   private boolean verbose;
+  private Base64 b64 = new Base64();
 
   protected transient Logger log;
 
@@ -154,14 +156,14 @@ public class PKITools {
 
     try {
       // write the encoded key to a file
-      writeFile(pubKeyFile, toHex(keys.publicKey), append);
+      writeFile(pubKeyFile, b64.encode(keys.publicKey), append);
 
       if (debug & verbose) {
         trace("Saving Private Key...");
       }
 
       // write the encoded key to a file
-      writeFile(privKeyFile, toHex(keys.privateKey), append);
+      writeFile(privKeyFile, b64.encode(keys.privateKey), append);
 
       return keys;
     } catch(Throwable t) {
@@ -228,7 +230,7 @@ public class PKITools {
         trace("Reading Public Key from file...");
       }
 
-      return encrypt(fromHex(getEncryptedKey(pubKeyFile, keyNum)), item);
+      return encrypt((byte[])b64.decode(getEncryptedKey(pubKeyFile, keyNum)), item);
     } catch(Throwable t) {
       throw new PKIException(t);
     }
@@ -265,14 +267,11 @@ public class PKITools {
 
       asymmetricCipher.init(Cipher.ENCRYPT_MODE, publicKey);
       encryptedItem = asymmetricCipher.doFinal(item.getBytes());
-      if (verbose) {
-        trace("Item to be encrypted: " +item);
-      }
     } catch(Throwable t) {
       throw new PKIException(t);
     }
 
-    return toHex(encryptedItem);
+    return new String(b64.encode(encryptedItem));
   }
 
   /**
@@ -285,7 +284,13 @@ public class PKITools {
   public String decryptWithKeyFile(String privKeyFile,
                                    String hexVal,
                                    int keyNum) throws PKIException {
-    return decrypt(fromHex(getEncryptedKey(privKeyFile, keyNum)), hexVal);
+    try {
+      return decrypt((byte[])b64.decode(getEncryptedKey(privKeyFile, keyNum)), hexVal);
+    } catch(PKIException pe) {
+      throw pe;
+    } catch(Throwable t) {
+      throw new PKIException(t);
+    }
   }
 
   /**
@@ -297,9 +302,10 @@ public class PKITools {
   public String decrypt(byte[] privKeyBytes,
                         String hexVal) throws PKIException {
     Cipher asymmetricCipher;
-    byte[] eVal = fromHex(hexVal);
 
     try {
+      byte[] eVal = (byte[])b64.decode(hexVal.getBytes());
+
       PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
       PrivateKey privateKey;
 
@@ -350,7 +356,7 @@ public class PKITools {
    *                 Private methods
    * ************************************************************************ */
 
-  private String getEncryptedKey(String fileName,
+  private byte[] getEncryptedKey(String fileName,
                                  int keyNum) throws PKIException {
     byte[] keys = getKeys(fileName);
 
@@ -373,7 +379,7 @@ public class PKITools {
       byte[] key = new byte[keyLen];
       System.arraycopy(keys, keyStart, key, 0, keyLen);
 
-      return new String(key);
+      return key;
     }
 
     throw new PKIException("Invalid key number");
@@ -403,18 +409,18 @@ public class PKITools {
   /** Write a single string to a file. Used to write keys
    *
    * @param fileName   String file to write to
-   * @param s          String to write
+   * @param bs         bytes to write
    * @param append     true to add the key to the file.
    * @throws IOException
    */
   private void writeFile(String fileName,
-                         String s,
+                         byte[] bs,
                          boolean append) throws IOException {
     FileOutputStream fstr = null;
 
     try {
       fstr = new FileOutputStream(fileName, append);
-      fstr.write(s.getBytes());
+      fstr.write(bs);
 
       // Terminate key with newline
       fstr.write('\n');
@@ -427,24 +433,10 @@ public class PKITools {
     }
   }
 
-  private static String toHex(byte[] byteArray) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < byteArray.length; i++) {
-      String s = Integer.toHexString(byteArray[i] & 0x000000FF);
-
-      if (s.length() == 1) {
-        sb.append("0");
-      }
-      sb.append(s);
-    }
-
-    return sb.toString();
-  }
-
-  /**
+  /* *
    * @param val
    * @return byte[]
-   */
+   * /
   public static byte[] fromHex(String val) {
     if ((val == null) || (val.length() == 0)) {
       return null;
@@ -462,41 +454,7 @@ public class PKITools {
     }
 
     return bytes;
-  }
-
-  /* *
-   * @param str
-   * @return byte[]
-   * /
-  public static byte[] fromHex(String str) {
-    int len = str.length();    // probably should check length
-    char hex[] = str.toCharArray();
-    byte[] buf = new byte[len / 2];
-
-    for (int pos = 0; pos < len / 2; pos++) {
-      buf[pos] = (byte)( ((data(hex[2 * pos]) << 4) & 0xF0)
-                        | (data(hex[2 * pos + 1]) & 0x0F) );
-    }
-
-    return buf;
-  }
-
-  private static byte data(char c) {
-    if (('0' <= c) && (c <= '9' )) {
-      return (byte)((byte)c - (byte)'0');
-    }
-
-    if (('a' <= c) && (c <= 'f' )) {
-      return (byte)((byte)c - (byte)'a' + 10);
-    }
-
-    if (('A' <= c) && (c <= 'F' )) {
-      return (byte)((byte)c - (byte)'A' + 10);
-    }
-
-    return -1;
-  }
-  */
+  }*/
 
   /**
    * @return Logger
