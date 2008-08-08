@@ -67,7 +67,7 @@ public class XmlEmit {
   }
 
   /** construct an object which will be used to collect namespace names
-   * during the first phase and emit xml afetr startEmit is called.
+   * during the first phase and emit xml after startEmit is called.
    *
    * @param noHeaders    boolean true to suppress headers
    * @param noDefaultns  boolean true if we don't have a default namespace
