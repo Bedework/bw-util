@@ -41,7 +41,7 @@ public class Log4jOutputStream extends ByteArrayOutputStream {
    */
   private boolean closed;
 
-  private Logger log;
+  private transient Logger log;
 
   /** Constructor
    *
