@@ -173,6 +173,9 @@ public class WebdavTags {
   public static final QName missingRequiredPrincipal = makeQName("missing-required-principal");
 
   /** */
+  public static final QName mkcol = makeQName("mkcol");
+
+  /** */
   public static final QName multistatus = makeQName("multistatus");
 
   /** */

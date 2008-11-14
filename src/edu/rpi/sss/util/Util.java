@@ -31,6 +31,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -412,5 +414,103 @@ public class Util {
     }
 
     return l;
+  }
+
+  /** Compare two possibly null objects
+   *
+   * @param thisone
+   * @param thatone
+   * @return int -1, 0, 1,
+   */
+  public static int cmpObjval(Comparable thisone, Comparable thatone) {
+    if (thisone == null) {
+      if (thatone == null) {
+        return 0;
+      }
+
+      return -1;
+    }
+
+    if (thatone == null) {
+      return 1;
+    }
+
+    return thisone.compareTo(thatone);
+  }
+
+  /** Compare two possibly null objects
+   *
+   * @param thisone
+   * @param thatone
+   * @return int -1, 0, 1,
+   */
+  public static int cmpObjval(Collection<? extends Comparable> thisone,
+                              Collection<? extends Comparable> thatone) {
+    if (thisone == null) {
+      if (thatone == null) {
+        return 0;
+      }
+
+      return -1;
+    }
+
+    if (thatone == null) {
+      return 1;
+    }
+
+    int thisLen = thisone.size();
+    int thatLen = thatone.size();
+
+    int res = cmpIntval(thisLen, thatLen);
+    if (res != 0) {
+      return res;
+    }
+
+    Iterator<? extends Comparable> thatIt = thatone.iterator();
+    for (Comparable c: thisone) {
+      res = cmpObjval(c, thatIt.next());
+
+      if (res != 0) {
+        return res;
+      }
+    }
+
+    return 0;
+  }
+
+  /** Compare two boolean objects
+  *
+  * @param thisone
+  * @param thatone
+  * @return int -1, 0, 1,
+  */
+  public static int cmpBoolval(boolean thisone, boolean thatone) {
+    if (thisone == thatone) {
+      return 0;
+    }
+
+    if (!thisone) {
+      return -1;
+    }
+
+    return 1;
+  }
+
+  /** Compare two int objects
+  *
+  * @param thisone
+  * @param thatone
+  * @return int -1, 0, 1,
+  */
+  public static int cmpIntval(int thisone, int thatone) {
+    if (thisone == thatone) {
+      return 0;
+    }
+
+    if (thisone < thatone) {
+      return -1;
+    }
+
+    return 1;
   }
 }

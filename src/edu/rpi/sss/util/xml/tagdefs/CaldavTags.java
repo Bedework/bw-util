@@ -219,10 +219,6 @@ public class CaldavTags implements CaldavDefs {
                                                  "schedule");
 
   /**   */
-  public static final QName scheduleCalendar = new QName(caldavNamespace,
-                                                         "schedule-calendar");
-
-  /**   */
   public static final QName scheduleFreeBusy = new QName(caldavNamespace,
                                                          "schedule-free-busy");
 

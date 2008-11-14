@@ -51,6 +51,10 @@ public class CarddavTags {
   /** */
   public static final QName addressbookHomeSet = makeQName("addressbook-home-set");
 
+  /** */
+  public static final QName addressbookCollectionLocationOk =
+              makeQName("addressbook-collection-location-ok");
+
   /**   */
   public static final QName addressbookMultiget = makeQName("addressbook-multiget");
 
@@ -89,6 +93,9 @@ public class CarddavTags {
 
   /** */
   public static final QName supportedCollation = makeQName("supported-collation");
+
+  /** */
+  public static final QName validAddressData = makeQName("valid-address-data");
 
   /**   */
   public static final QName textMatch = makeQName("text-match");
