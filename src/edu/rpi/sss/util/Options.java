@@ -127,7 +127,7 @@ public class Options implements OptionsI {
 
       Element root = doc.getDocumentElement();
 
-      if (!XmlUtil.nodeMatches(root, outerTag)) {
+      if (!root.getNodeName().equals(outerTag.getLocalPart())) {
         throw new OptionsException("org.bedework.bad.options");
       }
 
