@@ -32,12 +32,13 @@ import java.util.Collection;
 
 /** An interface delivering properties in an xml format.
  *
- * <p>The file we parse is resource "/properties/calendar/bedework.options".
+ * <p>The file we parse is resource on some provided path e.g.
+ * "/properties/options.xml".
  *
- * <p>This needs some work but the idea is to allow something like:
+ * <p>The approach is to allow something like:
  *
  * <pre>
- *   &lt;bedework-options&gt;
+ *   &lt;outer-tag-1&gt;
  *     &lt;org&gt;
  *       &lt;bedework&gt;
  *         &lt;global&gt;
@@ -53,8 +54,10 @@ import java.util.Collection;
  *         &lt;/app&gt;
  *       &lt;/bedework&gt;
  *     &lt;/org&gt;
- *   &lt;/bedework-options&gt;
+ *   &lt;/outer-tag-1&gt;
  * </pre>
+ *
+ * <p>The outer-tag name is provided as a parameter.
  *
  * <p>Then a call on get option for "org.bedework.module.user-ldap-group"
  * would return an object of class org.bedework.calcore.ldap.LdapConfigProperties.

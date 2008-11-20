@@ -123,11 +123,11 @@ public class Options implements OptionsI {
 
       Document doc = builder.parse(new InputSource(rdr));
 
-      /* We expect a root element named "bedework-options" */
+      /* We expect a root element named as specified */
 
       Element root = doc.getDocumentElement();
 
-      if (!root.getNodeName().equals("bedework-options")) {
+      if (!XmlUtil.nodeMatches(root, outerTag)) {
         throw new OptionsException("org.bedework.bad.options");
       }
 
