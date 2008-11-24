@@ -69,11 +69,6 @@ public class CaldavTags implements CaldavDefs {
   /**   */
   public static final QName calendarHomeSet = new QName(caldavNamespace,
                                                         "calendar-home-set");
-
-  /**   */
-  public static final QName calendarHomeURL = new QName(caldavNamespace,
-                                                        "calendar-home-URL");
-
   /**   */
   public static final QName calendarMultiget = new QName(caldavNamespace,
                                                          "calendar-multiget");
