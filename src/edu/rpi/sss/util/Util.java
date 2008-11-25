@@ -479,11 +479,11 @@ public class Util {
   }
 
   /** Compare two boolean objects
-  *
-  * @param thisone
-  * @param thatone
-  * @return int -1, 0, 1,
-  */
+   *
+   * @param thisone
+   * @param thatone
+   * @return int -1, 0, 1,
+   */
   public static int cmpBoolval(boolean thisone, boolean thatone) {
     if (thisone == thatone) {
       return 0;
@@ -497,11 +497,11 @@ public class Util {
   }
 
   /** Compare two int objects
-  *
-  * @param thisone
-  * @param thatone
-  * @return int -1, 0, 1,
-  */
+   *
+   * @param thisone
+   * @param thatone
+   * @return int -1, 0, 1,
+   */
   public static int cmpIntval(int thisone, int thatone) {
     if (thisone == thatone) {
       return 0;
@@ -515,15 +515,130 @@ public class Util {
   }
 
   /** Return true for null or empty
-  *
-  * @param val
-  * @return boolean
-  */
- public static boolean isEmpty(Collection val) {
-   if (val == null) {
-     return true;
-   }
+   *
+   * @param val
+   * @return boolean
+   */
+  public static boolean isEmpty(Collection val) {
+    if (val == null) {
+      return true;
+    }
 
-   return val.isEmpty();
- }
+    return val.isEmpty();
+  }
+
+  /** Encode a json string according to the statement:
+   * <p>In JSON only the backslash, double quote and ASCII control characters
+   * need to be escaped. Forward slashes may be escaped
+   *
+   * <p>I assume we also need to do the whitespace characters
+   *
+   * @param val
+   * @return encoded String
+   */
+  public static String jsonEncode(String val) {
+    if ((val == null) || (val.length() == 0)) {
+      return "\"\"";
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    /* \n    newline
+     * \t   tab
+     * \b   backspace
+     * \f   form feed
+     * \r   return
+     * \"   "   (double quote)
+     * \'   '    (single quote)
+     * \\   \    (back slash)
+     */
+
+    sb.append('"');
+
+    for (int i = 0; i < val.length(); i++) {
+      char ch = val.charAt(i);
+
+      switch (ch) {
+      case '\n':
+        sb.append("\\n");
+        break;
+
+      case '\t':
+        sb.append("\\t");
+        break;
+
+      case '\b':
+        sb.append("\\b");
+        break;
+
+      case '\f':
+        sb.append("\\f");
+        break;
+
+      case '\r':
+        sb.append("\\r");
+        break;
+
+      case '"':
+      case '\'':
+      case '/':
+      case '\\':
+        sb.append('\\');
+        sb.append(ch);
+        break;
+
+      case ' ':
+        sb.append(" ");
+        break;
+
+      default:
+        if (Character.isISOControl(ch)) {
+          String str = Integer.toHexString(ch);
+          sb.append("\\u");
+          sb.append("0000".substring(str.length() - 4));
+          sb.append(str);
+        } else {
+          sb.append(ch);
+        }
+      }
+    }
+
+    sb.append('"');
+    return sb.toString();
+  }
+
+  /** Encode a json name
+   *
+   * @param name
+   * @return encoded String
+   */
+  public static String jsonName(String name) {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(name.toLowerCase());
+
+    return sb.toString();
+  }
+
+  /** Encode a json name and value
+   *
+   * @param indent
+   * @param name
+   * @param val
+   * @return encoded String
+   */
+  public static String jsonNameVal(String indent, String name, String val) {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(indent);
+    sb.append("\"");
+    sb.append(name);
+    sb.append("\": ");
+
+    if (val != null) {
+      sb.append(jsonEncode(val));
+    }
+
+    return sb.toString();
+  }
 }
