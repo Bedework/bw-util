@@ -513,4 +513,17 @@ public class Util {
 
     return 1;
   }
+
+  /** Return true for null or empty
+  *
+  * @param val
+  * @return boolean
+  */
+ public static boolean isEmpty(Collection val) {
+   if (val == null) {
+     return true;
+   }
+
+   return val.isEmpty();
+ }
 }
