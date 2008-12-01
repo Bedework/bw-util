@@ -23,7 +23,6 @@
     special, consequential, or incidental damages related to the software,
     to the maximum extent the law permits.
 */
-
 package edu.rpi.sss.util;
 
 import java.io.InputStream;
