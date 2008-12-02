@@ -74,7 +74,13 @@ public class CarddavTags {
   public static final QName isNotDefined = makeQName("is-not-defined");
 
   /**   */
+  public static final QName limit = makeQName("limit");
+
+  /**   */
   public static final QName maxResourceSize = makeQName("max-resource-size");
+
+  /**   */
+  public static final QName nresults = makeQName("nresults");
 
   /**   */
   public static final QName paramFilter = makeQName("param-filter");
