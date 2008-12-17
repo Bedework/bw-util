@@ -150,6 +150,10 @@ public class CaldavTags implements CaldavDefs {
                                                      "no-uid-conflict");
 
   /**   */
+  public static final QName opaque = new QName(caldavNamespace,
+                                               "opaque");
+
+  /**   */
   public static final QName organizerAllowed = new QName(caldavNamespace,
                                                    "organizer-allowed");
 
@@ -214,6 +218,14 @@ public class CaldavTags implements CaldavDefs {
                                                  "schedule");
 
   /**   */
+  public static final QName scheduleCalendarTransp = new QName(caldavNamespace,
+                                                               "schedule-calendar-transp");
+
+  /**   */
+  public static final QName scheduleDefaultCalendarURL = new QName(caldavNamespace,
+                                             "schedule-default-calendar-URL");
+
+  /**   */
   public static final QName scheduleFreeBusy = new QName(caldavNamespace,
                                                          "schedule-free-busy");
 
@@ -271,6 +283,10 @@ public class CaldavTags implements CaldavDefs {
 
   /**   */
   public static final QName timezone = new QName(caldavNamespace, "timezone");
+
+  /**   */
+  public static final QName transparent = new QName(caldavNamespace,
+                                                    "transparent");
 
   /**   */
   public static final QName validCalendarData = new QName(caldavNamespace,
