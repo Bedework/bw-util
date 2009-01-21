@@ -582,7 +582,7 @@ public abstract class IndexLuceneImpl implements Index {
     try {
       if (wtr != null) {
         if (updatedIndex) {
-          wtr.optimize();
+//          wtr.optimize();
           updatedIndex = false;
         }
         wtr.close();
