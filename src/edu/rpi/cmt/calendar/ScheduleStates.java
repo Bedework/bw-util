@@ -48,4 +48,7 @@ public interface ScheduleStates extends Serializable {
 
   /** Earlier request so ignored */
   public final static int scheduleIgnored = 3;
+
+  /** Failed to send */
+  public final static int scheduleError = 4;
 }
