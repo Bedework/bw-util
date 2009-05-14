@@ -513,6 +513,49 @@ public class Util {
     return 1;
   }
 
+  /** Compare two char arrays
+   *
+   * @param thisone
+   * @param thatone
+   * @return int -1, 0, 1,
+   */
+  public static int compare(char[] thisone, char[] thatone) {
+    if (thisone == thatone) {
+      return 0;
+    }
+
+    if (thisone == null) {
+      return -1;
+    }
+
+    if (thatone == null) {
+      return 1;
+    }
+
+    if (thisone.length < thatone.length) {
+      return -1;
+    }
+
+    if (thisone.length > thatone.length) {
+      return -1;
+    }
+
+    for (int i = 0; i < thisone.length; i++) {
+      char thisc = thisone[i];
+      char thatc = thatone[i];
+
+      if (thisc < thatc) {
+        return -1;
+      }
+
+      if (thisc > thatc) {
+        return 1;
+      }
+    }
+
+    return 0;
+  }
+
   /** Return true for null or empty
    *
    * @param val
