@@ -95,7 +95,7 @@ public class CarddavTags {
   public static final QName propFilter = makeQName("prop-filter");
 
   /** */
-  public static final QName supportedAddressData = makeQName("supported--address-data");
+  public static final QName supportedAddressData = makeQName("supported-address-data");
 
   /** */
   public static final QName supportedCollation = makeQName("supported-collation");
