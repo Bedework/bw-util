@@ -219,11 +219,23 @@ public class CaldavTags implements CaldavDefs {
 
   /**   */
   public static final QName scheduleCalendarTransp = new QName(caldavNamespace,
-                                                               "schedule-calendar-transp");
+                                                      "schedule-calendar-transp");
 
   /**   */
   public static final QName scheduleDefaultCalendarURL = new QName(caldavNamespace,
                                              "schedule-default-calendar-URL");
+
+  /**   */
+  public static final QName scheduleDeliver = new QName(caldavNamespace,
+                                                        "schedule-deliver");
+
+  /**   */
+  public static final QName scheduleDeliverInvite = new QName(caldavNamespace,
+                                                     "schedule-deliver-invite");
+
+  /**   */
+  public static final QName scheduleDeliverReply = new QName(caldavNamespace,
+                                                      "schedule-deliver-reply");
 
   /**   */
   public static final QName scheduleFreeBusy = new QName(caldavNamespace,
@@ -246,6 +258,10 @@ public class CaldavTags implements CaldavDefs {
                                                           "schedule-outbox-URL");
 
   /**   */
+  public static final QName scheduleQueryFreebusy = new QName(caldavNamespace,
+                                                     "schedule-query-freebusy");
+
+  /**   */
   public static final QName scheduleReply = new QName(caldavNamespace,
                                                       "schedule-reply");
 
@@ -256,6 +272,22 @@ public class CaldavTags implements CaldavDefs {
   /**   */
   public static final QName scheduleResponse = new QName(caldavNamespace,
                                                          "schedule-response");
+
+  /**   */
+  public static final QName scheduleSend = new QName(caldavNamespace,
+                                                     "schedule-send");
+
+  /**   */
+  public static final QName scheduleSendFreebusy = new QName(caldavNamespace,
+                                                             "schedule-send-freebusy");
+
+                                                                                                                          /**   */
+  public static final QName scheduleSendInvite = new QName(caldavNamespace,
+                                                           "schedule-send-invite");
+
+                                                                                                                                                                                        /**   */
+  public static final QName scheduleSendReply = new QName(caldavNamespace,
+                                                          "schedule-send-reply");
 
   /**   */
   public static final QName scheduleState = new QName(caldavNamespace,

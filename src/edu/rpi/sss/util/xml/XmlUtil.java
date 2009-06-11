@@ -800,6 +800,10 @@ public final class XmlUtil implements Serializable {
    * @return boolean true for match
    */
   public static boolean nodeMatches(Node nd, QName tag) {
+    if (tag == null) {
+      return false;
+    }
+
     String ns = nd.getNamespaceURI();
 
     if (ns == null) {
