@@ -90,7 +90,24 @@ public class XmlEmit {
     if (!noHeaders) {
       mustEmitNS = true;
 
-      writeHeader();
+      writeHeader(null);
+    }
+    newline();
+  }
+
+  /** Emit any headers, dtd and namespace declarations
+   *
+   * @param wtr
+   * @param dtd
+   * @throws IOException
+   */
+  public void startEmit(Writer wtr, String dtd) throws IOException {
+    this.wtr = wtr;
+
+    if (!noHeaders) {
+      mustEmitNS = true;
+
+      writeHeader(dtd);
     }
     newline();
   }
@@ -113,7 +130,7 @@ public class XmlEmit {
    * @throws IOException
    */
   public void openTag(QName tag,
-                      String attrName, Object attrVal) throws IOException {
+                      String attrName, String attrVal) throws IOException {
     blanks();
     openTagSameLine(tag, attrName, attrVal);
     newline();
@@ -147,11 +164,11 @@ public class XmlEmit {
    * @throws IOException
    */
   public void openTagSameLine(QName tag,
-                              String attrName, Object attrVal) throws IOException {
+                              String attrName,
+                              String attrVal) throws IOException {
     lb();
     tagname(tag);
-    comma();
-    attr(attrName, attrVal);
+    attribute(attrName, attrVal);
     rb();
   }
 
@@ -292,6 +309,17 @@ public class XmlEmit {
     newline();
   }
 
+  /** Write out a value
+   *
+   * @param val
+   * @throws IOException
+   */
+  public void value(String val) throws IOException {
+    if (val != null) {
+      wtr.write(val);
+    }
+  }
+
   /** Create the sequence<br>
    *  <tag>val</tag>
    *
@@ -428,8 +456,16 @@ public class XmlEmit {
 
   /* Write out the xml header
    */
-  private void writeHeader() throws IOException {
+  private void writeHeader(String dtd) throws IOException {
     wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+
+    if (dtd == null) {
+      return;
+    }
+
+    wtr.write("<!DOCTYPE properties SYSTEM \"");
+    wtr.write(dtd);
+    wtr.write("\">\n");
   }
 
   private void blanks() throws IOException {
@@ -446,17 +482,6 @@ public class XmlEmit {
 
   private void rb() throws IOException {
     wtr.write(">");
-  }
-
-  private void comma() throws IOException {
-    wtr.write(", ");
-  }
-
-  private void attr(String name, Object val) throws IOException {
-    wtr.write(name);
-    wtr.write("=\"");
-    wtr.write(String.valueOf(val));
-    wtr.write("\"");
   }
 
   /* size of buffer used for copying content to response.
