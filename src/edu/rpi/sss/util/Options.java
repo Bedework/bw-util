@@ -832,6 +832,7 @@ public class Options implements OptionsI {
             warn("Unable to instantiate class " + className);
             // Treat it as a non-leaf node
             //throw new OptionsException(t);
+            className = null;
           }
         } else {
           /* Just a non-leaf node */
