@@ -85,8 +85,18 @@ public class DateTimeUtil {
    *
    */
   public static class BadDateException extends Throwable {
-    BadDateException() {
+    /**
+     *
+     */
+    public BadDateException() {
       super("Bad date");
+    }
+
+    /**
+     * @param msg
+     */
+    public BadDateException(String msg) {
+      super(msg);
     }
   }
 

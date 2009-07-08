@@ -38,6 +38,7 @@
 
     <getJar name="avalon" />
     <getJar name="commons-codec" version="1.3" />
+    <getJar name="commons-httpclient" version="3.0" />
     <getJar name="fop" />
     <getJar name="ical4j" version="head-dev" />
     <getJar name="jtidy" />
