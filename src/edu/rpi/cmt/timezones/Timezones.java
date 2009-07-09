@@ -185,7 +185,7 @@ public abstract class Timezones implements Serializable {
   public static void initTimezones(String serverUrl) throws TimezonesException {
     try {
       if (tzs == null) {
-        tzs = (Timezones)Class.forName("org.bedework.calfacade.timezonesImpl.CalTimezonesImpl").newInstance();
+        tzs = (Timezones)Class.forName("edu.rpi.cmt.timezones.TimezonesImpl").newInstance();
       }
 
       tzs.init(serverUrl);
