@@ -261,6 +261,9 @@ public class PropertyIndex implements Serializable {
     OWNER("OWNER", single, event_Todo_Journal),
 
     /** non ical */
+    COST("COST", single, event_Todo),
+
+    /** non ical */
     CTAG("CTAG", single, noComponent),
 
     /** non ical */
