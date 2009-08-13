@@ -32,7 +32,42 @@ package edu.rpi.cmt.calendar;
  *
  */
 public class IcalDefs {
+  /* Integer values associated with each type of calendar entity. Used as a
+  code for db entries.
+   */
+
   /** */
+  public static final int entityTypeEvent = 0;
+
+  /** */
+  public static final int entityTypeAlarm = 1;
+
+  /** */
+  public static final int entityTypeTodo = 2;
+
+  /** */
+  public static final int entityTypeJournal = 3;
+
+  /** */
+  public static final int entityTypeFreeAndBusy = 4;
+
+  /** */
+  public static final int entityTypeVavailability = 5;
+
+  /** */
+  public static final int entityTypeAvailable = 6;
+
+  /** */
+  public static final String[] entityTypeNames = {"event",
+                                                  "alarm",
+                                                  "todo",
+                                                  "journal",
+                                                  "freeAndBusy",
+                                                  "vavailability",
+                                                  "available"
+  };
+
+  /** Used to identify types of components within a calendar object */
   public enum IcalComponentType {
     /** */
     none,

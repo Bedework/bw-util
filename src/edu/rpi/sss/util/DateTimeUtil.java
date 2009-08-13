@@ -85,8 +85,18 @@ public class DateTimeUtil {
    *
    */
   public static class BadDateException extends Throwable {
-    BadDateException() {
+    /**
+     *
+     */
+    public BadDateException() {
       super("Bad date");
+    }
+
+    /**
+     * @param msg
+     */
+    public BadDateException(String msg) {
+      super(msg);
     }
   }
 
@@ -458,6 +468,54 @@ public class DateTimeUtil {
       return true;
     } catch (Throwable t) {
       return false;
+    }
+  }
+
+  /** Return rfc or iso String date or datetime as java Date
+   *
+   * @param dt
+   * @return Date
+   * @throws BadDateException
+   */
+  public static Date fromDate(String dt) throws BadDateException {
+    try {
+      if (dt == null) {
+        return null;
+      }
+
+      if (dt.indexOf("T") > 0) {
+        return fromDateTime(dt);
+      }
+
+      if (dt.indexOf("-") < 0) {
+        return fromISODate(dt);
+      }
+
+      return fromRfcDate(dt);
+    } catch (Throwable t) {
+      throw new BadDateException();
+    }
+  }
+
+  /** Return rfc or iso String datetime as java Date
+   *
+   * @param dt
+   * @return Date
+   * @throws BadDateException
+   */
+  public static Date fromDateTime(String dt) throws BadDateException {
+    try {
+      if (dt == null) {
+        return null;
+      }
+
+      if (dt.indexOf("-") < 0) {
+        return fromISODateTimeUTC(dt);
+      }
+
+      return fromRfcDateTimeUTC(dt);
+    } catch (Throwable t) {
+      throw new BadDateException();
     }
   }
 }
