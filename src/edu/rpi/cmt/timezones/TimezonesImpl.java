@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletResponse;
+
 /** Handle caching, retrieval and registration of timezones. There are possibly
  * two sets of timezones, public or system - shared across a system, and user owned,
  * private to the current user.
@@ -476,6 +478,14 @@ public class TimezonesImpl extends Timezones {
       return tzid.substring(pos + 1);
     }
 
+    /* Special to get James Andrewartha going */
+    String ss = "/softwarestudio.org/Tzfile/";
+
+    if ((len > ss.length()) &&
+        (tzid.startsWith(ss))) {
+      return tzid.substring(ss.length());
+    }
+
     return tzid;
   }
 
@@ -530,6 +540,12 @@ public class TimezonesImpl extends Timezones {
     public String call(String req) throws TimezonesException {
       try {
         doCall(req);
+
+        int status = getter.getStatusCode();
+
+        if (status != HttpServletResponse.SC_OK) {
+          return null;
+        }
 
         return getter.getResponseBodyAsString();
       } catch (TimezonesException cfe) {
