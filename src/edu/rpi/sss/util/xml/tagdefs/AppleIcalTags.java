@@ -39,4 +39,8 @@ public class AppleIcalTags {
   /**   */
   public static final QName calendarColor = new QName(appleIcalNamespace,
                                                       "calendar-color");
+
+  /**   */
+  public static final QName calendarOrder = new QName(appleIcalNamespace,
+                                                      "calendar-order");
 }
