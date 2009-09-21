@@ -315,6 +315,15 @@ public class WebdavTags {
   public static final QName supportedReportSet = makeQName("supported-report-set");
 
   /** */
+  public static final QName syncCollection = makeQName("sync-collection");
+
+  /** */
+  public static final QName syncResponse = makeQName("sync-response");
+
+  /** */
+  public static final QName syncToken = makeQName("sync-token");
+
+  /** */
   public static final QName supportedlock = makeQName("supportedlock");
 
   /** */
@@ -325,6 +334,9 @@ public class WebdavTags {
 
   /** */
   public static final QName unlock = makeQName("unlock");
+
+  /** */
+  public static final QName validSyncToken = makeQName("valid-sync-token");
 
   /** */
   public static final QName whoami = makeQName("whoami");
