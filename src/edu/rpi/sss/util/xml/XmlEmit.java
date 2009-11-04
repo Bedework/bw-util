@@ -282,13 +282,9 @@ public class XmlEmit {
 
   private void quote(String val) throws IOException {
     if (val.indexOf("\"") < 0) {
-      wtr.write("\"");
-      wtr.write(val);
-      wtr.write("\"");
+      value(val, "\"");
     } else {
-      wtr.write("'");
-      wtr.write(val);
-      wtr.write("'");
+      value(val, "'");
     }
   }
 
@@ -302,9 +298,7 @@ public class XmlEmit {
   public void property(QName tag, String val) throws IOException {
     blanks();
     openTagSameLine(tag);
-    if (val != null) {
-      wtr.write(val);
-    }
+    value(val);
     closeTagSameLine(tag);
     newline();
   }
@@ -315,8 +309,37 @@ public class XmlEmit {
    * @throws IOException
    */
   public void value(String val) throws IOException {
-    if (val != null) {
+    value(val, null);
+  }
+
+  /** Write out a value
+   *
+   * @param val
+   * @param quoteChar
+   * @throws IOException
+   */
+  private void value(String val,
+                     String quoteChar) throws IOException {
+    if (val == null) {
+      return;
+    }
+
+    String q = quoteChar;
+    if (q == null) {
+      q = "";
+    }
+
+    if ((val.indexOf('&') >= 0) ||
+        (val.indexOf('<') >= 0)) {
+      wtr.write("<![CDATA[");
+      wtr.write(q);
       wtr.write(val);
+      wtr.write(q);
+      wtr.write("]]>");
+    } else {
+      wtr.write(q);
+      wtr.write(val);
+      wtr.write(q);
     }
   }
 
