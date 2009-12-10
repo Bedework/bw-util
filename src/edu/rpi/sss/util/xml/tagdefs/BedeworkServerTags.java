@@ -43,4 +43,8 @@ public class BedeworkServerTags {
   /**   */
   public static final QName systemIndexingOn = new QName(bedeworkCaldavNamespace,
                                                          "systemIndexingOn");
+
+  /**   */
+  public static final QName adminContact = new QName(bedeworkCaldavNamespace,
+                                                     "admin-contact");
 }
