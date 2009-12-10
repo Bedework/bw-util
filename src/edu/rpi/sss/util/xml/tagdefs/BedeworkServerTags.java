@@ -39,4 +39,8 @@ public class BedeworkServerTags {
   /**   */
   public static final QName isTopicalArea = new QName(bedeworkCaldavNamespace,
                                                 "isTopicalArea");
+
+  /**   */
+  public static final QName systemIndexingOn = new QName(bedeworkCaldavNamespace,
+                                                         "systemIndexingOn");
 }
