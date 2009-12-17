@@ -45,6 +45,22 @@ public class BedeworkServerTags {
                                                          "systemIndexingOn");
 
   /**   */
+  public static final QName defaultFBPeriod = new QName(bedeworkCaldavNamespace,
+                                                         "defaultFBPeriod");
+
+  /**   */
+  public static final QName maxFBPeriod = new QName(bedeworkCaldavNamespace,
+                                                         "maxFBPeriod");
+
+  /**   */
+  public static final QName defaultWebCalPeriod = new QName(bedeworkCaldavNamespace,
+                                                         "defaultWebCalPeriod");
+
+  /**   */
+  public static final QName maxWebCalPeriod = new QName(bedeworkCaldavNamespace,
+                                                         "maxWebCalPeriod");
+
+  /**   */
   public static final QName adminContact = new QName(bedeworkCaldavNamespace,
                                                      "admin-contact");
 }
