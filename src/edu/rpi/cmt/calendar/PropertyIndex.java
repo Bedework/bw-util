@@ -43,12 +43,12 @@ public class PropertyIndex implements Serializable {
     private boolean timezoneProperty;
     private boolean alarmProperty;
 
-    ComponentFlags(boolean eventProperty,
-                   boolean todoProperty,
-                   boolean journalProperty,
-                   boolean freeBusyProperty,
-                   boolean timezoneProperty,
-                   boolean alarmProperty) {
+    ComponentFlags(final boolean eventProperty,
+                   final boolean todoProperty,
+                   final boolean journalProperty,
+                   final boolean freeBusyProperty,
+                   final boolean timezoneProperty,
+                   final boolean alarmProperty) {
       this.eventProperty = eventProperty;
       this.todoProperty = todoProperty;
       this.journalProperty = journalProperty;
@@ -273,7 +273,7 @@ public class PropertyIndex implements Serializable {
     COLLECTION("COLLECTION", single, event_Todo_Journal),
 
     /** non ical */
-    ENTITY_TYPE("ENTITY-TYPE", single, event_Todo_Journal),
+    ENTITY_TYPE("ENTITY_TYPE", single, event_Todo_Journal),
 
     /** treat VALARM sub-component as a property */
     VALARM("VALARM", multi, notAlarm),
@@ -305,20 +305,25 @@ public class PropertyIndex implements Serializable {
 
     static {
       for (PropertyInfoIndex pii: values()) {
-        pnameLookup.put(pii.getPname(), pii);
+        String pname = pii.getPname();
+
+        if (pname != null) {
+          pname = pname.toLowerCase();
+        }
+        pnameLookup.put(pname, pii);
       }
     }
 
-    PropertyInfoIndex(String pname, boolean multiValued,
-                      ComponentFlags components) {
+    PropertyInfoIndex(final String pname, final boolean multiValued,
+                      final ComponentFlags components) {
       this.pname = pname;
       this.components = components;
       this.multiValued = multiValued;
     }
 
-    PropertyInfoIndex(String pname, boolean multiValued,
-                      ComponentFlags components,
-                      boolean param) {
+    PropertyInfoIndex(final String pname, final boolean multiValued,
+                      final ComponentFlags components,
+                      final boolean param) {
       this(pname, multiValued, components);
       this.param = param;
     }
@@ -400,8 +405,8 @@ public class PropertyIndex implements Serializable {
      * @param val
      * @return PropertyInfoIndex
      */
-    public static PropertyInfoIndex lookupPname(String val) {
-      return pnameLookup.get(val);
+    public static PropertyInfoIndex lookupPname(final String val) {
+      return pnameLookup.get(val.toLowerCase());
     }
   }
 }
