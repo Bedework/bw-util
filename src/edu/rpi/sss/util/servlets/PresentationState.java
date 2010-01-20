@@ -26,9 +26,11 @@
 
 package edu.rpi.sss.util.servlets;
 
-import java.io.Serializable;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
+
+import java.io.Serializable;
+
+import javax.servlet.http.HttpServletRequest;
 
 /** This class holds the presentation state of servlet sessions.
  * We assume that we will want the same information for most of the
@@ -51,6 +53,12 @@ public class PresentationState implements Serializable {
    * This must be set to some valid value.
    */
   private String appRoot;
+
+  /** browserResourceRoot is where we find web related static info used by the program,
+     such as XSLT stylesheets.
+   * This must be set to some valid value.
+   */
+  private String browserResourceRoot;
 
   /** The requet name we expect. */
   private String browserTypeRequestName = "browserType";
@@ -139,7 +147,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setAppRootRequestName(String val) {
+  public void setAppRootRequestName(final String val) {
     appRootRequestName = val;
   }
 
@@ -154,7 +162,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setAppRoot(String val) {
+  public void setAppRoot(final String val) {
     appRoot = val;
   }
 
@@ -165,6 +173,20 @@ public class PresentationState implements Serializable {
     return appRoot;
   }
 
+  /**
+   * @param val
+   */
+  public void setBrowserResourceRoot(final String val) {
+    browserResourceRoot = val;
+  }
+
+  /**
+   * @return where we find the css etc
+   */
+  public String getBrowserResourceRoot() {
+    return browserResourceRoot;
+  }
+
   /* ====================================================================
              Browser type methods
      ==================================================================== */
@@ -173,7 +195,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setBrowserTypeRequestName(String val) {
+  public void setBrowserTypeRequestName(final String val) {
     browserTypeRequestName = val;
   }
 
@@ -188,7 +210,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setBrowserType(String val) {
+  public void setBrowserType(final String val) {
     browserType = val;
   }
 
@@ -203,7 +225,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setBrowserTypeStickyRequestName(String val) {
+  public void setBrowserTypeStickyRequestName(final String val) {
     browserTypeStickyRequestName = val;
   }
 
@@ -218,7 +240,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setBrowserTypeSticky(boolean val) {
+  public void setBrowserTypeSticky(final boolean val) {
     browserTypeSticky = val;
   }
 
@@ -233,7 +255,7 @@ public class PresentationState implements Serializable {
    *
    * @param request  Needed to locate parameters
    */
-  public void checkBrowserType(HttpServletRequest request) {
+  public void checkBrowserType(final HttpServletRequest request) {
     String reqpar = request.getParameter(getBrowserTypeRequestName());
 
     if (reqpar != null) {
@@ -266,7 +288,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setContentTypeRequestName(String val) {
+  public void setContentTypeRequestName(final String val) {
     contentTypeRequestName = val;
   }
 
@@ -281,7 +303,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setContentType(String val) {
+  public void setContentType(final String val) {
     contentType = val;
   }
 
@@ -296,7 +318,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setContentTypeStickyRequestName(String val) {
+  public void setContentTypeStickyRequestName(final String val) {
     contentTypeStickyRequestName = val;
   }
 
@@ -311,7 +333,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setContentTypeSticky(boolean val) {
+  public void setContentTypeSticky(final boolean val) {
     contentTypeSticky = val;
   }
 
@@ -326,7 +348,7 @@ public class PresentationState implements Serializable {
    *
    * @param request  Needed to locate session
    */
-  public void checkContentType(HttpServletRequest request) {
+  public void checkContentType(final HttpServletRequest request) {
     String reqpar = request.getParameter(getContentTypeRequestName());
 
     if (reqpar != null) {
@@ -359,7 +381,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setContentNameRequestName(String val) {
+  public void setContentNameRequestName(final String val) {
     contentNameRequestName = val;
   }
 
@@ -374,7 +396,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setContentName(String val) {
+  public void setContentName(final String val) {
     contentName = val;
   }
 
@@ -389,7 +411,7 @@ public class PresentationState implements Serializable {
    *
    * @param request  Needed to locate session
    */
-  public void checkContentName(HttpServletRequest request) {
+  public void checkContentName(final HttpServletRequest request) {
     String reqpar = request.getParameter(getContentNameRequestName());
 
     // Set to null if not found.
@@ -404,7 +426,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setSkinNameRequestName(String val) {
+  public void setSkinNameRequestName(final String val) {
     skinNameRequestName = val;
   }
 
@@ -419,7 +441,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setSkinName(String val) {
+  public void setSkinName(final String val) {
     skinName = val;
   }
 
@@ -434,7 +456,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setSkinNameStickyRequestName(String val) {
+  public void setSkinNameStickyRequestName(final String val) {
     skinNameStickyRequestName = val;
   }
 
@@ -449,7 +471,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setSkinNameSticky(boolean val) {
+  public void setSkinNameSticky(final boolean val) {
     skinNameSticky = val;
   }
 
@@ -464,7 +486,7 @@ public class PresentationState implements Serializable {
    *
    * @param request  Needed to locate session
    */
-  public void checkSkinName(HttpServletRequest request) {
+  public void checkSkinName(final HttpServletRequest request) {
     String reqpar = request.getParameter(getSkinNameRequestName());
 
     if (reqpar != null) {
@@ -497,7 +519,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setRefreshXSLTRequestName(String val) {
+  public void setRefreshXSLTRequestName(final String val) {
     refreshXSLTRequestName = val;
   }
 
@@ -513,7 +535,7 @@ public class PresentationState implements Serializable {
    *
    * @param val
    */
-  public void setForceXSLTRefresh(boolean val) {
+  public void setForceXSLTRefresh(final boolean val) {
     forceXSLTRefresh = val;
   }
 
@@ -528,7 +550,7 @@ public class PresentationState implements Serializable {
    *
    * @param val
    */
-  public void setForceXSLTRefreshAlways(boolean val) {
+  public void setForceXSLTRefreshAlways(final boolean val) {
     forceXSLTRefreshAlways = val;
   }
 
@@ -543,7 +565,7 @@ public class PresentationState implements Serializable {
    *
    * @param request  Needed to locate session
    */
-  public void checkRefreshXslt(HttpServletRequest request) {
+  public void checkRefreshXslt(final HttpServletRequest request) {
     String reqpar = request.getParameter(getRefreshXSLTRequestName());
 
     if (reqpar == null) {
@@ -571,7 +593,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setNoXSLTRequestName(String val) {
+  public void setNoXSLTRequestName(final String val) {
     noXSLTRequestName = val;
   }
 
@@ -586,7 +608,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setNoXSLT(boolean val) {
+  public void setNoXSLT(final boolean val) {
     noXSLT = val;
   }
 
@@ -601,7 +623,7 @@ public class PresentationState implements Serializable {
    *
    * @param val   String request name
    */
-  public void setNoXSLTStickyRequestName(String val) {
+  public void setNoXSLTStickyRequestName(final String val) {
     noXSLTStickyRequestName = val;
   }
 
@@ -616,7 +638,7 @@ public class PresentationState implements Serializable {
   /**
    * @param val
    */
-  public void setNoXSLTSticky(boolean val) {
+  public void setNoXSLTSticky(final boolean val) {
     noXSLTSticky = val;
   }
 
@@ -632,7 +654,7 @@ public class PresentationState implements Serializable {
    *
    * @param request  Needed to locate session
    */
-  public void checkNoXSLT(HttpServletRequest request) {
+  public void checkNoXSLT(final HttpServletRequest request) {
     String reqpar = request.getParameter(getNoXSLTRequestName());
 
     if (reqpar != null) {
@@ -663,7 +685,7 @@ public class PresentationState implements Serializable {
   /**
    * @param title
    */
-  public void debugDump(String title) {
+  public void debugDump(final String title) {
     debugDump(title, Logger.getLogger(this.getClass()));
   }
 
@@ -671,10 +693,11 @@ public class PresentationState implements Serializable {
    * @param title
    * @param log
    */
-  public void debugDump(String title, Logger log) {
+  public void debugDump(final String title, final Logger log) {
     log.debug("------------- Presentation state: " + title +
                        " -------");
     log.debug("               AppRoot: " + appRoot);
+    log.debug("   BrowserResourceRoot: " + browserResourceRoot);
     log.debug("           BrowserType: " + browserType);
     log.debug("           ContentType: " + contentType);
     log.debug("           ContentName: " + contentName);
