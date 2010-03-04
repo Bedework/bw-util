@@ -60,14 +60,14 @@ public abstract class Timezones implements Serializable {
     /**
      * @param t
      */
-    public TimezonesException(Throwable t) {
+    public TimezonesException(final Throwable t) {
       super(t);
     }
 
     /**
      * @param msg
      */
-    public TimezonesException(String msg) {
+    public TimezonesException(final String msg) {
       super(msg);
     }
 
@@ -75,7 +75,7 @@ public abstract class Timezones implements Serializable {
      * @param msg
      * @param extra
      */
-    public TimezonesException(String msg, String extra) {
+    public TimezonesException(final String msg, final String extra) {
       super(msg);
       this.extra = extra;
     }
@@ -87,6 +87,7 @@ public abstract class Timezones implements Serializable {
       return extra;
     }
 
+    @Override
     public String toString() {
       StringBuilder sb = new StringBuilder(super.toString());
       if (extra != null) {
@@ -97,6 +98,9 @@ public abstract class Timezones implements Serializable {
       return sb.toString();
     }
   }
+
+  private static ThreadLocal<String> threadTzid =
+    new ThreadLocal<String>();
 
   private static Timezones tzs;
 
@@ -138,9 +142,9 @@ public abstract class Timezones implements Serializable {
     /**
      * @param name
      */
-    public TimeZoneName(String name) {
+    public TimeZoneName(final String name) {
       this.name = name;
-      this.id = name;
+      id = name;
     }
 
     /**
@@ -157,7 +161,7 @@ public abstract class Timezones implements Serializable {
       return id;
     }
 
-    public int compareTo(TimeZoneName that) {
+    public int compareTo(final TimeZoneName that) {
       if (that == this) {
         return 0;
       }
@@ -165,10 +169,12 @@ public abstract class Timezones implements Serializable {
       return name.compareTo(that.name);
     }
 
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
       return compareTo((TimeZoneName)o) == 0;
     }
 
+    @Override
     public int hashCode() {
       return name.hashCode();
     }
@@ -182,7 +188,7 @@ public abstract class Timezones implements Serializable {
    * @param serverUrl
    * @throws TimezonesException
    */
-  public static void initTimezones(String serverUrl) throws TimezonesException {
+  public static void initTimezones(final String serverUrl) throws TimezonesException {
     try {
       if (tzs == null) {
         tzs = (Timezones)Class.forName("edu.rpi.cmt.timezones.TimezonesImpl").newInstance();
@@ -210,7 +216,7 @@ public abstract class Timezones implements Serializable {
    * @param id
    * @throws TimezonesException
    */
-  public static void setDefaultTzid(String id) throws TimezonesException {
+  public static void setSystemDefaultTzid(final String id) throws TimezonesException {
     getTimezones().setDefaultTimeZoneId(id);
   }
 
@@ -219,8 +225,31 @@ public abstract class Timezones implements Serializable {
    * @return String id
    * @throws TimezonesException
    */
-  public static String getDefaultTzid() throws TimezonesException {
+  public static String getSystemDefaultTzid() throws TimezonesException {
     return getTimezones().getDefaultTimeZoneId();
+  }
+
+  /** Set the default timezone id for this thread.
+   *
+   * @param id
+   * @throws TimezonesException
+   */
+  public static void setThreadDefaultTzid(final String id) throws TimezonesException {
+    threadTzid.set(id);
+  }
+
+  /** Get the default timezone id for this thread.
+   *
+   * @return String id
+   * @throws TimezonesException
+   */
+  public static String getThreadDefaultTzid() throws TimezonesException {
+    String id = threadTzid.get();
+
+    if (id != null) {
+      return id;
+    }
+    return getSystemDefaultTzid();
   }
 
   /** Get the default timezone for this system.
@@ -229,7 +258,7 @@ public abstract class Timezones implements Serializable {
    * @throws TimezonesException
    */
   public static TimeZone getDefaultTz() throws TimezonesException {
-    return getTimezones().getDefaultTimeZone();
+    return getTz(getThreadDefaultTzid());
   }
 
   /** Get a timezone object given the id. This will return transient objects
@@ -239,7 +268,7 @@ public abstract class Timezones implements Serializable {
    * @return TimeZone with id or null
    * @throws TimezonesException
    */
-   public static TimeZone getTz(String id) throws TimezonesException {
+   public static TimeZone getTz(final String id) throws TimezonesException {
      return getTimezones().getTimeZone(id);
    }
 
@@ -262,8 +291,8 @@ public abstract class Timezones implements Serializable {
    * @return String always of form yyyyMMddThhmmssZ
    * @throws TimezonesException for bad parameters or timezone
    */
-  public static String getUtc(String time,
-                              String tzid) throws TimezonesException {
+  public static String getUtc(final String time,
+                              final String tzid) throws TimezonesException {
     return getTimezones().getUtc(time, tzid, null);
   }
 
@@ -273,7 +302,7 @@ public abstract class Timezones implements Serializable {
    * @param timezone
    * @throws TimezonesException
    */
-  public static void registerTz(String id, TimeZone timezone)
+  public static void registerTz(final String id, final TimeZone timezone)
           throws TimezonesException {
     /* We don't allow ical to change our timezones. */
     //getTimezones().registerTimeZone(id, timezone);
