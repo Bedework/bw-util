@@ -122,7 +122,7 @@ public class PropertyIndex implements Serializable {
     CREATED("CREATED", single, event_Todo_Journal_Freebusy),
 
     /** */
-    DESCRIPTION("DESCRIPTION", single, event_Todo_Journal_Alarm),
+    DESCRIPTION("DESCRIPTION", single, multi, event_Todo_Journal_Alarm),
 
     /** */
     DTSTAMP("DTSTAMP", single, event_Todo_Journal_Freebusy),
@@ -158,7 +158,7 @@ public class PropertyIndex implements Serializable {
     STATUS("STATUS", single, event_Todo_Journal),
 
     /** */
-    SUMMARY("SUMMARY", single, event_Todo_Journal_Alarm),
+    SUMMARY("SUMMARY", single, multi, event_Todo_Journal_Alarm),
 
     /** */
     UID("UID", single, event_Todo_Journal_Freebusy),
@@ -294,7 +294,11 @@ public class PropertyIndex implements Serializable {
 
     private String pname;
 
+    /* true if the standard says it's multi */
     private boolean multiValued;
+
+    /* true if we store multi - e.g. multi-language */
+    private boolean dbMultiValued;
 
     private boolean param; /* It's a parameter   */
 
@@ -319,6 +323,16 @@ public class PropertyIndex implements Serializable {
       this.pname = pname;
       this.components = components;
       this.multiValued = multiValued;
+      dbMultiValued = multiValued;
+    }
+
+    PropertyInfoIndex(final String pname, final boolean multiValued,
+                      final boolean dbMultiValued,
+                      final ComponentFlags components) {
+      this.pname = pname;
+      this.components = components;
+      this.multiValued = multiValued;
+      this.dbMultiValued = dbMultiValued;
     }
 
     PropertyInfoIndex(final String pname, final boolean multiValued,
@@ -336,12 +350,20 @@ public class PropertyIndex implements Serializable {
       return pname;
     }
 
-    /** May need some elaboration
+    /** May need some elaboration - this is for the standard
      *
      * @return boolean
      */
     public boolean getMultiValued() {
       return multiValued;
+    }
+
+    /** May need some elaboration - this is for the db
+     *
+     * @return boolean
+     */
+    public boolean getDbMultiValued() {
+      return dbMultiValued;
     }
 
     /** True if it's a parameter
