@@ -276,4 +276,34 @@ public class IcalDefs {
 
   /** */
   public static final String deliveryStatusRejected = "5.3";
+
+  /** For RFC5545 request status */
+  public static class RequestStatus {
+    private String code;
+    private String description;
+
+    RequestStatus(final String code,
+                  final String description) {
+      this.code = code;
+      this.description = description;
+    }
+
+    /**
+     * @return String
+     */
+    public String getCode() {
+      return code;
+    }
+
+    /**
+     * @return String or null
+     */
+    public String getDescription() {
+      return description;
+    }
+  }
+
+  /** */
+  public static final RequestStatus requestStatusSuccess =
+    new RequestStatus("2.0", "Success");
 }
