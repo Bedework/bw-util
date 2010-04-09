@@ -153,7 +153,7 @@ public class IcalDefs {
    *  @param  val   String partstat
    *  @return int index, <0 for undefined
    */
-  public static int checkPartstat(String val) {
+  public static int checkPartstat(final String val) {
     if (val == null) {
       return partstatNone;
     }
@@ -258,6 +258,9 @@ public class IcalDefs {
 
   /** */
   public static final String deliveryStatusDelivered = "1.2";
+
+  /** */
+  public static final String deliveryStatusSuccess = "2.0";
 
   /** */
   public static final String deliveryStatusInvalidCUA = "3.7";
