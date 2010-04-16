@@ -353,7 +353,7 @@ public class WebdavTags {
   /** */
   public static final QName writeProperties = makeQName("write-properties");
 
-  private static QName makeQName(String name) {
+  private static QName makeQName(final String name) {
     QName q = new QName(namespace, name);
     qnames.put(name, q);
 

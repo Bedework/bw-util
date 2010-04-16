@@ -323,5 +323,9 @@ public class CaldavTags implements CaldavDefs {
   /**   */
   public static final QName validCalendarData = new QName(caldavNamespace,
                                                           "valid-calendar-data");
+
+  /**   */
+  public static final QName validCalendarObjectResource = new QName(caldavNamespace,
+                                                "valid-calendar-object-resource");
 }
 
