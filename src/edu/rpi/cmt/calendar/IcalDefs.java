@@ -90,9 +90,9 @@ public class IcalDefs {
     /** */
     mixed}
 
-  /* ----------------------------------------------------------------------
+  /* ====================================================================
    *        status we can set for scheduling requests
-   * ---------------------------------------------------------------------- */
+   * ==================================================================== */
 
   /** Deferred till later e.g. needs mailing */
   public static final String requestStatusDeferred = "1.0;Deferred";
@@ -113,6 +113,24 @@ public class IcalDefs {
            "4.2;No Access";
 
   /* ====================================================================
+   *                      Transparency
+   * ==================================================================== */
+  /** Transparency is used in free/busy time calculation
+   *      transp     = "TRANSP" tranparam ":" transvalue CRLF
+
+     tranparam  = *(";" xparam)
+
+     transvalue = "OPAQUE"      ;Blocks or opaque on busy time searches.
+                / "TRANSPARENT" ;Transparent on busy time searches.
+        ;Default value is OPAQUE
+   */
+
+  /** */
+  public final static String transparencyOpaque = "OPAQUE";
+  /** */
+  public final static String transparencyTransparent = "TRANSPARENT";
+
+  /* ====================================================================
    *                      Attendee partstat
    * ==================================================================== */
 
@@ -131,21 +149,36 @@ public class IcalDefs {
   /** Event, to-do */
   public static final int partstatTentative = 3;
   /** Event, to-do */
-  public static final int partstatdelegated = 4;
+  public static final int partstatDelegated = 4;
   /** to-do */
-  public static final int partstatcompleted = 5;
+  public static final int partstatCompleted = 5;
   /** to-do */
   public static final int partstatInProcess = 6;
 
+  /** Event, to-do, journal */
+  public static final String partstatValNeedsAction = "NEEDS-ACTION";
+  /** Event, to-do, journal */
+  public static final String partstatValAccepted = "ACCEPTED";
+  /** Event, to-do, journal */
+  public static final String partstatValDeclined = "DECLINED";
+  /** Event, to-do */
+  public static final String partstatValTentative = "TENTATIVE";
+  /** Event, to-do */
+  public static final String partstatValDelegated = "DELEGATED";
+  /** to-do */
+  public static final String partstatValCompleted = "COMPLETED";
+  /** to-do */
+  public static final String partstatValInProcess = "IN-PROCESS";
+
   /** Defined partstat values */
   public final static String[] partstats = {
-    "NEEDS-ACTION",
-    "ACCEPTED",
-    "DECLINED",
-    "TENTATIVE",
-    "DELEGATED",
-    "COMPLETED",
-    "IN-PROCESS"
+    partstatValNeedsAction,
+    partstatValAccepted,
+    partstatValDeclined,
+    partstatValTentative,
+    partstatValDelegated,
+    partstatValCompleted,
+    partstatValInProcess
   };
 
   /** Return an index for the partstat
