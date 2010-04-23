@@ -26,15 +26,14 @@
 
 package edu.rpi.sss.util.jsp;
 
-import javax.servlet.http.HttpSessionListener;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.ServletContext;
+import org.apache.log4j.Logger;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 /** A class to listen for session start and end. Note this may not work too
  * well in a clustered environment because the counts should be shared.
@@ -59,7 +58,7 @@ public class SessionListener implements HttpSessionListener {
   /* (non-Javadoc)
    * @see javax.servlet.http.HttpSessionListener#sessionCreated(javax.servlet.http.HttpSessionEvent)
    */
-  public void sessionCreated(HttpSessionEvent se) {
+  public void sessionCreated(final HttpSessionEvent se) {
     HttpSession session = se.getSession();
     ServletContext sc = session.getServletContext();
     String appname = getAppName(session);
@@ -77,6 +76,7 @@ public class SessionListener implements HttpSessionListener {
             Runtime.getRuntime().totalMemory()/(1024 * 1024) + "M)");
     }
 
+    /*
     if (false) {
       Enumeration en = session.getAttributeNames();
 
@@ -86,13 +86,13 @@ public class SessionListener implements HttpSessionListener {
 
         sc.log("New session: attribute name " + s);
       }
-    }
+    }*/
   }
 
   /* (non-Javadoc)
    * @see javax.servlet.http.HttpSessionListener#sessionDestroyed(javax.servlet.http.HttpSessionEvent)
    */
-  public void sessionDestroyed(HttpSessionEvent se) {
+  public void sessionDestroyed(final HttpSessionEvent se) {
     HttpSession session = se.getSession();
     ServletContext sc = session.getServletContext();
     String appname = getAppName(session);
@@ -114,7 +114,7 @@ public class SessionListener implements HttpSessionListener {
   /**
    * @param val
    */
-  public static void setLogActive(boolean val) {
+  public static void setLogActive(final boolean val) {
     logActive = val;
   }
 
@@ -123,8 +123,8 @@ public class SessionListener implements HttpSessionListener {
    * @param sess       HttpSession for the session id
    * @param start      true for session start
    */
-  protected void logSessionCounts(HttpSession sess,
-                                  boolean start) {
+  protected void logSessionCounts(final HttpSession sess,
+                                  final boolean start) {
     Logger log = Logger.getLogger(this.getClass());
     StringBuffer sb;
     String appname = getAppName(sess);
@@ -152,7 +152,7 @@ public class SessionListener implements HttpSessionListener {
     log.info(sb.toString());
   }
 
-  private Counts getCounts(String name) {
+  private Counts getCounts(final String name) {
     try {
       synchronized (countsMap) {
         Counts c = countsMap.get(name);
@@ -169,7 +169,7 @@ public class SessionListener implements HttpSessionListener {
     }
   }
 
-  private String getAppName(HttpSession sess) {
+  private String getAppName(final HttpSession sess) {
     ServletContext sc = sess.getServletContext();
 
     String appname = sc.getInitParameter(appNameInitParameter);
@@ -185,7 +185,7 @@ public class SessionListener implements HttpSessionListener {
    * @param sess
    * @return  String    session id
    */
-  private String getSessionId(HttpSession sess) {
+  private String getSessionId(final HttpSession sess) {
     try {
       if (sess == null) {
         return "NO-SESSIONID";
