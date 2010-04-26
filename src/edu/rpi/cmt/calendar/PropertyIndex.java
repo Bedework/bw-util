@@ -193,7 +193,7 @@ public class PropertyIndex implements Serializable {
     ATTACH("ATTACH", multi, event_Todo_Journal_Alarm),
 
     /** */
-    ATTENDEE ("ATTENDEE", multi, notTimezone),
+    ATTENDEE("ATTENDEE", multi, notTimezone),
 
     /** */
     CATEGORIES("CATEGORIES", multi, event_Todo_Journal_Alarm),
@@ -254,26 +254,34 @@ public class PropertyIndex implements Serializable {
     /** */
     TRIGGER("TRIGGER", single, alarmOnly),
 
-    /** non ical */
-    CREATOR("CREATOR", single, event_Todo_Journal),
+    /* -------------- Non-ical ---------------- */
 
     /** non ical */
-    OWNER("OWNER", single, event_Todo_Journal),
+    CREATOR("CREATOR", single, event_Todo_Journal, false, true),
+
+    /** non ical */
+    OWNER("OWNER", single, event_Todo_Journal, false, true),
+
+    /** non ical */
+    END_TYPE("END-TYPE", single, event_Todo_Journal),
 
     /** non ical */
     COST("COST", single, event_Todo),
 
     /** non ical */
-    CTAG("CTAG", single, noComponent),
+    CTAG("CTAG", single, noComponent, false, true),
 
     /** non ical */
-    ETAG("ETAG", single, noComponent),
+    DELETED("DELETED", single, event_Todo),
+
+    /** non ical */
+    ETAG("ETAG", single, noComponent, false, true),
 
     /** non ical */
     COLLECTION("COLLECTION", single, event_Todo_Journal),
 
     /** non ical */
-    ENTITY_TYPE("ENTITY_TYPE", single, event_Todo_Journal),
+    ENTITY_TYPE("ENTITY_TYPE", single, event_Todo_Journal, false, true),
 
     /** treat VALARM sub-component as a property */
     VALARM("VALARM", multi, notAlarm),
@@ -301,6 +309,8 @@ public class PropertyIndex implements Serializable {
     private boolean dbMultiValued;
 
     private boolean param; /* It's a parameter   */
+
+    private boolean immutable;
 
     private ComponentFlags components;
 
@@ -342,6 +352,15 @@ public class PropertyIndex implements Serializable {
       this.param = param;
     }
 
+    PropertyInfoIndex(final String pname, final boolean multiValued,
+                      final ComponentFlags components,
+                      final boolean param,
+                      final boolean immutable) {
+      this(pname, multiValued, components);
+      this.param = param;
+      this.immutable = immutable;
+    }
+
     /** get the property name
      *
      * @return property name
@@ -372,6 +391,14 @@ public class PropertyIndex implements Serializable {
      */
     public boolean getParam() {
       return param;
+    }
+
+    /** True if it's immutable
+     *
+     * @return boolean
+     */
+    public boolean getImmutable() {
+      return immutable;
     }
 
     /** True if it's an event property
