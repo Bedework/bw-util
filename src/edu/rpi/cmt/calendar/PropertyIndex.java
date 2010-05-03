@@ -106,198 +106,219 @@ public class PropertyIndex implements Serializable {
   static final ComponentFlags allComponents =
      new ComponentFlags(true, true, true, true, true, true);
 
-  private static boolean multi = true;
+  private static boolean IS_MULTI = true;
 
-  private static boolean single = false;
+  private static boolean IS_SINGLE = false;
+
+  private static boolean IS_PARAM = true;
+
+  private static boolean NOT_PARAM = false;
+
+  private static boolean IS_IMMUTABLE = true;
+
+  private static boolean NOT_IMMUTABLE = false;
+
+  private static boolean IS_SCHEDULING_SIGNIFICANT = true;
+
+  private static boolean NOT_SCHEDULING_SIGNIFICANT = false;
+
 
   /** */
   public static enum PropertyInfoIndex {
     /** */
-    UNKNOWN_PROPERTY(null, single, noComponent),
+    UNKNOWN_PROPERTY(null, IS_SINGLE, noComponent),
 
     /** */
-    CLASS("CLASS", single, event_Todo_Journal),
+    CLASS("CLASS", IS_SINGLE, event_Todo_Journal),
 
     /** */
-    CREATED("CREATED", single, event_Todo_Journal_Freebusy),
+    CREATED("CREATED", IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    DESCRIPTION("DESCRIPTION", single, multi, event_Todo_Journal_Alarm),
+    DESCRIPTION("DESCRIPTION", IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    DTSTAMP("DTSTAMP", single, event_Todo_Journal_Freebusy),
+    DTSTAMP("DTSTAMP", IS_SINGLE, event_Todo_Journal_Freebusy,
+            NOT_PARAM, NOT_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** */
-    DTSTART("DTSTART", single, notAlarm),
+    DTSTART("DTSTART", IS_SINGLE, notAlarm),
 
     /** */
-    DURATION("DURATION", single, event_Todo_Freebusy),
+    DURATION("DURATION", IS_SINGLE, event_Todo_Freebusy),
 
     /** */
-    GEO("GEO", single, event_Todo),
+    GEO("GEO", IS_SINGLE, event_Todo),
 
     /** */
-    LAST_MODIFIED("LAST-MODIFIED", single, event_Todo_Journal_Timezone),
+    LAST_MODIFIED("LAST-MODIFIED", IS_SINGLE, event_Todo_Journal_Timezone,
+                  NOT_PARAM, NOT_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** */
-    LOCATION("LOCATION", single, event_Todo),
+    LOCATION("LOCATION", IS_SINGLE, event_Todo),
 
     /** */
-    ORGANIZER("ORGANIZER", single, event_Todo_Journal_Freebusy),
+    ORGANIZER("ORGANIZER", IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    PRIORITY("PRIORITY", single, event_Todo),
+    PRIORITY("PRIORITY", IS_SINGLE, event_Todo),
 
     /** */
-    RECURRENCE_ID("RECURRENCE-ID", single, event_Todo_Journal_Freebusy),
+    RECURRENCE_ID("RECURRENCE-ID", IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    SEQUENCE("SEQUENCE", single, event_Todo_Journal),
+    SEQUENCE("SEQUENCE", IS_SINGLE, event_Todo_Journal,
+             NOT_PARAM, NOT_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** */
-    STATUS("STATUS", single, event_Todo_Journal),
+    STATUS("STATUS", IS_SINGLE, event_Todo_Journal),
 
     /** */
-    SUMMARY("SUMMARY", single, multi, event_Todo_Journal_Alarm),
+    SUMMARY("SUMMARY", IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    UID("UID", single, event_Todo_Journal_Freebusy),
+    UID("UID", IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    URL("URL", single, event_Todo_Journal_Freebusy),
+    URL("URL", IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /* Event only */
 
     /** */
-    DTEND("DTEND", single, event_Freebusy),
+    DTEND("DTEND", IS_SINGLE, event_Freebusy),
 
     /** */
-    TRANSP("TRANSP", single, eventOnly),
+    TRANSP("TRANSP", IS_SINGLE, eventOnly),
 
     /* Todo only */
 
     /** */
-    COMPLETED("COMPLETED", single, todoOnly),
+    COMPLETED("COMPLETED", IS_SINGLE, todoOnly),
 
     /** */
-    DUE("DUE", single, todoOnly),
+    DUE("DUE", IS_SINGLE, todoOnly),
 
     /** */
-    PERCENT_COMPLETE("PERCENT-COMPLETE", single, todoOnly),
+    PERCENT_COMPLETE("PERCENT-COMPLETE", IS_SINGLE, todoOnly),
 
     /* ---------------------------- Multi valued --------------- */
 
     /* Event and Todo */
 
     /** */
-    ATTACH("ATTACH", multi, event_Todo_Journal_Alarm),
+    ATTACH("ATTACH", IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    ATTENDEE("ATTENDEE", multi, notTimezone),
+    ATTENDEE("ATTENDEE", IS_MULTI, notTimezone),
 
     /** */
-    CATEGORIES("CATEGORIES", multi, event_Todo_Journal_Alarm),
+    CATEGORIES("CATEGORIES", IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    COMMENT("COMMENT", multi, notAlarm),
+    COMMENT("COMMENT", IS_MULTI, notAlarm),
 
     /** */
-    CONTACT("COMMENT", multi, event_Todo_Journal_Freebusy),
+    CONTACT("COMMENT", IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** */
-    EXDATE("EXDATE", multi, event_Todo_Journal_Timezone),
+    EXDATE("EXDATE", IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    EXRULE("EXRULE", multi, event_Todo_Journal_Timezone),
+    EXRULE("EXRULE", IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    REQUEST_STATUS("", multi, event_Todo_Journal_Freebusy),
+    REQUEST_STATUS("REQUEST-STATUS", IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** */
-    RELATED_TO("", multi, event_Todo_Journal),
+    RELATED_TO("RELATED-TO", IS_MULTI, event_Todo_Journal),
 
     /** */
-    RESOURCES("RESOURCES", multi, event_Todo),
+    RESOURCES("RESOURCES", IS_MULTI, event_Todo),
 
     /** */
-    RDATE("RDATE", multi, event_Todo_Journal_Timezone),
+    RDATE("RDATE", IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    RRULE ("RRULE", multi, event_Todo_Journal_Timezone),
+    RRULE ("RRULE", IS_MULTI, event_Todo_Journal_Timezone),
 
     /* -------------- Other non-event, non-todo ---------------- */
 
     /** */
-    FREEBUSY("FREEBUSY", single, freebusyOnly),
+    FREEBUSY("FREEBUSY", IS_SINGLE, freebusyOnly),
 
     /** */
-    TZID("TZID", single, timezoneOnly),
+    TZID("TZID", IS_SINGLE, timezoneOnly),
 
     /** */
-    TZNAME("TZNAME", single, timezoneOnly),
+    TZNAME("TZNAME", IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETFROM("TZOFFSETFROM", single, timezoneOnly),
+    TZOFFSETFROM("TZOFFSETFROM", IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETTO("TZOFFSETTO", single, timezoneOnly),
+    TZOFFSETTO("TZOFFSETTO", IS_SINGLE, timezoneOnly),
 
     /** */
-    TZURL("TZURL", single, timezoneOnly),
+    TZURL("TZURL", IS_SINGLE, timezoneOnly),
 
     /** */
-    ACTION("ACTION", single, alarmOnly),
+    ACTION("ACTION", IS_SINGLE, alarmOnly),
 
     /** */
-    REPEAT("REPEAT", single, alarmOnly),
+    REPEAT("REPEAT", IS_SINGLE, alarmOnly),
 
     /** */
-    TRIGGER("TRIGGER", single, alarmOnly),
+    TRIGGER("TRIGGER", IS_SINGLE, alarmOnly),
 
     /* -------------- Non-ical ---------------- */
 
     /** non ical */
-    CREATOR("CREATOR", single, event_Todo_Journal, false, true),
+    CREATOR("CREATOR", IS_SINGLE, event_Todo_Journal,
+            NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** non ical */
-    OWNER("OWNER", single, event_Todo_Journal, false, true),
+    OWNER("OWNER", IS_SINGLE, event_Todo_Journal,
+          NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** non ical */
-    END_TYPE("END-TYPE", single, event_Todo_Journal),
+    END_TYPE("END-TYPE", IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
-    COST("COST", single, event_Todo),
+    COST("COST", IS_SINGLE, event_Todo),
 
     /** non ical */
-    CTAG("CTAG", single, noComponent, false, true),
+    CTAG("CTAG", IS_SINGLE, noComponent,
+         NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** non ical */
-    DELETED("DELETED", single, event_Todo),
+    DELETED("DELETED", IS_SINGLE, event_Todo),
 
     /** non ical */
-    ETAG("ETAG", single, noComponent, false, true),
+    ETAG("ETAG", IS_SINGLE, noComponent,
+         NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** non ical */
-    COLLECTION("COLLECTION", single, event_Todo_Journal),
+    COLLECTION("COLLECTION", IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
-    ENTITY_TYPE("ENTITY_TYPE", single, event_Todo_Journal, false, true),
+    ENTITY_TYPE("ENTITY_TYPE", IS_SINGLE, event_Todo_Journal,
+                NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
 
     /** treat VALARM sub-component as a property */
-    VALARM("VALARM", multi, notAlarm),
+    VALARM("VALARM", IS_MULTI, notAlarm),
 
     /** treat x-properties as a single multi-valued property */
-    XPROP("XPROP", multi, allComponents),
+    XPROP("XPROP", IS_MULTI, allComponents),
 
     /** ----------------------------- Following are parameters ----------- */
 
     /** */
-    LANG("LANGUAGE", single, noComponent,
-         true),                // param
+    LANG("LANGUAGE", IS_SINGLE, noComponent,
+         IS_PARAM, NOT_IMMUTABLE, IS_SCHEDULING_SIGNIFICANT),
 
     /** */
-    TZIDPAR("TZID", single, noComponent,
-            true)             // param
+    TZIDPAR("TZID", IS_SINGLE, noComponent,
+            IS_PARAM, NOT_IMMUTABLE, IS_SCHEDULING_SIGNIFICANT),
             ;
 
     private String pname;
@@ -311,6 +332,8 @@ public class PropertyIndex implements Serializable {
     private boolean param; /* It's a parameter   */
 
     private boolean immutable;
+
+    private boolean schedulingSignificant;
 
     private ComponentFlags components;
 
@@ -339,26 +362,20 @@ public class PropertyIndex implements Serializable {
     PropertyInfoIndex(final String pname, final boolean multiValued,
                       final boolean dbMultiValued,
                       final ComponentFlags components) {
-      this.pname = pname;
-      this.components = components;
-      this.multiValued = multiValued;
+      this(pname, multiValued, components,
+           NOT_PARAM, NOT_IMMUTABLE, IS_SCHEDULING_SIGNIFICANT);
       this.dbMultiValued = dbMultiValued;
     }
 
     PropertyInfoIndex(final String pname, final boolean multiValued,
                       final ComponentFlags components,
-                      final boolean param) {
-      this(pname, multiValued, components);
-      this.param = param;
-    }
-
-    PropertyInfoIndex(final String pname, final boolean multiValued,
-                      final ComponentFlags components,
                       final boolean param,
-                      final boolean immutable) {
+                      final boolean immutable,
+                      final boolean schedulingSignificant) {
       this(pname, multiValued, components);
       this.param = param;
       this.immutable = immutable;
+      this.schedulingSignificant = schedulingSignificant;
     }
 
     /** get the property name
@@ -399,6 +416,14 @@ public class PropertyIndex implements Serializable {
      */
     public boolean getImmutable() {
       return immutable;
+    }
+
+    /** True if a change is significant for scheduling
+     *
+     * @return boolean
+     */
+    public boolean getSchedulingSignificant() {
+      return schedulingSignificant;
     }
 
     /** True if it's an event property

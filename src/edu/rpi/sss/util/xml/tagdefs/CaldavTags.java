@@ -290,8 +290,13 @@ public class CaldavTags implements CaldavDefs {
                                                           "schedule-send-reply");
 
   /**   */
+  public static final QName scheduleTag = new QName(caldavNamespace,
+                                                    "schedule-tag");
+
+  /* * removed  * /
   public static final QName scheduleState = new QName(caldavNamespace,
                                                       "schedule-state");
+                                                      */
 
   /**   */
   public static final QName supportedCalendarComponentSet = new QName(caldavNamespace,
