@@ -118,11 +118,6 @@ public class PropertyIndex implements Serializable {
 
   private static boolean NOT_IMMUTABLE = false;
 
-  private static boolean IS_SCHEDULING_SIGNIFICANT = true;
-
-  private static boolean NOT_SCHEDULING_SIGNIFICANT = false;
-
-
   /** */
   public static enum PropertyInfoIndex {
     /** */
@@ -139,7 +134,7 @@ public class PropertyIndex implements Serializable {
 
     /** */
     DTSTAMP("DTSTAMP", IS_SINGLE, event_Todo_Journal_Freebusy,
-            NOT_PARAM, NOT_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+            NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
     DTSTART("DTSTART", IS_SINGLE, notAlarm),
@@ -152,7 +147,7 @@ public class PropertyIndex implements Serializable {
 
     /** */
     LAST_MODIFIED("LAST-MODIFIED", IS_SINGLE, event_Todo_Journal_Timezone,
-                  NOT_PARAM, NOT_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+                  NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
     LOCATION("LOCATION", IS_SINGLE, event_Todo),
@@ -168,7 +163,7 @@ public class PropertyIndex implements Serializable {
 
     /** */
     SEQUENCE("SEQUENCE", IS_SINGLE, event_Todo_Journal,
-             NOT_PARAM, NOT_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+             NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
     STATUS("STATUS", IS_SINGLE, event_Todo_Journal),
@@ -218,7 +213,7 @@ public class PropertyIndex implements Serializable {
     COMMENT("COMMENT", IS_MULTI, notAlarm),
 
     /** */
-    CONTACT("COMMENT", IS_MULTI, event_Todo_Journal_Freebusy),
+    CONTACT("CONTACT", IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** */
     EXDATE("EXDATE", IS_MULTI, event_Todo_Journal_Timezone),
@@ -274,11 +269,11 @@ public class PropertyIndex implements Serializable {
 
     /** non ical */
     CREATOR("CREATOR", IS_SINGLE, event_Todo_Journal,
-            NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+            NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     OWNER("OWNER", IS_SINGLE, event_Todo_Journal,
-          NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     END_TYPE("END-TYPE", IS_SINGLE, event_Todo_Journal),
@@ -288,21 +283,21 @@ public class PropertyIndex implements Serializable {
 
     /** non ical */
     CTAG("CTAG", IS_SINGLE, noComponent,
-         NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+         NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     DELETED("DELETED", IS_SINGLE, event_Todo),
 
     /** non ical */
     ETAG("ETAG", IS_SINGLE, noComponent,
-         NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+         NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     COLLECTION("COLLECTION", IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
     ENTITY_TYPE("ENTITY_TYPE", IS_SINGLE, event_Todo_Journal,
-                NOT_PARAM, IS_IMMUTABLE, NOT_SCHEDULING_SIGNIFICANT),
+                NOT_PARAM, IS_IMMUTABLE),
 
     /** treat VALARM sub-component as a property */
     VALARM("VALARM", IS_MULTI, notAlarm),
@@ -314,11 +309,11 @@ public class PropertyIndex implements Serializable {
 
     /** */
     LANG("LANGUAGE", IS_SINGLE, noComponent,
-         IS_PARAM, NOT_IMMUTABLE, IS_SCHEDULING_SIGNIFICANT),
+         IS_PARAM, NOT_IMMUTABLE),
 
     /** */
     TZIDPAR("TZID", IS_SINGLE, noComponent,
-            IS_PARAM, NOT_IMMUTABLE, IS_SCHEDULING_SIGNIFICANT),
+            IS_PARAM, NOT_IMMUTABLE),
             ;
 
     private String pname;
@@ -332,8 +327,6 @@ public class PropertyIndex implements Serializable {
     private boolean param; /* It's a parameter   */
 
     private boolean immutable;
-
-    private boolean schedulingSignificant;
 
     private ComponentFlags components;
 
@@ -363,19 +356,17 @@ public class PropertyIndex implements Serializable {
                       final boolean dbMultiValued,
                       final ComponentFlags components) {
       this(pname, multiValued, components,
-           NOT_PARAM, NOT_IMMUTABLE, IS_SCHEDULING_SIGNIFICANT);
+           NOT_PARAM, NOT_IMMUTABLE);
       this.dbMultiValued = dbMultiValued;
     }
 
     PropertyInfoIndex(final String pname, final boolean multiValued,
                       final ComponentFlags components,
                       final boolean param,
-                      final boolean immutable,
-                      final boolean schedulingSignificant) {
+                      final boolean immutable) {
       this(pname, multiValued, components);
       this.param = param;
       this.immutable = immutable;
-      this.schedulingSignificant = schedulingSignificant;
     }
 
     /** get the property name
@@ -416,14 +407,6 @@ public class PropertyIndex implements Serializable {
      */
     public boolean getImmutable() {
       return immutable;
-    }
-
-    /** True if a change is significant for scheduling
-     *
-     * @return boolean
-     */
-    public boolean getSchedulingSignificant() {
-      return schedulingSignificant;
     }
 
     /** True if it's an event property
