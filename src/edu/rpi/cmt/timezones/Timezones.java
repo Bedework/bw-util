@@ -109,6 +109,10 @@ public abstract class Timezones implements Serializable {
       // Do nothing
     }
 
+    public void register(final TimeZone timezone, final boolean update) {
+      // Do nothing
+    }
+
     public void clear() {
       // Do nothing
     }

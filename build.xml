@@ -43,7 +43,7 @@
     <getJar name="derbynet" version="10.5.3.0" />
     <getJar name="fop" />
     <getJar name="h2" version="1.2.130" />
-    <getJar name="ical4j" version="head-dev" />
+    <getJar name="ical4j" version="head-20100601" />
     <getJar name="jtidy" />
     <getJar name="junit" version="4.4" />
     <getJar name="log4j" version="1.2.8" />
