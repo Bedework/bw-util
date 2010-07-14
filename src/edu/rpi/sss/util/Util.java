@@ -57,7 +57,7 @@ public class Util {
    * @return Properties populated from the resource
    * @throws Throwable
    */
-  public static Properties getPropertiesFromResource(String name) throws Throwable {
+  public static Properties getPropertiesFromResource(final String name) throws Throwable {
     Properties pr = new Properties();
     InputStream is = null;
 
@@ -100,7 +100,7 @@ public class Util {
    * @param arg
    * @return String formatted message
    */
-  public static String fmtMsg(String fmt, String arg) {
+  public static String fmtMsg(final String fmt, final String arg) {
     Object[] o = new Object[1];
     o[0] = arg;
 
@@ -114,7 +114,7 @@ public class Util {
    * @param arg2
    * @return String formatted message
    */
-  public static String fmtMsg(String fmt, String arg1, String arg2) {
+  public static String fmtMsg(final String fmt, final String arg1, final String arg2) {
     Object[] o = new Object[2];
     o[0] = arg1;
     o[1] = arg2;
@@ -128,7 +128,7 @@ public class Util {
    * @param arg
    * @return String formatted message
    */
-  public static String fmtMsg(String fmt, int arg) {
+  public static String fmtMsg(final String fmt, final int arg) {
     Object[] o = new Object[1];
     o[0] = new Integer(arg);
 
@@ -181,8 +181,8 @@ public class Util {
    * @param  maxEntries Number of entries we keep.
    * @return String[]   Modified sarray
    */
-  public static String[] appendTextToArray(String[] sarray, String val,
-                                    int maxEntries) {
+  public static String[] appendTextToArray(String[] sarray, final String val,
+                                    final int maxEntries) {
     if (sarray == null) {
       if (maxEntries > 0) {
         sarray = new String[1];
@@ -229,7 +229,7 @@ public class Util {
    * @param  val    String[] value to encode
    * @return String encoded value
    */
-  public static String encodeArray(String[] val){
+  public static String encodeArray(final String[] val){
     if (val == null) {
       return null;
     }
@@ -269,7 +269,7 @@ public class Util {
    * @param  val      String value encoded by encodeArray
    * @return String[] decoded value
    */
-  public static String[] decodeArray(String val){
+  public static String[] decodeArray(final String val){
     if (val == null) {
       return null;
     }
@@ -306,7 +306,7 @@ public class Util {
       }
     }
 
-    return (String[])al.toArray(new String[al.size()]);
+    return al.toArray(new String[al.size()]);
   }
 
   /** Return true if Strings are equal including possible null
@@ -315,7 +315,7 @@ public class Util {
    * @param thatStr
    * @return boolean true for equal
    */
-  public static boolean equalsString(String thisStr, String thatStr) {
+  public static boolean equalsString(final String thisStr, final String thatStr) {
     if ((thisStr == null) && (thatStr == null)) {
       return true;
     }
@@ -335,7 +335,7 @@ public class Util {
    *                 <0 if s1 is lexicographically less than s2;
    *                 >0 if s1 is lexicographically greater than s2.
    */
-  public static int compareStrings(String s1, String s2) {
+  public static int compareStrings(final String s1, final String s2) {
     if (s1 == null) {
       if (s2 != null) {
         return -1;
@@ -376,7 +376,7 @@ public class Util {
    * @param  val    String request parameter value
    * @return boolean true for length > 0
    */
-  public static boolean present(String val) {
+  public static boolean present(final String val) {
     return checkNull(val) != null;
   }
 
@@ -388,7 +388,7 @@ public class Util {
    * @return List of elements, never null
    * @throws Throwable for invalid list
    */
-  public static List<String> getList(String val, boolean emptyOk) throws Throwable {
+  public static List<String> getList(final String val, final boolean emptyOk) throws Throwable {
     List<String> l = new LinkedList<String>();
 
     if ((val == null) || (val.length() == 0)) {
@@ -421,7 +421,7 @@ public class Util {
    * @param thatone
    * @return int -1, 0, 1,
    */
-  public static int cmpObjval(Comparable thisone, Comparable thatone) {
+  public static int cmpObjval(final Comparable thisone, final Comparable thatone) {
     if (thisone == null) {
       if (thatone == null) {
         return 0;
@@ -443,8 +443,8 @@ public class Util {
    * @param thatone
    * @return int -1, 0, 1,
    */
-  public static int cmpObjval(Collection<? extends Comparable> thisone,
-                              Collection<? extends Comparable> thatone) {
+  public static int cmpObjval(final Collection<? extends Comparable> thisone,
+                              final Collection<? extends Comparable> thatone) {
     if (thisone == null) {
       if (thatone == null) {
         return 0;
@@ -483,7 +483,7 @@ public class Util {
    * @param thatone
    * @return int -1, 0, 1,
    */
-  public static int cmpBoolval(boolean thisone, boolean thatone) {
+  public static int cmpBoolval(final boolean thisone, final boolean thatone) {
     if (thisone == thatone) {
       return 0;
     }
@@ -501,7 +501,7 @@ public class Util {
    * @param thatone
    * @return int -1, 0, 1,
    */
-  public static int cmpIntval(int thisone, int thatone) {
+  public static int cmpIntval(final int thisone, final int thatone) {
     if (thisone == thatone) {
       return 0;
     }
@@ -519,7 +519,7 @@ public class Util {
    * @param thatone
    * @return int -1, 0, 1,
    */
-  public static int compare(char[] thisone, char[] thatone) {
+  public static int compare(final char[] thisone, final char[] thatone) {
     if (thisone == thatone) {
       return 0;
     }
@@ -561,7 +561,7 @@ public class Util {
    * @param val
    * @return boolean
    */
-  public static boolean isEmpty(Collection val) {
+  public static boolean isEmpty(final Collection val) {
     if (val == null) {
       return true;
     }
@@ -578,7 +578,7 @@ public class Util {
    * @param val
    * @return encoded String
    */
-  public static String jsonEncode(String val) {
+  public static String jsonEncode(final String val) {
     if ((val == null) || (val.length() == 0)) {
       return "\"\"";
     }
@@ -591,7 +591,6 @@ public class Util {
      * \f   form feed
      * \r   return
      * \"   "   (double quote)
-     * \'   '    (single quote)
      * \\   \    (back slash)
      */
 
@@ -622,7 +621,6 @@ public class Util {
         break;
 
       case '"':
-      case '\'':
       case '/':
       case '\\':
         sb.append('\\');
@@ -654,7 +652,7 @@ public class Util {
    * @param name
    * @return encoded String
    */
-  public static String jsonName(String name) {
+  public static String jsonName(final String name) {
     StringBuilder sb = new StringBuilder();
 
     sb.append(name.toLowerCase());
@@ -669,7 +667,7 @@ public class Util {
    * @param val
    * @return encoded String
    */
-  public static String jsonNameVal(String indent, String name, String val) {
+  public static String jsonNameVal(final String indent, final String name, final String val) {
     StringBuilder sb = new StringBuilder();
 
     sb.append(indent);
