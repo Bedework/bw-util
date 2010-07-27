@@ -72,7 +72,7 @@ public class XmlEmit {
    * @param noHeaders    boolean true to suppress headers
    * @param noDefaultns  boolean true if we don't have a default namespace
    */
-  public XmlEmit(boolean noHeaders, boolean noDefaultns) {
+  public XmlEmit(final boolean noHeaders, final boolean noDefaultns) {
     nsMap = new HashMap<String, String>();
     nsIndex = 0;
     this.noHeaders = noHeaders;
@@ -84,7 +84,7 @@ public class XmlEmit {
    * @param wtr
    * @throws IOException
    */
-  public void startEmit(Writer wtr) throws IOException {
+  public void startEmit(final Writer wtr) throws IOException {
     this.wtr = wtr;
 
     if (!noHeaders) {
@@ -101,7 +101,7 @@ public class XmlEmit {
    * @param dtd
    * @throws IOException
    */
-  public void startEmit(Writer wtr, String dtd) throws IOException {
+  public void startEmit(final Writer wtr, final String dtd) throws IOException {
     this.wtr = wtr;
 
     if (!noHeaders) {
@@ -116,7 +116,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void openTag(QName tag) throws IOException {
+  public void openTag(final QName tag) throws IOException {
     blanks();
     openTagSameLine(tag);
     newline();
@@ -129,8 +129,8 @@ public class XmlEmit {
    * @param attrVal
    * @throws IOException
    */
-  public void openTag(QName tag,
-                      String attrName, String attrVal) throws IOException {
+  public void openTag(final QName tag,
+                      final String attrName, final String attrVal) throws IOException {
     blanks();
     openTagSameLine(tag, attrName, attrVal);
     newline();
@@ -141,7 +141,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void openTagNoNewline(QName tag) throws IOException {
+  public void openTagNoNewline(final QName tag) throws IOException {
     blanks();
     openTagSameLine(tag);
     indent += 2;
@@ -151,7 +151,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void openTagSameLine(QName tag) throws IOException {
+  public void openTagSameLine(final QName tag) throws IOException {
     lb();
     tagname(tag);
     rb();
@@ -163,9 +163,9 @@ public class XmlEmit {
    * @param attrVal
    * @throws IOException
    */
-  public void openTagSameLine(QName tag,
-                              String attrName,
-                              String attrVal) throws IOException {
+  public void openTagSameLine(final QName tag,
+                              final String attrName,
+                              final String attrVal) throws IOException {
     lb();
     tagname(tag);
     attribute(attrName, attrVal);
@@ -176,7 +176,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void closeTag(QName tag) throws IOException {
+  public void closeTag(final QName tag) throws IOException {
     indent -= 2;
     if (indent < 0) {
       indent = 0;
@@ -190,7 +190,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void closeTagNoblanks(QName tag) throws IOException {
+  public void closeTagNoblanks(final QName tag) throws IOException {
     indent -= 2;
     if (indent < 0) {
       indent = 0;
@@ -203,7 +203,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void closeTagSameLine(QName tag) throws IOException {
+  public void closeTagSameLine(final QName tag) throws IOException {
     lb();
     wtr.write("/");
     tagname(tag);
@@ -214,7 +214,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void emptyTag(QName tag) throws IOException {
+  public void emptyTag(final QName tag) throws IOException {
     blanks();
     emptyTagSameLine(tag);
     newline();
@@ -225,7 +225,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void startTag(QName tag) throws IOException {
+  public void startTag(final QName tag) throws IOException {
     blanks();
     startTagSameLine(tag);
   }
@@ -236,7 +236,7 @@ public class XmlEmit {
    * @param attrVal
    * @throws IOException
    */
-  public void attribute(String attrName, String attrVal) throws IOException {
+  public void attribute(final String attrName, final String attrVal) throws IOException {
     wtr.write(" ");
     wtr.write(attrName);
     wtr.write("=");
@@ -264,7 +264,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void emptyTagSameLine(QName tag) throws IOException {
+  public void emptyTagSameLine(final QName tag) throws IOException {
     lb();
     tagname(tag);
     wtr.write("/");
@@ -275,12 +275,12 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  public void startTagSameLine(QName tag) throws IOException {
+  public void startTagSameLine(final QName tag) throws IOException {
     lb();
     tagname(tag);
   }
 
-  private void quote(String val) throws IOException {
+  private void quote(final String val) throws IOException {
     if (val.indexOf("\"") < 0) {
       value(val, "\"");
     } else {
@@ -295,7 +295,7 @@ public class XmlEmit {
    * @param val
    * @throws IOException
    */
-  public void property(QName tag, String val) throws IOException {
+  public void property(final QName tag, final String val) throws IOException {
     blanks();
     openTagSameLine(tag);
     value(val);
@@ -308,7 +308,7 @@ public class XmlEmit {
    * @param val
    * @throws IOException
    */
-  public void value(String val) throws IOException {
+  public void value(final String val) throws IOException {
     value(val, null);
   }
 
@@ -318,8 +318,8 @@ public class XmlEmit {
    * @param quoteChar
    * @throws IOException
    */
-  private void value(String val,
-                     String quoteChar) throws IOException {
+  private void value(final String val,
+                     final String quoteChar) throws IOException {
     if (val == null) {
       return;
     }
@@ -350,16 +350,44 @@ public class XmlEmit {
    * @param val
    * @throws IOException
    */
-  public void cdataProperty(QName tag, String val) throws IOException {
+  public void cdataProperty(final QName tag, final String val) throws IOException {
     blanks();
     openTagSameLine(tag);
     if (val != null) {
+      /*
       if (val.indexOf("]]>") > 0) {
         throw new IOException("Data contains CDATA end sequence");
       }
       wtr.write("<![CDATA[");
       wtr.write(val);
       wtr.write("]]>");
+      */
+      // We have to watch for text that includes "]]"
+
+      int start = 0;
+
+      while (start < val.length()) {
+        int end = val.indexOf("]]", start);
+        boolean lastSeg = end < 0;
+        String seg;
+
+        if (lastSeg) {
+          seg = val.substring(start);
+        } else {
+          seg = val.substring(start, end);
+        }
+
+        wtr.write("<![CDATA[");
+        wtr.write(seg);
+        wtr.write("]]>");
+
+        if (lastSeg) {
+          break;
+        }
+
+        wtr.write("]]");
+        start = end + 2;
+      }
     }
     closeTagSameLine(tag);
     newline();
@@ -372,7 +400,7 @@ public class XmlEmit {
    * @param val
    * @throws IOException
    */
-  public void property(QName tag, Reader val) throws IOException {
+  public void property(final QName tag, final Reader val) throws IOException {
     blanks();
     openTagSameLine(tag);
     writeContent(val, wtr);
@@ -387,7 +415,7 @@ public class XmlEmit {
    * @param tagVal
    * @throws IOException
    */
-  public void propertyTagVal(QName tag, QName tagVal) throws IOException {
+  public void propertyTagVal(final QName tag, final QName tagVal) throws IOException {
     blanks();
     openTagSameLine(tag);
     emptyTagSameLine(tagVal);
@@ -406,13 +434,13 @@ public class XmlEmit {
    *
    * @param val
    */
-  public void addNs(String val) {
+  public void addNs(final String val) {
     if (nsMap.get(val) != null) {
       return;
     }
 
     String ns = "ns" + nsIndex;
-    if (nsIndex == 0 && !noDefaultns) {
+    if ((nsIndex == 0) && !noDefaultns) {
       defaultNs = ns;
     }
     nsMap.put(val, ns);
@@ -423,7 +451,7 @@ public class XmlEmit {
    * @param ns
    * @return namespace abrev
    */
-  public String getNsAbbrev(String ns) {
+  public String getNsAbbrev(final String ns) {
     return nsMap.get(ns);
   }
 
@@ -441,7 +469,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  private void tagname(QName tag) throws IOException {
+  private void tagname(final QName tag) throws IOException {
     String ns = tag.getNamespaceURI();
 
     if (ns != null) {
@@ -479,7 +507,7 @@ public class XmlEmit {
 
   /* Write out the xml header
    */
-  private void writeHeader(String dtd) throws IOException {
+  private void writeHeader(final String dtd) throws IOException {
     wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 
     if (dtd == null) {
@@ -511,7 +539,7 @@ public class XmlEmit {
    */
   private static final int bufferSize = 4096;
 
-  private void writeContent(Reader in, Writer out) throws IOException {
+  private void writeContent(final Reader in, final Writer out) throws IOException {
     try {
       char[] buff = new char[bufferSize];
       int len;
