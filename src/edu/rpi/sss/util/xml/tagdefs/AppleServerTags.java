@@ -37,6 +37,66 @@ public class AppleServerTags {
   public static final String appleCaldavNamespace = "http://calendarserver.org/ns/";
 
   /**   */
+  public static final QName action = new QName(appleCaldavNamespace,
+                                               "action");
+
+  /**   */
+  public static final QName attendee = new QName(appleCaldavNamespace,
+                                                 "attendee");
+
+  /**   */
+  public static final QName cancel = new QName(appleCaldavNamespace,
+                                               "cancel");
+
+  /**   */
+  public static final QName changedProperty = new QName(appleCaldavNamespace,
+                                                        "changed-property");
+
+  /**   */
+  public static final QName changes = new QName(appleCaldavNamespace,
+                                                "changes");
+
+  /**   */
+  public static final QName create = new QName(appleCaldavNamespace,
+                                               "create");
+
+  /**   */
+  public static final QName dtstamp = new QName(appleCaldavNamespace,
+                                                "dtstamp");
+
+  /**   */
   public static final QName getctag = new QName(appleCaldavNamespace,
                                                 "getctag");
+
+  /**   */
+  public static final QName master = new QName(appleCaldavNamespace,
+                                               "master");
+
+  /**   */
+  public static final QName partstat = new QName(appleCaldavNamespace,
+                                                 "partstat");
+
+  /**   */
+  public static final QName privateComment = new QName(appleCaldavNamespace,
+                                                       "private-comment");
+
+  /**   */
+  public static final QName recurrenceid = new QName(appleCaldavNamespace,
+                                                     "recurrenceid");
+
+  /**   */
+  public static final QName recurrences = new QName(appleCaldavNamespace,
+                                                    "recurrences");
+
+  /**   */
+  public static final QName reply = new QName(appleCaldavNamespace,
+                                              "reply");
+
+  /**   */
+  public static final QName scheduleChanges = new QName(appleCaldavNamespace,
+                                                        "schedule-changes");
+
+  /**   */
+  public static final QName update = new QName(appleCaldavNamespace,
+                                               "update");
 }
