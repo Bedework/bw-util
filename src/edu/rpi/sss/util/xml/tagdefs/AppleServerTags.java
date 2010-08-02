@@ -81,12 +81,12 @@ public class AppleServerTags {
                                                        "private-comment");
 
   /**   */
-  public static final QName recurrenceid = new QName(appleCaldavNamespace,
-                                                     "recurrenceid");
+  public static final QName recurrence = new QName(appleCaldavNamespace,
+                                                   "recurrence");
 
   /**   */
-  public static final QName recurrences = new QName(appleCaldavNamespace,
-                                                    "recurrences");
+  public static final QName recurrenceid = new QName(appleCaldavNamespace,
+                                                     "recurrenceid");
 
   /**   */
   public static final QName reply = new QName(appleCaldavNamespace,
