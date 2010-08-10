@@ -103,7 +103,7 @@ public class PkiUtil {
     return decrypt;
   }
 
-  void processArgs(String[] args) throws Exception {
+  void processArgs(final String[] args) throws Exception {
     if (args == null) {
       return;
     }
@@ -150,7 +150,7 @@ public class PkiUtil {
     }
   }
 
-  boolean argpar(String n, String[] args, int i) throws Exception {
+  boolean argpar(final String n, final String[] args, final int i) throws Exception {
     if (!args[i].equals(n)) {
       return false;
     }
@@ -165,10 +165,12 @@ public class PkiUtil {
   boolean doGenKeys() throws Throwable {
     if (privKeyFileName == null) {
       error("Must provide a -privkey <file> parameter");
+      return false;
     }
 
     if (pubKeyFileName == null) {
       error("Must provide a -pubkey <file> parameter");
+      return false;
     }
 
     PKITools.RSAKeys keys = pki.genRSAKeysIntoFiles(privKeyFileName,
@@ -206,7 +208,7 @@ public class PkiUtil {
     return true;
   }
 
-  boolean doit(String[] args) throws Throwable {
+  boolean doit(final String[] args) throws Throwable {
     processArgs(args);
 
     pki = new PKITools(verbose, debug);
@@ -227,7 +229,7 @@ public class PkiUtil {
    * @return boolean
    * @throws Exception
    */
-  private boolean dumpKey(byte[] key) throws Exception {
+  private boolean dumpKey(final byte[] key) throws Exception {
     byte[] encoded = Base64.encodeBase64Chunked(key);
     String encText = new String(encoded);
 
@@ -262,7 +264,7 @@ public class PkiUtil {
     return true;
   }
 
-  private void dumpHex(byte[] hex) {
+  private void dumpHex(final byte[] hex) {
     StringBuffer sb = new StringBuffer();
 
     for (int i = 0; i < hex.length; i++) {
@@ -281,7 +283,7 @@ public class PkiUtil {
     }
   }
 
-  private static String toHex(byte b) {
+  private static String toHex(final byte b) {
     int i = (b >> 4) & 0x0F;
     String tmp;
 
@@ -305,7 +307,7 @@ public class PkiUtil {
   /**
    * @param args
    */
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
     PkiUtil pkiu = new PkiUtil();
 
     try {
@@ -326,19 +328,19 @@ public class PkiUtil {
     return log;
   }
 
-  protected void debugMsg(String msg) {
+  protected void debugMsg(final String msg) {
     getLogger().debug(msg);
   }
 
-  protected void error(Throwable t) {
+  protected void error(final Throwable t) {
     getLogger().error(this, t);
   }
 
-  protected void error(String msg) {
+  protected void error(final String msg) {
     getLogger().error(msg);
   }
 
-  protected void trace(String msg) {
+  protected void trace(final String msg) {
     getLogger().debug(msg);
   }
 }

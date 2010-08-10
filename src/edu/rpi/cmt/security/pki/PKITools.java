@@ -27,7 +27,6 @@ package edu.rpi.cmt.security.pki;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-// import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,12 +45,21 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.Cipher;
 
 /** Tools to implement public key encryption.
- *  Modified by Mike Douglass to incorporate into CVS repository.
+ *  Modified by Mike Douglass to incorporate into CVS repository and then for
+ *  bedework.
+ *
+ * <p>Multiple keys are stored in 2 key files (public/private). The encrypted
+ * value is stored with a key number which is used to select the key for
+ * en/decryption.
+ *
+ * <p>If it is feared that the keys have been compromised, or perhaps simply as
+ * a regular precaution, a new pair of keys can be created and appended to the
+ * key files.
+ *
+ * <p>New uses will use the latest pair of keys.
  *
  *  User a encrypts with user b's public key.
  *  User b decrypts with their private key.
- *
- *  Copyright (c) 2001
  *
  *  @author Alan Powell (powela rpi.edu)
  *  @author Mike Douglass (douglm rpi.edu)
@@ -70,8 +78,8 @@ public class PKITools {
     String algorithm;
     String keyFactory;
 
-    Schema(Provider p, String pName, String algorithm,
-           String keyFactory) {
+    Schema(final Provider p, final String pName, final String algorithm,
+           final String keyFactory) {
       this.p = p;
       this.pName = pName;
       this.algorithm = algorithm;
@@ -94,14 +102,14 @@ public class PKITools {
     /**
      * @param t
      */
-    public PKIException(Throwable t) {
+    public PKIException(final Throwable t) {
       super(t);
     }
 
     /**
      * @param s
      */
-    public PKIException(String s) {
+    public PKIException(final String s) {
       super(s);
     }
   }
@@ -119,7 +127,7 @@ public class PKITools {
    * @param verbose
    * @param debug
    */
-  public PKITools(boolean verbose, boolean debug) {
+  public PKITools(final boolean verbose, final boolean debug) {
     this.verbose = verbose;
     this.debug = debug;
 
@@ -145,9 +153,9 @@ public class PKITools {
    * @return RSAKeys
    * @throws PKIException
    */
-  public RSAKeys genRSAKeysIntoFiles(String privKeyFile,
-                                     String pubKeyFile,
-                                     boolean append) throws PKIException {
+  public RSAKeys genRSAKeysIntoFiles(final String privKeyFile,
+                                     final String pubKeyFile,
+                                     final boolean append) throws PKIException {
     RSAKeys keys = genRSAKeys();
 
     if (keys == null) {
@@ -222,15 +230,15 @@ public class PKITools {
    * @return encrypted value
    * @throws PKIException
    */
-  public String encryptWithKeyFile(String pubKeyFile,
-                                   String item,
-                                   int keyNum) throws PKIException {
+  public String encryptWithKeyFile(final String pubKeyFile,
+                                   final String item,
+                                   final int keyNum) throws PKIException {
     try {
       if (verbose) {
         trace("Reading Public Key from file...");
       }
 
-      return encrypt((byte[])b64.decode(getEncryptedKey(pubKeyFile, keyNum)), item);
+      return encrypt(b64.decode(getEncryptedKey(pubKeyFile, keyNum)), item);
     } catch(Throwable t) {
       throw new PKIException(t);
     }
@@ -242,8 +250,8 @@ public class PKITools {
    * @return encrypted value
    * @throws PKIException
    */
-  public String encrypt(byte[] pubKeyBytes,
-                        String item) throws PKIException {
+  public String encrypt(final byte[] pubKeyBytes,
+                        final String item) throws PKIException {
     byte[] encryptedItem = null;
     Cipher asymmetricCipher;
 
@@ -281,11 +289,11 @@ public class PKITools {
    * @return Decrypted value
    * @throws PKIException
    */
-  public String decryptWithKeyFile(String privKeyFile,
-                                   String hexVal,
-                                   int keyNum) throws PKIException {
+  public String decryptWithKeyFile(final String privKeyFile,
+                                   final String hexVal,
+                                   final int keyNum) throws PKIException {
     try {
-      return decrypt((byte[])b64.decode(getEncryptedKey(privKeyFile, keyNum)), hexVal);
+      return decrypt(b64.decode(getEncryptedKey(privKeyFile, keyNum)), hexVal);
     } catch(PKIException pe) {
       throw pe;
     } catch(Throwable t) {
@@ -299,12 +307,12 @@ public class PKITools {
    * @return String decrypted value
    * @throws PKIException
    */
-  public String decrypt(byte[] privKeyBytes,
-                        String hexVal) throws PKIException {
+  public String decrypt(final byte[] privKeyBytes,
+                        final String hexVal) throws PKIException {
     Cipher asymmetricCipher;
 
     try {
-      byte[] eVal = (byte[])b64.decode(hexVal.getBytes());
+      byte[] eVal = b64.decode(hexVal.getBytes());
 
       PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
       PrivateKey privateKey;
@@ -337,7 +345,7 @@ public class PKITools {
    * @return number of keys in file.
    * @throws PKIException
    */
-  public int countKeys(String fileName) throws PKIException {
+  public int countKeys(final String fileName) throws PKIException {
     byte[] keys = getKeys(fileName);
 
     int foundKeys = 0;
@@ -356,8 +364,8 @@ public class PKITools {
    *                 Private methods
    * ************************************************************************ */
 
-  private byte[] getEncryptedKey(String fileName,
-                                 int keyNum) throws PKIException {
+  private byte[] getEncryptedKey(final String fileName,
+                                 final int keyNum) throws PKIException {
     byte[] keys = getKeys(fileName);
 
     int foundKeys = 0;
@@ -385,7 +393,7 @@ public class PKITools {
     throw new PKIException("Invalid key number");
   }
 
-  private byte[] getKeys(String fileName) throws PKIException {
+  private byte[] getKeys(final String fileName) throws PKIException {
     FileInputStream fstr = null;
     byte[] keys = null;
 
@@ -413,9 +421,9 @@ public class PKITools {
    * @param append     true to add the key to the file.
    * @throws IOException
    */
-  private void writeFile(String fileName,
-                         byte[] bs,
-                         boolean append) throws IOException {
+  private void writeFile(final String fileName,
+                         final byte[] bs,
+                         final boolean append) throws IOException {
     FileOutputStream fstr = null;
 
     try {
@@ -467,19 +475,19 @@ public class PKITools {
     return log;
   }
 
-  protected void debugMsg(String msg) {
+  protected void debugMsg(final String msg) {
     getLogger().debug(msg);
   }
 
-  protected void error(Throwable t) {
+  protected void error(final Throwable t) {
     getLogger().error(this, t);
   }
 
-  protected void error(String msg) {
+  protected void error(final String msg) {
     getLogger().error(msg);
   }
 
-  protected void trace(String msg) {
+  protected void trace(final String msg) {
     getLogger().debug(msg);
   }
 }
