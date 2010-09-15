@@ -29,7 +29,6 @@ package edu.rpi.sss.util.xml;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 
@@ -39,9 +38,16 @@ import javax.xml.namespace.QName;
  */
 public class XmlEmit {
   private Writer wtr;
-  private boolean mustEmitNS;
 
   private boolean noHeaders = false;
+
+  private String dtd;
+
+  private boolean started;
+
+  private int scopeLevel; // So we can pop namespaces
+
+  private XmlEmitNamespaces nameSpaces = new XmlEmitNamespaces();
 
   /**
    * @author douglm
@@ -50,6 +56,10 @@ public class XmlEmit {
     String ns;
 
     String abbrev;
+
+    int level;
+
+    boolean defaultNs;
 
     /**
      * @param ns
@@ -72,16 +82,6 @@ public class XmlEmit {
     }
   }
 
-  /** We need to map the namespaces onto a set of reasonable abbreviations
-   * for the generated xml. New set created each request
-   */
-  private HashMap<String, NameSpace> nsMap;
-
-  private int nsIndex;
-
-  private boolean noDefaultns;
-  private String defaultNs;
-
   /** The following allow us to tidy up the output a little.
    */
   int indent;
@@ -93,20 +93,16 @@ public class XmlEmit {
    * during the first phase and emit xml after startEmit is called.
    */
   public XmlEmit() {
-    this(false, false);
+    this(false);
   }
 
   /** construct an object which will be used to collect namespace names
    * during the first phase and emit xml after startEmit is called.
    *
    * @param noHeaders    boolean true to suppress headers
-   * @param noDefaultns  boolean true if we don't have a default namespace
    */
-  public XmlEmit(final boolean noHeaders, final boolean noDefaultns) {
-    nsMap = new HashMap<String, NameSpace>();
-
+  public XmlEmit(final boolean noHeaders) {
     this.noHeaders = noHeaders;
-    this.noDefaultns = noDefaultns;
   }
 
   /** Emit any headers and namespace declarations
@@ -116,13 +112,6 @@ public class XmlEmit {
    */
   public void startEmit(final Writer wtr) throws IOException {
     this.wtr = wtr;
-
-    if (!noHeaders) {
-      mustEmitNS = true;
-
-      writeHeader(null);
-    }
-    newline();
   }
 
   /** Emit any headers, dtd and namespace declarations
@@ -133,14 +122,10 @@ public class XmlEmit {
    */
   public void startEmit(final Writer wtr, final String dtd) throws IOException {
     this.wtr = wtr;
-
-    if (!noHeaders) {
-      mustEmitNS = true;
-
-      writeHeader(dtd);
-    }
-    newline();
+    this.dtd = dtd;
   }
+
+  /* ===================================== Tag start ======================== */
 
   /**
    * @param tag
@@ -154,6 +139,7 @@ public class XmlEmit {
   }
 
   /** open with attribute
+   *
    * @param tag
    * @param attrName
    * @param attrVal
@@ -198,10 +184,11 @@ public class XmlEmit {
   public void openTagSameLine(final QName tag) throws IOException {
     lb();
     emitQName(tag);
-    rb();
+    endOpeningTag();
   }
 
-  /**
+  /** Emit an opening tag ready for nested values. No new line
+   *
    * @param tag
    * @param attrName
    * @param attrVal
@@ -213,8 +200,82 @@ public class XmlEmit {
     lb();
     emitQName(tag);
     attribute(attrName, attrVal);
+    endOpeningTag();
+  }
+
+  /** Start tag ready for attributes
+   *
+   * @param tag
+   * @throws IOException
+   */
+  public void startTag(final QName tag) throws IOException {
+    blanks();
+    startTagSameLine(tag);
+  }
+
+  /** Start tag ready for attributes - new line and indent
+   *
+   * @param tag
+   * @throws IOException
+   */
+  public void startTagIndent(final QName tag) throws IOException {
+    blanks();
+    startTagSameLine(tag);
+    indent += 2;
+  }
+
+  /** Start a tag ready for some attributes. No new line
+   *
+   * @param tag
+   * @throws IOException
+   */
+  public void startTagSameLine(final QName tag) throws IOException {
+    lb();
+    emitQName(tag);
+  }
+
+  /** End a tag we are opening
+   *
+   * @throws IOException
+   */
+  public void endOpeningTag() throws IOException {
+    scopeIn();
     rb();
   }
+
+  /* ===================================== Attributes ======================= */
+
+  /** Add an attribute
+   *
+   * @param attrName
+   * @param attrVal
+   * @throws IOException
+   */
+  public void attribute(final String attrName, final String attrVal) throws IOException {
+    out(" ");
+    out(attrName);
+    out("=");
+    quote(attrVal);
+  }
+
+  /** Add an attribute
+   *
+   * @param attr
+   * @param attrVal
+   * @throws IOException
+   */
+  public void attribute(final QName attr, final String attrVal) throws IOException {
+    out(" ");
+
+    emitQName(attr);
+
+    out("=");
+    quote(attrVal);
+
+    emitNs();
+  }
+
+  /* ===================================== Tag end ========================== */
 
   /**
    * @param tag
@@ -249,10 +310,22 @@ public class XmlEmit {
    */
   public void closeTagSameLine(final QName tag) throws IOException {
     lb();
-    wtr.write("/");
+    out("/");
     emitQName(tag);
     rb();
+    scopeOut();
   }
+
+  /** End an empty tag
+   *
+   * @throws IOException
+   */
+  public void endEmptyTag() throws IOException {
+    out(" /");
+    rb();
+  }
+
+  /* ===================================== Tag start and end ================ */
 
   /**
    * @param tag
@@ -264,76 +337,6 @@ public class XmlEmit {
     newline();
   }
 
-  /** Start tag ready for attributes
-   *
-   * @param tag
-   * @throws IOException
-   */
-  public void startTag(final QName tag) throws IOException {
-    blanks();
-    startTagSameLine(tag);
-  }
-
-  /** Start tag ready for attributes and indent
-   *
-   * @param tag
-   * @throws IOException
-   */
-  public void startTagIndent(final QName tag) throws IOException {
-    blanks();
-    startTagSameLine(tag);
-    indent += 2;
-  }
-
-  /** Add an attribute
-   *
-   * @param attrName
-   * @param attrVal
-   * @throws IOException
-   */
-  public void attribute(final String attrName, final String attrVal) throws IOException {
-    wtr.write(" ");
-    wtr.write(attrName);
-    wtr.write("=");
-    quote(attrVal);
-  }
-
-  /** Add an attribute
-   *
-   * @param attr
-   * @param attrVal
-   * @throws IOException
-   */
-  public void attribute(final QName attr, final String attrVal) throws IOException {
-    wtr.write(" ");
-
-    emitQName(attr);
-
-    wtr.write("=");
-    quote(attrVal);
-
-    if (!noHeaders && mustEmitNS) {
-      emitNs();
-    }
-  }
-
-  /** End a tag
-   *
-   * @throws IOException
-   */
-  public void endTag() throws IOException {
-    rb();
-  }
-
-  /** End an empty tag
-   *
-   * @throws IOException
-   */
-  public void endEmptyTag() throws IOException {
-    wtr.write(" /");
-    rb();
-  }
-
   /**
    * @param tag
    * @throws IOException
@@ -341,25 +344,8 @@ public class XmlEmit {
   public void emptyTagSameLine(final QName tag) throws IOException {
     lb();
     emitQName(tag);
-    wtr.write("/");
+    out("/");
     rb();
-  }
-
-  /**
-   * @param tag
-   * @throws IOException
-   */
-  public void startTagSameLine(final QName tag) throws IOException {
-    lb();
-    emitQName(tag);
-  }
-
-  private void quote(final String val) throws IOException {
-    if (val.indexOf("\"") < 0) {
-      value(val, "\"");
-    } else {
-      value(val, "'");
-    }
   }
 
   /** Create the sequence<br>
@@ -377,46 +363,6 @@ public class XmlEmit {
     newline();
   }
 
-  /** Write out a value
-   *
-   * @param val
-   * @throws IOException
-   */
-  public void value(final String val) throws IOException {
-    value(val, null);
-  }
-
-  /** Write out a value
-   *
-   * @param val
-   * @param quoteChar
-   * @throws IOException
-   */
-  private void value(final String val,
-                     final String quoteChar) throws IOException {
-    if (val == null) {
-      return;
-    }
-
-    String q = quoteChar;
-    if (q == null) {
-      q = "";
-    }
-
-    if ((val.indexOf('&') >= 0) ||
-        (val.indexOf('<') >= 0)) {
-      wtr.write("<![CDATA[");
-      wtr.write(q);
-      wtr.write(val);
-      wtr.write(q);
-      wtr.write("]]>");
-    } else {
-      wtr.write(q);
-      wtr.write(val);
-      wtr.write(q);
-    }
-  }
-
   /** Create the sequence<br>
    *  <tag>val</tag>
    *
@@ -427,42 +373,7 @@ public class XmlEmit {
   public void cdataProperty(final QName tag, final String val) throws IOException {
     blanks();
     openTagSameLine(tag);
-    if (val != null) {
-      /*
-      if (val.indexOf("]]>") > 0) {
-        throw new IOException("Data contains CDATA end sequence");
-      }
-      wtr.write("<![CDATA[");
-      wtr.write(val);
-      wtr.write("]]>");
-      */
-      // We have to watch for text that includes "]]"
-
-      int start = 0;
-
-      while (start < val.length()) {
-        int end = val.indexOf("]]", start);
-        boolean lastSeg = end < 0;
-        String seg;
-
-        if (lastSeg) {
-          seg = val.substring(start);
-        } else {
-          seg = val.substring(start, end);
-        }
-
-        wtr.write("<![CDATA[");
-        wtr.write(seg);
-        wtr.write("]]>");
-
-        if (lastSeg) {
-          break;
-        }
-
-        wtr.write("]]");
-        start = end + 2;
-      }
-    }
+    cdataValue(val);
     closeTagSameLine(tag);
     newline();
   }
@@ -498,6 +409,95 @@ public class XmlEmit {
     newline();
   }
 
+  /* ===================================== Values =========================== */
+
+  /** Create the sequence<br>
+   *  <tag>val</tag>
+   *
+   * @param val
+   * @throws IOException
+   */
+  public void cdataValue(final String val) throws IOException {
+    if (val == null) {
+      return;
+    }
+
+    int start = 0;
+
+    while (start < val.length()) {
+      int end = val.indexOf("]]", start);
+      boolean lastSeg = end < 0;
+      String seg;
+
+      if (lastSeg) {
+        seg = val.substring(start);
+      } else {
+        seg = val.substring(start, end);
+      }
+
+      out("<![CDATA[");
+      out(seg);
+      out("]]>");
+
+      if (lastSeg) {
+        break;
+      }
+
+      out("]]");
+      start = end + 2;
+    }
+  }
+
+  /** Write out a value
+   *
+   * @param val
+   * @throws IOException
+   */
+  public void value(final String val) throws IOException {
+    value(val, null);
+  }
+
+  /** Write out a value
+   *
+   * @param val
+   * @param quoteChar
+   * @throws IOException
+   */
+  private void value(final String val,
+                     final String quoteChar) throws IOException {
+    if (val == null) {
+      return;
+    }
+
+    String q = quoteChar;
+    if (q == null) {
+      q = "";
+    }
+
+    if ((val.indexOf('&') >= 0) ||
+        (val.indexOf('<') >= 0)) {
+      out("<![CDATA[");
+      out(q);
+      out(val);
+      out(q);
+      out("]]>");
+    } else {
+      out(q);
+      out(val);
+      out(q);
+    }
+  }
+
+  /* ===================================== Misc ============================= */
+
+  /** Return the underlying writer. Should only be used to emit values.
+   *
+   * @return - the writer
+   */
+  public Writer getWriter() {
+    return wtr;
+  }
+
   /**
    * @throws IOException
    */
@@ -513,26 +513,7 @@ public class XmlEmit {
    */
   public void addNs(final NameSpace val,
                     final boolean makeDefaultNs) throws IOException {
-    if (val.abbrev == null) {
-      val.abbrev = "ns" + nsIndex;
-      nsIndex++;
-    }
-
-    for (NameSpace ns: nsMap.values()) {
-      if (val.equals(ns)) {
-        continue;
-      }
-
-      if (val.abbrev.equals(ns.abbrev)) {
-        throw new IOException("Duplicate namespace alias for " + val.ns);
-      }
-    }
-
-    nsMap.put(val.ns, val);
-
-    if (makeDefaultNs && !noDefaultns) {
-      defaultNs = val.ns;
-    }
+    nameSpaces.addNs(val, makeDefaultNs);
   }
 
   /**
@@ -540,7 +521,7 @@ public class XmlEmit {
    * @return NameSpace if present
    */
   public NameSpace getNameSpace(final String ns) {
-    return nsMap.get(ns);
+    return nameSpaces.getNameSpace(ns);
   }
 
   /**
@@ -548,13 +529,7 @@ public class XmlEmit {
    * @return namespace abrev
    */
   public String getNsAbbrev(final String ns) {
-    NameSpace n = nsMap.get(ns);
-
-    if (n == null) {
-      return null;
-    }
-
-    return n.abbrev;
+    return nameSpaces.getNsAbbrev(ns);
   }
 
   /** Write a new line
@@ -562,7 +537,19 @@ public class XmlEmit {
    * @throws IOException
    */
   public void newline() throws IOException {
-    wtr.write("\n");
+    out("\n");
+  }
+
+  /* ====================================================================
+   *                         Private methods
+   * ==================================================================== */
+
+  private void quote(final String val) throws IOException {
+    if (val.indexOf("\"") < 0) {
+      value(val, "\"");
+    } else {
+      value(val, "'");
+    }
   }
 
   /* Write out the tag name, adding the ns abbreviation.
@@ -572,78 +559,31 @@ public class XmlEmit {
    * @throws IOException
    */
   private void emitQName(final QName tag) throws IOException {
-    String ns = tag.getNamespaceURI();
+    nameSpaces.emitNsAbbr(tag.getNamespaceURI(), wtr);
 
-    if ((ns != null) && !ns.equals(defaultNs)) {
-      String abbr = getNsAbbrev(ns);
+    out(tag.getLocalPart());
 
-      if (abbr != null) {
-        wtr.write(abbr);
-        wtr.write(":");
-      }
-    }
-
-    wtr.write(tag.getLocalPart());
-
-    if (!noHeaders && mustEmitNS) {
-      emitNs();
-    }
+    emitNs();
   }
 
   private void emitNs() throws IOException {
-    /* First tag so emit the name space declarations.
-     */
-    String delim = "";
-
-    for (String nsp: nsMap.keySet()) {
-      wtr.write(delim);
-      delim = "\n             ";
-
-      wtr.write(" xmlns");
-
-      String abbr = getNsAbbrev(nsp);
-
-      if ((abbr != null) && !nsp.equals(defaultNs)) {
-        wtr.write(":");
-        wtr.write(abbr);
-      }
-
-      wtr.write("=\"");
-      wtr.write(nsp);
-      wtr.write("\"");
-    }
-
-    mustEmitNS = false;
-  }
-
-  /* Write out the xml header
-   */
-  private void writeHeader(final String dtd) throws IOException {
-    wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-
-    if (dtd == null) {
-      return;
-    }
-
-    wtr.write("<!DOCTYPE properties SYSTEM \"");
-    wtr.write(dtd);
-    wtr.write("\">\n");
+    nameSpaces.emitNs(wtr);
   }
 
   private void blanks() throws IOException {
     if (indent >= blankLen) {
-      wtr.write(blank);
+      out(blank);
     } else {
-      wtr.write(blank.substring(0, indent));
+      out(blank.substring(0, indent));
     }
   }
 
   private void lb() throws IOException {
-    wtr.write("<");
+    out("<");
   }
 
   private void rb() throws IOException {
-    wtr.write(">");
+    out(">");
   }
 
   /* size of buffer used for copying content to response.
@@ -672,5 +612,42 @@ public class XmlEmit {
         out.close();
       } catch (Throwable t) {}
     }
+  }
+
+  private void scopeIn() {
+    scopeLevel++;
+    nameSpaces.startScope();
+  }
+
+  private void scopeOut() {
+    scopeLevel--;
+    nameSpaces.endScope();
+  }
+
+  private void out(final String val) throws IOException {
+    if (!started) {
+      started = true;
+
+      if (!noHeaders) {
+        writeHeader(dtd);
+        wtr.write("\n");
+      }
+    }
+
+    wtr.write(val);
+  }
+
+  /* Write out the xml header
+   */
+  private void writeHeader(final String dtd) throws IOException {
+    wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+
+    if (dtd == null) {
+      return;
+    }
+
+    wtr.write("<!DOCTYPE properties SYSTEM \"");
+    wtr.write(dtd);
+    wtr.write("\">\n");
   }
 }

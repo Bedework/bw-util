@@ -25,8 +25,12 @@
 */
 package edu.rpi.cmt.calendar;
 
+import edu.rpi.sss.util.xml.tagdefs.XcalTags;
+
 import java.io.Serializable;
 import java.util.HashMap;
+
+import javax.xml.namespace.QName;
 
 /** Define an (arbitrary) index associated with calendar properties
  *
@@ -119,6 +123,249 @@ public class PropertyIndex implements Serializable {
   private static boolean NOT_IMMUTABLE = false;
 
   /** */
+  public static enum DataType {
+    /** */
+    BINARY(XcalTags.binary),
+
+    /** */
+    BOOLEAN(XcalTags._boolean),
+
+    /** */
+    CUA(XcalTags.calAddress),
+
+    /** */
+    DATE(XcalTags.date),
+
+    /** */
+    DATE_TIME(XcalTags.dateTime),
+
+    /** */
+    DURATION(XcalTags.duration),
+
+    /** */
+    FLOAT(XcalTags._float),
+
+    /** */
+    INTEGER(XcalTags.integer),
+
+    /** */
+    PERIOD(XcalTags.period),
+
+    /** */
+    RECUR(XcalTags.recur),
+
+    /** */
+    TEXT(XcalTags.text),
+
+    /** */
+    TIME(XcalTags.time),
+
+    /** */
+    URI(XcalTags.uri),
+
+    /** */
+    UTC_OFFSET(XcalTags.utcOffset),
+
+    /** More work */
+    SPECIAL(null),
+
+    /** Non-ical */
+    HREF(null);
+
+    private QName xcalType;
+
+    DataType(final QName xcalType) {
+      this.xcalType = xcalType;
+    }
+
+    /**
+     * @return type or null
+     */
+    public QName getXcalType() {
+      return xcalType;
+    }
+  };
+
+  /** */
+  public static enum ParameterInfoIndex {
+    /** */
+    UNKNOWN_PARAMETER(null),
+
+    /**
+     * Region abbreviation.
+     */
+    ABBREV("ABBREV"),
+
+    /**
+     * Alternate text representation.
+     */
+    ALTREP("ALTREP"),
+
+    /**
+     * Common name.
+     */
+    CN("CN"),
+
+    /**
+     * Calendar user type.
+     */
+    CUTYPE("CUTYPE"),
+
+    /**
+     * Delegator.
+     */
+    DELEGATED_FROM("DELEGATED-FROM"),
+
+    /**
+     * Delegatee.
+     */
+    DELEGATED_TO("DELEGATED-TO"),
+
+    /**
+     * Directory entry.
+     */
+    DIR("DIR"),
+
+    /**
+     * Inline encoding.
+     */
+    ENCODING("ENCODING"),
+
+    /**
+     * Format type.
+     */
+    FMTTYPE("FMTTYPE"),
+
+    /**
+     * Free/busy time type.
+     */
+    FBTYPE("FBTYPE"),
+
+    /**
+     * Language for text.
+     */
+    LANGUAGE("LANGUAGE"),
+
+    /**
+     * Group or list membership.
+     */
+    MEMBER("MEMBER"),
+
+    /**
+     * Participation status.
+     */
+    PARTSTAT("PARTSTAT"),
+
+    /**
+     * Recurrence identifier range.
+     */
+    RANGE("RANGE"),
+
+    /**
+     * Alarm trigger relationship.
+     */
+    RELATED("RELATED"),
+
+    /**
+     * Relationship type.
+     */
+    RELTYPE("RELTYPE"),
+
+    /**
+     * Participation role.
+     */
+    ROLE("ROLE"),
+
+    /**
+     * RSVP expectation.
+     */
+    RSVP("RSVP"),
+
+    /**
+     * Schedule agent.
+     */
+    SCHEDULE_AGENT("SCHEDULE-AGENT"),
+
+    /**
+     * Schedule status.
+     */
+    SCHEDULE_STATUS("SCHEDULE-STATUS"),
+
+    /**
+     * Sent by.
+     */
+    SENT_BY("SENT-BY"),
+
+    /**
+     * Type.
+     */
+    TYPE("TYPE"),
+
+    /**
+     * Reference to time zone object.
+     */
+    TZID("TZID"),
+
+    /**
+     * Property value data type.
+     */
+    VALUE("VALUE");
+
+    private String pname;
+
+    private DataType ptype;
+
+    private static HashMap<String, ParameterInfoIndex> pnameLookup =
+      new HashMap<String, ParameterInfoIndex>();
+
+    static {
+      for (ParameterInfoIndex pii: values()) {
+        String pname = pii.getPname();
+
+        if (pname != null) {
+          pname = pname.toLowerCase();
+        }
+        pnameLookup.put(pname, pii);
+      }
+    }
+
+    ParameterInfoIndex(final String pname) {
+      this(pname, DataType.TEXT);
+    }
+
+    ParameterInfoIndex(final String pname,
+                      final DataType ptype) {
+      this.pname = pname;
+      this.ptype = ptype;
+    }
+
+    /** get the parameter name
+     *
+     * @return parameter name
+     */
+    public String getPname() {
+      return pname;
+    }
+
+    /** get the parameter type
+     *
+     * @return parameter type
+     */
+    public DataType getPtype() {
+      return ptype;
+    }
+
+    /** get the index given the parameter name
+     *
+     * @param val
+     * @return ParameterInfoIndex
+     */
+    public static ParameterInfoIndex lookupPname(final String val) {
+      return pnameLookup.get(val.toLowerCase());
+    }
+  }
+
+  /** */
   public static enum PropertyInfoIndex {
     /** */
     UNKNOWN_PROPERTY(null, IS_SINGLE, noComponent),
@@ -127,42 +374,51 @@ public class PropertyIndex implements Serializable {
     CLASS("CLASS", IS_SINGLE, event_Todo_Journal),
 
     /** */
-    CREATED("CREATED", IS_SINGLE, event_Todo_Journal_Freebusy),
+    CREATED("CREATED", DataType.DATE_TIME,
+            IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
     DESCRIPTION("DESCRIPTION", IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    DTSTAMP("DTSTAMP", IS_SINGLE, event_Todo_Journal_Freebusy,
+    DTSTAMP("DTSTAMP", DataType.DATE_TIME,
+            IS_SINGLE, event_Todo_Journal_Freebusy,
             NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
-    DTSTART("DTSTART", IS_SINGLE, notAlarm),
+    DTSTART("DTSTART", DataType.DATE_TIME,
+            IS_SINGLE, notAlarm),
 
     /** */
-    DURATION("DURATION", IS_SINGLE, event_Todo_Freebusy),
+    DURATION("DURATION", DataType.DURATION,
+             IS_SINGLE, event_Todo_Freebusy),
 
     /** */
     GEO("GEO", IS_SINGLE, event_Todo),
 
     /** */
-    LAST_MODIFIED("LAST-MODIFIED", IS_SINGLE, event_Todo_Journal_Timezone,
+    LAST_MODIFIED("LAST-MODIFIED", DataType.DATE_TIME,
+                  IS_SINGLE, event_Todo_Journal_Timezone,
                   NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
     LOCATION("LOCATION", IS_SINGLE, event_Todo),
 
     /** */
-    ORGANIZER("ORGANIZER", IS_SINGLE, event_Todo_Journal_Freebusy),
+    ORGANIZER("ORGANIZER", DataType.CUA,
+              IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    PRIORITY("PRIORITY", IS_SINGLE, event_Todo),
+    PRIORITY("PRIORITY", DataType.INTEGER,
+             IS_SINGLE, event_Todo),
 
     /** */
-    RECURRENCE_ID("RECURRENCE-ID", IS_SINGLE, event_Todo_Journal_Freebusy),
+    RECURRENCE_ID("RECURRENCE-ID", DataType.DATE_TIME,
+                  IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    SEQUENCE("SEQUENCE", IS_SINGLE, event_Todo_Journal,
+    SEQUENCE("SEQUENCE", DataType.INTEGER,
+             IS_SINGLE, event_Todo_Journal,
              NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
@@ -175,12 +431,14 @@ public class PropertyIndex implements Serializable {
     UID("UID", IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    URL("URL", IS_SINGLE, event_Todo_Journal_Freebusy),
+    URL("URL", DataType.URI,
+        IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /* Event only */
 
     /** */
-    DTEND("DTEND", IS_SINGLE, event_Freebusy),
+    DTEND("DTEND", DataType.DATE_TIME,
+          IS_SINGLE, event_Freebusy),
 
     /** */
     TRANSP("TRANSP", IS_SINGLE, eventOnly),
@@ -188,10 +446,12 @@ public class PropertyIndex implements Serializable {
     /* Todo only */
 
     /** */
-    COMPLETED("COMPLETED", IS_SINGLE, todoOnly),
+    COMPLETED("COMPLETED", DataType.DATE_TIME,
+              IS_SINGLE, todoOnly),
 
     /** */
-    DUE("DUE", IS_SINGLE, todoOnly),
+    DUE("DUE", DataType.DATE_TIME,
+        IS_SINGLE, todoOnly),
 
     /** */
     PERCENT_COMPLETE("PERCENT-COMPLETE", IS_SINGLE, todoOnly),
@@ -201,10 +461,12 @@ public class PropertyIndex implements Serializable {
     /* Event and Todo */
 
     /** */
-    ATTACH("ATTACH", IS_MULTI, event_Todo_Journal_Alarm),
+    ATTACH("ATTACH", DataType.SPECIAL,
+           IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    ATTENDEE("ATTENDEE", IS_MULTI, notTimezone),
+    ATTENDEE("ATTENDEE", DataType.CUA,
+             IS_MULTI, notTimezone),
 
     /** */
     CATEGORIES("CATEGORIES", IS_MULTI, event_Todo_Journal_Alarm),
@@ -216,10 +478,12 @@ public class PropertyIndex implements Serializable {
     CONTACT("CONTACT", IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** */
-    EXDATE("EXDATE", IS_MULTI, event_Todo_Journal_Timezone),
+    EXDATE("EXDATE", DataType.DATE_TIME,
+           IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    EXRULE("EXRULE", IS_MULTI, event_Todo_Journal_Timezone),
+    EXRULE("EXRULE", DataType.SPECIAL,
+           IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
     REQUEST_STATUS("REQUEST-STATUS", IS_MULTI, event_Todo_Journal_Freebusy),
@@ -231,15 +495,18 @@ public class PropertyIndex implements Serializable {
     RESOURCES("RESOURCES", IS_MULTI, event_Todo),
 
     /** */
-    RDATE("RDATE", IS_MULTI, event_Todo_Journal_Timezone),
+    RDATE("RDATE", DataType.DATE_TIME,
+          IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    RRULE ("RRULE", IS_MULTI, event_Todo_Journal_Timezone),
+    RRULE ("RRULE", DataType.SPECIAL,
+           IS_MULTI, event_Todo_Journal_Timezone),
 
     /* -------------- Other non-event, non-todo ---------------- */
 
     /** */
-    FREEBUSY("FREEBUSY", IS_SINGLE, freebusyOnly),
+    FREEBUSY("FREEBUSY", DataType.PERIOD,
+             IS_SINGLE, freebusyOnly),
 
     /** */
     TZID("TZID", IS_SINGLE, timezoneOnly),
@@ -248,31 +515,36 @@ public class PropertyIndex implements Serializable {
     TZNAME("TZNAME", IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETFROM("TZOFFSETFROM", IS_SINGLE, timezoneOnly),
+    TZOFFSETFROM("TZOFFSETFROM", DataType.UTC_OFFSET,
+                 IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETTO("TZOFFSETTO", IS_SINGLE, timezoneOnly),
+    TZOFFSETTO("TZOFFSETTO", DataType.UTC_OFFSET,
+               IS_SINGLE, timezoneOnly),
 
     /** */
-    TZURL("TZURL", IS_SINGLE, timezoneOnly),
+    TZURL("TZURL", DataType.URI,
+          IS_SINGLE, timezoneOnly),
 
     /** */
     ACTION("ACTION", IS_SINGLE, alarmOnly),
 
     /** */
-    REPEAT("REPEAT", IS_SINGLE, alarmOnly),
+    REPEAT("REPEAT", DataType.INTEGER,
+           IS_SINGLE, alarmOnly),
 
     /** */
-    TRIGGER("TRIGGER", IS_SINGLE, alarmOnly),
+    TRIGGER("TRIGGER", DataType.SPECIAL,
+            IS_SINGLE, alarmOnly),
 
     /* -------------- Non-ical ---------------- */
 
     /** non ical */
-    CREATOR("CREATOR", IS_SINGLE, event_Todo_Journal,
+    CREATOR("CREATOR", DataType.HREF, IS_SINGLE, event_Todo_Journal,
             NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    OWNER("OWNER", IS_SINGLE, event_Todo_Journal,
+    OWNER("OWNER", DataType.HREF, IS_SINGLE, event_Todo_Journal,
           NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
@@ -282,21 +554,22 @@ public class PropertyIndex implements Serializable {
     COST("COST", IS_SINGLE, event_Todo),
 
     /** non ical */
-    CTAG("CTAG", IS_SINGLE, noComponent,
+    CTAG("CTAG", DataType.TEXT, IS_SINGLE, noComponent,
          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     DELETED("DELETED", IS_SINGLE, event_Todo),
 
     /** non ical */
-    ETAG("ETAG", IS_SINGLE, noComponent,
+    ETAG("ETAG", DataType.TEXT, IS_SINGLE, noComponent,
          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     COLLECTION("COLLECTION", IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
-    ENTITY_TYPE("ENTITY_TYPE", IS_SINGLE, event_Todo_Journal,
+    ENTITY_TYPE("ENTITY_TYPE", DataType.INTEGER,
+                IS_SINGLE, event_Todo_Journal,
                 NOT_PARAM, IS_IMMUTABLE),
 
     /** treat VALARM sub-component as a property */
@@ -308,15 +581,17 @@ public class PropertyIndex implements Serializable {
     /** ----------------------------- Following are parameters ----------- */
 
     /** */
-    LANG("LANGUAGE", IS_SINGLE, noComponent,
+    LANG("LANGUAGE", DataType.TEXT, IS_SINGLE, noComponent,
          IS_PARAM, NOT_IMMUTABLE),
 
     /** */
-    TZIDPAR("TZID", IS_SINGLE, noComponent,
+    TZIDPAR("TZID", DataType.TEXT, IS_SINGLE, noComponent,
             IS_PARAM, NOT_IMMUTABLE),
             ;
 
     private String pname;
+
+    private DataType ptype;
 
     /* true if the standard says it's multi */
     private boolean multiValued;
@@ -352,19 +627,29 @@ public class PropertyIndex implements Serializable {
       dbMultiValued = multiValued;
     }
 
+    PropertyInfoIndex(final String pname,
+                      final DataType ptype, final boolean multiValued,
+                      final ComponentFlags components) {
+      this(pname, multiValued, components);
+      this.ptype = ptype;
+    }
+
     PropertyInfoIndex(final String pname, final boolean multiValued,
                       final boolean dbMultiValued,
                       final ComponentFlags components) {
-      this(pname, multiValued, components,
+      this(pname, DataType.TEXT, multiValued, components,
            NOT_PARAM, NOT_IMMUTABLE);
       this.dbMultiValued = dbMultiValued;
     }
 
-    PropertyInfoIndex(final String pname, final boolean multiValued,
+    PropertyInfoIndex(final String pname,
+                      final DataType ptype,
+                      final boolean multiValued,
                       final ComponentFlags components,
                       final boolean param,
                       final boolean immutable) {
       this(pname, multiValued, components);
+      this.ptype = ptype;
       this.param = param;
       this.immutable = immutable;
     }
@@ -375,6 +660,14 @@ public class PropertyIndex implements Serializable {
      */
     public String getPname() {
       return pname;
+    }
+
+    /** get the property type
+     *
+     * @return property type
+     */
+    public DataType getPtype() {
+      return ptype;
     }
 
     /** May need some elaboration - this is for the standard

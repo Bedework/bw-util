@@ -28,6 +28,11 @@ package edu.rpi.sss.util;
 import edu.rpi.sss.util.xml.XmlEmit;
 import edu.rpi.sss.util.xml.XmlUtil;
 
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -43,11 +48,6 @@ import java.util.regex.Pattern;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 /** Access properties in an xml format.
  *
@@ -76,11 +76,11 @@ public class Options implements OptionsI {
 
   private OptionElement localOptionsRoot;
 
-  public void init(String globalPrefix,
-                   String appPrefix,
-                   String optionsFile,
-                   String outerTagName,
-                   boolean debug) throws OptionsException {
+  public void init(final String globalPrefix,
+                   final String appPrefix,
+                   final String optionsFile,
+                   final String outerTagName,
+                   final boolean debug) throws OptionsException {
     this.globalPrefix = globalPrefix;
     this.appPrefix = appPrefix;
     this.optionsFile = optionsFile;
@@ -90,7 +90,7 @@ public class Options implements OptionsI {
     initOptions();
   }
 
-  public void initFromStream(InputStream is) throws OptionsException {
+  public void initFromStream(final InputStream is) throws OptionsException {
     useSystemwideValues = false;
     localOptionsRoot = parseOptions(is);
   }
@@ -110,7 +110,7 @@ public class Options implements OptionsI {
    * @return OptionElement root of parsed options.
    * @exception OptionsException Some error occurred.
    */
-  public OptionElement parseOptions(InputStream is) throws OptionsException{
+  public OptionElement parseOptions(final InputStream is) throws OptionsException{
     Reader rdr = null;
 
     try {
@@ -156,11 +156,11 @@ public class Options implements OptionsI {
    * @param str
    * @throws OptionsException
    */
-  public void toXml(OptionElement root, OutputStream str) throws OptionsException {
+  public void toXml(final OptionElement root, final OutputStream str) throws OptionsException {
     Writer wtr = null;
 
     try {
-      XmlEmit xml = new XmlEmit(true, true);
+      XmlEmit xml = new XmlEmit(true);
 
       wtr = new OutputStreamWriter(str);
       xml.startEmit(wtr);
@@ -185,8 +185,8 @@ public class Options implements OptionsI {
     }
   }
 
-  private static void childToXml(OptionElement subRoot,
-                                 XmlEmit xml) throws OptionsException {
+  private static void childToXml(final OptionElement subRoot,
+                                 final XmlEmit xml) throws OptionsException {
     try {
       Object val = subRoot.val;
       QName tag = new QName(null, subRoot.name);
@@ -236,9 +236,9 @@ public class Options implements OptionsI {
     }
   }
 
-  private static void methodToXml(Method meth,
-                                  Object val,
-                                  XmlEmit xml) throws OptionsException {
+  private static void methodToXml(final Method meth,
+                                  final Object val,
+                                  final XmlEmit xml) throws OptionsException {
     try {
       String methodName = meth.getName();
 
@@ -319,7 +319,7 @@ public class Options implements OptionsI {
    * @return Object value
    * @throws OptionsException
    */
-  public Object getProperty(String name) throws OptionsException {
+  public Object getProperty(final String name) throws OptionsException {
     Object val = getOptProperty(name);
 
     if (val == null) {
@@ -335,7 +335,7 @@ public class Options implements OptionsI {
    * @return Object value
    * @throws OptionsException
    */
-  public Object getOptProperty(String name) throws OptionsException {
+  public Object getOptProperty(final String name) throws OptionsException {
     if (useSystemwideValues) {
       return findValue(optionsRoot, makePathElements(name), -1);
     }
@@ -349,7 +349,7 @@ public class Options implements OptionsI {
    * @return String value of property
    * @throws OptionsException
    */
-  public String getStringProperty(String name) throws OptionsException {
+  public String getStringProperty(final String name) throws OptionsException {
     Object val = getProperty(name);
 
     if (!(val instanceof String)) {
@@ -365,7 +365,7 @@ public class Options implements OptionsI {
    * @return String value
    * @throws OptionsException
    */
-  public String getOptStringProperty(String name) throws OptionsException {
+  public String getOptStringProperty(final String name) throws OptionsException {
     Object val = getOptProperty(name);
 
     if (val == null) {
@@ -385,7 +385,7 @@ public class Options implements OptionsI {
    * @return boolean value of property
    * @throws OptionsException
    */
-  public boolean getBoolProperty(String name) throws OptionsException {
+  public boolean getBoolProperty(final String name) throws OptionsException {
     String val = getStringProperty(name);
 
     val = val.toLowerCase();
@@ -399,7 +399,7 @@ public class Options implements OptionsI {
    * @return int value of property
    * @throws OptionsException
    */
-  public int getIntProperty(String name) throws OptionsException {
+  public int getIntProperty(final String name) throws OptionsException {
     String val = getStringProperty(name);
 
     try {
@@ -416,28 +416,28 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalProperty(java.lang.String)
    */
-  public Object getGlobalProperty(String name) throws OptionsException {
+  public Object getGlobalProperty(final String name) throws OptionsException {
     return getProperty(globalPrefix + name);
   }
 
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalStringProperty(java.lang.String)
    */
-  public String getGlobalStringProperty(String name) throws OptionsException {
+  public String getGlobalStringProperty(final String name) throws OptionsException {
     return getStringProperty(globalPrefix + name);
   }
 
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalBoolProperty(java.lang.String)
    */
-  public boolean getGlobalBoolProperty(String name) throws OptionsException {
+  public boolean getGlobalBoolProperty(final String name) throws OptionsException {
     return getBoolProperty(globalPrefix + name);
   }
 
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalIntProperty(java.lang.String)
    */
-  public int getGlobalIntProperty(String name) throws OptionsException {
+  public int getGlobalIntProperty(final String name) throws OptionsException {
     return getIntProperty(globalPrefix + name);
   }
 
@@ -451,7 +451,7 @@ public class Options implements OptionsI {
    * @return Object value
    * @throws OptionsException
    */
-  public Object getAppProperty(String name) throws OptionsException {
+  public Object getAppProperty(final String name) throws OptionsException {
     return getProperty(appPrefix + name);
   }
 
@@ -461,7 +461,7 @@ public class Options implements OptionsI {
    * @return String value
    * @throws OptionsException
    */
-  public String getAppStringProperty(String name) throws OptionsException {
+  public String getAppStringProperty(final String name) throws OptionsException {
     return getStringProperty(appPrefix + name);
   }
 
@@ -471,7 +471,7 @@ public class Options implements OptionsI {
    * @return Object value or null
    * @throws OptionsException
    */
-  public Object getAppOptProperty(String name) throws OptionsException {
+  public Object getAppOptProperty(final String name) throws OptionsException {
     return getOptProperty(appPrefix + name);
   }
 
@@ -481,7 +481,7 @@ public class Options implements OptionsI {
    * @return String value or null
    * @throws OptionsException
    */
-  public String getAppOptStringProperty(String name) throws OptionsException {
+  public String getAppOptStringProperty(final String name) throws OptionsException {
     return getOptStringProperty(appPrefix + name);
   }
 
@@ -491,14 +491,14 @@ public class Options implements OptionsI {
    * @return boolean value of global property
    * @throws OptionsException
    */
-  public boolean getAppBoolProperty(String name) throws OptionsException {
+  public boolean getAppBoolProperty(final String name) throws OptionsException {
     return getBoolProperty(appPrefix + name);
   }
 
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getAppIntProperty(java.lang.String)
    */
-  public int getAppIntProperty(String name) throws OptionsException {
+  public int getAppIntProperty(final String name) throws OptionsException {
     return getIntProperty(appPrefix + name);
   }
 
@@ -509,9 +509,9 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#setValue(java.lang.String, java.lang.String, java.lang.Object)
    */
-  public void setValue(String optionObjectName,
-                       String optionName,
-                       Object val) throws OptionsException {
+  public void setValue(final String optionObjectName,
+                       final String optionName,
+                       final Object val) throws OptionsException {
     if (!useSystemwideValues) {
       // No screwing round with them
       throw new OptionsException("cannot.set.values");
@@ -533,8 +533,8 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getValue(java.lang.String, java.lang.String)
    */
-  public Object getValue(String optionObjectName,
-                         String optionName) throws OptionsException {
+  public Object getValue(final String optionObjectName,
+                         final String optionName) throws OptionsException {
     if (useSystemwideValues) {
       // No screwing round with them
       throw new OptionsException("cannot.set.values");
@@ -559,7 +559,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.OptionsI#getNames(java.lang.String)
    */
-  public Collection<String> getNames(String name) throws OptionsException {
+  public Collection<String> getNames(final String name) throws OptionsException {
     if (useSystemwideValues) {
       return getNames(optionsRoot, makePathElements(name), -1);
     }
@@ -573,7 +573,7 @@ public class Options implements OptionsI {
    * @return Collection
    * @throws OptionsException
    */
-  public Collection match(String name) throws OptionsException {
+  public Collection match(final String name) throws OptionsException {
     if (useSystemwideValues) {
       return match(optionsRoot, makePathElements(name), -1);
     }
@@ -592,8 +592,8 @@ public class Options implements OptionsI {
    * @param pos
    * @return Collection<String>
    */
-  private static Collection<String> getNames(OptionElement subroot,
-                                             String[] pathElements, int pos) {
+  private static Collection<String> getNames(final OptionElement subroot,
+                                             final String[] pathElements, int pos) {
     if (pos >= 0) {
       // Not at root.
       if (!pathElements[pos].equals(subroot.name)) {
@@ -638,8 +638,8 @@ public class Options implements OptionsI {
    * @param pos
    * @return Collection
    */
-  private static Collection match(OptionElement subroot,
-                                  String[] pathElements, int pos) {
+  private static Collection match(final OptionElement subroot,
+                                  final String[] pathElements, int pos) {
 
     if (pos >= 0) {
       // Not at root.
@@ -687,8 +687,8 @@ public class Options implements OptionsI {
   /* Given the root and a path element array find the corresponding value(s)
    *
    */
-  private static Object findValue(OptionElement subroot,
-                                  String[] pathElements, int pos) {
+  private static Object findValue(final OptionElement subroot,
+                                  final String[] pathElements, int pos) {
     if (pos >= 0) {
       // Not at root.
       if (!pathElements[pos].equals(subroot.name)) {
@@ -737,7 +737,7 @@ public class Options implements OptionsI {
     return singleRes;
   }
 
-  private static void appendResult(Object res, ArrayList<Object> multiRes) {
+  private static void appendResult(final Object res, final ArrayList<Object> multiRes) {
     if (res instanceof Collection) {
       multiRes.addAll((Collection<? extends Object>)res);
     } else {
@@ -745,8 +745,8 @@ public class Options implements OptionsI {
     }
   }
 
-  private void doChildren(OptionElement oel, Element subroot,
-                          Stack<Object> objStack) throws OptionsException {
+  private void doChildren(final OptionElement oel, final Element subroot,
+                          final Stack<Object> objStack) throws OptionsException {
     try {
       if (!XmlUtil.hasChildren(subroot)) {
         // Leaf node
@@ -851,23 +851,23 @@ public class Options implements OptionsI {
     }
   }
 
-  private static void error(String msg) {
+  private static void error(final String msg) {
     Logger.getLogger(Options.class).error(msg);
   }
 
-  private static void warn(String msg) {
+  private static void warn(final String msg) {
     Logger.getLogger(Options.class).warn(msg);
   }
 
   /* We've been dealing with property names - convert the dotted notation to a path
    */
-  private static String[] makePathElements(String val) {
+  private static String[] makePathElements(final String val) {
     synchronized (splitPathPattern) {
       return splitPathPattern.split(val, 0);
     }
   }
 
-  private Method findSetter(Object val, String name) throws OptionsException {
+  private Method findSetter(final Object val, final String name) throws OptionsException {
     String methodName = "set" + name.substring(0, 1).toUpperCase() +
                         name.substring(1);
     Method[] meths = val.getClass().getMethods();
@@ -894,7 +894,7 @@ public class Options implements OptionsI {
     return meth;
   }
 
-  private static Method findGetter(Object val, String name) throws OptionsException {
+  private static Method findGetter(final Object val, final String name) throws OptionsException {
     String methodName = "get" + name.substring(0, 1).toUpperCase() +
                         name.substring(1);
     Method[] meths = val.getClass().getMethods();
@@ -923,8 +923,8 @@ public class Options implements OptionsI {
     return meth;
   }
 
-  private static Method findMethod(Object val,
-                                   String methodName) throws OptionsException {
+  private static Method findMethod(final Object val,
+                                   final String methodName) throws OptionsException {
     Method[] meths = val.getClass().getMethods();
     Method meth = null;
 
@@ -949,7 +949,7 @@ public class Options implements OptionsI {
     return meth;
   }
 
-  private static Collection<Method> findGetters(Object val) throws OptionsException {
+  private static Collection<Method> findGetters(final Object val) throws OptionsException {
     Method[] meths = val.getClass().getMethods();
     Collection<Method> getters = new ArrayList<Method>();
 

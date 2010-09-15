@@ -35,6 +35,9 @@ public class XcalTags {
   /** */
   public static final String namespace = "urn:ietf:params:xml:ns:icalendar-2.0";
 
+  /** */
+  public static final String mimetype = "application/calendar+xml";
+
   /* =====================================================================
                               values
      ===================================================================== */
@@ -145,4 +148,14 @@ public class XcalTags {
 
   /**   */
   public static final QName vcalendar = new QName(namespace, "vcalendar");
+
+  /* =====================================================================
+                              properties
+     ===================================================================== */
+
+  /**   */
+  public static final QName prodid = new QName(namespace, "prodid");
+
+  /**   */
+  public static final QName version = new QName(namespace, "version");
 }
