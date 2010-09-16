@@ -482,7 +482,7 @@ public class PropertyIndex implements Serializable {
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    EXRULE("EXRULE", DataType.SPECIAL,
+    EXRULE("EXRULE", DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
@@ -499,7 +499,7 @@ public class PropertyIndex implements Serializable {
           IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    RRULE ("RRULE", DataType.SPECIAL,
+    RRULE ("RRULE", DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /* -------------- Other non-event, non-todo ---------------- */
