@@ -65,6 +65,9 @@ public class CarddavTags {
   public static final QName addressData = makeQName("address-data");
 
   /** */
+  public static final QName addressDataType = makeQName("address-data-type");
+
+  /** */
   public static final QName allprop = makeQName("allprop");
 
   /**   */
@@ -106,7 +109,7 @@ public class CarddavTags {
   /**   */
   public static final QName textMatch = makeQName("text-match");
 
-  private static QName makeQName(String name) {
+  private static QName makeQName(final String name) {
     QName q = new QName(namespace, name);
     qnames.put(name, q);
 
