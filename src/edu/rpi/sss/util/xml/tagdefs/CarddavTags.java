@@ -83,6 +83,8 @@ public class CarddavTags {
   public static final QName maxResourceSize = makeQName("max-resource-size");
 
   /**   */
+  public static final QName noUidConflict = makeQName("no-uid-conflict");
+  /**   */
   public static final QName nresults = makeQName("nresults");
 
   /**   */
