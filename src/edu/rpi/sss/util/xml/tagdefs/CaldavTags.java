@@ -166,10 +166,6 @@ public class CaldavTags implements CaldavDefs {
                                                    "originator-allowed");
 
   /**   */
-  public static final QName originatorSpecified = new QName(caldavNamespace,
-                                                   "originator-specified");
-
-  /**   */
   public static final QName paramFilter = new QName(caldavNamespace,
                                                     "param-filter");
 
@@ -196,10 +192,6 @@ public class CaldavTags implements CaldavDefs {
   /**   */
   public static final QName recipientPermissions = new QName(caldavNamespace,
                                                   "recipient-permissions");
-
-  /**   */
-  public static final QName recipientSpecified = new QName(caldavNamespace,
-                                                  "recipient-specified");
 
   /**   */
   public static final QName requestStatus = new QName(caldavNamespace,
@@ -336,5 +328,15 @@ public class CaldavTags implements CaldavDefs {
   /**   */
   public static final QName validFilter = new QName(caldavNamespace,
                                                     "valid-filter");
+
+  /* ---------------- isched - delete thede ------------------------------- */
+
+  /** isched  */
+  public static final QName originatorSpecified = new QName(caldavNamespace,
+                                                   "originator-specified");
+
+  /**   */
+  public static final QName recipientSpecified = new QName(caldavNamespace,
+                                                  "recipient-specified");
 }
 
