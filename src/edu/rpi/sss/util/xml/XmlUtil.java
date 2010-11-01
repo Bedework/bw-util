@@ -26,26 +26,24 @@
 
 package edu.rpi.sss.util.xml;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.xml.namespace.QName;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
-
 import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.xml.namespace.QName;
 
 /**
  * Utility routines associated with handling xml
@@ -115,10 +113,10 @@ public final class XmlUtil implements Serializable {
    * @param  crs          Object to hold results
    * @param debug
    */
-  public static void tidyString(String id,
-                                String val,
-                                CheckStringResult crs,
-                                boolean debug) {
+  public static void tidyString(final String id,
+                                final String val,
+                                final CheckStringResult crs,
+                                final boolean debug) {
     crs.errStr = null;
     crs.tidyState = xmlOk;
     crs.newContent = null;
@@ -241,11 +239,11 @@ public final class XmlUtil implements Serializable {
    * @param  emptyOk      True if empty text is not special
    * @param debug
    */
-  public static void checkString(String id,
-                                 String val,
-                                 CheckStringResult crs,
-                                 boolean emptyOk,
-                                 boolean debug) {
+  public static void checkString(final String id,
+                                 final String val,
+                                 final CheckStringResult crs,
+                                 final boolean emptyOk,
+                                 final boolean debug) {
     tidyString(id, val, crs, /*tagUntagged,*/ debug);
 
     if ((crs.tidyState == xmlOk) &&
@@ -279,12 +277,12 @@ public final class XmlUtil implements Serializable {
    * @param strVal
    * @return
    */
-  private static String strip(String strVal) {
+  private static String strip(final String strVal) {
     StringBuffer val = new StringBuffer(strVal);
 
     int i = 0;
     while (i < val.length()) {
-      if ((int)val.charAt(i) == 13) {
+      if (val.charAt(i) == 13) {
         val.deleteCharAt(i);
       } else {
         i++;
@@ -365,9 +363,9 @@ public final class XmlUtil implements Serializable {
    * @return String    tidied result.
    * @throws Exception When tidying fails.
    */
-  public static String tidyXML(String id,
-                               String val,
-                               PrintWriter err) throws Exception {
+  public static String tidyXML(final String id,
+                               final String val,
+                               final PrintWriter err) throws Exception {
     if (val == null) {
       return null;
     }
@@ -427,7 +425,7 @@ public final class XmlUtil implements Serializable {
 
       String res = out.toString();
 
-      if ((res.length() == 1) && ((int)res.charAt(0) == 10)) {
+      if ((res.length() == 1) && (res.charAt(0) == 10)) {
         err.println("Tidy for " + id + " results in empty string");
         res = null;
       }
@@ -520,7 +518,7 @@ public final class XmlUtil implements Serializable {
    * @return String     node value or null
    * @throws SAXException
    */
-  public static String getOneNodeVal(Node el, String name)
+  public static String getOneNodeVal(final Node el, final String name)
       throws SAXException {
     /* We expect one child of type text */
 
@@ -545,7 +543,7 @@ public final class XmlUtil implements Serializable {
    * @return String     node value or null
    * @throws SAXException
    */
-  public static String getOneNodeVal(Node el) throws SAXException {
+  public static String getOneNodeVal(final Node el) throws SAXException {
     return getOneNodeVal(el, el.getNodeName());
   }
 
@@ -557,7 +555,7 @@ public final class XmlUtil implements Serializable {
    * @return String     node value
    * @throws SAXException
    */
-  public static String getReqOneNodeVal(Node el, String name)
+  public static String getReqOneNodeVal(final Node el, final String name)
       throws SAXException {
     String str = getOneNodeVal(el, name);
 
@@ -575,7 +573,7 @@ public final class XmlUtil implements Serializable {
    * @return String     node value
    * @throws SAXException
    */
-  public static String getReqOneNodeVal(Node el) throws SAXException {
+  public static String getReqOneNodeVal(final Node el) throws SAXException {
     return getReqOneNodeVal(el, el.getNodeName());
   }
 
@@ -586,7 +584,7 @@ public final class XmlUtil implements Serializable {
    * @return String     attribute value or null
    * @throws SAXException
    */
-  public static String getAttrVal(Element el, String name)
+  public static String getAttrVal(final Element el, final String name)
       throws SAXException {
     Attr at = el.getAttributeNode(name);
     if (at == null) {
@@ -603,7 +601,7 @@ public final class XmlUtil implements Serializable {
    * @return String     attribute value
    * @throws SAXException
    */
-  public static String getReqAttrVal(Element el, String name)
+  public static String getReqAttrVal(final Element el, final String name)
       throws SAXException {
     String str = getAttrVal(el, name);
 
@@ -620,7 +618,7 @@ public final class XmlUtil implements Serializable {
    * @param name        String name of desired attribute
    * @return String     attribute value or null
    */
-  public static String getAttrVal(NamedNodeMap nnm, String name) {
+  public static String getAttrVal(final NamedNodeMap nnm, final String name) {
     Node nmAttr = nnm.getNamedItem(name);
 
     if ((nmAttr == null) || (absent(nmAttr.getNodeValue()))) {
@@ -638,7 +636,7 @@ public final class XmlUtil implements Serializable {
    * @return Boolean    attribute value or null
    * @throws SAXException
    */
-  public static Boolean getYesNoAttrVal(NamedNodeMap nnm, String name)
+  public static Boolean getYesNoAttrVal(final NamedNodeMap nnm, final String name)
       throws SAXException {
     String val = getAttrVal(nnm, name);
 
@@ -657,7 +655,7 @@ public final class XmlUtil implements Serializable {
    * @param nd
    * @return int number of attributes
    */
-  public static int numAttrs(Node nd) {
+  public static int numAttrs(final Node nd) {
     NamedNodeMap nnm = nd.getAttributes();
 
     if (nnm == null) {
@@ -673,7 +671,7 @@ public final class XmlUtil implements Serializable {
    * @return Collection   element nodes. Always non-null
    * @throws SAXException
    */
-  public static Collection<Element> getElements(Node nd) throws SAXException {
+  public static Collection<Element> getElements(final Node nd) throws SAXException {
     ArrayList<Element> al = new ArrayList<Element>();
 
     NodeList children = nd.getChildNodes();
@@ -688,7 +686,8 @@ public final class XmlUtil implements Serializable {
           for (int vi= 0; vi < val.length(); vi++) {
             if (!Character.isWhitespace(val.charAt(vi))) {
               throw new SAXException("Non-whitespace text in element body for " +
-                                     nd.getLocalName());
+                                     nd.getLocalName() +
+                                     "\n text=" + val);
             }
           }
         }
@@ -714,7 +713,7 @@ public final class XmlUtil implements Serializable {
    * @return element content
    * @throws SAXException
    */
-  public static String getElementContent(Element el) throws SAXException {
+  public static String getElementContent(final Element el) throws SAXException {
     StringBuffer sb = new StringBuffer();
 
     NodeList children = el.getChildNodes();
@@ -743,7 +742,7 @@ public final class XmlUtil implements Serializable {
    * @return boolean
    * @throws SAXException
    */
-  public static boolean hasContent(Element el) throws SAXException {
+  public static boolean hasContent(final Element el) throws SAXException {
     String s = getElementContent(el);
 
     return (s != null) && (s.length() > 0);
@@ -755,7 +754,7 @@ public final class XmlUtil implements Serializable {
    * @return boolean   true for any child elements
    * @throws SAXException
    */
-  public static boolean hasChildren(Element el) throws SAXException {
+  public static boolean hasChildren(final Element el) throws SAXException {
     NodeList children = el.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
@@ -778,7 +777,7 @@ public final class XmlUtil implements Serializable {
    * @return boolean   true for empty
    * @throws SAXException
    */
-  public static boolean isEmpty(Element el) throws SAXException {
+  public static boolean isEmpty(final Element el) throws SAXException {
     return !hasChildren(el) && !hasContent(el);
   }
 
@@ -787,10 +786,10 @@ public final class XmlUtil implements Serializable {
    * @return element array from node
    * @throws SAXException
    */
-  public static Element[] getElementsArray(Node nd) throws SAXException {
+  public static Element[] getElementsArray(final Node nd) throws SAXException {
     Collection<Element> al = getElements(nd);
 
-    return (Element[])al.toArray(new Element[al.size()]);
+    return al.toArray(new Element[al.size()]);
   }
 
   /** See if node matches tag
@@ -799,7 +798,7 @@ public final class XmlUtil implements Serializable {
    * @param tag
    * @return boolean true for match
    */
-  public static boolean nodeMatches(Node nd, QName tag) {
+  public static boolean nodeMatches(final Node nd, final QName tag) {
     if (tag == null) {
       return false;
     }
@@ -834,7 +833,7 @@ public final class XmlUtil implements Serializable {
    * @return only child node
    * @throws SAXException  if not exactly one child elemnt
    */
-  public static Element getOnlyElement(Node nd) throws SAXException {
+  public static Element getOnlyElement(final Node nd) throws SAXException {
     Element[] els = getElementsArray(nd);
 
     if (els.length != 1) {
@@ -845,7 +844,7 @@ public final class XmlUtil implements Serializable {
     return els[0];
   }
 
-  private static boolean absent(String val) {
+  private static boolean absent(final String val) {
     return (val == null) || (val.length() == 0);
   }
 }
