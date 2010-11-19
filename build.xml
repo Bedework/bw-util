@@ -30,7 +30,7 @@
   <property name="buildjar" location="${build.dir}/buildjar.xml"/>
 
   <property name="project.name" value="${edu.rpi.cmt.package.name}"/>
-  <property name="project.version" value="${edu.rpi.cmt.version}"/>
+  <property name="project.version" value="${org.bedework.rpiutil.version}"/>
 
   <target name="init">
     <delete dir="${lib.dir}" />
