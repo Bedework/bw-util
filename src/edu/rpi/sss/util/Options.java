@@ -829,7 +829,7 @@ public class Options implements OptionsI {
 
             objStack.push(val);
           } catch (Throwable t) {
-            warn("Unable to instantiate class " + className);
+            info("Unable to instantiate class " + className);
             // Treat it as a non-leaf node
             //throw new OptionsException(t);
             className = null;
@@ -855,8 +855,8 @@ public class Options implements OptionsI {
     Logger.getLogger(Options.class).error(msg);
   }
 
-  private static void warn(final String msg) {
-    Logger.getLogger(Options.class).warn(msg);
+  private static void info(final String msg) {
+    Logger.getLogger(Options.class).info(msg);
   }
 
   /* We've been dealing with property names - convert the dotted notation to a path
