@@ -10,29 +10,38 @@
 
 <project name="rpiutil" default="build">
   <property environment="env"/>
-  <property name="base.name" value="rpiutil"/>
   <dirname property="project.home" file="${ant.file}"/>
+  
+  <property name="bedework.home"
+            location="${project.home}/../.." />
 
   <property file="${project.home}/build.properties" />
-  <property name="build.dir" location="${project.home}/build"/>
 
   <property name="org.bedework.libcache.dir"
             location="${project.home}/libcache"/>
 
-  <import file="${build.dir}/getJar.xml"/>
-
   <property name="source.home" location="${project.home}/src"/>
   <property name="dist.home" location="${project.home}/dist"/>
   <property name="lib.dir" location="${project.home}/lib"/>
-  <property name="libapi.dir" location="${project.home}/libapi"/>
 
-  <property name="build.dir" location="${project.home}/build"/>
+  <property name="build.dir" location="${bedework.home}/build/buildTools"/>
   <property name="buildjar" location="${build.dir}/buildjar.xml"/>
+
+  <import file="${build.dir}/getJar.xml"/>
 
   <property name="project.name" value="${edu.rpi.cmt.package.name}"/>
   <property name="project.version" value="${org.bedework.rpiutil.version}"/>
 
   <target name="init">
+    <if>
+      <not>
+        <istrue value="${org.bedework.build.silent}" />
+      </not>
+      <then>
+        <echo message="* =========== Building ${project.name}" />
+      </then>
+    </if>
+    
     <delete dir="${lib.dir}" />
     <mkdir dir="${lib.dir}" />
 
@@ -101,7 +110,6 @@
        ================================================================= -->
   <target name="clean">
     <delete dir="${dist.home}" />
-    <delete dir="${libapi.dir}" />
   </target>
 
   <!-- =================================================================
@@ -146,10 +154,6 @@
       <property name="build.jar.file"
                 location="${generated.jar.file}" />
     </ant>
-
-    <mkdir dir="${libapi.dir}" />
-
-    <copy todir="${libapi.dir}" file="${generated.jar.file}" />
   </target>
 
   <target name="build-test">

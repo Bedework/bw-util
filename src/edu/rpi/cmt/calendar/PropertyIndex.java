@@ -534,7 +534,7 @@ public class PropertyIndex implements Serializable {
            IS_SINGLE, alarmOnly),
 
     /** */
-    TRIGGER("TRIGGER", DataType.SPECIAL,
+    TRIGGER("TRIGGER", DataType.DURATION,
             IS_SINGLE, alarmOnly),
 
     /* -------------- Non-ical ---------------- */
