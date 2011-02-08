@@ -125,46 +125,46 @@ public class PropertyIndex implements Serializable {
   /** */
   public static enum DataType {
     /** */
-    BINARY(XcalTags.binary),
+    BINARY(XcalTags.binaryVal),
 
     /** */
-    BOOLEAN(XcalTags._boolean),
+    BOOLEAN(XcalTags.booleanVal),
 
     /** */
-    CUA(XcalTags.calAddress),
+    CUA(XcalTags.calAddressVal),
 
     /** */
-    DATE(XcalTags.date),
+    DATE(XcalTags.dateVal),
 
     /** */
-    DATE_TIME(XcalTags.dateTime),
+    DATE_TIME(XcalTags.dateTimeVal),
 
     /** */
     DURATION(XcalTags.duration),
 
     /** */
-    FLOAT(XcalTags._float),
+    FLOAT(XcalTags.floatVal),
 
     /** */
-    INTEGER(XcalTags.integer),
+    INTEGER(XcalTags.integerVal),
 
     /** */
-    PERIOD(XcalTags.period),
+    PERIOD(XcalTags.periodVal),
 
     /** */
-    RECUR(XcalTags.recur),
+    RECUR(XcalTags.recurVal),
 
     /** */
-    TEXT(XcalTags.text),
+    TEXT(XcalTags.textVal),
 
     /** */
-    TIME(XcalTags.time),
+    TIME(XcalTags.timeVal),
 
     /** */
-    URI(XcalTags.uri),
+    URI(XcalTags.uriVal),
 
     /** */
-    UTC_OFFSET(XcalTags.utcOffset),
+    UTC_OFFSET(XcalTags.utcOffsetVal),
 
     /** More work */
     SPECIAL(null),
