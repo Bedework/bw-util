@@ -79,8 +79,7 @@ public class Options implements OptionsI {
   public void init(final String globalPrefix,
                    final String appPrefix,
                    final String optionsFile,
-                   final String outerTagName,
-                   final boolean debug) throws OptionsException {
+                   final String outerTagName) throws OptionsException {
     this.globalPrefix = globalPrefix;
     this.appPrefix = appPrefix;
     this.optionsFile = optionsFile;

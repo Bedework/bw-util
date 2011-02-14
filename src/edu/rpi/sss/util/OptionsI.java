@@ -78,14 +78,12 @@ public interface OptionsI extends Serializable {
    * @param appPrefix
    * @param optionsFile - path to file e.g. /properties/calendar/options.xml
    * @param outerTagName - surrounding tag in options file e.g. bedework-options
-   * @param debug
    * @throws OptionsException
    */
   public void init(String globalPrefix,
                    String appPrefix,
                    String optionsFile,
-                   String outerTagName,
-                   boolean debug) throws OptionsException;
+                   String outerTagName) throws OptionsException;
 
   /** Just a restatement of the xml element
    *
@@ -117,7 +115,7 @@ public interface OptionsI extends Serializable {
      *
      * @param val OptionElement
      */
-    public void addChild(OptionElement val) {
+    public void addChild(final OptionElement val) {
       getChildren().add(val);
     }
   }

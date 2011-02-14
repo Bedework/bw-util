@@ -39,15 +39,13 @@ public class OptionsFactory {
    * @param appPrefix
    * @param optionsFile - path to file e.g. /properties/calendar/options.xml
    * @param outerTagName - surrounding tag in options file e.g. bedework-options
-   * @param debug
    * @return CalOptionsI
   * @throws OptionsException
   */
-  public static OptionsI getOptions(String globalPrefix,
-                                    String appPrefix,
-                                    String optionsFile,
-                                    String outerTagName,
-                                    boolean debug) throws OptionsException {
+  public static OptionsI getOptions(final String globalPrefix,
+                                    final String appPrefix,
+                                    final String optionsFile,
+                                    final String outerTagName) throws OptionsException {
     try {
       Object o = Class.forName(envclass).newInstance();
 
@@ -63,7 +61,7 @@ public class OptionsFactory {
 
       OptionsI options = (OptionsI)o;
 
-      options.init(globalPrefix, appPrefix, optionsFile, outerTagName, debug);
+      options.init(globalPrefix, appPrefix, optionsFile, outerTagName);
 
       return options;
     } catch (OptionsException ce) {
@@ -79,18 +77,16 @@ public class OptionsFactory {
    * @param appPrefix
    * @param outerTagName
    * @param is
-   * @param debug
    * @return CalOptions
    * @throws OptionsException
    */
-  public static Options fromStream(String globalPrefix,
-                                   String appPrefix,
-                                   String outerTagName,
-                                   InputStream is,
-                                   boolean debug) throws OptionsException {
+  public static Options fromStream(final String globalPrefix,
+                                   final String appPrefix,
+                                   final String outerTagName,
+                                   final InputStream is) throws OptionsException {
     Options opts = new Options();
 
-    opts.init(globalPrefix, appPrefix, null, outerTagName, debug);
+    opts.init(globalPrefix, appPrefix, null, outerTagName);
 
     opts.initFromStream(is);
 
