@@ -25,6 +25,7 @@
 */
 package edu.rpi.cct.misc.indexing;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -45,7 +46,6 @@ import org.apache.lucene.store.Directory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.apache.log4j.Logger;
 
 /** This class implements indexing using Lucene.
  * There is an abstract method to create a Lucene Document from an object.
@@ -108,7 +108,7 @@ public abstract class IndexLuceneImpl implements Index {
      * @param name
      * @param tokenized
      */
-    public FieldInfo(String name, boolean tokenized) {
+    public FieldInfo(final String name, final boolean tokenized) {
       this(name, false, tokenized, 1);
     }
 
@@ -118,7 +118,7 @@ public abstract class IndexLuceneImpl implements Index {
      * @param tokenized
      * @param boost
      */
-    public FieldInfo(String name, boolean tokenized, float boost) {
+    public FieldInfo(final String name, final boolean tokenized, final float boost) {
       this(name, false, tokenized, boost);
     }
 
@@ -129,8 +129,8 @@ public abstract class IndexLuceneImpl implements Index {
      * @param tokenized
      * @param boost
      */
-    public FieldInfo(String name, boolean store,
-                     boolean tokenized, float boost) {
+    public FieldInfo(final String name, final boolean store,
+                     final boolean tokenized, final float boost) {
       this.name = name;
       this.store = store;
       this.tokenized = tokenized;
@@ -149,7 +149,7 @@ public abstract class IndexLuceneImpl implements Index {
       }
     }
 
-    Field makeField(String val) {
+    Field makeField(final String val) {
       Field f = new Field(name, val, howStore, howIndexed);
       f.setBoost(boost);
 
@@ -169,14 +169,12 @@ public abstract class IndexLuceneImpl implements Index {
    * @param basePath    String path to where we should read/write indexes
    * @param defaultFieldName  default name for searches
    * @param writeable   true if the caller can update the index
-   * @param debug       true if we want to see what's going on
    * @throws IndexException
    */
-  public IndexLuceneImpl(String basePath,
-                         String defaultFieldName,
-                         boolean writeable,
-                         boolean debug) throws IndexException {
-    this(basePath, defaultFieldName, writeable, null, debug);
+  public IndexLuceneImpl(final String basePath,
+                         final String defaultFieldName,
+                         final boolean writeable) throws IndexException {
+    this(basePath, defaultFieldName, writeable, null);
   }
 
   /** Create an indexer with the given set of stop words.
@@ -185,15 +183,13 @@ public abstract class IndexLuceneImpl implements Index {
    * @param defaultFieldName  default name for searches
    * @param writeable   true if the caller can update the index
    * @param stopWords   set of stop words, null for default.
-   * @param debug       true if we want to see what's going on
    * @throws IndexException
    */
-  public IndexLuceneImpl(String basePath,
-                         String defaultFieldName,
-                         boolean writeable,
-                         String[] stopWords,
-                         boolean debug) throws IndexException {
-    setDebug(debug);
+  public IndexLuceneImpl(final String basePath,
+                         final String defaultFieldName,
+                         final boolean writeable,
+                         final String[] stopWords) throws IndexException {
+    setDebug(getLog().isDebugEnabled());
     this.writeable = writeable;
     this.basePath = basePath;
     this.defaultFieldName = defaultFieldName;
@@ -211,7 +207,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param val
    */
-  public void setCleanLocks(boolean val) {
+  public void setCleanLocks(final boolean val) {
     cleanLocks = val;
   }
 
@@ -265,7 +261,7 @@ public abstract class IndexLuceneImpl implements Index {
    */
   public abstract String[] getTermNames();
 
-  public void setDebug(boolean val) {
+  public void setDebug(final boolean val) {
     debug = val;
   }
 
@@ -348,7 +344,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   rec      The record to index
    */
-  public void indexRec(Object rec) throws IndexException {
+  public void indexRec(final Object rec) throws IndexException {
     unindexRec(rec);
     intIndexRec(rec);
     closeWtr();
@@ -358,7 +354,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   rec      The record to unindex
    */
-  public void unindexRec(Object rec) throws IndexException {
+  public void unindexRec(final Object rec) throws IndexException {
     try {
       checkOpen();
       closeWtr();
@@ -380,7 +376,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   recs     The records to index
    */
-  public void indexRecs(Object[] recs) throws IndexException {
+  public void indexRecs(final Object[] recs) throws IndexException {
     if (recs == null) {
       return;
     }
@@ -404,7 +400,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   recs     The records to index
    */
-  public void indexNewRecs(Object[] recs) throws IndexException {
+  public void indexNewRecs(final Object[] recs) throws IndexException {
     if (recs == null) {
       return;
     }
@@ -426,7 +422,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   recs      The records to unindex
    */
-  public void unindexRecs(Object[] recs) throws IndexException {
+  public void unindexRecs(final Object[] recs) throws IndexException {
     if (recs == null) {
       return;
     }
@@ -454,7 +450,7 @@ public abstract class IndexLuceneImpl implements Index {
    * @return  int      Number found. 0 means none found,
    *                                -1 means indeterminate
    */
-  public int search(String query) throws IndexException {
+  public int search(final String query) throws IndexException {
     return search(query, null);
   }
 
@@ -468,7 +464,7 @@ public abstract class IndexLuceneImpl implements Index {
    *                                -1 means indeterminate
    * @throws IndexException
    */
-  public int search(String query, Filter filter) throws IndexException {
+  public int search(final String query, final Filter filter) throws IndexException {
 
     checkOpen();
 
@@ -522,7 +518,7 @@ public abstract class IndexLuceneImpl implements Index {
    * @param   keys     Array for the record keys
    * @return  int      Actual number of records
    */
-  public int retrieve(int n, Index.Key[] keys) throws IndexException {
+  public int retrieve(final int n, final Index.Key[] keys) throws IndexException {
     checkOpen();
 
     if ((lastResult == null) ||
@@ -725,7 +721,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   rec      The record to unindex
    */
-  private boolean intUnindexRec(Object rec) throws IndexException {
+  private boolean intUnindexRec(final Object rec) throws IndexException {
     try {
       Term t = makeKeyTerm(rec);
 
@@ -759,7 +755,7 @@ public abstract class IndexLuceneImpl implements Index {
    *
    * @param   rec      The record to index
    */
-  private void intIndexRec(Object rec) throws IndexException {
+  private void intIndexRec(final Object rec) throws IndexException {
     Document doc = new Document();
 
     addFields(doc, rec);
@@ -789,7 +785,7 @@ public abstract class IndexLuceneImpl implements Index {
    * @param   os       Object array
    * @throws IndexException
    */
-  protected void addField(Document doc, FieldInfo fld, Object[] os)
+  protected void addField(final Document doc, final FieldInfo fld, final Object[] os)
       throws IndexException {
     if (os == null) {
       return;
@@ -809,7 +805,7 @@ public abstract class IndexLuceneImpl implements Index {
    * @param   val      The value
    * @throws IndexException
    */
-  protected void addField(Document doc, FieldInfo fld, Object val)
+  protected void addField(final Document doc, final FieldInfo fld, final Object val)
       throws IndexException {
     if (val == null) {
       return;
@@ -826,19 +822,19 @@ public abstract class IndexLuceneImpl implements Index {
     return log;
   }
 
-  protected void error(Throwable e) {
+  protected void error(final Throwable e) {
     getLog().error(this, e);
   }
 
-  protected void error(String msg) {
+  protected void error(final String msg) {
     getLog().error(msg);
   }
 
-  protected void info(String msg) {
+  protected void info(final String msg) {
     getLog().info(msg);
   }
 
-  protected void trace(String msg) {
+  protected void trace(final String msg) {
     getLog().debug(msg);
   }
 }
