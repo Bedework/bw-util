@@ -61,6 +61,10 @@ public class BedeworkServerTags {
                                                          "maxWebCalPeriod");
 
   /**   */
+  public static final QName maxAttendees = new QName(bedeworkCaldavNamespace,
+                                                     "maxAttendees");
+
+  /**   */
   public static final QName adminContact = new QName(bedeworkCaldavNamespace,
                                                      "admin-contact");
 }
