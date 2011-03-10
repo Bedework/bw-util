@@ -19,6 +19,7 @@
 package edu.rpi.sss.util;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -674,5 +675,18 @@ public class Util {
     }
 
     return sb.toString();
+  }
+
+  /** Test for a valid URI and return the URI object.
+   *
+   * @param val
+   * @return null for invalid or a URI object
+   */
+  public static URI validURI(final String val) {
+    try {
+      return new URI(val);
+    } catch (Throwable t) {
+      return null;
+    }
   }
 }
