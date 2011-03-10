@@ -30,6 +30,20 @@
   <target name="init">
     <projectInit/>
 
+    <property name="org.bedework.rpiutil.base" location="${project.home}" />
+    <property name="org.bedework.rpiutiltests.base" location="${project.home}/tests" />
+
+    <property name="generated.jar.file"
+              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-${project.version}.jar" />
+
+    <property name="test.jar.file"
+              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-test-${project.version}.jar" />
+  </target>
+  
+  <target name="build-init" depends="init">
+    <!-- Make sure bwxml is built -->
+    <ant antfile="${bedework.home}/../bwxml/build.xml" inheritall="false" />
+
     <getJar name="commons-codec" version="1.3" />
     <getJar name="commons-httpclient" version="3.0" />
     <getJar name="derby" version="10.5.3.0" />
@@ -46,22 +60,17 @@
     <getJar name="servletapi" version="2.4" />
     <getJar name="struts" version="1.2.9" />
 
-    <property name="org.bedework.rpiutil.base" location="${project.home}" />
-    <property name="org.bedework.rpiutiltests.base" location="${project.home}/tests" />
-
-    <property name="generated.jar.file"
-              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-${project.version}.jar" />
-
-    <property name="test.jar.file"
-              location="${dist.home}/${edu.rpi.cmt.rpiutil.jar}-test-${project.version}.jar" />
+    <getJar name="bw-icalschema" 
+            version="${org.bedework.bwxml.version}" project="bwxml" 
+            projecthome="${bedework.home}/../bwxml" />
   </target>
 
-  <target name="build-source">
+  <target name="build-source" depends="build-init">
     <build-jar module-base="${org.bedework.rpiutil.base}" 
                jar-file="${generated.jar.file}" />
   </target>
 
-  <target name="build-test">
+  <target name="build-test" depends="build-init">
     <build-jar module-base="${org.bedework.rpiutiltests.base}" 
                jar-file="${test.jar.file}" />
   </target>
