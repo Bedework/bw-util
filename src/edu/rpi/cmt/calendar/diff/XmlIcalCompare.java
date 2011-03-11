@@ -286,6 +286,7 @@ public class XmlIcalCompare {
     XpathUpdate upd = new XpathUpdate();
 
     upd.xpath = sb.toString();
+    upd.name = be.getName();
     upd.add = be.getAdd();
     upd.delete = be.getDelete();
 
