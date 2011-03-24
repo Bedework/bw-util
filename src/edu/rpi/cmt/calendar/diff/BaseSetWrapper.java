@@ -28,6 +28,10 @@ import javax.xml.namespace.QName;
 /** This class wraps an array of components.
  *
  * @author Mike Douglass
+ *
+ * @param <T>
+ * @param <ParentT>
+ * @param <ListT>
  */
 abstract class BaseSetWrapper<T extends BaseWrapper,
                               ParentT extends BaseWrapper, ListT>
