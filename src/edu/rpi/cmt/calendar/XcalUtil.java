@@ -25,7 +25,7 @@ import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
 import ietf.params.xml.ns.icalendar_2.Icalendar;
-import ietf.params.xml.ns.icalendar_2.VcalendarType;
+import ietf.params.xml.ns.icalendar_2.Vcalendar;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -42,7 +42,7 @@ public class XcalUtil {
    */
   public static BaseComponentType findComponent(final Icalendar ical,
                                                 final QName name) {
-    for (VcalendarType v: ical.getVcalendars()) {
+    for (Vcalendar v: ical.getVcalendars()) {
       if (name.equals(XcalTags.vcalendar)) {
         return v;
       }
@@ -91,7 +91,7 @@ public class XcalUtil {
       return null;
     }
 
-    for (VcalendarType v: ical.getVcalendars()) {
+    for (Vcalendar v: ical.getVcalendars()) {
       ArrayOfComponents cs = v.getComponents();
       if (cs == null) {
         continue;

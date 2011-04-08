@@ -25,7 +25,7 @@ import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.DaylightType;
 import ietf.params.xml.ns.icalendar_2.StandardType;
 import ietf.params.xml.ns.icalendar_2.ValarmType;
-import ietf.params.xml.ns.icalendar_2.VcalendarType;
+import ietf.params.xml.ns.icalendar_2.Vcalendar;
 import ietf.params.xml.ns.icalendar_2.VeventType;
 import ietf.params.xml.ns.icalendar_2.VfreebusyType;
 import ietf.params.xml.ns.icalendar_2.VjournalType;
@@ -64,7 +64,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     // Outer container
     addInfo(XcalTags.vcalendar,
             OuterKind,
-            VcalendarType.class);
+            Vcalendar.class);
 
     // Recurring style uid + optional recurrence id
     addInfo(XcalTags.vtodo,
