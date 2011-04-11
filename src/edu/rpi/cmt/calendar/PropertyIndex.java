@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,69 +39,81 @@ public class PropertyIndex implements Serializable {
     private boolean freeBusyProperty;
     private boolean timezoneProperty;
     private boolean alarmProperty;
+    private boolean vavailabilityProperty;
+    private boolean availableProperty;
 
     ComponentFlags(final boolean eventProperty,
                    final boolean todoProperty,
                    final boolean journalProperty,
                    final boolean freeBusyProperty,
                    final boolean timezoneProperty,
-                   final boolean alarmProperty) {
+                   final boolean alarmProperty,
+                   final boolean vavailabilityProperty,
+                   final boolean availableProperty) {
       this.eventProperty = eventProperty;
       this.todoProperty = todoProperty;
       this.journalProperty = journalProperty;
       this.freeBusyProperty = freeBusyProperty;
       this.timezoneProperty = timezoneProperty;
       this.alarmProperty = alarmProperty;
+      this.vavailabilityProperty = vavailabilityProperty;
+      this.availableProperty = availableProperty;
     }
   }
 
   static final ComponentFlags noComponent =
-     new ComponentFlags(false, false, false, false, false, false);
+     new ComponentFlags(false, false, false, false, false, false, false, false);
 
   static final ComponentFlags eventOnly =
-     new ComponentFlags(true, false, false, false, false, false);
+     new ComponentFlags(true, false, false, false, false, false, false, false);
 
   static final ComponentFlags todoOnly =
-     new ComponentFlags(false, true, false, false, false, false);
+     new ComponentFlags(false, true, false, false, false, false, false, false);
 
   static final ComponentFlags freebusyOnly =
-     new ComponentFlags(false, false, false, true, false, false);
+     new ComponentFlags(false, false, false, true, false, false, false, false);
 
   static final ComponentFlags timezoneOnly =
-     new ComponentFlags(false, false, false, false, true, false);
+     new ComponentFlags(false, false, false, false, true, false, false, false);
 
   static final ComponentFlags alarmOnly =
-     new ComponentFlags(false, false, false, false, false, true);
+     new ComponentFlags(false, false, false, false, false, true, false, false);
+
+  static final ComponentFlags vavailabilityOnly =
+     new ComponentFlags(false, false, false, false, false, false, true, false);
+
+  static final ComponentFlags availableOnly =
+    new ComponentFlags(false, false, false, false, false, false, false, true);
 
   static final ComponentFlags event_Todo =
-     new ComponentFlags(true, true, false, false, false, false);
+     new ComponentFlags(true, true, false, false, false, false, false, false);
 
   static final ComponentFlags event_Todo_Journal =
-     new ComponentFlags(true, true, true, false, false, false);
+     new ComponentFlags(true, true, true, false, false, false, false, false);
 
   static final ComponentFlags event_Todo_Freebusy =
-     new ComponentFlags(true, true, false, true, false, false);
+     new ComponentFlags(true, true, false, true, false, false, false, false);
 
   static final ComponentFlags event_Freebusy =
-     new ComponentFlags(true, false, false, true, false, false);
+     new ComponentFlags(true, false, false, true, false, false, false, false);
 
   static final ComponentFlags event_Todo_Journal_Freebusy =
-     new ComponentFlags(true, true, true, true, false, false);
+     new ComponentFlags(true, true, true, true, false, false, false, false);
 
   static final ComponentFlags event_Todo_Journal_Timezone =
-     new ComponentFlags(true, true, true, false, true, false);
+     new ComponentFlags(true, true, true, false, true, false, false, false);
 
   static final ComponentFlags event_Todo_Journal_Alarm =
-     new ComponentFlags(true, true, true, false, false, true);
+     new ComponentFlags(true, true, true, false, false, true, false, false);
 
   static final ComponentFlags notTimezone =
-     new ComponentFlags(true, true, true, true, false, true);
+     new ComponentFlags(true, true, true, true, false, true, false, false);
 
   static final ComponentFlags notAlarm =
-     new ComponentFlags(true, true, true, true, true, false);
+     new ComponentFlags(true, true, true, true, true, false, false, false);
 
   static final ComponentFlags allComponents =
-     new ComponentFlags(true, true, true, true, true, true);
+     new ComponentFlags(true, true, true, true, true, true, false, false);
 
   private static boolean IS_MULTI = true;
 
@@ -502,6 +514,9 @@ public class PropertyIndex implements Serializable {
              IS_SINGLE, freebusyOnly),
 
     /** */
+    BUSYTYPE("BUSYTYPE", IS_SINGLE, vavailabilityOnly),
+
+    /** */
     TZID("TZID", IS_SINGLE, timezoneOnly),
 
     /** */
@@ -741,6 +756,22 @@ public class PropertyIndex implements Serializable {
      */
     public boolean getAlarmProperty() {
       return components.alarmProperty;
+    }
+
+    /** True if it's a vavailability property
+     *
+     * @return boolean
+     */
+    public boolean getVavailabilityProperty() {
+      return components.vavailabilityProperty;
+    }
+
+    /** True if it's an available property
+     *
+     * @return boolean
+     */
+    public boolean getAvailableProperty() {
+      return components.availableProperty;
     }
 
     /** get the index given the property name
