@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.calendar;
 
+import edu.rpi.sss.util.xml.tagdefs.BedeworkServerTags;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import java.io.Serializable;
@@ -373,229 +374,246 @@ public class PropertyIndex implements Serializable {
   /** */
   public static enum PropertyInfoIndex {
     /** */
-    UNKNOWN_PROPERTY(null, IS_SINGLE, noComponent),
+    UNKNOWN_PROPERTY(null, null, IS_SINGLE, noComponent),
 
     /** */
-    CLASS("CLASS", IS_SINGLE, event_Todo_Journal),
+    CLASS(XcalTags._class, "CLASS", IS_SINGLE, event_Todo_Journal),
 
     /** */
-    CREATED("CREATED", DataType.DATE_TIME,
+    CREATED(XcalTags.created, "CREATED", DataType.DATE_TIME,
             IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    DESCRIPTION("DESCRIPTION", IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
+    DESCRIPTION(XcalTags.description, "DESCRIPTION",
+                IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    DTSTAMP("DTSTAMP", DataType.DATE_TIME,
+    DTSTAMP(XcalTags.dtstamp, "DTSTAMP", DataType.DATE_TIME,
             IS_SINGLE, event_Todo_Journal_Freebusy,
             NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
-    DTSTART("DTSTART", DataType.DATE_TIME,
+    DTSTART(XcalTags.dtstart, "DTSTART", DataType.DATE_TIME,
             IS_SINGLE, notAlarm),
 
     /** */
-    DURATION("DURATION", DataType.DURATION,
+    DURATION(XcalTags.duration, "DURATION", DataType.DURATION,
              IS_SINGLE, event_Todo_Freebusy),
 
     /** */
-    GEO("GEO", IS_SINGLE, event_Todo),
+    GEO(XcalTags.geo, "GEO", IS_SINGLE, event_Todo),
 
     /** */
-    LAST_MODIFIED("LAST-MODIFIED", DataType.DATE_TIME,
+    LAST_MODIFIED(XcalTags.lastModified, "LAST-MODIFIED", DataType.DATE_TIME,
                   IS_SINGLE, event_Todo_Journal_Timezone,
                   NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
-    LOCATION("LOCATION", IS_SINGLE, event_Todo),
+    LOCATION(XcalTags.location, "LOCATION", IS_SINGLE, event_Todo),
 
     /** */
-    ORGANIZER("ORGANIZER", DataType.CUA,
+    ORGANIZER(XcalTags.organizer, "ORGANIZER", DataType.CUA,
               IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    PRIORITY("PRIORITY", DataType.INTEGER,
+    PRIORITY(XcalTags.priority, "PRIORITY", DataType.INTEGER,
              IS_SINGLE, event_Todo),
 
     /** */
-    RECURRENCE_ID("RECURRENCE-ID", DataType.DATE_TIME,
+    RECURRENCE_ID(XcalTags.recurrenceId, "RECURRENCE-ID", DataType.DATE_TIME,
                   IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    SEQUENCE("SEQUENCE", DataType.INTEGER,
+    SEQUENCE(XcalTags.sequence, "SEQUENCE", DataType.INTEGER,
              IS_SINGLE, event_Todo_Journal,
              NOT_PARAM, NOT_IMMUTABLE),
 
     /** */
-    STATUS("STATUS", IS_SINGLE, event_Todo_Journal),
+    STATUS(XcalTags.status, "STATUS", IS_SINGLE, event_Todo_Journal),
 
     /** */
-    SUMMARY("SUMMARY", IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
+    SUMMARY(XcalTags.summary, "SUMMARY", IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    UID("UID", IS_SINGLE, event_Todo_Journal_Freebusy),
+    UID(XcalTags.uid, "UID", IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** */
-    URL("URL", DataType.URI,
+    URL(XcalTags.url, "URL", DataType.URI,
         IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /* Event only */
 
     /** */
-    DTEND("DTEND", DataType.DATE_TIME,
+    DTEND(XcalTags.dtend, "DTEND", DataType.DATE_TIME,
           IS_SINGLE, event_Freebusy),
 
     /** */
-    TRANSP("TRANSP", IS_SINGLE, eventOnly),
+    TRANSP(XcalTags.transp, "TRANSP", IS_SINGLE, eventOnly),
 
     /* Todo only */
 
     /** */
-    COMPLETED("COMPLETED", DataType.DATE_TIME,
+    COMPLETED(XcalTags.completed, "COMPLETED", DataType.DATE_TIME,
               IS_SINGLE, todoOnly),
 
     /** */
-    DUE("DUE", DataType.DATE_TIME,
+    DUE(XcalTags.due, "DUE", DataType.DATE_TIME,
         IS_SINGLE, todoOnly),
 
     /** */
-    PERCENT_COMPLETE("PERCENT-COMPLETE", IS_SINGLE, todoOnly),
+    PERCENT_COMPLETE(XcalTags.percentComplete, "PERCENT-COMPLETE",
+                     IS_SINGLE, todoOnly),
 
     /* ---------------------------- Multi valued --------------- */
 
     /* Event and Todo */
 
     /** */
-    ATTACH("ATTACH", DataType.SPECIAL,
+    ATTACH(XcalTags.attach, "ATTACH", DataType.SPECIAL,
            IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    ATTENDEE("ATTENDEE", DataType.CUA,
+    ATTENDEE(XcalTags.attendee, "ATTENDEE", DataType.CUA,
              IS_MULTI, notTimezone),
 
     /** */
-    CATEGORIES("CATEGORIES", IS_MULTI, event_Todo_Journal_Alarm),
+    CATEGORIES(XcalTags.categories, "CATEGORIES",
+               IS_MULTI, event_Todo_Journal_Alarm),
 
     /** */
-    COMMENT("COMMENT", IS_MULTI, notAlarm),
+    COMMENT(XcalTags.comment, "COMMENT",
+            IS_MULTI, notAlarm),
 
     /** */
-    CONTACT("CONTACT", IS_MULTI, event_Todo_Journal_Freebusy),
+    CONTACT(XcalTags.contact, "CONTACT",
+            IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** */
-    EXDATE("EXDATE", DataType.DATE_TIME,
+    EXDATE(XcalTags.exdate, "EXDATE", DataType.DATE_TIME,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    EXRULE("EXRULE", DataType.RECUR,
+    EXRULE(XcalTags.exrule, "EXRULE", DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    REQUEST_STATUS("REQUEST-STATUS", IS_MULTI, event_Todo_Journal_Freebusy),
+    REQUEST_STATUS(XcalTags.requestStatus, "REQUEST-STATUS",
+                   IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** */
-    RELATED_TO("RELATED-TO", IS_MULTI, event_Todo_Journal),
+    RELATED_TO(XcalTags.relatedTo, "RELATED-TO", IS_MULTI, event_Todo_Journal),
 
     /** */
-    RESOURCES("RESOURCES", IS_MULTI, event_Todo),
+    RESOURCES(XcalTags.resources, "RESOURCES", IS_MULTI, event_Todo),
 
     /** */
-    RDATE("RDATE", DataType.DATE_TIME,
+    RDATE(XcalTags.rdate, "RDATE", DataType.DATE_TIME,
           IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    RRULE ("RRULE", DataType.RECUR,
+    RRULE (XcalTags.rrule, "RRULE", DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /* -------------- Other non-event, non-todo ---------------- */
 
     /** */
-    FREEBUSY("FREEBUSY", DataType.PERIOD,
+    FREEBUSY(XcalTags.freebusy, "FREEBUSY", DataType.PERIOD,
              IS_SINGLE, freebusyOnly),
 
     /** */
-    BUSYTYPE("BUSYTYPE", IS_SINGLE, vavailabilityOnly),
+    BUSYTYPE(XcalTags.busytype, "BUSYTYPE", IS_SINGLE, vavailabilityOnly),
 
     /** */
-    TZID("TZID", IS_SINGLE, timezoneOnly),
+    TZID(XcalTags.tzid, "TZID", IS_SINGLE, timezoneOnly),
 
     /** */
-    TZNAME("TZNAME", IS_SINGLE, timezoneOnly),
+    TZNAME(XcalTags.tzname, "TZNAME", IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETFROM("TZOFFSETFROM", DataType.UTC_OFFSET,
+    TZOFFSETFROM(XcalTags.tzoffsetfrom, "TZOFFSETFROM", DataType.UTC_OFFSET,
                  IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETTO("TZOFFSETTO", DataType.UTC_OFFSET,
+    TZOFFSETTO(XcalTags.tzoffsetto, "TZOFFSETTO", DataType.UTC_OFFSET,
                IS_SINGLE, timezoneOnly),
 
     /** */
-    TZURL("TZURL", DataType.URI,
+    TZURL(XcalTags.tzurl, "TZURL", DataType.URI,
           IS_SINGLE, timezoneOnly),
 
     /** */
-    ACTION("ACTION", IS_SINGLE, alarmOnly),
+    ACTION(XcalTags.action, "ACTION", IS_SINGLE, alarmOnly),
 
     /** */
-    REPEAT("REPEAT", DataType.INTEGER,
+    REPEAT(XcalTags.repeat, "REPEAT", DataType.INTEGER,
            IS_SINGLE, alarmOnly),
 
     /** */
-    TRIGGER("TRIGGER", DataType.DURATION,
+    TRIGGER(XcalTags.trigger, "TRIGGER", DataType.DURATION,
             IS_SINGLE, alarmOnly),
 
     /* -------------- Non-ical ---------------- */
 
     /** non ical */
-    CREATOR("CREATOR", DataType.HREF, IS_SINGLE, event_Todo_Journal,
+    CREATOR(BedeworkServerTags.creator, "CREATOR", DataType.HREF,
+            IS_SINGLE, event_Todo_Journal,
             NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    OWNER("OWNER", DataType.HREF, IS_SINGLE, event_Todo_Journal,
+    OWNER(BedeworkServerTags.owner, "OWNER", DataType.HREF,
+          IS_SINGLE, event_Todo_Journal,
           NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    END_TYPE("END-TYPE", IS_SINGLE, event_Todo_Journal),
+    END_TYPE(BedeworkServerTags.endType, "END-TYPE",
+             IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
-    COST("COST", IS_SINGLE, event_Todo),
+    COST(BedeworkServerTags.cost, "COST",
+         IS_SINGLE, event_Todo),
 
     /** non ical */
-    CTAG("CTAG", DataType.TEXT, IS_SINGLE, noComponent,
+    CTAG(BedeworkServerTags.ctag, "CTAG", DataType.TEXT,
+         IS_SINGLE, noComponent,
          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    DELETED("DELETED", IS_SINGLE, event_Todo),
+    DELETED(BedeworkServerTags.deleted, "DELETED",
+            IS_SINGLE, event_Todo),
 
     /** non ical */
-    ETAG("ETAG", DataType.TEXT, IS_SINGLE, noComponent,
+    ETAG(BedeworkServerTags.etag, "ETAG", DataType.TEXT,
+         IS_SINGLE, noComponent,
          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    COLLECTION("COLLECTION", IS_SINGLE, event_Todo_Journal),
+    COLLECTION(BedeworkServerTags.collection, "COLLECTION",
+               IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
-    ENTITY_TYPE("ENTITY_TYPE", DataType.INTEGER,
+    ENTITY_TYPE(BedeworkServerTags.entityType, "ENTITY_TYPE", DataType.INTEGER,
                 IS_SINGLE, event_Todo_Journal,
                 NOT_PARAM, IS_IMMUTABLE),
 
     /** treat VALARM sub-component as a property */
-    VALARM("VALARM", IS_MULTI, notAlarm),
+    VALARM(XcalTags.valarm, "VALARM", IS_MULTI, notAlarm),
 
     /** treat x-properties as a single multi-valued property */
-    XPROP("XPROP", IS_MULTI, allComponents),
+    XPROP(BedeworkServerTags.xprop, "XPROP", IS_MULTI, allComponents),
 
     /** ----------------------------- Following are parameters ----------- */
 
     /** */
-    LANG("LANGUAGE", DataType.TEXT, IS_SINGLE, noComponent,
+    LANG(BedeworkServerTags.language, "LANGUAGE", DataType.TEXT,
+         IS_SINGLE, noComponent,
          IS_PARAM, NOT_IMMUTABLE),
 
     /** */
-    TZIDPAR("TZID", DataType.TEXT, IS_SINGLE, noComponent,
+    TZIDPAR(XcalTags.tzid, "TZID", DataType.TEXT, IS_SINGLE, noComponent,
             IS_PARAM, NOT_IMMUTABLE),
             ;
+
+    private QName qname;
 
     private String pname;
 
@@ -616,6 +634,9 @@ public class PropertyIndex implements Serializable {
     private static HashMap<String, PropertyInfoIndex> pnameLookup =
       new HashMap<String, PropertyInfoIndex>();
 
+    private static HashMap<QName, PropertyInfoIndex> qnameLookup =
+      new HashMap<QName, PropertyInfoIndex>();
+
     static {
       for (PropertyInfoIndex pii: values()) {
         String pname = pii.getPname();
@@ -624,42 +645,61 @@ public class PropertyIndex implements Serializable {
           pname = pname.toLowerCase();
         }
         pnameLookup.put(pname, pii);
+
+        QName qname = pii.getQname();
+
+        qnameLookup.put(qname, pii);
       }
     }
 
-    PropertyInfoIndex(final String pname, final boolean multiValued,
+    PropertyInfoIndex(final QName qname,
+                      final String pname,
+                      final boolean multiValued,
                       final ComponentFlags components) {
+      this.qname = qname;
       this.pname = pname;
       this.components = components;
       this.multiValued = multiValued;
       dbMultiValued = multiValued;
     }
 
-    PropertyInfoIndex(final String pname,
+    PropertyInfoIndex(final QName qname,
+                      final String pname,
                       final DataType ptype, final boolean multiValued,
                       final ComponentFlags components) {
-      this(pname, multiValued, components);
+      this(qname, pname, multiValued, components);
       this.ptype = ptype;
     }
 
-    PropertyInfoIndex(final String pname, final boolean multiValued,
+    PropertyInfoIndex(final QName qname,
+                      final String pname,
+                      final boolean multiValued,
                       final boolean dbMultiValued,
                       final ComponentFlags components) {
-      this(pname, DataType.TEXT, multiValued, components,
+      this(qname, pname, DataType.TEXT, multiValued, components,
            NOT_PARAM, NOT_IMMUTABLE);
       this.dbMultiValued = dbMultiValued;
     }
 
-    PropertyInfoIndex(final String pname,
+    PropertyInfoIndex(final QName qname,
+                      final String pname,
                       final DataType ptype,
                       final boolean multiValued,
                       final ComponentFlags components,
                       final boolean param,
                       final boolean immutable) {
-      this(pname, multiValued, components);
+      this(qname, pname, multiValued, components);
       this.ptype = ptype;
       this.param = param;
       this.immutable = immutable;
+    }
+
+    /** get the qname
+     *
+     * @return qname
+     */
+    public QName getQname() {
+      return qname;
     }
 
     /** get the property name
@@ -781,6 +821,15 @@ public class PropertyIndex implements Serializable {
      */
     public static PropertyInfoIndex lookupPname(final String val) {
       return pnameLookup.get(val.toLowerCase());
+    }
+
+    /** get the index given the qname
+     *
+     * @param val
+     * @return PropertyInfoIndex
+     */
+    public static PropertyInfoIndex lookupQname(final QName val) {
+      return qnameLookup.get(val);
     }
   }
 }

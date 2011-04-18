@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -60,4 +60,50 @@ public class BedeworkServerTags {
   /**   */
   public static final QName adminContact = new QName(bedeworkCaldavNamespace,
                                                      "admin-contact");
+
+  /* used for property index */
+
+  /**   */
+  public static final QName creator = new QName(bedeworkCaldavNamespace,
+                                                     "creator");
+
+  /**   */
+  public static final QName owner = new QName(bedeworkCaldavNamespace,
+                                                     "owner");
+
+  /**   */
+  public static final QName endType = new QName(bedeworkCaldavNamespace,
+                                                     "end-type");
+
+  /**   */
+  public static final QName cost = new QName(bedeworkCaldavNamespace,
+                                                     "cost");
+
+  /**   */
+  public static final QName ctag = new QName(bedeworkCaldavNamespace,
+                                                     "ctag");
+
+  /**   */
+  public static final QName deleted = new QName(bedeworkCaldavNamespace,
+                                                     "deleted");
+
+  /**   */
+  public static final QName etag = new QName(bedeworkCaldavNamespace,
+                                                     "etag");
+
+  /**   */
+  public static final QName collection = new QName(bedeworkCaldavNamespace,
+                                                     "collection");
+
+  /**   */
+  public static final QName entityType = new QName(bedeworkCaldavNamespace,
+                                                     "entity-type");
+
+  /**   */
+  public static final QName xprop = new QName(bedeworkCaldavNamespace,
+                                                     "xprop");
+
+  /**   */
+  public static final QName language = new QName(bedeworkCaldavNamespace,
+                                                     "language");
 }

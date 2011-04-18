@@ -18,8 +18,8 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
-import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
+import ietf.params.xml.ns.icalendar_2.Components;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,10 +35,10 @@ import javax.xml.namespace.QName;
 class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
                                           JAXBElement<? extends BaseComponentType>>
                    implements Comparable<CompsWrapper> {
-  private ArrayOfComponents aoc;
+  private Components aoc;
 
   CompsWrapper(final CompWrapper parent,
-               final ArrayOfComponents aoc) {
+               final Components aoc) {
     super(parent, new QName(icalendarNs, "components"));
     this.aoc = aoc;
 

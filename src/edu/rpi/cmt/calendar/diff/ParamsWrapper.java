@@ -18,8 +18,8 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
-import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
+import ietf.params.xml.ns.icalendar_2.Parameters;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,10 +35,10 @@ import javax.xml.namespace.QName;
 class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
                                           JAXBElement<? extends BaseParameterType>>
                     implements Comparable<ParamsWrapper> {
-  private ArrayOfParameters aop;
+  private Parameters aop;
 
   ParamsWrapper(final PropWrapper parent,
-                final ArrayOfParameters aop) {
+                final Parameters aop) {
     super(parent, new QName(icalendarNs, "parameters"));
     this.aop = aop;
 

@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -52,6 +52,15 @@ public class XcalTags {
      ===================================================================== */
 
   /** */
+  public static final QName valarm = new QName(namespace, "valarm");
+
+  /** */
+  public static final QName vavailability = new QName(namespace, "vavailability");
+
+  /** */
+  public static final QName available = new QName(namespace, "available");
+
+  /** */
   public static final QName vcalendar = new QName(namespace, "vcalendar");
 
   /** */
@@ -65,9 +74,6 @@ public class XcalTags {
 
   /** */
   public static final QName vfreebusy = new QName(namespace, "vfreebusy");
-
-  /** */
-  public static final QName valarm = new QName(namespace, "valarm");
 
   /** */
   public static final QName standard = new QName(namespace, "standard");
@@ -123,6 +129,76 @@ public class XcalTags {
 
   /**   */
   public static final QName utcOffsetVal = new QName(namespace, "utc-offset");
+
+  /* =====================================================================
+                              parameters
+     ===================================================================== */
+
+  /**   */
+  public static final QName altrep = new QName(namespace, "altrep");
+
+  /**   */
+  public static final QName cn = new QName(namespace, "cn");
+
+  /**   */
+  public static final QName cutype = new QName(namespace, "cutype");
+
+  /**   */
+  public static final QName delegatedFrom = new QName(namespace, "delegated-from");
+
+  /**   */
+  public static final QName delegatedTo = new QName(namespace, "delegated-to");
+
+  /**   */
+  public static final QName dir = new QName(namespace, "dir");
+
+  /**   */
+  public static final QName encoding = new QName(namespace, "encoding");
+
+  /**   */
+  public static final QName fmttype = new QName(namespace, "fmttype");
+
+  /**   */
+  public static final QName fbtype = new QName(namespace, "fbtype");
+
+  /**   */
+  public static final QName language = new QName(namespace, "language");
+
+  /**   */
+  public static final QName member = new QName(namespace, "member");
+
+  /**   */
+  public static final QName partstat = new QName(namespace, "partstat");
+
+  /**   */
+  public static final QName range = new QName(namespace, "range");
+
+  /**   */
+  public static final QName related = new QName(namespace, "related");
+
+  /**   */
+  public static final QName reltype = new QName(namespace, "reltype");
+
+  /**   */
+  public static final QName role = new QName(namespace, "role");
+
+  /**   */
+  public static final QName rsvp = new QName(namespace, "rsvp");
+
+  /**   */
+  public static final QName sentBy = new QName(namespace, "sent-by");
+
+  /**   */
+  public static final QName tzidPar = new QName(namespace, "tzid");
+
+  /**   */
+  public static final QName scheduleAgent = new QName(namespace, "schedule-agent");
+
+  /**   */
+  public static final QName scheduleForceSend = new QName(namespace, "schedule-force-send");
+
+  /**   */
+  public static final QName scheduleStatus = new QName(namespace, "schedule-status");
 
   /* =====================================================================
                               geo
@@ -356,5 +432,8 @@ public class XcalTags {
 
   /**     *     *     *        *            *          CALENDAR*/
   public static final QName version = new QName(namespace, "version");
+
+  /** VAVAILABILITY only */
+  public static final QName busytype = new QName(namespace, "busytype");
 
 }

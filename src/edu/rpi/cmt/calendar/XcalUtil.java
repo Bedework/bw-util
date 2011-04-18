@@ -20,11 +20,11 @@ package edu.rpi.cmt.calendar;
 
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
-import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
-import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
+import ietf.params.xml.ns.icalendar_2.Components;
 import ietf.params.xml.ns.icalendar_2.Icalendar;
+import ietf.params.xml.ns.icalendar_2.Properties;
 import ietf.params.xml.ns.icalendar_2.Vcalendar;
 
 import javax.xml.bind.JAXBElement;
@@ -63,7 +63,7 @@ public class XcalUtil {
    */
   public static BaseComponentType findComponent(final BaseComponentType bcPar,
                                                 final QName name) {
-    ArrayOfComponents cs = bcPar.getComponents();
+    Components cs = bcPar.getComponents();
     if (cs == null) {
       return null;
     }
@@ -92,7 +92,7 @@ public class XcalUtil {
     }
 
     for (Vcalendar v: ical.getVcalendars()) {
-      ArrayOfComponents cs = v.getComponents();
+      Components cs = v.getComponents();
       if (cs == null) {
         continue;
       }
@@ -117,7 +117,7 @@ public class XcalUtil {
       return null;
     }
 
-    ArrayOfProperties ps = bcPar.getProperties();
+    Properties ps = bcPar.getProperties();
     if (ps == null) {
       return null;
     }
