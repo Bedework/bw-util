@@ -76,29 +76,6 @@
   </target>
 
   <!-- =================================================================
-                            javadoc.
-       ================================================================= -->
-  <target name="javadoc" depends="init"
-          description="Create Javadoc API documentation">
-    <property name="destdir" location="${dist.home}/docs/api"/>
-    <mkdir dir="${destdir}"/>
-
-    <javadoc sourcepath="${source.home}"
-           classpathref="compile.classpath"
-                destdir="${destdir}"
-           packagenames="edu.rpi.*"
-                 access="public"
-                 author="true"
-                version="true"
-          breakiterator="yes"
-            windowtitle="${project.name} ${project.version} API Documentation">
-      <doctitle><![CDATA[${project.name} ${project.version}<br/>API Documentation]]></doctitle>
-      <header><![CDATA[${project.name} ${project.version}<br/>API Documentation]]></header>
-      <link href="${env.JAVA_HOME}/docs/api" />
-    </javadoc>
-  </target>
-
-  <!-- =================================================================
                             unittest.
        ================================================================= -->
   <target name="unittest" depends="init,build-source,build-test,run-unittest,cleanup"
