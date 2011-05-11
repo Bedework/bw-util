@@ -41,14 +41,15 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
   private T[] tarray;
 
   BaseSetWrapper(final ParentT parent,
-                 final QName name) {
+                 final QName name,
+                 final List<ListT> elsList) {
     super(parent, name);
-  }
 
-  protected void init() {
-    List<ListT> l = getListT();
+    if (elsList == null) {
+      return;
+    }
 
-    for (ListT el: l) {
+    for (ListT el: elsList) {
       T t = getWrapped(el);
 
       if (t == null) {
@@ -61,7 +62,7 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
 
     /* The set is ordered - use that to produce ordered array */
 
-    tarray = getTarray(l.size());
+    tarray = getTarray(elsList.size());
     int i = 0;
 
     for (T t: els) {
@@ -73,8 +74,6 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
   abstract T getWrapped(ListT el);
 
   abstract T[] getTarray(int len);
-
-  abstract List<ListT> getListT();
 
   Set<T> getEls() {
     return els;

@@ -19,7 +19,6 @@
 package edu.rpi.cmt.calendar.diff;
 
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
-import ietf.params.xml.ns.icalendar_2.Properties;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +38,6 @@ import javax.xml.namespace.QName;
 class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
                                           JAXBElement<? extends BasePropertyType>>
                    implements Comparable<PropsWrapper> {
-  private Properties aop;
-
   /* Set of properties we skip during comparison.
    */
   private static Map<QName, QName> skipped = new HashMap<QName, QName>();
@@ -68,20 +65,8 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
   //private int[] hashCodes;
 
   PropsWrapper(final CompWrapper parent,
-               final Properties aop) {
-    super(parent, new QName(icalendarNs, "properties"));
-    this.aop = aop;
-
-    if (this.aop == null) {
-      return;
-    }
-
-    init();
-  }
-
-  @Override
-  List<JAXBElement<? extends BasePropertyType>> getListT() {
-    return aop.getBaseProperties();
+               final List<JAXBElement<? extends BasePropertyType>> propsList) {
+    super(parent, new QName(icalendarNs, "properties"), propsList);
   }
 
   @Override

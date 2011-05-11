@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import edu.rpi.cmt.calendar.XcalUtil;
 import edu.rpi.sss.util.xml.NsContext;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
@@ -25,7 +26,7 @@ import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.DaylightType;
 import ietf.params.xml.ns.icalendar_2.StandardType;
 import ietf.params.xml.ns.icalendar_2.ValarmType;
-import ietf.params.xml.ns.icalendar_2.Vcalendar;
+import ietf.params.xml.ns.icalendar_2.VcalendarType;
 import ietf.params.xml.ns.icalendar_2.VeventType;
 import ietf.params.xml.ns.icalendar_2.VfreebusyType;
 import ietf.params.xml.ns.icalendar_2.VjournalType;
@@ -64,7 +65,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     // Outer container
     addInfo(XcalTags.vcalendar,
             OuterKind,
-            Vcalendar.class);
+            VcalendarType.class);
 
     // Recurring style uid + optional recurrence id
     addInfo(XcalTags.vtodo,
@@ -102,8 +103,8 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
               final QName name,
               final BaseComponentType c) {
     super(parent, name, c);
-    props = new PropsWrapper(this, c.getProperties());
-    comps = new CompsWrapper(this, c.getComponents());
+    props = new PropsWrapper(this, c.getProperties().getBaseProperty());
+    comps = new CompsWrapper(this, XcalUtil.getComponents(c));
 
     kind = compKinds.get(name);
   }

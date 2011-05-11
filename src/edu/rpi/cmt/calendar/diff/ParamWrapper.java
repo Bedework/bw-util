@@ -100,7 +100,7 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     }
 
     if (p instanceof CalAddressListParamType) {
-      List<String> ss = ((CalAddressListParamType)p).getCalAddresses();
+      List<String> ss = ((CalAddressListParamType)p).getCalAddress();
 
       ValueType vt = new ValueType();
 

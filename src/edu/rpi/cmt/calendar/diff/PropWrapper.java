@@ -24,6 +24,7 @@ import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.AttachPropType;
+import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
 import ietf.params.xml.ns.icalendar_2.CalAddressPropertyType;
 import ietf.params.xml.ns.icalendar_2.CalscalePropType;
@@ -50,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /** This class wraps a property.
@@ -80,7 +82,13 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
               final QName name,
               final BasePropertyType p) {
     super(parent, name, p);
-    params = new ParamsWrapper(this, p.getParameters());
+
+    List<JAXBElement<? extends BaseParameterType>> plist = null;
+
+    if (p.getParameters() != null) {
+      plist = p.getParameters().getBaseParameter();
+    }
+    params = new ParamsWrapper(this, plist);
   }
 
   @Override
@@ -157,7 +165,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
     if (p instanceof FreebusyPropType) {
       vt = new ValueType(XcalTags.periodVal,
-                         ((FreebusyPropType)p).getPeriods().toString());
+                         ((FreebusyPropType)p).getPeriod().toString());
       return vt;
     }
 
@@ -279,7 +287,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     }
 
     if (p instanceof TextListPropertyType) {
-      List<String> ss = ((TextListPropertyType)p).getTexts();
+      List<String> ss = ((TextListPropertyType)p).getText();
 
       vt = new ValueType();
 
@@ -305,14 +313,14 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       append(vt, XcalTags.count, r.getCount());
       append(vt, XcalTags.until, r.getUntil());
       append(vt, XcalTags.interval, r.getInterval());
-      append(vt, XcalTags.bysecond, r.getByseconds());
-      append(vt, XcalTags.byminute, r.getByminutes());
-      append(vt, XcalTags.byhour, r.getByhours());
-      append(vt, XcalTags.byday, r.getBydaies());
-      append(vt, XcalTags.byyearday, r.getByyeardaies());
-      append(vt, XcalTags.bymonthday, r.getBymonthdaies());
-      append(vt, XcalTags.byweekno, r.getByweeknos());
-      append(vt, XcalTags.bymonth, r.getBymonths());
+      append(vt, XcalTags.bysecond, r.getBysecond());
+      append(vt, XcalTags.byminute, r.getByminute());
+      append(vt, XcalTags.byhour, r.getByhour());
+      append(vt, XcalTags.byday, r.getByday());
+      append(vt, XcalTags.byyearday, r.getByyearday());
+      append(vt, XcalTags.bymonthday, r.getBymonthday());
+      append(vt, XcalTags.byweekno, r.getByweekno());
+      append(vt, XcalTags.bymonth, r.getBymonth());
       append(vt, XcalTags.bysetpos, r.getBysetpos());
       append(vt, XcalTags.wkst, r.getWkst().toString());
 
@@ -321,7 +329,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
     if (p instanceof IntegerPropertyType) {
       vt = new ValueType(XcalTags.integerVal,
-                         ((IntegerPropertyType)p).getInteger());
+                         String.valueOf(((IntegerPropertyType)p).getInteger()));
       return vt;
     }
 

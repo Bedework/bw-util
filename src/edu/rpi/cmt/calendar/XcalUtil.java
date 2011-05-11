@@ -20,12 +20,24 @@ package edu.rpi.cmt.calendar;
 
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
+import ietf.params.xml.ns.icalendar_2.ArrayOfVcalendarContainedComponents;
+import ietf.params.xml.ns.icalendar_2.AvailableType;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
-import ietf.params.xml.ns.icalendar_2.Components;
-import ietf.params.xml.ns.icalendar_2.Icalendar;
-import ietf.params.xml.ns.icalendar_2.Properties;
-import ietf.params.xml.ns.icalendar_2.Vcalendar;
+import ietf.params.xml.ns.icalendar_2.DaylightType;
+import ietf.params.xml.ns.icalendar_2.EventTodoComponentType;
+import ietf.params.xml.ns.icalendar_2.IcalendarType;
+import ietf.params.xml.ns.icalendar_2.StandardType;
+import ietf.params.xml.ns.icalendar_2.ValarmType;
+import ietf.params.xml.ns.icalendar_2.VavailabilityType;
+import ietf.params.xml.ns.icalendar_2.VcalendarType;
+import ietf.params.xml.ns.icalendar_2.VeventType;
+import ietf.params.xml.ns.icalendar_2.VtimezoneType;
+import ietf.params.xml.ns.icalendar_2.VtodoType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -40,9 +52,9 @@ public class XcalUtil {
    * @param name
    * @return null or first matching component
    */
-  public static BaseComponentType findComponent(final Icalendar ical,
+  public static BaseComponentType findComponent(final IcalendarType ical,
                                                 final QName name) {
-    for (Vcalendar v: ical.getVcalendars()) {
+    for (VcalendarType v: ical.getVcalendar()) {
       if (name.equals(XcalTags.vcalendar)) {
         return v;
       }
@@ -56,6 +68,93 @@ public class XcalUtil {
     return null;
   }
 
+  /** Get enclosed components for the supplied component.
+   *
+   * @param c
+   * @return list of components or null for none or unrecognized class.
+   */
+  public static List<JAXBElement<? extends BaseComponentType>> getComponents(final BaseComponentType c) {
+    if (c instanceof VcalendarType) {
+      VcalendarType vc = (VcalendarType)c;
+
+      if (vc.getComponents() == null) {
+        return null;
+      }
+
+      return new ArrayList<JAXBElement<? extends BaseComponentType>>(
+        vc.getComponents().getVcalendarContainedComponent());
+    }
+
+    if ((c instanceof VeventType) ||
+        (c instanceof VtodoType)) {
+      EventTodoComponentType etc = (EventTodoComponentType)c;
+
+      if ((etc.getComponents() == null) ||
+          (etc.getComponents().getValarm().size() == 0)) {
+        return null;
+      }
+
+      ArrayList<JAXBElement<? extends BaseComponentType>> res =
+        new ArrayList<JAXBElement<? extends BaseComponentType>>();
+
+      for (ValarmType va: etc.getComponents().getValarm()) {
+        res.add(new JAXBElement<ValarmType>(XcalTags.valarm,
+            ValarmType.class, va));
+      }
+
+      return res;
+    }
+
+    if (c instanceof VavailabilityType) {
+      VavailabilityType vav = (VavailabilityType)c;
+
+      if ((vav.getComponents() == null) ||
+          (vav.getComponents().getAvailable().size() == 0)) {
+        return null;
+      }
+
+      ArrayList<JAXBElement<? extends BaseComponentType>> res =
+        new ArrayList<JAXBElement<? extends BaseComponentType>>();
+
+      for (AvailableType a: vav.getComponents().getAvailable()) {
+        res.add(new JAXBElement<AvailableType>(XcalTags.available,
+            AvailableType.class, a));
+      }
+
+      return res;
+    }
+
+    if (c instanceof VtimezoneType) {
+      VtimezoneType etc = (VtimezoneType)c;
+
+      if ((etc.getComponents() == null) ||
+          (etc.getComponents().getStandardOrDaylight().size() == 0)) {
+        return null;
+      }
+
+      ArrayList<JAXBElement<? extends BaseComponentType>> res =
+        new ArrayList<JAXBElement<? extends BaseComponentType>>();
+
+      for (BaseComponentType bc: etc.getComponents().getStandardOrDaylight()) {
+        QName nm;
+        if (bc instanceof DaylightType) {
+          nm = XcalTags.daylight;
+        } else if (bc instanceof StandardType) {
+          nm = XcalTags.standard;
+        } else {
+          continue;
+        }
+
+        res.add(new JAXBElement<BaseComponentType>(nm,
+            (Class<BaseComponentType>)bc.getClass(), bc));
+      }
+
+      return res;
+    }
+
+    return null;
+  }
+
   /**
    * @param bcPar
    * @param name
@@ -63,12 +162,12 @@ public class XcalUtil {
    */
   public static BaseComponentType findComponent(final BaseComponentType bcPar,
                                                 final QName name) {
-    Components cs = bcPar.getComponents();
+    List<JAXBElement<? extends BaseComponentType>> cs = getComponents(bcPar);
     if (cs == null) {
       return null;
     }
 
-    for (JAXBElement<? extends BaseComponentType> bcel: cs.getBaseComponents()) {
+    for (JAXBElement<? extends BaseComponentType> bcel: cs) {
       if (bcel.getName().equals(name)) {
         return bcel.getValue();
       }
@@ -86,18 +185,18 @@ public class XcalUtil {
    * @param ical
    * @return null or first contained entity
    */
-  public static BaseComponentType findEntity(final Icalendar ical) {
+  public static BaseComponentType findEntity(final IcalendarType ical) {
     if (ical == null) {
       return null;
     }
 
-    for (Vcalendar v: ical.getVcalendars()) {
-      Components cs = v.getComponents();
+    for (VcalendarType v: ical.getVcalendar()) {
+      ArrayOfVcalendarContainedComponents cs = v.getComponents();
       if (cs == null) {
         continue;
       }
 
-      for (JAXBElement<? extends BaseComponentType> bcel: cs.getBaseComponents()) {
+      for (JAXBElement<? extends BaseComponentType> bcel: cs.getVcalendarContainedComponent()) {
         return bcel.getValue();
       }
     }
@@ -117,12 +216,12 @@ public class XcalUtil {
       return null;
     }
 
-    Properties ps = bcPar.getProperties();
+    ArrayOfProperties ps = bcPar.getProperties();
     if (ps == null) {
       return null;
     }
 
-    for (JAXBElement<? extends BasePropertyType> bpel: ps.getBaseProperties()) {
+    for (JAXBElement<? extends BasePropertyType> bpel: ps.getBaseProperty()) {
       if (bpel.getName().equals(name)) {
         return bpel.getValue();
       }
