@@ -164,8 +164,8 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     }
 
     if (p instanceof RsvpParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((RsvpParamType)p).getText());
+      return new ValueType(XcalTags.booleanVal,
+                           String.valueOf(((RsvpParamType)p).isBoolean()));
     }
 
     if (p instanceof ScheduleAgentParamType) {

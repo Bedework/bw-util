@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import edu.rpi.cmt.calendar.XcalUtil;
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.NsContext;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
@@ -190,9 +191,10 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     if (p instanceof GeoPropType) {
       GeoPropType gp = (GeoPropType)p;
 
-      vt = new ValueType(XcalTags.latitudeVal, gp.getLatitude());
+      vt = new ValueType(XcalTags.latitudeVal,
+                         String.valueOf(gp.getLatitude()));
       vt.vtes.add(new ValueTypeEntry(XcalTags.longitudeVal,
-                                     gp.getLongitude()));
+                                     String.valueOf(gp.getLongitude())));
 
       return vt;
     }
@@ -219,10 +221,10 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       TriggerPropType tp = (TriggerPropType)p;
       if (tp.getDuration() != null) {
         vt = new ValueType(XcalTags.durationVal,
-                           tp.getDuration());
+                           tp.getDuration().toString());
       } else {
         vt = new ValueType(XcalTags.dateTimeVal,
-                           tp.getDateTime());
+                           tp.getDateTime().toString());
       }
 
       return vt;
@@ -230,7 +232,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
     if (p instanceof DurationPropType) {
       vt = new ValueType(XcalTags.durationVal,
-                         ((DurationPropType)p).getDuration());
+                         ((DurationPropType)p).getDuration().toString());
       return vt;
     }
 
@@ -249,14 +251,14 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     }
 
     if (p instanceof DateDatetimePropertyType) {
-      DateDatetimePropertyType dt = (DateDatetimePropertyType)p;
+      XcalUtil.DtTzid dtTzid = XcalUtil.getDtTzid((DateDatetimePropertyType)p);
 
-      if (dt.getDate() != null) {
+      if (dtTzid.dateOnly) {
         vt = new ValueType(XcalTags.dateVal,
-                           dt.getDate());
+                           dtTzid.dt);
       } else {
         vt = new ValueType(XcalTags.dateTimeVal,
-                           dt.getDateTime());
+                           dtTzid.dt);
       }
 
       return vt;
@@ -264,13 +266,13 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
     if (p instanceof DatetimePropertyType) {
       vt = new ValueType(XcalTags.dateTimeVal,
-                         ((DatetimePropertyType)p).getDateTime());
+                         XcalUtil.xmlDtToIcalDt(((DatetimePropertyType)p).getDateTime().toString()));
       return vt;
     }
 
     if (p instanceof UtcDatetimePropertyType) {
       vt = new ValueType(XcalTags.utcDateTimeVal,
-                         ((UtcDatetimePropertyType)p).getUtcDateTime());
+                         XcalUtil.xmlDtToIcalDt(((UtcDatetimePropertyType)p).getUtcDateTime().toString()));
       return vt;
     }
 

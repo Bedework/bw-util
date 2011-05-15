@@ -123,6 +123,16 @@ public class IcalDefs {
   public final static String transparencyTransparent = "TRANSPARENT";
 
   /* ====================================================================
+   *                      Alarm trigger relationship
+   * ==================================================================== */
+
+  /** Trigger related to start */
+  public static final String alarmTriggerRelatedStart = "START";
+
+  /** Trigger related to end */
+  public static final String alarmTriggerRelatedEnd = "END";
+
+  /* ====================================================================
    *                      Attendee partstat
    * ==================================================================== */
 
