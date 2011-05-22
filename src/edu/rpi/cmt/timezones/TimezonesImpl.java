@@ -536,7 +536,7 @@ public class TimezonesImpl extends Timezones {
     }
 
     public String getTz(final String id) throws TimezonesException {
-      return call("tzid=" + id);
+      return call("action=get&tzid=" + id);
     }
 
     /* Not used - remove from server
