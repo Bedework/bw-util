@@ -120,24 +120,7 @@ public class XcalUtil {
   public static XMLGregorianCalendar fromDtval(final String dtval) throws Throwable {
     DatatypeFactory dtf = DatatypeFactory.newInstance();
 
-    StringBuilder sb = new StringBuilder();
-
-    sb.append(dtval.substring(0, 4));
-    sb.append("-");
-    sb.append(dtval.substring(4, 6));
-    sb.append("-");
-    sb.append(dtval.substring(6, 8));
-
-    if (dtval.length() > 8) {
-      sb.append("T");
-      sb.append(dtval.substring(9, 11));
-      sb.append(":");
-      sb.append(dtval.substring(11, 13));
-      sb.append(":");
-      sb.append(dtval.substring(13));
-    }
-
-    return dtf.newXMLGregorianCalendar(sb.toString());
+    return dtf.newXMLGregorianCalendar(getXmlFormatDateTime(dtval));
   }
 
   /**
@@ -158,14 +141,8 @@ public class XcalUtil {
    */
   public static XMLGregorianCalendar getXMlUTCCal(final String dtval) throws Throwable {
     DatatypeFactory dtf = DatatypeFactory.newInstance();
-    String xdt = dtval.substring(0, 4) + "-" +
-                dtval.substring(4, 6) + "-" +
-                dtval.substring(6, 8) + "T" +
-                dtval.substring(9, 11) + ":" +
-                dtval.substring(11, 13) + ":" +
-                dtval.substring(13);
 
-    return dtf.newXMLGregorianCalendar(xdt);
+    return dtf.newXMLGregorianCalendar(getXmlFormatDateTime(dtval));
   }
 
   /** */
@@ -206,6 +183,36 @@ public class XcalUtil {
     }
 
     return res;
+  }
+
+  /**
+   * @param val ical format or xml format date or datetime
+   * @return XML formatted
+   */
+  public static String getXmlFormatDateTime(final String val) {
+    if (val.charAt(4) == '-') {
+      // XML format
+      return val;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(val.substring(0, 4));
+    sb.append("-");
+    sb.append(val.substring(4, 6));
+    sb.append("-");
+    sb.append(val.substring(6, 8));
+
+    if (val.length() > 8) {
+      sb.append("T");
+      sb.append(val.substring(9, 11));
+      sb.append(":");
+      sb.append(val.substring(11, 13));
+      sb.append(":");
+      sb.append(val.substring(13));
+    }
+
+    return sb.toString();
   }
 
   /**

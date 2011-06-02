@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.log4j.Logger;
 
+import ietf.params.xml.ns.timezone_service.ObjectFactory;
 import ietf.params.xml.ns.timezone_service.SummaryType;
 import ietf.params.xml.ns.timezone_service.TimezoneListType;
 
@@ -116,14 +117,15 @@ public class TimezonesImpl extends Timezones {
   @Override
   public void init(final String serverUrl) {
     this.serverUrl = serverUrl;
+    debug = getLogger().isDebugEnabled();
   }
 
   /* (non-Javadoc)
    * @see org.bedework.calfacade.timezones.CalTimezones#getTimeZone(java.lang.String)
    */
   @Override
-  public TimeZone getTimeZone(String id) throws TimezonesException {
-    id = unalias(id);
+  public TimeZone getTimeZone(final String id) throws TimezonesException {
+    //id = unalias(id);
 
     TimeZone tz = timezones.get(id);
     if (tz != null) {
@@ -134,6 +136,12 @@ public class TimezonesImpl extends Timezones {
     register(id, tz);
 
     return tz;
+  }
+
+  @Override
+  public TaggedTimeZone getTimeZone(final String id,
+                                    final String etag) throws TimezonesException {
+    return fetchTimeZone(id, etag);
   }
 
   /* (non-Javadoc)
@@ -148,7 +156,7 @@ public class TimezonesImpl extends Timezones {
     TzServer server = new TzServer(serverUrl);
 
     try {
-      TimezoneListType tzlist = server.getList();
+      TimezoneListType tzlist = server.getList(null);
 
       Collection<TimeZoneName> ids = new TreeSet<TimeZoneName>();
 
@@ -159,6 +167,20 @@ public class TimezonesImpl extends Timezones {
       timezoneNames = ids;
 
       return Collections.unmodifiableCollection(timezoneNames);
+    } finally {
+      server.close();
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see edu.rpi.cmt.timezones.Timezones#getList(java.lang.String)
+   */
+  @Override
+  public TimezoneListType getList(final String changedSince) throws TimezonesException {
+    TzServer server = new TzServer(serverUrl);
+
+    try {
+      return server.getList(changedSince);
     } finally {
       server.close();
     }
@@ -430,18 +452,32 @@ public class TimezonesImpl extends Timezones {
    * @throws TimezonesException
    */
   protected TimeZone fetchTimeZone(final String id) throws TimezonesException {
+    TaggedTimeZone ttz = fetchTimeZone(id, null);
+
+    if (ttz == null) {
+      return null;
+    }
+
+    register(id, ttz.tz);
+
+    return ttz.tz;
+  }
+
+  protected TaggedTimeZone fetchTimeZone(final String id,
+                                         final String etag) throws TimezonesException {
     TzServer server = new TzServer(serverUrl);
 
     try {
-      String tzdef = server.getTz(id);
+      TaggedTimeZone ttz = server.getTz(id, etag);
 
-      if ((tzdef == null) || (tzdef.length() == 0)) {
+      if (ttz == null) {
         return null;
       }
 
       CalendarBuilder cb = new CalendarBuilder();
 
-      UnfoldingReader ufrdr = new UnfoldingReader(new StringReader(tzdef), true);
+      UnfoldingReader ufrdr = new UnfoldingReader(new StringReader(ttz.vtz),
+                                                  true);
 
       net.fortuna.ical4j.model.Calendar cal = cb.build(ufrdr);
       VTimeZone vtz = (VTimeZone)cal.getComponents().getComponent(Component.VTIMEZONE);
@@ -450,9 +486,10 @@ public class TimezonesImpl extends Timezones {
       }
 
       TimeZone tz = new TimeZone(vtz);
-      register(id, tz);
 
-      return tz;
+      ttz.tz = tz;
+
+      return ttz;
     } catch (Throwable t) {
       throw new TimezonesException(t);
     } finally {
@@ -535,8 +572,28 @@ public class TimezonesImpl extends Timezones {
       tzserverUri = uri;
     }
 
-    public String getTz(final String id) throws TimezonesException {
-      return call("action=get&tzid=" + id);
+    public TaggedTimeZone getTz(final String id,
+                                final String etag) throws TimezonesException {
+      try {
+        doCall("action=get&tzid=" + id, etag);
+
+        int status = getter.getStatusCode();
+
+        if (status == HttpServletResponse.SC_NO_CONTENT) {
+          return new TaggedTimeZone(etag);
+        }
+
+        if (status != HttpServletResponse.SC_OK) {
+          return null;
+        }
+
+        return new TaggedTimeZone(getter.getResponseHeader("Etag").getValue(),
+                                  getter.getResponseBodyAsString());
+      } catch (TimezonesException cfe) {
+        throw cfe;
+      } catch (Throwable t) {
+        throw new TimezonesException(t);
+      }
     }
 
     /* Not used - remove from server
@@ -544,8 +601,14 @@ public class TimezonesImpl extends Timezones {
       return call("names");
     }*/
 
-    public TimezoneListType getList() throws TimezonesException {
-      JAXBElement jel = getXml("action=list");
+    public TimezoneListType getList(final String changedSince) throws TimezonesException {
+      String req = "action=list";
+
+      if (changedSince != null) {
+        req = req + "&changedsince=" + changedSince;
+      }
+
+      JAXBElement jel = getXml(req);
 
       if (jel == null) {
         return null;
@@ -560,7 +623,7 @@ public class TimezonesImpl extends Timezones {
 
     public String call(final String req) throws TimezonesException {
       try {
-        doCall(req);
+        doCall(req, null);
 
         int status = getter.getStatusCode();
 
@@ -589,7 +652,7 @@ public class TimezonesImpl extends Timezones {
         if (jc == null) {
           synchronized (this) {
             if (jc == null) {
-              jc = JAXBContext.newInstance("urn:ietf:params:xml:ns:timezone-service");
+              jc = JAXBContext.newInstance(ObjectFactory.class);
             }
           }
         }
@@ -607,7 +670,7 @@ public class TimezonesImpl extends Timezones {
 
     public InputStream callForStream(final String req) throws TimezonesException {
       try {
-        doCall(req);
+        doCall(req, null);
 
         return getter.getResponseBodyAsStream();
       } catch (TimezonesException cfe) {
@@ -630,7 +693,8 @@ public class TimezonesImpl extends Timezones {
       }
     }
 
-    private void doCall(final String req) throws TimezonesException {
+    private void doCall(final String req,
+                        final String etag) throws TimezonesException {
       try {
         if (tzserverUri == null) {
           throw new TimezonesException("No timezones server URI defined");
@@ -639,6 +703,10 @@ public class TimezonesImpl extends Timezones {
         HttpClient client = new HttpClient();
 
         getter = new GetMethod(tzserverUri + "?" + req);
+
+        if (etag != null) {
+          getter.setRequestHeader("If-None-Match", etag);
+        }
 
         client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
                                         new DefaultHttpMethodRetryHandler());

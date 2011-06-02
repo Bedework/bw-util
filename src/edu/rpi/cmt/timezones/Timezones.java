@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,6 +20,8 @@ package edu.rpi.cmt.timezones;
 
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
+
+import ietf.params.xml.ns.timezone_service.TimezoneListType;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -343,6 +345,50 @@ public abstract class Timezones implements Serializable {
    */
   public abstract TimeZone getTimeZone(String id) throws TimezonesException;
 
+  /** A non-null object means tz exists.A null tz means that it has identical
+   * etags.
+   *
+   * @author douglm
+   */
+  public static class TaggedTimeZone {
+    /** server etag */
+    public String etag;
+
+    /** null if etags matched */
+    public String vtz;
+
+    /** null if etags matched */
+    public TimeZone tz;
+
+    /**
+     * @param etag
+     */
+    public TaggedTimeZone(final String etag) {
+      this.etag = etag;
+    }
+
+    /**
+     * @param etag
+     * @param vtz
+     */
+    public TaggedTimeZone(final String etag,
+                          final String vtz) {
+      this.etag = etag;
+      this.vtz = vtz;
+    }
+  }
+
+  /** Get a timezone object given the id and etag. This method will bypass the
+   * cach and call a remote servicedirectly.
+   *
+   * @param id
+   * @param etag - null for unconditional fetch
+   * @return TaggedTimeZone or null
+   * @throws TimezonesException
+   */
+  public abstract TaggedTimeZone getTimeZone(String id,
+                                             String etag) throws TimezonesException;
+
   /** Get an unmodifiable list of timezone names
    *
    * @return Collection of timezone names
@@ -350,6 +396,15 @@ public abstract class Timezones implements Serializable {
    */
   public abstract Collection<TimeZoneName> getTimeZoneNames()
       throws TimezonesException;
+
+  /** Get timezone list as defined by spec.
+   *
+   * @param changedSince if non-null is XML formatted UTC datetime indicating
+   *                     last dtstamp received by caller
+   * @return Collection of timezone names
+   * @throws TimezonesException
+   */
+  public abstract TimezoneListType getList(String changedSince) throws TimezonesException;
 
   /** Refresh the timezone table - usually after timezones have changed..
    *
