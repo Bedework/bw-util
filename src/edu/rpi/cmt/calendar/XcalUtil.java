@@ -177,9 +177,9 @@ public class XcalUtil {
 
     res.dateOnly = dt.getDate() != null;
     if (res.dateOnly) {
-      res.dt = xmlDtToIcalDt(dt.getDate().toString());
+      res.dt = getIcalFormatDateTime(dt.getDate().toString());
     } else {
-      res.dt = xmlDtToIcalDt(dt.getDateTime().toString());
+      res.dt = getIcalFormatDateTime(dt.getDateTime().toString());
     }
 
     return res;
@@ -219,7 +219,12 @@ public class XcalUtil {
    * @param dt
    * @return DtTzid filled in
    */
-  public static String xmlDtToIcalDt(final String dt) {
+  public static String getIcalFormatDateTime(final String dt) {
+    if (dt.charAt(4) != '-') {
+      // Already Ical format
+      return dt;
+    }
+
     StringBuilder sb = new StringBuilder();
 
     sb.append(dt.substring(0, 4));

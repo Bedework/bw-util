@@ -266,13 +266,13 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
     if (p instanceof DatetimePropertyType) {
       vt = new ValueType(XcalTags.dateTimeVal,
-                         XcalUtil.xmlDtToIcalDt(((DatetimePropertyType)p).getDateTime().toString()));
+                         XcalUtil.getIcalFormatDateTime(((DatetimePropertyType)p).getDateTime().toString()));
       return vt;
     }
 
     if (p instanceof UtcDatetimePropertyType) {
       vt = new ValueType(XcalTags.utcDateTimeVal,
-                         XcalUtil.xmlDtToIcalDt(((UtcDatetimePropertyType)p).getUtcDateTime().toString()));
+                         XcalUtil.getIcalFormatDateTime(((UtcDatetimePropertyType)p).getUtcDateTime().toString()));
       return vt;
     }
 
