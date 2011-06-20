@@ -92,6 +92,9 @@ public class PropertyIndex implements Serializable {
   static final ComponentFlags event_Todo_Journal =
      new ComponentFlags(true, true, true, false, false, false, false, false);
 
+  static final ComponentFlags event_Todo_Freebusy_Alarm =
+     new ComponentFlags(true, true, false, true, false, true, false, false);
+
   static final ComponentFlags event_Todo_Freebusy =
      new ComponentFlags(true, true, false, true, false, false, false, false);
 
@@ -374,206 +377,233 @@ public class PropertyIndex implements Serializable {
   /** */
   public static enum PropertyInfoIndex {
     /** */
-    UNKNOWN_PROPERTY(null, null, IS_SINGLE, noComponent),
+    UNKNOWN_PROPERTY(null, null,
+                     IS_SINGLE, noComponent),
 
-    /** */
-    CLASS(XcalTags._class, "CLASS", IS_SINGLE, event_Todo_Journal),
+    /** Alarm only: action */
+    ACTION(XcalTags.action, "ACTION",
+           IS_SINGLE, alarmOnly),
 
-    /** */
-    CREATED(XcalTags.created, "CREATED", DataType.DATE_TIME,
-            IS_SINGLE, event_Todo_Journal_Freebusy),
-
-    /** */
-    DESCRIPTION(XcalTags.description, "DESCRIPTION",
-                IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
-
-    /** */
-    DTSTAMP(XcalTags.dtstamp, "DTSTAMP", DataType.DATE_TIME,
-            IS_SINGLE, event_Todo_Journal_Freebusy,
-            NOT_PARAM, NOT_IMMUTABLE),
-
-    /** */
-    DTSTART(XcalTags.dtstart, "DTSTART", DataType.DATE_TIME,
-            IS_SINGLE, notAlarm),
-
-    /** */
-    DURATION(XcalTags.duration, "DURATION", DataType.DURATION,
-             IS_SINGLE, event_Todo_Freebusy),
-
-    /** */
-    GEO(XcalTags.geo, "GEO", IS_SINGLE, event_Todo),
-
-    /** */
-    LAST_MODIFIED(XcalTags.lastModified, "LAST-MODIFIED", DataType.DATE_TIME,
-                  IS_SINGLE, event_Todo_Journal_Timezone,
-                  NOT_PARAM, NOT_IMMUTABLE),
-
-    /** */
-    LOCATION(XcalTags.location, "LOCATION", IS_SINGLE, event_Todo),
-
-    /** */
-    ORGANIZER(XcalTags.organizer, "ORGANIZER", DataType.CUA,
-              IS_SINGLE, event_Todo_Journal_Freebusy),
-
-    /** */
-    PRIORITY(XcalTags.priority, "PRIORITY", DataType.INTEGER,
-             IS_SINGLE, event_Todo),
-
-    /** */
-    RECURRENCE_ID(XcalTags.recurrenceId, "RECURRENCE-ID", DataType.DATE_TIME,
-                  IS_SINGLE, event_Todo_Journal_Freebusy),
-
-    /** */
-    SEQUENCE(XcalTags.sequence, "SEQUENCE", DataType.INTEGER,
-             IS_SINGLE, event_Todo_Journal,
-             NOT_PARAM, NOT_IMMUTABLE),
-
-    /** */
-    STATUS(XcalTags.status, "STATUS", IS_SINGLE, event_Todo_Journal),
-
-    /** */
-    SUMMARY(XcalTags.summary, "SUMMARY", IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
-
-    /** */
-    UID(XcalTags.uid, "UID", IS_SINGLE, event_Todo_Journal_Freebusy),
-
-    /** */
-    URL(XcalTags.url, "URL", DataType.URI,
-        IS_SINGLE, event_Todo_Journal_Freebusy),
-
-    /* Event only */
-
-    /** */
-    DTEND(XcalTags.dtend, "DTEND", DataType.DATE_TIME,
-          IS_SINGLE, event_Freebusy),
-
-    /** */
-    TRANSP(XcalTags.transp, "TRANSP", IS_SINGLE, eventOnly),
-
-    /* Todo only */
-
-    /** */
-    COMPLETED(XcalTags.completed, "COMPLETED", DataType.DATE_TIME,
-              IS_SINGLE, todoOnly),
-
-    /** */
-    DUE(XcalTags.due, "DUE", DataType.DATE_TIME,
-        IS_SINGLE, todoOnly),
-
-    /** */
-    PERCENT_COMPLETE(XcalTags.percentComplete, "PERCENT-COMPLETE",
-                     IS_SINGLE, todoOnly),
-
-    /* ---------------------------- Multi valued --------------- */
-
-    /* Event and Todo */
-
-    /** */
-    ATTACH(XcalTags.attach, "ATTACH", DataType.SPECIAL,
+    /** Multi-valued attachment */
+    ATTACH(XcalTags.attach, "ATTACH",
+           DataType.SPECIAL,
            IS_MULTI, event_Todo_Journal_Alarm),
 
-    /** */
-    ATTENDEE(XcalTags.attendee, "ATTENDEE", DataType.CUA,
+    /** attendee */
+    ATTENDEE(XcalTags.attendee, "ATTENDEE",
+             DataType.CUA,
              IS_MULTI, notTimezone),
 
     /** */
+    BUSYTYPE(XcalTags.busytype, "BUSYTYPE",
+             IS_SINGLE, vavailabilityOnly),
+
+    /** String names */
     CATEGORIES(XcalTags.categories, "CATEGORIES",
                IS_MULTI, event_Todo_Journal_Alarm),
 
-    /** */
+    /** classification */
+    CLASS(XcalTags._class, "CLASS",
+          IS_SINGLE, event_Todo_Journal),
+
+    /** String comment */
     COMMENT(XcalTags.comment, "COMMENT",
             IS_MULTI, notAlarm),
 
-    /** */
+    /** date/date-time completed */
+    COMPLETED(XcalTags.completed, "COMPLETED",
+              DataType.DATE_TIME,
+              IS_SINGLE, todoOnly),
+
+    /** String contact */
     CONTACT(XcalTags.contact, "CONTACT",
             IS_MULTI, event_Todo_Journal_Freebusy),
 
-    /** */
-    EXDATE(XcalTags.exdate, "EXDATE", DataType.DATE_TIME,
+    /** UTC datetime */
+    CREATED(XcalTags.created, "CREATED",
+            DataType.DATE_TIME,
+            IS_SINGLE, event_Todo_Journal_Freebusy),
+
+    /** long description */
+    DESCRIPTION(XcalTags.description, "DESCRIPTION",
+                IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
+
+    /** Event only: end date */
+    DTEND(XcalTags.dtend, "DTEND",
+          DataType.DATE_TIME,
+          IS_SINGLE, event_Freebusy),
+
+    /** date stamp */
+    DTSTAMP(XcalTags.dtstamp, "DTSTAMP",
+            DataType.DATE_TIME,
+            IS_SINGLE, event_Todo_Journal_Freebusy,
+            NOT_PARAM, NOT_IMMUTABLE),
+
+    /** start date/time */
+    DTSTART(XcalTags.dtstart, "DTSTART",
+            DataType.DATE_TIME,
+            IS_SINGLE, notAlarm),
+
+    /** tod-: due time */
+    DUE(XcalTags.due, "DUE",
+        DataType.DATE_TIME,
+        IS_SINGLE, todoOnly),
+
+    /** Duration of event/task etc */
+    DURATION(XcalTags.duration, "DURATION",
+             DataType.DURATION,
+             IS_SINGLE, event_Todo_Freebusy_Alarm),
+
+    /** Exception date */
+    EXDATE(XcalTags.exdate, "EXDATE",
+           DataType.DATE_TIME,
+           IS_MULTI, event_Todo_Journal_Timezone),
+
+    /** Exception rule */
+    EXRULE(XcalTags.exrule, "EXRULE",
+           DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    EXRULE(XcalTags.exrule, "EXRULE", DataType.RECUR,
-           IS_MULTI, event_Todo_Journal_Timezone),
+    FREEBUSY(XcalTags.freebusy, "FREEBUSY",
+             DataType.PERIOD,
+             IS_SINGLE, freebusyOnly),
 
-    /** */
+    /** Geographic location */
+    GEO(XcalTags.geo, "GEO", IS_SINGLE, event_Todo),
+
+    /** UTC */
+    LAST_MODIFIED(XcalTags.lastModified, "LAST-MODIFIED",
+                  DataType.DATE_TIME,
+                  IS_SINGLE, event_Todo_Journal_Timezone,
+                  NOT_PARAM, NOT_IMMUTABLE),
+
+    /** simple location value */
+    LOCATION(XcalTags.location, "LOCATION",
+             IS_SINGLE, event_Todo),
+
+    /** meeting organizer */
+    ORGANIZER(XcalTags.organizer, "ORGANIZER",
+              DataType.CUA,
+              IS_SINGLE, event_Todo_Journal_Freebusy),
+
+    /** % complete */
+    PERCENT_COMPLETE(XcalTags.percentComplete, "PERCENT-COMPLETE",
+                     IS_SINGLE, todoOnly),
+
+    /** Priority */
+    PRIORITY(XcalTags.priority, "PRIORITY",
+             DataType.INTEGER,
+             IS_SINGLE, event_Todo),
+
+    /** recurrence date/time */
+    RDATE(XcalTags.rdate, "RDATE",
+          DataType.DATE_TIME,
+          IS_MULTI, event_Todo_Journal_Timezone),
+
+    /** recurrenceId */
+    RECURRENCE_ID(XcalTags.recurrenceId, "RECURRENCE-ID",
+                  DataType.DATE_TIME,
+                  IS_SINGLE, event_Todo_Journal_Freebusy),
+
+    /** Establish relationship */
+    RELATED_TO(XcalTags.relatedTo, "RELATED-TO",
+               IS_MULTI, event_Todo_Journal),
+
+    /** Alarm: repeat time */
+    REPEAT(XcalTags.repeat, "REPEAT",
+           DataType.INTEGER,
+           IS_SINGLE, alarmOnly),
+
+    /** Itip */
     REQUEST_STATUS(XcalTags.requestStatus, "REQUEST-STATUS",
                    IS_MULTI, event_Todo_Journal_Freebusy),
 
-    /** */
-    RELATED_TO(XcalTags.relatedTo, "RELATED-TO", IS_MULTI, event_Todo_Journal),
+    /** names of resources */
+    RESOURCES(XcalTags.resources, "RESOURCES",
+              IS_MULTI, event_Todo),
 
-    /** */
-    RESOURCES(XcalTags.resources, "RESOURCES", IS_MULTI, event_Todo),
-
-    /** */
-    RDATE(XcalTags.rdate, "RDATE", DataType.DATE_TIME,
-          IS_MULTI, event_Todo_Journal_Timezone),
-
-    /** */
+    /** recurrence rule */
     RRULE (XcalTags.rrule, "RRULE", DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
-    /* -------------- Other non-event, non-todo ---------------- */
+    /** itip sequence # */
+    SEQUENCE(XcalTags.sequence, "SEQUENCE",
+             DataType.INTEGER,
+             IS_SINGLE, event_Todo_Journal,
+             NOT_PARAM, NOT_IMMUTABLE),
+
+    /** Event/task status */
+    STATUS(XcalTags.status, "STATUS",
+           IS_SINGLE, event_Todo_Journal),
+
+    /** short summary */
+    SUMMARY(XcalTags.summary, "SUMMARY",
+            IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
+
+    /** Alarm trigger */
+    TRIGGER(XcalTags.trigger, "TRIGGER", DataType.DURATION,
+            IS_SINGLE, alarmOnly),
+
+    /** Transparency */
+    TRANSP(XcalTags.transp, "TRANSP",
+           IS_SINGLE, eventOnly),
 
     /** */
-    FREEBUSY(XcalTags.freebusy, "FREEBUSY", DataType.PERIOD,
-             IS_SINGLE, freebusyOnly),
+    TZID(XcalTags.tzid, "TZID",
+         IS_SINGLE, timezoneOnly),
 
     /** */
-    BUSYTYPE(XcalTags.busytype, "BUSYTYPE", IS_SINGLE, vavailabilityOnly),
+    TZNAME(XcalTags.tzname, "TZNAME",
+           IS_SINGLE, timezoneOnly),
 
     /** */
-    TZID(XcalTags.tzid, "TZID", IS_SINGLE, timezoneOnly),
-
-    /** */
-    TZNAME(XcalTags.tzname, "TZNAME", IS_SINGLE, timezoneOnly),
-
-    /** */
-    TZOFFSETFROM(XcalTags.tzoffsetfrom, "TZOFFSETFROM", DataType.UTC_OFFSET,
+    TZOFFSETFROM(XcalTags.tzoffsetfrom, "TZOFFSETFROM",
+                 DataType.UTC_OFFSET,
                  IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETTO(XcalTags.tzoffsetto, "TZOFFSETTO", DataType.UTC_OFFSET,
+    TZOFFSETTO(XcalTags.tzoffsetto, "TZOFFSETTO",
+               DataType.UTC_OFFSET,
                IS_SINGLE, timezoneOnly),
 
     /** */
-    TZURL(XcalTags.tzurl, "TZURL", DataType.URI,
+    TZURL(XcalTags.tzurl, "TZURL",
+          DataType.URI,
           IS_SINGLE, timezoneOnly),
 
-    /** */
-    ACTION(XcalTags.action, "ACTION", IS_SINGLE, alarmOnly),
+    /** Unique id */
+    UID(XcalTags.uid, "UID",
+        IS_SINGLE, event_Todo_Journal_Freebusy),
 
-    /** */
-    REPEAT(XcalTags.repeat, "REPEAT", DataType.INTEGER,
-           IS_SINGLE, alarmOnly),
+    /** link to some related resource */
+    URL(XcalTags.url, "URL",
+        DataType.URI,
+        IS_SINGLE, event_Todo_Journal_Freebusy),
 
-    /** */
-    TRIGGER(XcalTags.trigger, "TRIGGER", DataType.DURATION,
-            IS_SINGLE, alarmOnly),
+    /** treat x-properties as a single multi-valued property */
+    XPROP(BedeworkServerTags.xprop, "XPROP",
+          IS_MULTI, allComponents),
 
     /* -------------- Non-ical ---------------- */
 
     /** non ical */
-    CREATOR(BedeworkServerTags.creator, "CREATOR", DataType.HREF,
-            IS_SINGLE, event_Todo_Journal,
-            NOT_PARAM, IS_IMMUTABLE),
-
-    /** non ical */
-    OWNER(BedeworkServerTags.owner, "OWNER", DataType.HREF,
-          IS_SINGLE, event_Todo_Journal,
-          NOT_PARAM, IS_IMMUTABLE),
-
-    /** non ical */
-    END_TYPE(BedeworkServerTags.endType, "END-TYPE",
-             IS_SINGLE, event_Todo_Journal),
+    COLLECTION(BedeworkServerTags.collection, "COLLECTION",
+               IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
     COST(BedeworkServerTags.cost, "COST",
          IS_SINGLE, event_Todo),
 
     /** non ical */
-    CTAG(BedeworkServerTags.ctag, "CTAG", DataType.TEXT,
+    CREATOR(BedeworkServerTags.creator, "CREATOR",
+            DataType.HREF,
+            IS_SINGLE, event_Todo_Journal,
+            NOT_PARAM, IS_IMMUTABLE),
+
+    /** non ical */
+    CTAG(BedeworkServerTags.ctag, "CTAG",
+         DataType.TEXT,
          IS_SINGLE, noComponent,
          NOT_PARAM, IS_IMMUTABLE),
 
@@ -582,24 +612,29 @@ public class PropertyIndex implements Serializable {
             IS_SINGLE, event_Todo),
 
     /** non ical */
-    ETAG(BedeworkServerTags.etag, "ETAG", DataType.TEXT,
+    END_TYPE(BedeworkServerTags.endType, "END-TYPE",
+             IS_SINGLE, event_Todo_Journal),
+
+    /** non ical */
+    ETAG(BedeworkServerTags.etag, "ETAG",
+         DataType.TEXT,
          IS_SINGLE, noComponent,
          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    COLLECTION(BedeworkServerTags.collection, "COLLECTION",
-               IS_SINGLE, event_Todo_Journal),
-
-    /** non ical */
-    ENTITY_TYPE(BedeworkServerTags.entityType, "ENTITY_TYPE", DataType.INTEGER,
+    ENTITY_TYPE(BedeworkServerTags.entityType, "ENTITY_TYPE",
+                DataType.INTEGER,
                 IS_SINGLE, event_Todo_Journal,
                 NOT_PARAM, IS_IMMUTABLE),
 
+    /** non ical */
+    OWNER(BedeworkServerTags.owner, "OWNER",
+          DataType.HREF,
+          IS_SINGLE, event_Todo_Journal,
+          NOT_PARAM, IS_IMMUTABLE),
+
     /** treat VALARM sub-component as a property */
     VALARM(XcalTags.valarm, "VALARM", IS_MULTI, notAlarm),
-
-    /** treat x-properties as a single multi-valued property */
-    XPROP(BedeworkServerTags.xprop, "XPROP", IS_MULTI, allComponents),
 
     /** ----------------------------- Following are parameters ----------- */
 
