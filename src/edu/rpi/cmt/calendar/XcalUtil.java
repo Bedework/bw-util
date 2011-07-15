@@ -217,9 +217,25 @@ public class XcalUtil {
 
   /**
    * @param dt
-   * @return DtTzid filled in
+   * @return rfc5545 date or date/time
+   */
+  public static String getIcalFormatDateTime(final XMLGregorianCalendar dt) {
+    if (dt == null) {
+      return null;
+    }
+
+    return getIcalFormatDateTime(dt.toXMLFormat());
+  }
+
+  /**
+   * @param dt
+   * @return rfc5545 date or date/time
    */
   public static String getIcalFormatDateTime(final String dt) {
+    if (dt == null) {
+      return null;
+    }
+
     if (dt.charAt(4) != '-') {
       // Already Ical format
       return dt;
@@ -419,7 +435,7 @@ public class XcalUtil {
       return null;
     }
 
-    for (JAXBElement<? extends BasePropertyType> bpel: ps.getBaseProperty()) {
+    for (JAXBElement<? extends BasePropertyType> bpel: ps.getBasePropertyOrTzid()) {
       if (bpel.getName().equals(name)) {
         return bpel.getValue();
       }

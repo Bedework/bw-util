@@ -103,7 +103,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
               final QName name,
               final BaseComponentType c) {
     super(parent, name, c);
-    props = new PropsWrapper(this, c.getProperties().getBaseProperty());
+    props = new PropsWrapper(this, c.getProperties().getBasePropertyOrTzid());
     comps = new CompsWrapper(this, XcalUtil.getComponents(c));
 
     kind = compKinds.get(name);
