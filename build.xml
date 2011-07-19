@@ -67,6 +67,10 @@
     <getJar name="bw-tzschema" 
             version="${org.bedework.bwxml.version}" project="bwxml" 
             projecthome="${bedework.home}/../bwxml" />
+
+    <getJar name="bw-calws-soapschema" 
+            version="${org.bedework.bwxml.version}" project="bwxml" 
+            projecthome="${bedework.home}/../bwxml" />
   </target>
 
   <target name="build-source" depends="build-init">

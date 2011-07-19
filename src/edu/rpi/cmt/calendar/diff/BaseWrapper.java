@@ -70,8 +70,8 @@ class BaseWrapper<ParentT extends BaseWrapper> {
    * @param sb
    * @param nsContext
    */
-  public void appendXpathElement(final StringBuilder sb,
-                                 final NsContext nsContext) {
+  void appendXpathElement(final StringBuilder sb,
+                          final NsContext nsContext) {
     appendNsName(sb, nsContext);
   }
 

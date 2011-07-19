@@ -21,6 +21,8 @@ package edu.rpi.cmt.calendar.diff;
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.CalAddressListParamType;
 import ietf.params.xml.ns.icalendar_2.CalAddressParamType;
@@ -74,6 +76,18 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     }
 
     return true;
+  }
+
+  @Override
+  SelectElementType getChange() {
+    if (getAdd()) {
+
+    }
+    SelectElementType set = new SelectElementType();
+
+    set.setBaseParameter(getJaxbElement());
+
+    return set;
   }
 
   /** Creates a diff value if the values differ. Sets that.diffVal

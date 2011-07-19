@@ -21,10 +21,13 @@ package edu.rpi.cmt.calendar.diff;
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.NsContext;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /** This class wraps a property.
@@ -190,6 +193,13 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
     return entity;
   }
 
+  @SuppressWarnings("unchecked")
+  JAXBElement<? extends EntityT> getJaxbElement() {
+    return new JAXBElement<EntityT>(getName(),
+                                    (Class<EntityT>)entity.getClass(),
+                                    getEntity());
+  }
+
   /**
    * @param name
    * @return null for no mapping.
@@ -208,6 +218,11 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    * @return true if this represents the same (but possibly altered) entity.
    */
   abstract boolean sameEntity(BaseEntityWrapper val);
+
+  /**
+   * @return SelectElementType representing the selection or change
+   */
+  abstract SelectElementType getChange();
 
   /**
    * @param val

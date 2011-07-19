@@ -22,10 +22,13 @@ import edu.rpi.sss.util.xml.NsContext;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import org.apache.log4j.Logger;
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
+import ietf.params.xml.ns.icalendar_2.IcalendarType;
+import ietf.params.xml.ns.icalendar_2.VcalendarType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,20 @@ public class XmlIcalCompare {
    */
   public XmlIcalCompare(final NsContext nsContext) {
     this.nsContext = nsContext;
+  }
+
+  /** Compare the parameters. Set up a diff list.
+   *
+   * @param val1
+   * @param val2
+   * @return true if val1 and val2 differ.
+   */
+  public boolean differ(final IcalendarType val1,
+                        final IcalendarType val2) {
+    VcalendarType v1 = val1.getVcalendar().get(0);
+    VcalendarType v2 = val2.getVcalendar().get(0);
+
+    return differ(v1, v2);
   }
 
   /** Compare the parameters. Set up a diff list.
@@ -222,11 +239,26 @@ public class XmlIcalCompare {
   /**
    * @return List of updates
    */
-  public List<XpathUpdate> getUpdates() {
+  public List<SelectElementType> getUpdates() {
+    List<SelectElementType> upds = new ArrayList<SelectElementType>();
+
+    for (BaseEntityWrapper bw: updates) {
+      SelectElementType upd = bw.getChange();
+
+      upds.add(upd);
+    }
+
+    return upds;
+  }
+
+  /**
+   * @return List of updates
+   */
+  public List<XpathUpdate> getXpathUpdates() {
     List<XpathUpdate> upds = new ArrayList<XpathUpdate>();
 
     for (BaseEntityWrapper bw: updates) {
-      XpathUpdate upd = makeUpdate(bw);
+      XpathUpdate upd = makeXpathUpdate(bw);
 
       if (debug) {
         trace(upd.toString());
@@ -249,7 +281,7 @@ public class XmlIcalCompare {
    *   We select a parameter to delete it or change its value. The value is a value-type
    *  element
    */
-  private XpathUpdate makeUpdate(final BaseEntityWrapper be) {
+  private XpathUpdate makeXpathUpdate(final BaseEntityWrapper be) {
     Stack<BaseWrapper> els = new Stack<BaseWrapper>();
 
     BaseWrapper b = be;

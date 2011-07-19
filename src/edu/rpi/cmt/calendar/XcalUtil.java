@@ -247,7 +247,7 @@ public class XcalUtil {
     sb.append(dt.substring(5, 7));
     sb.append(dt.substring(8, 10));
 
-    if (dt.length() > 8) {
+    if (dt.length() > 10) {
       sb.append("T");
       sb.append(dt.substring(11, 13));
       sb.append(dt.substring(14, 16));

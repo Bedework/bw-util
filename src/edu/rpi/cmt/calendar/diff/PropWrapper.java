@@ -23,6 +23,8 @@ import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.NsContext;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.AttachPropType;
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
@@ -113,7 +115,19 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
   }
 
   @Override
-  public void appendXpathElement(final StringBuilder sb,
+  SelectElementType getChange() {
+    if (getAdd()) {
+
+    }
+    SelectElementType set = new SelectElementType();
+
+    set.setBaseProperty(getJaxbElement());
+
+    return set;
+  }
+
+  @Override
+  void appendXpathElement(final StringBuilder sb,
                                  final NsContext nsContext) {
     appendNsName(sb, nsContext);
 

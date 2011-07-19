@@ -94,7 +94,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
     int thatI = 0;
     int thisI = 0;
 
-    while ((thisI < size()) && (thatI < that.size())) {
+    while ((that != null) && (thisI < size()) && (thatI < that.size())) {
       PropWrapper thisOne = getTarray()[thisI];
       PropWrapper thatOne = that.getTarray()[thatI];
 
@@ -125,8 +125,8 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
          * be an add, update or mod.
          */
 
-        if ((thisI + 1 == size()) ||
-            (thatI + 1 == that.size())) {
+        if (((thisI + 1) == size()) ||
+            ((thatI + 1) == that.size())) {
           // No more on this side or that side - call it an update
           updates.addAll(thisOne.diff(thatOne));
           thisI++;
@@ -176,7 +176,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
       thisI++;
     }
 
-    while (thatI < that.size()) {
+    while ((that != null) && (thatI < that.size())) {
       // Extra ones in the target
 
       PropWrapper thatOne = that.getTarray()[thatI];

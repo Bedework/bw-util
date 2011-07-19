@@ -22,6 +22,8 @@ import edu.rpi.cmt.calendar.XcalUtil;
 import edu.rpi.sss.util.xml.NsContext;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.DaylightType;
 import ietf.params.xml.ns.icalendar_2.StandardType;
@@ -103,7 +105,10 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
               final QName name,
               final BaseComponentType c) {
     super(parent, name, c);
-    props = new PropsWrapper(this, c.getProperties().getBasePropertyOrTzid());
+
+    if (c.getProperties() != null) {
+      props = new PropsWrapper(this, c.getProperties().getBasePropertyOrTzid());
+    }
     comps = new CompsWrapper(this, XcalUtil.getComponents(c));
 
     kind = compKinds.get(name);
@@ -119,10 +124,21 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     return null;
   }
 
+  @Override
+  SelectElementType getChange() {
+    if (getAdd()) {
+
+    }
+    SelectElementType set = new SelectElementType();
+
+    set.setBaseComponent(getJaxbElement());
+
+    return set;
+  }
 
   @Override
-  public void appendXpathElement(final StringBuilder sb,
-                                 final NsContext nsContext) {
+  void appendXpathElement(final StringBuilder sb,
+                          final NsContext nsContext) {
     appendNsName(sb, nsContext);
 
     if ((kind == OuterKind) || (kind == TzKind)) {
