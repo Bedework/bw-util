@@ -57,9 +57,7 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
   /* Change this entity value */
   private boolean changeValue;
 
-  /* Othrewise it's replace the entity */
-
-  private T diffVal;
+  /* Otherwise it's replace the entity */
 
   BaseEntityWrapper(final ParentT parent,
                     final QName name,
@@ -148,20 +146,6 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    */
   public boolean getChangeValue() {
     return changeValue;
-  }
-
-  /**
-   * @param val needed to change to match the original
-   */
-  public void setDiffVal(final T val) {
-    diffVal = val;
-  }
-
-  /**
-   * @return value needed to change to match the original
-   */
-  public T getDiffVal() {
-    return diffVal;
   }
 
   public int compareNames(final BaseEntityWrapper that) {

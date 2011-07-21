@@ -133,32 +133,24 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
          * be an add, update or mod.
          */
 
-        if (((thisI + 1) == size()) ||
+        if (((thisI + 1) == size()) &&
             ((thatI + 1) == that.size())) {
-          // No more on this side or that side - call it an update
+          // No more on this side and that side - call it an update
           sel = addSelect(sel, thisOne.diff(thatOne));
           thisI++;
           thatI++;
           continue;
         }
 
-        // More on both sides
+        /* More on one or both sides. This allows the possibility that an
+         * extra multivalued value has been inserted or one deleted.
+         *
+         * We should check further down both sides.
+         */
 
-        if (thisOne.getValue().equals(thatOne.getValue())) {
-          // Must be a parameter change
-          sel = addSelect(sel, thisOne.diff(thatOne));
-          thisI++;
-          thatI++;
-          continue;
-        }
+        // For the moment just create a diff
 
-        // Be crude about this for the moment. Delete thatOne, add ThisOne
-        thatOne.setDelete(true);
-        sel = addUpdate(sel, thatOne.getUpdate());
-
-        thisOne.setAdd(true);
-        sel = addUpdate(sel, thisOne.getUpdate());
-
+        sel = addSelect(sel, thisOne.diff(thatOne));
         thisI++;
         thatI++;
       } else if (ncmp < 0) {

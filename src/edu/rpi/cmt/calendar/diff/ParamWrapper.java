@@ -129,10 +129,11 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     SelectElementType sel = null;
 
     if (!getValue().equals(that.getValue())) {
-      sel = getSelect();
+      sel = that.getSelect();
       ChangeType ct = new ChangeType();
 
       ct.setNewValue(new NewValueType());
+      ct.getNewValue().setBaseParameter(getJaxbElement());
 
       sel.getBaseUpdate().add(of.createChange(ct));
     }

@@ -172,13 +172,13 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     }
 
     if (!getValue().equals(that.getValue())) {
-      that.setDiffVal(this);
       setChangeValue(true);
 
-      sel = getSelect();
+      sel = that.getSelect();
       ChangeType ct = new ChangeType();
 
       ct.setNewValue(new NewValueType());
+      ct.getNewValue().setBaseProperty(getJaxbElement());
 
       sel.getBaseUpdate().add(of.createChange(ct));
     }

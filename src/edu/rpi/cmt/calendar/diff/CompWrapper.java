@@ -285,7 +285,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       SelectElementType psel = props.diff(that.props);
 
       if (psel != null) {
-        sel = getSelect();
+        sel = that.getSelect();
 
         sel.getSelect().add(psel);
       }
@@ -295,13 +295,27 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
 
     if (csel != null) {
       if (sel == null) {
-        sel = getSelect();
+        sel = that.getSelect();
       }
 
       sel.getSelect().add(csel);
     }
 
     return sel;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  JAXBElement<? extends BaseComponentType> getJaxbElement() {
+    if (kind != OuterKind) {
+      return super.getJaxbElement();
+    }
+
+    /* Only want the outer element for this class */
+    BaseComponentType bct = new VcalendarType();
+    return new JAXBElement<BaseComponentType>(getName(),
+        (Class<BaseComponentType>)bct.getClass(),
+                                    bct);
   }
 
   /* create sel with a selection for this component
