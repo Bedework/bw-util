@@ -18,9 +18,11 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.PropertiesSelectionType;
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -88,8 +90,14 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
     return new PropWrapper(this, nm, el.getValue());
   }
 
-  public List<BaseEntityWrapper> diff(final PropsWrapper that) {
-    List<BaseEntityWrapper> updates = new ArrayList<BaseEntityWrapper>();
+  /** Return a list of differences between this (the new object) and that (the
+   * old object)
+   *
+   * @param that - the old form.
+   * @return changes
+   */
+  public SelectElementType diff(final PropsWrapper that) {
+    SelectElementType sel = null;
 
     int thatI = 0;
     int thisI = 0;
@@ -128,7 +136,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
         if (((thisI + 1) == size()) ||
             ((thatI + 1) == that.size())) {
           // No more on this side or that side - call it an update
-          updates.addAll(thisOne.diff(thatOne));
+          sel = addSelect(sel, thisOne.diff(thatOne));
           thisI++;
           thatI++;
           continue;
@@ -138,7 +146,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
 
         if (thisOne.getValue().equals(thatOne.getValue())) {
           // Must be a parameter change
-          updates.addAll(thisOne.diff(thatOne));
+          sel = addSelect(sel, thisOne.diff(thatOne));
           thisI++;
           thatI++;
           continue;
@@ -146,23 +154,23 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
 
         // Be crude about this for the moment. Delete thatOne, add ThisOne
         thatOne.setDelete(true);
-        updates.add(thatOne);
+        sel = addUpdate(sel, thatOne.getUpdate());
 
         thisOne.setAdd(true);
-        updates.add(thisOne);
+        sel = addUpdate(sel, thisOne.getUpdate());
 
         thisI++;
         thatI++;
       } else if (ncmp < 0) {
         // in this but not that - addition
         thisOne.setAdd(true);
-        updates.add(thisOne);
+        sel = addUpdate(sel, thisOne.getUpdate());
         thisI++;
       } else {
         // in that but not this - deletion
         // in that but not this - deletion
         thatOne.setDelete(true);
-        updates.add(thatOne);
+        sel = addUpdate(sel, thatOne.getUpdate());
         thatI++;
       }
     }
@@ -172,7 +180,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
 
       PropWrapper thisOne = getTarray()[thisI];
       thisOne.setAdd(true);
-      updates.add(thisOne);
+      sel = addUpdate(sel, thisOne.getUpdate());
       thisI++;
     }
 
@@ -181,11 +189,23 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
 
       PropWrapper thatOne = that.getTarray()[thatI];
       thatOne.setDelete(true);
-      updates.add(thatOne);
+      sel = addUpdate(sel, thatOne.getUpdate());
       thatI++;
     }
 
-    return updates;
+    return sel;
+  }
+
+  @Override
+  SelectElementType getSelect(final SelectElementType val) {
+    if (val != null) {
+      return val;
+    }
+
+    SelectElementType sel = new SelectElementType();
+    sel.setProperties(new PropertiesSelectionType());
+
+    return sel;
   }
 
   public int compareTo(final PropsWrapper that) {

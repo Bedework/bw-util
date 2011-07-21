@@ -19,13 +19,8 @@
 package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.sss.util.Util;
-import edu.rpi.sss.util.xml.NsContext;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -53,124 +48,18 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
   /* The entity we want to change */
   private EntityT entity;
 
+  /* Add this entity */
   private boolean add;
+
+  /* Delete this entity */
   private boolean delete;
 
+  /* Change this entity value */
+  private boolean changeValue;
+
+  /* Othrewise it's replace the entity */
+
   private T diffVal;
-
-  public static class ValueTypeEntry implements Comparable<ValueTypeEntry> {
-    public QName typeElement;
-    public String value;
-
-    public ValueTypeEntry(final QName typeElement,
-                          final String value) {
-      this.typeElement = typeElement;
-      this.value = value;
-    }
-
-    public String toString(final NsContext nsContext) {
-      StringBuilder sb = new StringBuilder();
-
-      sb.append("<");
-      nsContext.appendNsName(sb, typeElement);
-      sb.append(">");
-      sb.append(value);
-      sb.append("</");
-      nsContext.appendNsName(sb, typeElement);
-      sb.append(">");
-
-      return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      sb.append(typeElement);
-      sb.append(value);
-
-      return sb.toString();
-    }
-
-    public int compareTo(final ValueTypeEntry o) {
-      int res = typeElement.getNamespaceURI().compareTo(o.typeElement.getNamespaceURI());
-      if (res != 0) {
-        return res;
-      }
-
-      res = typeElement.getLocalPart().compareTo(o.typeElement.getLocalPart());
-      if (res != 0) {
-        return res;
-      }
-
-      return value.compareTo(o.value);
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      return compareTo((ValueTypeEntry)o) == 0;
-    }
-  }
-
-  public static class ValueType implements Comparable<ValueType> {
-    public List<ValueTypeEntry> vtes = new ArrayList<ValueTypeEntry>();
-
-    public ValueType() {}
-
-    public ValueType(final QName typeElement,
-                     final String value) {
-      vtes.add(new ValueTypeEntry(typeElement, value));
-    }
-
-    public String toString(final NsContext nsContext) {
-      StringBuilder sb = new StringBuilder();
-
-      for (ValueTypeEntry vte: vtes) {
-        sb.append(vte.toString(nsContext));
-      }
-
-      return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      for (ValueTypeEntry vte: vtes) {
-        sb.append(vte.toString());
-      }
-
-      return sb.toString();
-    }
-
-    public int compareTo(final ValueType o) {
-      Integer thisSz = vtes.size();
-      Integer thatSz = o.vtes.size();
-
-      int res = thisSz.compareTo(thatSz);
-      if (res != 0) {
-        return res;
-      }
-
-      Iterator<ValueTypeEntry> thatIt = o.vtes.iterator();
-
-      for (ValueTypeEntry vte: vtes) {
-        ValueTypeEntry thatVte = thatIt.next();
-
-        res = vte.compareTo(thatVte);
-        if (res != 0) {
-          return res;
-        }
-      }
-
-      return 0;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      return compareTo((ValueType)o) == 0;
-    }
-  }
 
   BaseEntityWrapper(final ParentT parent,
                     final QName name,
@@ -206,10 +95,10 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    */
   abstract QName getMappedName(QName name);
 
-  /** Get the value used for an update
-   * @return ValueType
+  /** Get the update
+   * @return JAXBElement<? extends BaseUpdateType>
    */
-  abstract ValueType getUpdateValue();
+  abstract JAXBElement<? extends BaseUpdateType> getUpdate();
 
   /** For example, two events objects represent the same entity if the uid and
    * recurrence-ids match.
@@ -218,11 +107,6 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    * @return true if this represents the same (but possibly altered) entity.
    */
   abstract boolean sameEntity(BaseEntityWrapper val);
-
-  /**
-   * @return SelectElementType representing the selection or change
-   */
-  abstract SelectElementType getChange();
 
   /**
    * @param val
@@ -250,6 +134,20 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    */
   public boolean getDelete() {
     return delete;
+  }
+
+  /**
+   * @param val
+   */
+  public void setChangeValue(final boolean val) {
+    changeValue = val;
+  }
+
+  /**
+   * @return true if we should change the value
+   */
+  public boolean getChangeValue() {
+    return changeValue;
   }
 
   /**

@@ -20,9 +20,14 @@ package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.cmt.calendar.XcalUtil;
 import edu.rpi.sss.util.Util;
-import edu.rpi.sss.util.xml.NsContext;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
+import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ChangeType;
+import org.oasis_open.docs.ns.wscal.calws_soap.NewValueType;
+import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ReplaceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
@@ -49,7 +54,6 @@ import ietf.params.xml.ns.icalendar_2.UriPropertyType;
 import ietf.params.xml.ns.icalendar_2.UtcDatetimePropertyType;
 import ietf.params.xml.ns.icalendar_2.UtcOffsetPropertyType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,11 +104,6 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
   }
 
   @Override
-  ValueType getUpdateValue() {
-    return getValue();
-  }
-
-  @Override
   boolean sameEntity(final BaseEntityWrapper val) {
     int res = super.compareNameClass(val);
     if (res != 0) {
@@ -115,54 +114,76 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
   }
 
   @Override
-  SelectElementType getChange() {
-    if (getAdd()) {
+  public JAXBElement<? extends BaseUpdateType> getUpdate() {
+    if (getDelete()) {
+      RemoveType r = new RemoveType();
 
+      r.setSelect(getSelect());
+
+      return of.createRemove(r);
     }
-    SelectElementType set = new SelectElementType();
 
-    set.setBaseProperty(getJaxbElement());
+    if (getAdd()) {
+      AddType a = new AddType();
 
-    return set;
+      a.setNewValue(new NewValueType());
+      a.getNewValue().setBaseProperty(getJaxbElement());
+      return of.createAdd(a);
+    }
+
+    /* Need to distinguish between change and replace
+     */
+
+    ReplaceType r = new ReplaceType();
+
+    r.setSelect(getSelect());
+    r.setNewValue(new NewValueType());
+    r.getNewValue().setBaseProperty(getJaxbElement());
+    return of.createReplace(r);
   }
 
-  @Override
-  void appendXpathElement(final StringBuilder sb,
-                                 final NsContext nsContext) {
-    appendNsName(sb, nsContext);
-
-    // Append value element.
-
-    ValueType vt = getValue();
-    sb.append("[");
-
-    // XXX This is wrong - just using first element for the moment
-    ValueTypeEntry vte = vt.vtes.get(0);
-    nsContext.appendNsName(sb, vte.typeElement);
-
-    sb.append("/text()='");
-    sb.append(vte.value);
-    sb.append("']");
-  }
-
-  /** Creates a diff value if the values differ. Sets that.diffVal
-   *
-   * @param that
-   * @return List<BaseEntityWrapper>
+  /* create a SelectElementType with a selection for this property
    */
-  public List<BaseEntityWrapper> diff(final PropWrapper that) {
-    List<BaseEntityWrapper> u = new ArrayList<BaseEntityWrapper>();
+  private SelectElementType getSelect() {
+    SelectElementType sel = new SelectElementType();
+
+    sel.setBaseProperty(getJaxbElement());
+
+    return sel;
+  }
+
+  /** Return a SelectElementType if the values differ. This object
+   * represents the new state
+   *
+   * @param that - the old version
+   * @return SelectElementType
+   */
+  public SelectElementType diff(final PropWrapper that) {
+    SelectElementType sel = null;
+
+    if (params != null) {
+      SelectElementType psel = params.diff(that.params);
+
+      if (psel != null) {
+        sel = getSelect();
+
+        sel.getSelect().add(psel);
+      }
+    }
 
     if (!getValue().equals(that.getValue())) {
       that.setDiffVal(this);
-      u.add(that);
-      return u;
+      setChangeValue(true);
+
+      sel = getSelect();
+      ChangeType ct = new ChangeType();
+
+      ct.setNewValue(new NewValueType());
+
+      sel.getBaseUpdate().add(of.createChange(ct));
     }
 
-    that.setDiffVal(null);
-
-    u.addAll(params.diff(that.params));
-    return u;
+    return sel;
   }
 
   ValueType getValue() {
@@ -190,13 +211,11 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       vt = new ValueType(XcalTags.codeVal, rs.getCode());
 
       if (rs.getDescription() != null) {
-        vt.vtes.add(new ValueTypeEntry(XcalTags.descriptionVal,
-                                       rs.getDescription()));
+        vt.addValue(XcalTags.descriptionVal, rs.getDescription());
       }
 
       if (rs.getExtdata() != null) {
-        vt.vtes.add(new ValueTypeEntry(XcalTags.extdataVal,
-                                       rs.getExtdata()));
+        vt.addValue(XcalTags.extdataVal, rs.getExtdata());
       }
 
       return vt;
@@ -207,8 +226,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
       vt = new ValueType(XcalTags.latitudeVal,
                          String.valueOf(gp.getLatitude()));
-      vt.vtes.add(new ValueTypeEntry(XcalTags.longitudeVal,
-                                     String.valueOf(gp.getLongitude())));
+      vt.addValue(XcalTags.longitudeVal, String.valueOf(gp.getLongitude()));
 
       return vt;
     }
@@ -308,7 +326,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       vt = new ValueType();
 
       for (String s: ss) {
-        vt.vtes.add(new ValueTypeEntry(XcalTags.textVal, s));
+        vt.addValue(XcalTags.textVal, s);
       }
 
       return vt;
@@ -377,7 +395,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       return;
     }
 
-    vt.vtes.add(new ValueTypeEntry(nm, String.valueOf(val)));
+    vt.addValue(nm, String.valueOf(val));
   }
 
   public int compareTo(final PropWrapper o) {
@@ -413,6 +431,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
     super.toStringSegment(sb);
 
+    /* Just serialize the entity?
     if (params.size() > 0) {
       sb.append(", params=");
       sb.append(params);
@@ -421,6 +440,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     sb.append(", value=\"");
     sb.append(getValue());
     sb.append("\"");
+    */
 
     sb.append("}");
 

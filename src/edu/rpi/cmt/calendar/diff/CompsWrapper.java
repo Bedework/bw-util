@@ -18,9 +18,11 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.ComponentsSelectionType;
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,8 +51,8 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
     return new CompWrapper(this, el.getName(), el.getValue());
   }
 
-  public List<BaseEntityWrapper> diff(final CompsWrapper that) {
-    List<BaseEntityWrapper> updates = new ArrayList<BaseEntityWrapper>();
+  public SelectElementType diff(final CompsWrapper that) {
+    SelectElementType sel = null;
 
     int thatI = 0;
     int thisI = 0;
@@ -60,11 +62,11 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
       CompWrapper thatOne = that.getTarray()[thatI];
 
       if (thisOne.sameEntity(thatOne)) {
-        // For events for example that would be uid and recurremce id match
+        // For events for example that would be uid and recurrence id match
 
-        if (!thisOne.equals(thatOne)) {
-          // call it an update
-          updates.addAll(thisOne.diff(thatOne));
+        SelectElementType csel = thisOne.diff(thatOne);
+        if (csel != null) {
+          sel = addSelect(sel, csel);
         }
 
         thisI++;
@@ -97,8 +99,9 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
 
       if (cmp < 0) {
         // Add this side entry
+
         thisOne.setAdd(true);
-        updates.add(thisOne);
+        sel = addUpdate(sel, thisOne.getUpdate());
         thisI++;
         continue;
       }
@@ -111,7 +114,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
       // Extra ones in the target
 
       thatOne.setDelete(true);
-      updates.add(thatOne);
+      sel = addUpdate(sel, thatOne.getUpdate());
       thatI++;
     }
 
@@ -120,7 +123,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
 
       CompWrapper thisOne = getTarray()[thisI];
       thisOne.setAdd(true);
-      updates.add(thisOne);
+      sel = addUpdate(sel, thisOne.getUpdate());
       thisI++;
     }
 
@@ -129,11 +132,23 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
 
       CompWrapper thatOne = that.getTarray()[thatI];
       thatOne.setDelete(true);
-      updates.add(thatOne);
+      sel = addUpdate(sel, thatOne.getUpdate());
       thatI++;
     }
 
-    return updates;
+    return sel;
+  }
+
+  @Override
+  SelectElementType getSelect(final SelectElementType val) {
+    if (val != null) {
+      return val;
+    }
+
+    SelectElementType sel = new SelectElementType();
+    sel.setComponents(new ComponentsSelectionType());
+
+    return sel;
   }
 
   public int compareTo(final CompsWrapper that) {

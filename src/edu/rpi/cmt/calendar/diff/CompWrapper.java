@@ -19,14 +19,24 @@
 package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.cmt.calendar.XcalUtil;
-import edu.rpi.sss.util.xml.NsContext;
+import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
+import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
+import org.oasis_open.docs.ns.wscal.calws_soap.NewValueType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
+import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ReplaceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
+import ietf.params.xml.ns.icalendar_2.ActionPropType;
+import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.DaylightType;
+import ietf.params.xml.ns.icalendar_2.RecurrenceIdPropType;
 import ietf.params.xml.ns.icalendar_2.StandardType;
+import ietf.params.xml.ns.icalendar_2.UidPropType;
 import ietf.params.xml.ns.icalendar_2.ValarmType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
 import ietf.params.xml.ns.icalendar_2.VeventType;
@@ -36,9 +46,9 @@ import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /** This class wraps a property.
@@ -114,90 +124,53 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     kind = compKinds.get(name);
   }
 
+  CompWrapper(final ObjectFactory of,
+              final QName name,
+              final BaseComponentType c) {
+    super(null, name, c);
+
+    setObjectFactory(of);
+
+    if (c.getProperties() != null) {
+      props = new PropsWrapper(this, c.getProperties().getBasePropertyOrTzid());
+    }
+    comps = new CompsWrapper(this, XcalUtil.getComponents(c));
+
+    kind = compKinds.get(name);
+  }
+
   @Override
   QName getMappedName(final QName name) {
     return null;
   }
 
   @Override
-  ValueType getUpdateValue() {
-    return null;
-  }
+  public JAXBElement<? extends BaseUpdateType> getUpdate() {
+    if (getDelete()) {
+      RemoveType r = new RemoveType();
 
-  @Override
-  SelectElementType getChange() {
+      r.setSelect(getSelect());
+
+      return of.createRemove(r);
+    }
+
     if (getAdd()) {
+      AddType a = new AddType();
 
-    }
-    SelectElementType set = new SelectElementType();
-
-    set.setBaseComponent(getJaxbElement());
-
-    return set;
-  }
-
-  @Override
-  void appendXpathElement(final StringBuilder sb,
-                          final NsContext nsContext) {
-    appendNsName(sb, nsContext);
-
-    if ((kind == OuterKind) || (kind == TzKind)) {
-      return;
+      a.setNewValue(new NewValueType());
+      a.getNewValue().setBaseComponent(getJaxbElement());
+      return of.createAdd(a);
     }
 
-    if (kind == AlarmKind) {
-      sb.append("[");
+    /* Need to distinguish between change and replace
+     */
 
-      PropWrapper pw = props.find(XcalTags.action);
+    ReplaceType r = new ReplaceType();
 
-      props.appendXpathElement(sb, nsContext);
-      sb.append("/");
-      pw.appendXpathElement(sb, nsContext);
-
-      sb.append(" and ");
-
-      pw = props.find(XcalTags.trigger);
-
-      props.appendXpathElement(sb, nsContext);
-      sb.append("/");
-      pw.appendXpathElement(sb, nsContext);
-
-      sb.append("]");
-
-      return;
-    }
-
-    sb.append("[");
-
-    PropWrapper pw = props.find(XcalTags.uid);
-
-    props.appendXpathElement(sb, nsContext);
-    sb.append("/");
-    pw.appendXpathElement(sb, nsContext);
-
-    if (kind == UidKind) {
-      sb.append("]");
-
-      return;
-    }
-
-    sb.append(" and ");
-
-    pw = props.find(XcalTags.recurrenceId);
-
-    if (pw != null) {
-      props.appendXpathElement(sb, nsContext);
-      sb.append("/");
-      pw.appendXpathElement(sb, nsContext);
-    } else {
-      sb.append("not (");
-      props.appendXpathElement(sb, nsContext);
-      sb.append("/");
-      nsContext.appendNsName(sb, XcalTags.recurrenceId);
-      sb.append(")");
-    }
-
-    sb.append("]");
+    r.setSelect(getSelect());
+    r.setNewValue(new NewValueType());
+    r.getNewValue().setBaseComponent(getJaxbElement());
+    return of.createReplace(r);
   }
 
   @Override
@@ -226,7 +199,10 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       PropWrapper thatw = that.props.find(XcalTags.action);
       PropWrapper thisw = props.find(XcalTags.action);
 
-      if (!thatw.getValue().equals(thisw.getValue())) {
+      String thatAction = ((ActionPropType)thatw.getEntity()).getText();
+      String thisAction = ((ActionPropType)thisw.getEntity()).getText();
+
+      if (!thatAction.equals(thisAction)) {
         return false;
       }
 
@@ -237,7 +213,10 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     PropWrapper thatUidw = that.props.find(XcalTags.uid);
     PropWrapper thisUidw = props.find(XcalTags.uid);
 
-    if (!thatUidw.getValue().equals(thisUidw.getValue())) {
+    String thatUid = ((UidPropType)thatUidw.getEntity()).getText();
+    String thisUid = ((UidPropType)thisUidw.getEntity()).getText();
+
+    if (!thatUid.equals(thisUid)) {
       return false;
     }
 
@@ -245,18 +224,38 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return true;
     }
 
+    return cmpRids(that) == 0;
+  }
+
+  private int cmpRids(final CompWrapper that) {
     PropWrapper thatRidw = that.props.find(XcalTags.recurrenceId);
     PropWrapper thisRidw = props.find(XcalTags.recurrenceId);
 
     if ((thisRidw == null) && (thatRidw == null)) {
-      return true;
+      return 0;
     }
 
-    if ((thisRidw == null) || (thatRidw == null)) {
-      return false;
+    if (thisRidw == null) {
+      return -1;
     }
 
-    return thatRidw.getValue().equals(thisRidw.getValue());
+    if (thatRidw == null) {
+      return 1;
+    }
+
+    RecurrenceIdPropType thatRid = (RecurrenceIdPropType)thatRidw.getEntity();
+    RecurrenceIdPropType thisRid = (RecurrenceIdPropType)thisRidw.getEntity();
+
+    XcalUtil.DtTzid thatDtTzid = XcalUtil.getDtTzid(thatRid);
+    XcalUtil.DtTzid thisDtTzid = XcalUtil.getDtTzid(thisRid);
+
+    int res = thatDtTzid.dt.compareTo(thisDtTzid.dt);
+
+    if (res != 0) {
+      return res;
+    }
+
+    return Util.cmpObjval(thisDtTzid.tzid, thatDtTzid.tzid);
   }
 
   /**
@@ -273,16 +272,79 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     return comps;
   }
 
-  /** Creates a diff value if the values differ. Sets that.diffVal
+  /** Return a SelectElementType if the values differ. This object
+   * represents the new state
    *
-   * @param that
-   * @return List<BaseEntityWrapper>
+   * @param that - the old version
+   * @return SelectElementType
    */
-  public List<BaseEntityWrapper> diff(final CompWrapper that) {
-    List<BaseEntityWrapper> u = props.diff(that.props);
-    u.addAll(comps.diff(that.comps));
+  public SelectElementType diff(final CompWrapper that) {
+    SelectElementType sel = null;
 
-    return u;
+    if (props != null) {
+      SelectElementType psel = props.diff(that.props);
+
+      if (psel != null) {
+        sel = getSelect();
+
+        sel.getSelect().add(psel);
+      }
+    }
+
+    SelectElementType csel = comps.diff(that.comps);
+
+    if (csel != null) {
+      if (sel == null) {
+        sel = getSelect();
+      }
+
+      sel.getSelect().add(csel);
+    }
+
+    return sel;
+  }
+
+  /* create sel with a selection for this component
+   */
+  private SelectElementType getSelect() {
+    SelectElementType sel = new SelectElementType();
+
+    sel.setBaseComponent(getJaxbElement());
+
+    if ((kind == OuterKind) || (kind == TzKind)) {
+      return sel;
+    }
+
+    /* Add extra information to identify the component */
+
+    BaseComponentType bct = sel.getBaseComponent().getValue();
+    ArrayOfProperties bprops = new ArrayOfProperties();
+    bct.setProperties(bprops);
+
+    if (kind == AlarmKind) {
+      PropWrapper pw = props.find(XcalTags.action);
+
+      bprops.getBasePropertyOrTzid().add(pw.getJaxbElement());
+
+      bprops.getBasePropertyOrTzid().add(pw.getJaxbElement());
+
+      return sel;
+    }
+
+    PropWrapper pw = props.find(XcalTags.uid);
+    bprops.getBasePropertyOrTzid().add(pw.getJaxbElement());
+
+    if (kind == UidKind) {
+      return sel;
+    }
+
+    pw = props.find(XcalTags.recurrenceId);
+
+    if (pw != null) {
+      bprops.getBasePropertyOrTzid().add(pw.getJaxbElement());
+    }
+
+    return sel;
   }
 
   public int compareTo(final CompWrapper o) {
@@ -342,18 +404,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return res;
     }
 
-    PropWrapper thatRidw = o.props.find(XcalTags.recurrenceId);
-    PropWrapper thisRidw = props.find(XcalTags.recurrenceId);
-
-    if ((thisRidw == null) && (thatRidw == null)) {
-      res = 0;
-    } else if (thisRidw == null) {
-      res = -1;
-    } else if (thatRidw == null) {
-      res = 1;
-    } else {
-      res = thisRidw.getValue().compareTo(thatRidw.getValue());
-    }
+    res = cmpRids(o);
 
     if (res != 0) {
       return res;

@@ -21,6 +21,12 @@ package edu.rpi.cmt.calendar.diff;
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
+import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ChangeType;
+import org.oasis_open.docs.ns.wscal.calws_soap.NewValueType;
+import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ReplaceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
@@ -42,6 +48,7 @@ import ietf.params.xml.ns.icalendar_2.UriParameterType;
 
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /** This class wraps a parameter.
@@ -64,11 +71,6 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
   }
 
   @Override
-  ValueType getUpdateValue() {
-    return getValue();
-  }
-
-  @Override
   boolean sameEntity(final BaseEntityWrapper val) {
     int res = super.compareNameClass(val);
     if (res != 0) {
@@ -79,30 +81,63 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
   }
 
   @Override
-  SelectElementType getChange() {
-    if (getAdd()) {
+  public JAXBElement<? extends BaseUpdateType> getUpdate() {
+    if (getDelete()) {
+      RemoveType r = new RemoveType();
 
+      r.setSelect(getSelect());
+
+      return of.createRemove(r);
     }
-    SelectElementType set = new SelectElementType();
 
-    set.setBaseParameter(getJaxbElement());
+    if (getAdd()) {
+      AddType a = new AddType();
 
-    return set;
+      a.setNewValue(new NewValueType());
+      a.getNewValue().setBaseParameter(getJaxbElement());
+      return of.createAdd(a);
+    }
+
+    /* Need to distinguish between change and replace
+     */
+
+    ReplaceType r = new ReplaceType();
+
+    r.setSelect(getSelect());
+    r.setNewValue(new NewValueType());
+    r.getNewValue().setBaseParameter(getJaxbElement());
+    return of.createReplace(r);
   }
 
-  /** Creates a diff value if the values differ. Sets that.diffVal
-   *
-   * @param that
-   * @return boolean true for differences
+  /* create a SelectElementType with a selection for this property
    */
-  public boolean diff(final ParamWrapper that) {
+  private SelectElementType getSelect() {
+    SelectElementType sel = new SelectElementType();
+
+    sel.setBaseParameter(getJaxbElement());
+
+    return sel;
+  }
+
+  /** Return a SelectElementType if the values differ. This object
+   * represents the new state
+   *
+   * @param that - the old version
+   * @return SelectElementType
+   */
+  public SelectElementType diff(final ParamWrapper that) {
+    SelectElementType sel = null;
+
     if (!getValue().equals(that.getValue())) {
-      that.setDiffVal(this);
-      return true;
+      sel = getSelect();
+      ChangeType ct = new ChangeType();
+
+      ct.setNewValue(new NewValueType());
+
+      sel.getBaseUpdate().add(of.createChange(ct));
     }
 
-    that.setDiffVal(null);
-    return false;
+    return sel;
   }
 
   ValueType getValue() {
@@ -119,7 +154,7 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
       ValueType vt = new ValueType();
 
       for (String s: ss) {
-        vt.vtes.add(new ValueTypeEntry(XcalTags.calAddressVal, s));
+        vt.addValue(XcalTags.calAddressVal, s);
       }
 
       return vt;

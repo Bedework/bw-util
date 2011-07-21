@@ -18,11 +18,15 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /** This class wraps an array of components.
@@ -107,6 +111,26 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
     }
 
     return found;
+  }
+
+  abstract SelectElementType getSelect(final SelectElementType val);
+
+  protected SelectElementType addSelect(final SelectElementType to,
+                                        final SelectElementType val) {
+    SelectElementType sel = getSelect(to);
+
+    sel.getSelect().add(val);
+
+    return sel;
+  }
+
+  protected SelectElementType addUpdate(final SelectElementType to,
+                                        final JAXBElement<? extends BaseUpdateType> val) {
+    SelectElementType sel = getSelect(to);
+
+    sel.getBaseUpdate().add(val);
+
+    return sel;
   }
 
   @Override

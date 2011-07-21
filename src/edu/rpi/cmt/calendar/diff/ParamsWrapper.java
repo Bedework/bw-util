@@ -18,9 +18,11 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.ParametersSelectionType;
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,8 +51,14 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
     return new ParamWrapper(this, el.getName(), el.getValue());
   }
 
-  public List<BaseEntityWrapper> diff(final ParamsWrapper that) {
-    List<BaseEntityWrapper> updates = new ArrayList<BaseEntityWrapper>();
+  /** Return a list of differences between this (the new object) and that (the
+   * old object)
+   *
+   * @param that - the old form.
+   * @return changes
+   */
+  public SelectElementType diff(final ParamsWrapper that) {
+    SelectElementType sel = null;
 
     int thatI = 0;
     int thisI = 0;
@@ -73,17 +81,16 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
 
       if (ncmp == 0) {
         // Names match - it's a modify
-        thisOne.diff(thatOne);
-        updates.add(thatOne);
+        sel = addSelect(sel, thisOne.diff(thatOne));
       } else if (ncmp < 0) {
         // in this but not that - addition
         thisOne.setAdd(true);
-        updates.add(thisOne);
+        sel = addUpdate(sel, thisOne.getUpdate());
         thisI++;
       } else {
         // in that but not this - deletion
         thatOne.setDelete(true);
-        updates.add(thatOne);
+        sel = addUpdate(sel, thatOne.getUpdate());
         thatI++;
       }
     }
@@ -93,7 +100,7 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
 
       ParamWrapper thisOne = getTarray()[thisI];
       thisOne.setAdd(true);
-      updates.add(thisOne);
+      sel = addUpdate(sel, thisOne.getUpdate());
       thisI++;
     }
 
@@ -102,11 +109,23 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
 
       ParamWrapper thatOne = that.getTarray()[thatI];
       thatOne.setDelete(true);
-      updates.add(thatOne);
+      sel = addUpdate(sel, thatOne.getUpdate());
       thatI++;
     }
 
-    return updates;
+    return sel;
+  }
+
+  @Override
+  SelectElementType getSelect(final SelectElementType val) {
+    if (val != null) {
+      return val;
+    }
+
+    SelectElementType sel = new SelectElementType();
+    sel.setParameters(new ParametersSelectionType());
+
+    return sel;
   }
 
   public int compareTo(final ParamsWrapper that) {

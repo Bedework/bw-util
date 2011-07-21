@@ -20,6 +20,8 @@ package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.sss.util.xml.NsContext;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
+
 import javax.xml.namespace.QName;
 
 
@@ -36,14 +38,24 @@ class BaseWrapper<ParentT extends BaseWrapper> {
 
   private QName name;
 
+  protected ObjectFactory of;
+
   BaseWrapper(final ParentT parent,
               final QName name) {
     this.parent = parent;
     this.name = name;
+
+    if (parent != null) {
+      of = parent.of;
+    }
   }
 
   ParentT getParent() {
     return parent;
+  }
+
+  void setObjectFactory(final ObjectFactory val) {
+    of = val;
   }
 
   QName getName() {
