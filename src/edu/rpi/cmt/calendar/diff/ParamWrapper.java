@@ -18,9 +18,6 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
-import edu.rpi.sss.util.Util;
-import edu.rpi.sss.util.xml.tagdefs.XcalTags;
-
 import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
 import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ChangeType;
@@ -30,23 +27,6 @@ import org.oasis_open.docs.ns.wscal.calws_soap.ReplaceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
-import ietf.params.xml.ns.icalendar_2.CalAddressListParamType;
-import ietf.params.xml.ns.icalendar_2.CalAddressParamType;
-import ietf.params.xml.ns.icalendar_2.CutypeParamType;
-import ietf.params.xml.ns.icalendar_2.EncodingParamType;
-import ietf.params.xml.ns.icalendar_2.FbtypeParamType;
-import ietf.params.xml.ns.icalendar_2.PartstatParamType;
-import ietf.params.xml.ns.icalendar_2.RangeParamType;
-import ietf.params.xml.ns.icalendar_2.RelatedParamType;
-import ietf.params.xml.ns.icalendar_2.ReltypeParamType;
-import ietf.params.xml.ns.icalendar_2.RoleParamType;
-import ietf.params.xml.ns.icalendar_2.RsvpParamType;
-import ietf.params.xml.ns.icalendar_2.ScheduleAgentParamType;
-import ietf.params.xml.ns.icalendar_2.ScheduleForceSendParamType;
-import ietf.params.xml.ns.icalendar_2.TextParameterType;
-import ietf.params.xml.ns.icalendar_2.UriParameterType;
-
-import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -59,6 +39,8 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
                                              ParamsWrapper,
                                              BaseParameterType>
                    implements Comparable<ParamWrapper> {
+  private ValueMatcher matcher;
+
   ParamWrapper(final ParamsWrapper parent,
                final QName name,
                final BaseParameterType p) {
@@ -128,7 +110,7 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
   public SelectElementType diff(final ParamWrapper that) {
     SelectElementType sel = null;
 
-    if (!getValue().equals(that.getValue())) {
+    if (!equalValue(that)) {
       sel = that.getSelect();
       ChangeType ct = new ChangeType();
 
@@ -141,94 +123,20 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     return sel;
   }
 
-  ValueType getValue() {
-    BaseParameterType p = getEntity();
+  public boolean equalValue(final ParamWrapper that) {
+    return getMatcher().equals(that.getMatcher());
+  }
 
-    if (p instanceof CalAddressParamType) {
-      return new ValueType(XcalTags.calAddressVal,
-                           ((CalAddressParamType)p).getCalAddress());
+  public int compareValue(final ParamWrapper that) {
+    return getMatcher().compareTo(that.getMatcher());
+  }
+
+  ValueMatcher getMatcher() {
+    if (matcher == null) {
+      matcher = new ValueMatcher(getEntity());
     }
 
-    if (p instanceof CalAddressListParamType) {
-      List<String> ss = ((CalAddressListParamType)p).getCalAddress();
-
-      ValueType vt = new ValueType();
-
-      for (String s: ss) {
-        vt.addValue(XcalTags.calAddressVal, s);
-      }
-
-      return vt;
-    }
-
-    if (p instanceof TextParameterType) {
-      return new ValueType(XcalTags.textVal,
-                           ((TextParameterType)p).getText());
-    }
-
-    if (p instanceof UriParameterType) {
-      return new ValueType(XcalTags.uriVal,
-                           ((UriParameterType)p).getUri());
-    }
-
-    /* Non subclassed */
-
-    if (p instanceof CutypeParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((CutypeParamType)p).getText());
-    }
-
-    if (p instanceof EncodingParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((EncodingParamType)p).getText());
-    }
-
-    if (p instanceof FbtypeParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((FbtypeParamType)p).getText());
-    }
-
-    if (p instanceof PartstatParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((PartstatParamType)p).getText());
-    }
-
-    if (p instanceof RangeParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((RangeParamType)p).getText().toString());
-    }
-
-    if (p instanceof RelatedParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((RelatedParamType)p).getText());
-    }
-
-    if (p instanceof ReltypeParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((ReltypeParamType)p).getText().toString());
-    }
-
-    if (p instanceof RoleParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((RoleParamType)p).getText());
-    }
-
-    if (p instanceof RsvpParamType) {
-      return new ValueType(XcalTags.booleanVal,
-                           String.valueOf(((RsvpParamType)p).isBoolean()));
-    }
-
-    if (p instanceof ScheduleAgentParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((ScheduleAgentParamType)p).getText());
-    }
-
-    if (p instanceof ScheduleForceSendParamType) {
-      return new ValueType(XcalTags.textVal,
-                           ((ScheduleForceSendParamType)p).getText());
-    }
-
-    return null;
+    return matcher;
   }
 
   public int compareTo(final ParamWrapper o) {
@@ -243,12 +151,12 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
       return res;
     }
 
-    return Util.cmpObjval(getValue(), o.getValue());
+    return compareValue(o);
   }
 
   @Override
   public int hashCode() {
-    return getName().hashCode() * getValue().hashCode();
+    return getName().hashCode() * getMatcher().hashCode();
   }
 
   @Override
@@ -262,8 +170,8 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
 
     super.toStringSegment(sb);
 
-    sb.append(", value=\"");
-    sb.append(getValue());
+    sb.append(", matcher=\"");
+    sb.append(getMatcher());
     sb.append("\"");
 
     sb.append("}");

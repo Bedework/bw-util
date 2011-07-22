@@ -18,10 +18,6 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
-import edu.rpi.cmt.calendar.XcalUtil;
-import edu.rpi.sss.util.Util;
-import edu.rpi.sss.util.xml.tagdefs.XcalTags;
-
 import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
 import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ChangeType;
@@ -30,29 +26,8 @@ import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ReplaceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
-import ietf.params.xml.ns.icalendar_2.ActionPropType;
-import ietf.params.xml.ns.icalendar_2.AttachPropType;
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
-import ietf.params.xml.ns.icalendar_2.CalAddressPropertyType;
-import ietf.params.xml.ns.icalendar_2.CalscalePropType;
-import ietf.params.xml.ns.icalendar_2.DateDatetimePropertyType;
-import ietf.params.xml.ns.icalendar_2.DatetimePropertyType;
-import ietf.params.xml.ns.icalendar_2.DurationPropType;
-import ietf.params.xml.ns.icalendar_2.FreebusyPropType;
-import ietf.params.xml.ns.icalendar_2.GeoPropType;
-import ietf.params.xml.ns.icalendar_2.IntegerPropertyType;
-import ietf.params.xml.ns.icalendar_2.RecurPropertyType;
-import ietf.params.xml.ns.icalendar_2.RecurType;
-import ietf.params.xml.ns.icalendar_2.RequestStatusPropType;
-import ietf.params.xml.ns.icalendar_2.StatusPropType;
-import ietf.params.xml.ns.icalendar_2.TextListPropertyType;
-import ietf.params.xml.ns.icalendar_2.TextPropertyType;
-import ietf.params.xml.ns.icalendar_2.TranspPropType;
-import ietf.params.xml.ns.icalendar_2.TriggerPropType;
-import ietf.params.xml.ns.icalendar_2.UriPropertyType;
-import ietf.params.xml.ns.icalendar_2.UtcDatetimePropertyType;
-import ietf.params.xml.ns.icalendar_2.UtcOffsetPropertyType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +46,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
             implements Comparable<PropWrapper> {
   private ParamsWrapper params;
 
-  ValueType vt;
+  private ValueMatcher matcher;
 
   /* Key is the real name of the property - result is null for no mapping or a
    * QName we treat it as for comparison.
@@ -165,13 +140,13 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       SelectElementType psel = params.diff(that.params);
 
       if (psel != null) {
-        sel = getSelect();
+        sel = that.getSelect();
 
         sel.getSelect().add(psel);
       }
     }
 
-    if (!getValue().equals(that.getValue())) {
+    if (!equalValue(that)) {
       setChangeValue(true);
 
       sel = that.getSelect();
@@ -186,216 +161,20 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     return sel;
   }
 
-  ValueType getValue() {
-    if (vt != null) {
-      return vt;
-    }
-
-    BasePropertyType p = getEntity();
-
-    if (p instanceof ActionPropType) {
-      vt = new ValueType(XcalTags.textVal,
-                         ((ActionPropType)p).getText().toString());
-      return vt;
-    }
-
-    if (p instanceof FreebusyPropType) {
-      vt = new ValueType(XcalTags.periodVal,
-                         ((FreebusyPropType)p).getPeriod().toString());
-      return vt;
-    }
-
-    if (p instanceof RequestStatusPropType) {
-      RequestStatusPropType rs = (RequestStatusPropType)p;
-
-      vt = new ValueType(XcalTags.codeVal, rs.getCode());
-
-      if (rs.getDescription() != null) {
-        vt.addValue(XcalTags.descriptionVal, rs.getDescription());
-      }
-
-      if (rs.getExtdata() != null) {
-        vt.addValue(XcalTags.extdataVal, rs.getExtdata());
-      }
-
-      return vt;
-    }
-
-    if (p instanceof GeoPropType) {
-      GeoPropType gp = (GeoPropType)p;
-
-      vt = new ValueType(XcalTags.latitudeVal,
-                         String.valueOf(gp.getLatitude()));
-      vt.addValue(XcalTags.longitudeVal, String.valueOf(gp.getLongitude()));
-
-      return vt;
-    }
-
-    if (p instanceof StatusPropType) {
-      vt = new ValueType(XcalTags.textVal,
-                         ((StatusPropType)p).getText().toString());
-      return vt;
-    }
-
-    if (p instanceof TranspPropType) {
-      vt = new ValueType(XcalTags.textVal,
-                         ((TranspPropType)p).getText().toString());
-      return vt;
-    }
-
-    if (p instanceof CalscalePropType) {
-      vt= new ValueType(XcalTags.textVal,
-                        ((CalscalePropType)p).getText().toString());
-      return vt;
-    }
-
-    if (p instanceof TriggerPropType) {
-      TriggerPropType tp = (TriggerPropType)p;
-      if (tp.getDuration() != null) {
-        vt = new ValueType(XcalTags.durationVal,
-                           tp.getDuration().toString());
-      } else {
-        vt = new ValueType(XcalTags.dateTimeVal,
-                           tp.getDateTime().toString());
-      }
-
-      return vt;
-    }
-
-    if (p instanceof DurationPropType) {
-      vt = new ValueType(XcalTags.durationVal,
-                         ((DurationPropType)p).getDuration().toString());
-      return vt;
-    }
-
-    if (p instanceof AttachPropType) {
-      AttachPropType ap = (AttachPropType)p;
-
-      if (ap.getBinary() !=  null) {
-        vt = new ValueType(XcalTags.binaryVal,
-                           ap.getBinary());
-      } else {
-        vt = new ValueType(XcalTags.uriVal,
-                           ap.getUri());
-      }
-
-      return vt;
-    }
-
-    if (p instanceof DateDatetimePropertyType) {
-      XcalUtil.DtTzid dtTzid = XcalUtil.getDtTzid((DateDatetimePropertyType)p);
-
-      if (dtTzid.dateOnly) {
-        vt = new ValueType(XcalTags.dateVal,
-                           dtTzid.dt);
-      } else {
-        vt = new ValueType(XcalTags.dateTimeVal,
-                           dtTzid.dt);
-      }
-
-      return vt;
-    }
-
-    if (p instanceof DatetimePropertyType) {
-      vt = new ValueType(XcalTags.dateTimeVal,
-                         XcalUtil.getIcalFormatDateTime(((DatetimePropertyType)p).getDateTime().toString()));
-      return vt;
-    }
-
-    if (p instanceof UtcDatetimePropertyType) {
-      vt = new ValueType(XcalTags.utcDateTimeVal,
-                         XcalUtil.getIcalFormatDateTime(((UtcDatetimePropertyType)p).getUtcDateTime().toString()));
-      return vt;
-    }
-
-    if (p instanceof CalAddressPropertyType) {
-      vt = new ValueType(XcalTags.calAddressVal,
-                         ((CalAddressPropertyType)p).getCalAddress());
-      return vt;
-    }
-
-    if (p instanceof UtcOffsetPropertyType) {
-      vt = new ValueType(XcalTags.utcOffsetVal,
-                         ((UtcOffsetPropertyType)p).getUtcOffset());
-      return vt;
-    }
-
-    if (p instanceof TextListPropertyType) {
-      List<String> ss = ((TextListPropertyType)p).getText();
-
-      vt = new ValueType();
-
-      for (String s: ss) {
-        vt.addValue(XcalTags.textVal, s);
-      }
-
-      return vt;
-    }
-
-    if (p instanceof TextPropertyType) {
-      vt = new ValueType(XcalTags.textVal,
-                         ((TextPropertyType)p).getText());
-      return vt;
-    }
-
-    if (p instanceof RecurPropertyType) {
-      RecurType r = ((RecurPropertyType)p).getRecur();
-
-      vt = new ValueType();
-
-      append(vt, XcalTags.freq, r.getFreq().toString());
-      append(vt, XcalTags.count, r.getCount());
-      append(vt, XcalTags.until, r.getUntil());
-      append(vt, XcalTags.interval, r.getInterval());
-      append(vt, XcalTags.bysecond, r.getBysecond());
-      append(vt, XcalTags.byminute, r.getByminute());
-      append(vt, XcalTags.byhour, r.getByhour());
-      append(vt, XcalTags.byday, r.getByday());
-      append(vt, XcalTags.byyearday, r.getByyearday());
-      append(vt, XcalTags.bymonthday, r.getBymonthday());
-      append(vt, XcalTags.byweekno, r.getByweekno());
-      append(vt, XcalTags.bymonth, r.getBymonth());
-      append(vt, XcalTags.bysetpos, r.getBysetpos());
-      append(vt, XcalTags.wkst, r.getWkst().toString());
-
-      return vt;
-    }
-
-    if (p instanceof IntegerPropertyType) {
-      vt = new ValueType(XcalTags.integerVal,
-                         String.valueOf(((IntegerPropertyType)p).getInteger()));
-      return vt;
-    }
-
-    if (p instanceof UriPropertyType) {
-      vt = new ValueType(XcalTags.uriVal,
-                         ((UriPropertyType)p).getUri());
-      return vt;
-    }
-
-    return null;
+  public boolean equalValue(final PropWrapper that) {
+    return getMatcher().equals(that.getMatcher());
   }
 
-  private void append(final ValueType vt,
-                      final QName nm,
-                      final List val) {
-    if (val == null) {
-      return;
-    }
-
-    for (Object o: val) {
-      append(vt, nm, o);
-    }
+  public int compareValue(final PropWrapper that) {
+    return getMatcher().compareTo(that.getMatcher());
   }
 
-  private void append(final ValueType vt,
-                      final QName nm,
-                      final Object val) {
-    if (val == null) {
-      return;
+  ValueMatcher getMatcher() {
+    if (matcher == null) {
+      matcher = new ValueMatcher(getEntity());
     }
 
-    vt.addValue(nm, String.valueOf(val));
+    return matcher;
   }
 
   public int compareTo(final PropWrapper o) {
@@ -404,7 +183,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       return res;
     }
 
-    res = Util.cmpObjval(getValue(), o.getValue());
+    res = compareValue(o);
 
     if (res != 0) {
       return res;
@@ -417,7 +196,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
   @Override
   public int hashCode() {
-    return getName().hashCode() * getValue().hashCode();
+    return getName().hashCode() * getMatcher().hashCode();
   }
 
   @Override
