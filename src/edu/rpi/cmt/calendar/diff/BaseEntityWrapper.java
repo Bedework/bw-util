@@ -21,6 +21,7 @@ package edu.rpi.cmt.calendar.diff;
 import edu.rpi.sss.util.Util;
 
 import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
+import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -47,17 +48,6 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
 
   /* The entity we want to change */
   private EntityT entity;
-
-  /* Add this entity */
-  private boolean add;
-
-  /* Delete this entity */
-  private boolean delete;
-
-  /* Change this entity value */
-  private boolean changeValue;
-
-  /* Otherwise it's replace the entity */
 
   BaseEntityWrapper(final ParentT parent,
                     final QName name,
@@ -93,11 +83,6 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    */
   abstract QName getMappedName(QName name);
 
-  /** Get the update
-   * @return JAXBElement<? extends BaseUpdateType>
-   */
-  abstract JAXBElement<? extends BaseUpdateType> getUpdate();
-
   /** For example, two events objects represent the same entity if the uid and
    * recurrence-ids match.
    *
@@ -106,47 +91,23 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    */
   abstract boolean sameEntity(BaseEntityWrapper val);
 
-  /**
-   * @param val
+  /** Create a remove operation for this entity.
+   *
+   * @return the remove operation
    */
-  public void setAdd(final boolean val) {
-    add = val;
+  JAXBElement<? extends BaseUpdateType> makeRemove() {
+    RemoveType r = new RemoveType();
+
+    r.setSelect(getSelect(null));
+
+    return of.createRemove(r);
   }
 
-  /**
-   * @return true if we should add this to the target
+  /** Create an add operation for this entity.
+   *
+   * @return the add operation
    */
-  public boolean getAdd() {
-    return add;
-  }
-
-  /**
-   * @param val
-   */
-  public void setDelete(final boolean val) {
-    delete = val;
-  }
-
-  /**
-   * @return true if we should delete this from the target
-   */
-  public boolean getDelete() {
-    return delete;
-  }
-
-  /**
-   * @param val
-   */
-  public void setChangeValue(final boolean val) {
-    changeValue = val;
-  }
-
-  /**
-   * @return true if we should change the value
-   */
-  public boolean getChangeValue() {
-    return changeValue;
-  }
+  abstract JAXBElement<? extends BaseUpdateType> makeAdd();
 
   public int compareNames(final BaseEntityWrapper that) {
     QName thatN = that.getMappedName();
@@ -187,12 +148,6 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
     if (!mappedName.equals(getName())) {
       sb.append(", mappedName=");
       sb.append(mappedName);
-    }
-
-    if (add) {
-      sb.append(", add");
-    } else if (delete) {
-      sb.append(", delete");
     }
   }
 }

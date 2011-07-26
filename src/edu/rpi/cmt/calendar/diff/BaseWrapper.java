@@ -21,6 +21,7 @@ package edu.rpi.cmt.calendar.diff;
 import edu.rpi.sss.util.xml.NsContext;
 
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
+import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import javax.xml.namespace.QName;
 
@@ -31,7 +32,7 @@ import javax.xml.namespace.QName;
  *
  * @param <ParentT>
  */
-class BaseWrapper<ParentT extends BaseWrapper> {
+abstract class BaseWrapper<ParentT extends BaseWrapper> {
   static final String icalendarNs = "urn:ietf:params:xml:ns:icalendar-2.0";
 
   private ParentT parent;
@@ -61,6 +62,8 @@ class BaseWrapper<ParentT extends BaseWrapper> {
   QName getName() {
     return name;
   }
+
+  abstract SelectElementType getSelect(final SelectElementType val);
 
   void appendNsName(final StringBuilder sb,
                     final NsContext nsContext) {

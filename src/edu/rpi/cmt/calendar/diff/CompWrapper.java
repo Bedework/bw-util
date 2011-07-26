@@ -24,10 +24,7 @@ import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
 import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
-import org.oasis_open.docs.ns.wscal.calws_soap.NewValueType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
-import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ReplaceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
@@ -145,32 +142,11 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
   }
 
   @Override
-  public JAXBElement<? extends BaseUpdateType> getUpdate() {
-    if (getDelete()) {
-      RemoveType r = new RemoveType();
+  JAXBElement<? extends BaseUpdateType> makeAdd() {
+    AddType a = new AddType();
 
-      r.setSelect(getSelect());
-
-      return of.createRemove(r);
-    }
-
-    if (getAdd()) {
-      AddType a = new AddType();
-
-      a.setNewValue(new NewValueType());
-      a.getNewValue().setBaseComponent(getJaxbElement());
-      return of.createAdd(a);
-    }
-
-    /* Need to distinguish between change and replace
-     */
-
-    ReplaceType r = new ReplaceType();
-
-    r.setSelect(getSelect());
-    r.setNewValue(new NewValueType());
-    r.getNewValue().setBaseComponent(getJaxbElement());
-    return of.createReplace(r);
+    a.setBaseComponent(getJaxbElement());
+    return of.createAdd(a);
   }
 
   @Override
@@ -285,7 +261,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       SelectElementType psel = props.diff(that.props);
 
       if (psel != null) {
-        sel = that.getSelect();
+        sel = that.getSelect(sel);
 
         sel.getSelect().add(psel);
       }
@@ -294,9 +270,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     SelectElementType csel = comps.diff(that.comps);
 
     if (csel != null) {
-      if (sel == null) {
-        sel = that.getSelect();
-      }
+      sel = that.getSelect(sel);
 
       sel.getSelect().add(csel);
     }
@@ -318,9 +292,12 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
                                     bct);
   }
 
-  /* create sel with a selection for this component
-   */
-  private SelectElementType getSelect() {
+  @Override
+  SelectElementType getSelect(final SelectElementType val) {
+    if (val != null) {
+      return val;
+    }
+
     SelectElementType sel = new SelectElementType();
 
     sel.setBaseComponent(getJaxbElement());

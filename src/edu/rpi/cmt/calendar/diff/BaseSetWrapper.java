@@ -113,8 +113,6 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
     return found;
   }
 
-  abstract SelectElementType getSelect(final SelectElementType val);
-
   protected SelectElementType addSelect(final SelectElementType to,
                                         final SelectElementType val) {
     SelectElementType sel = getSelect(to);

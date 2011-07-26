@@ -155,14 +155,11 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
         thatI++;
       } else if (ncmp < 0) {
         // in this but not that - addition
-        thisOne.setAdd(true);
-        sel = addUpdate(sel, thisOne.getUpdate());
+        sel = addUpdate(sel, thisOne.makeAdd());
         thisI++;
       } else {
         // in that but not this - deletion
-        // in that but not this - deletion
-        thatOne.setDelete(true);
-        sel = addUpdate(sel, thatOne.getUpdate());
+        sel = addUpdate(sel, thatOne.makeRemove());
         thatI++;
       }
     }
@@ -171,8 +168,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
       // Extra ones in the source
 
       PropWrapper thisOne = getTarray()[thisI];
-      thisOne.setAdd(true);
-      sel = addUpdate(sel, thisOne.getUpdate());
+      sel = addUpdate(sel, thisOne.makeAdd());
       thisI++;
     }
 
@@ -180,8 +176,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
       // Extra ones in the target
 
       PropWrapper thatOne = that.getTarray()[thatI];
-      thatOne.setDelete(true);
-      sel = addUpdate(sel, thatOne.getUpdate());
+      sel = addUpdate(sel, thatOne.makeRemove());
       thatI++;
     }
 

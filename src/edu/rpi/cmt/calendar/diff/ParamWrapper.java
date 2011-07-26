@@ -21,9 +21,6 @@ package edu.rpi.cmt.calendar.diff;
 import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
 import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ChangeType;
-import org.oasis_open.docs.ns.wscal.calws_soap.NewValueType;
-import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ReplaceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
@@ -63,37 +60,19 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
   }
 
   @Override
-  public JAXBElement<? extends BaseUpdateType> getUpdate() {
-    if (getDelete()) {
-      RemoveType r = new RemoveType();
+  JAXBElement<? extends BaseUpdateType> makeAdd() {
+    AddType a = new AddType();
 
-      r.setSelect(getSelect());
-
-      return of.createRemove(r);
-    }
-
-    if (getAdd()) {
-      AddType a = new AddType();
-
-      a.setNewValue(new NewValueType());
-      a.getNewValue().setBaseParameter(getJaxbElement());
-      return of.createAdd(a);
-    }
-
-    /* Need to distinguish between change and replace
-     */
-
-    ReplaceType r = new ReplaceType();
-
-    r.setSelect(getSelect());
-    r.setNewValue(new NewValueType());
-    r.getNewValue().setBaseParameter(getJaxbElement());
-    return of.createReplace(r);
+    a.setBaseParameter(getJaxbElement());
+    return of.createAdd(a);
   }
 
-  /* create a SelectElementType with a selection for this property
-   */
-  private SelectElementType getSelect() {
+  @Override
+  SelectElementType getSelect(final SelectElementType val) {
+    if (val != null) {
+      return val;
+    }
+
     SelectElementType sel = new SelectElementType();
 
     sel.setBaseParameter(getJaxbElement());
@@ -111,11 +90,10 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     SelectElementType sel = null;
 
     if (!equalValue(that)) {
-      sel = that.getSelect();
+      sel = that.getSelect(sel);
       ChangeType ct = new ChangeType();
 
-      ct.setNewValue(new NewValueType());
-      ct.getNewValue().setBaseParameter(getJaxbElement());
+      ct.setBaseParameter(getJaxbElement());
 
       sel.getBaseUpdate().add(of.createChange(ct));
     }

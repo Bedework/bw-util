@@ -84,13 +84,11 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
         sel = addSelect(sel, thisOne.diff(thatOne));
       } else if (ncmp < 0) {
         // in this but not that - addition
-        thisOne.setAdd(true);
-        sel = addUpdate(sel, thisOne.getUpdate());
+        sel = addUpdate(sel, thisOne.makeAdd());
         thisI++;
       } else {
         // in that but not this - deletion
-        thatOne.setDelete(true);
-        sel = addUpdate(sel, thatOne.getUpdate());
+        sel = addUpdate(sel, thatOne.makeRemove());
         thatI++;
       }
     }
@@ -99,8 +97,7 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
       // Extra ones in the source
 
       ParamWrapper thisOne = getTarray()[thisI];
-      thisOne.setAdd(true);
-      sel = addUpdate(sel, thisOne.getUpdate());
+      sel = addUpdate(sel, thisOne.makeAdd());
       thisI++;
     }
 
@@ -108,8 +105,7 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
       // Extra ones in the target
 
       ParamWrapper thatOne = that.getTarray()[thatI];
-      thatOne.setDelete(true);
-      sel = addUpdate(sel, thatOne.getUpdate());
+      sel = addUpdate(sel, thatOne.makeRemove());
       thatI++;
     }
 
