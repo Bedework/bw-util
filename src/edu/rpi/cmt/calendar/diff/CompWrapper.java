@@ -22,10 +22,11 @@ import edu.rpi.cmt.calendar.XcalUtil;
 import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
-import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ComponentReferenceType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ComponentsSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+import org.oasis_open.docs.ns.wscal.calws_soap.PropertiesSelectionType;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
@@ -141,12 +142,11 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     return null;
   }
 
-  @Override
-  JAXBElement<? extends BaseUpdateType> makeAdd() {
-    AddType a = new AddType();
+  ComponentReferenceType makeRef() {
+    ComponentReferenceType r = new ComponentReferenceType();
 
-    a.setBaseComponent(getJaxbElement());
-    return of.createAdd(a);
+    r.setBaseComponent(getJaxbElement());
+    return r;
   }
 
   @Override
@@ -254,25 +254,25 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
    * @param that - the old version
    * @return SelectElementType
    */
-  public SelectElementType diff(final CompWrapper that) {
-    SelectElementType sel = null;
+  public ComponentSelectionType diff(final CompWrapper that) {
+    ComponentSelectionType sel = null;
 
     if (props != null) {
-      SelectElementType psel = props.diff(that.props);
+      PropertiesSelectionType psel = props.diff(that.props);
 
       if (psel != null) {
         sel = that.getSelect(sel);
 
-        sel.getSelect().add(psel);
+        sel.setProperties(psel);
       }
     }
 
-    SelectElementType csel = comps.diff(that.comps);
+    ComponentsSelectionType csel = comps.diff(that.comps);
 
     if (csel != null) {
       sel = that.getSelect(sel);
 
-      sel.getSelect().add(csel);
+      sel.setComponents(csel);
     }
 
     return sel;
@@ -292,13 +292,12 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
                                     bct);
   }
 
-  @Override
-  SelectElementType getSelect(final SelectElementType val) {
+  ComponentSelectionType getSelect(final ComponentSelectionType val) {
     if (val != null) {
       return val;
     }
 
-    SelectElementType sel = new SelectElementType();
+    ComponentSelectionType sel = new ComponentSelectionType();
 
     sel.setBaseComponent(getJaxbElement());
 

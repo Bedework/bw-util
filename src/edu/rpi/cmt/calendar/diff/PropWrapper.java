@@ -18,10 +18,9 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
-import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ChangeType;
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ParametersSelectionType;
+import org.oasis_open.docs.ns.wscal.calws_soap.PropertyReferenceType;
+import org.oasis_open.docs.ns.wscal.calws_soap.PropertySelectionType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
@@ -85,21 +84,19 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     return true;
   }
 
-  @Override
-  JAXBElement<? extends BaseUpdateType> makeAdd() {
-    AddType a = new AddType();
+  PropertyReferenceType makeRef() {
+    PropertyReferenceType r = new PropertyReferenceType();
 
-    a.setBaseProperty(getJaxbElement());
-    return of.createAdd(a);
+    r.setBaseProperty(getJaxbElement());
+    return r;
   }
 
-  @Override
-  SelectElementType getSelect(final SelectElementType val) {
+  PropertySelectionType getSelect(final PropertySelectionType val) {
     if (val != null) {
       return val;
     }
 
-    SelectElementType sel = new SelectElementType();
+    PropertySelectionType sel = new PropertySelectionType();
 
     sel.setBaseProperty(getJaxbElement());
 
@@ -112,26 +109,29 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
    * @param that - the old version
    * @return SelectElementType
    */
-  public SelectElementType diff(final PropWrapper that) {
-    SelectElementType sel = null;
+  @SuppressWarnings("unchecked")
+  public PropertySelectionType diff(final PropWrapper that) {
+    PropertySelectionType sel = null;
 
     if (params != null) {
-      SelectElementType psel = params.diff(that.params);
+      ParametersSelectionType psel = params.diff(that.params);
 
       if (psel != null) {
         sel = that.getSelect(sel);
 
-        sel.getSelect().add(psel);
+        sel.setParameters(psel);
       }
     }
 
     if (!equalValue(that)) {
       sel = that.getSelect(sel);
-      ChangeType ct = new ChangeType();
+      PropertyReferenceType ct = new PropertyReferenceType();
 
-      ct.setBaseProperty(getJaxbElement());
+      JAXBElement jel = getJaxbElement();
+      jel.setValue(getMatcher().getElementAndValue());
+      ct.setBaseProperty(jel);
 
-      sel.getBaseUpdate().add(of.createChange(ct));
+      sel.setChange(ct);
     }
 
     return sel;

@@ -20,9 +20,6 @@ package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.sss.util.Util;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
-import org.oasis_open.docs.ns.wscal.calws_soap.RemoveType;
-
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
@@ -90,24 +87,6 @@ abstract class BaseEntityWrapper<T extends BaseEntityWrapper,
    * @return true if this represents the same (but possibly altered) entity.
    */
   abstract boolean sameEntity(BaseEntityWrapper val);
-
-  /** Create a remove operation for this entity.
-   *
-   * @return the remove operation
-   */
-  JAXBElement<? extends BaseUpdateType> makeRemove() {
-    RemoveType r = new RemoveType();
-
-    r.setSelect(getSelect(null));
-
-    return of.createRemove(r);
-  }
-
-  /** Create an add operation for this entity.
-   *
-   * @return the add operation
-   */
-  abstract JAXBElement<? extends BaseUpdateType> makeAdd();
 
   public int compareNames(final BaseEntityWrapper that) {
     QName thatN = that.getMappedName();

@@ -19,7 +19,8 @@
 package edu.rpi.cmt.calendar.diff;
 
 import org.oasis_open.docs.ns.wscal.calws_soap.PropertiesSelectionType;
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+import org.oasis_open.docs.ns.wscal.calws_soap.PropertyReferenceType;
+import org.oasis_open.docs.ns.wscal.calws_soap.PropertySelectionType;
 
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
 
@@ -96,8 +97,8 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
    * @param that - the old form.
    * @return changes
    */
-  public SelectElementType diff(final PropsWrapper that) {
-    SelectElementType sel = null;
+  public PropertiesSelectionType diff(final PropsWrapper that) {
+    PropertiesSelectionType sel = null;
 
     int thatI = 0;
     int thisI = 0;
@@ -136,7 +137,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
         if (((thisI + 1) == size()) &&
             ((thatI + 1) == that.size())) {
           // No more on this side and that side - call it an update
-          sel = addSelect(sel, thisOne.diff(thatOne));
+          sel = select(sel, thisOne.diff(thatOne));
           thisI++;
           thatI++;
           continue;
@@ -150,16 +151,16 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
 
         // For the moment just create a diff
 
-        sel = addSelect(sel, thisOne.diff(thatOne));
+        sel = select(sel, thisOne.diff(thatOne));
         thisI++;
         thatI++;
       } else if (ncmp < 0) {
         // in this but not that - addition
-        sel = addUpdate(sel, thisOne.makeAdd());
+        sel = add(sel, thisOne.makeRef());
         thisI++;
       } else {
         // in that but not this - deletion
-        sel = addUpdate(sel, thatOne.makeRemove());
+        sel = remove(sel, thatOne.makeRef());
         thatI++;
       }
     }
@@ -168,7 +169,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
       // Extra ones in the source
 
       PropWrapper thisOne = getTarray()[thisI];
-      sel = addUpdate(sel, thisOne.makeAdd());
+      sel = add(sel, thisOne.makeRef());
       thisI++;
     }
 
@@ -176,23 +177,48 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
       // Extra ones in the target
 
       PropWrapper thatOne = that.getTarray()[thatI];
-      sel = addUpdate(sel, thatOne.makeRemove());
+      sel = remove(sel, thatOne.makeRef());
       thatI++;
     }
 
     return sel;
   }
 
-  @Override
-  SelectElementType getSelect(final SelectElementType val) {
+  PropertiesSelectionType getSelect(final PropertiesSelectionType val) {
     if (val != null) {
       return val;
     }
 
-    SelectElementType sel = new SelectElementType();
-    sel.setProperties(new PropertiesSelectionType());
+    PropertiesSelectionType sel = new PropertiesSelectionType();
 
     return sel;
+  }
+
+  PropertiesSelectionType add(final PropertiesSelectionType sel,
+                              final PropertyReferenceType val) {
+    PropertiesSelectionType csel = getSelect(sel);
+
+    csel.getAdd().add(val);
+
+    return csel;
+  }
+
+  PropertiesSelectionType remove(final PropertiesSelectionType sel,
+                                 final PropertyReferenceType val) {
+    PropertiesSelectionType csel = getSelect(sel);
+
+    csel.getRemove().add(val);
+
+    return csel;
+  }
+
+  PropertiesSelectionType select(final PropertiesSelectionType sel,
+                                 final PropertySelectionType val) {
+    PropertiesSelectionType csel = getSelect(sel);
+
+    csel.getProperty().add(val);
+
+    return csel;
   }
 
   public int compareTo(final PropsWrapper that) {

@@ -18,8 +18,9 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import org.oasis_open.docs.ns.wscal.calws_soap.ParameterReferenceType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ParameterSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ParametersSelectionType;
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 
@@ -57,8 +58,8 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
    * @param that - the old form.
    * @return changes
    */
-  public SelectElementType diff(final ParamsWrapper that) {
-    SelectElementType sel = null;
+  public ParametersSelectionType diff(final ParamsWrapper that) {
+    ParametersSelectionType sel = null;
 
     int thatI = 0;
     int thisI = 0;
@@ -81,14 +82,14 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
 
       if (ncmp == 0) {
         // Names match - it's a modify
-        sel = addSelect(sel, thisOne.diff(thatOne));
+        sel = select(sel, thisOne.diff(thatOne));
       } else if (ncmp < 0) {
         // in this but not that - addition
-        sel = addUpdate(sel, thisOne.makeAdd());
+        sel = add(sel, thisOne.makeRef());
         thisI++;
       } else {
         // in that but not this - deletion
-        sel = addUpdate(sel, thatOne.makeRemove());
+        sel = remove(sel, thatOne.makeRef());
         thatI++;
       }
     }
@@ -97,7 +98,7 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
       // Extra ones in the source
 
       ParamWrapper thisOne = getTarray()[thisI];
-      sel = addUpdate(sel, thisOne.makeAdd());
+      sel = add(sel, thisOne.makeRef());
       thisI++;
     }
 
@@ -105,23 +106,48 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
       // Extra ones in the target
 
       ParamWrapper thatOne = that.getTarray()[thatI];
-      sel = addUpdate(sel, thatOne.makeRemove());
+      sel = remove(sel, thatOne.makeRef());
       thatI++;
     }
 
     return sel;
   }
 
-  @Override
-  SelectElementType getSelect(final SelectElementType val) {
+  ParametersSelectionType getSelect(final ParametersSelectionType val) {
     if (val != null) {
       return val;
     }
 
-    SelectElementType sel = new SelectElementType();
-    sel.setParameters(new ParametersSelectionType());
+    ParametersSelectionType sel = new ParametersSelectionType();
 
     return sel;
+  }
+
+  ParametersSelectionType add(final ParametersSelectionType sel,
+                              final ParameterReferenceType val) {
+    ParametersSelectionType csel = getSelect(sel);
+
+    csel.getAdd().add(val);
+
+    return csel;
+  }
+
+  ParametersSelectionType remove(final ParametersSelectionType sel,
+                                 final ParameterReferenceType val) {
+    ParametersSelectionType csel = getSelect(sel);
+
+    csel.getRemove().add(val);
+
+    return csel;
+  }
+
+  ParametersSelectionType select(final ParametersSelectionType sel,
+                                 final ParameterSelectionType val) {
+    ParametersSelectionType csel = getSelect(sel);
+
+    csel.getParameter().add(val);
+
+    return csel;
   }
 
   public int compareTo(final ParamsWrapper that) {

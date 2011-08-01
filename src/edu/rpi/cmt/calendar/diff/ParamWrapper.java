@@ -18,14 +18,11 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.AddType;
-import org.oasis_open.docs.ns.wscal.calws_soap.BaseUpdateType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ChangeType;
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ParameterReferenceType;
+import org.oasis_open.docs.ns.wscal.calws_soap.ParameterSelectionType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /** This class wraps a parameter.
@@ -59,21 +56,19 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     return true;
   }
 
-  @Override
-  JAXBElement<? extends BaseUpdateType> makeAdd() {
-    AddType a = new AddType();
+  ParameterReferenceType makeRef() {
+    ParameterReferenceType r = new ParameterReferenceType();
 
-    a.setBaseParameter(getJaxbElement());
-    return of.createAdd(a);
+    r.setBaseParameter(getJaxbElement());
+    return r;
   }
 
-  @Override
-  SelectElementType getSelect(final SelectElementType val) {
+  ParameterSelectionType getSelect(final ParameterSelectionType val) {
     if (val != null) {
       return val;
     }
 
-    SelectElementType sel = new SelectElementType();
+    ParameterSelectionType sel = new ParameterSelectionType();
 
     sel.setBaseParameter(getJaxbElement());
 
@@ -84,18 +79,18 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
    * represents the new state
    *
    * @param that - the old version
-   * @return SelectElementType
+   * @return ParameterSelectionType
    */
-  public SelectElementType diff(final ParamWrapper that) {
-    SelectElementType sel = null;
+  public ParameterSelectionType diff(final ParamWrapper that) {
+    ParameterSelectionType sel = null;
 
     if (!equalValue(that)) {
       sel = that.getSelect(sel);
-      ChangeType ct = new ChangeType();
+      ParameterReferenceType ct = new ParameterReferenceType();
 
       ct.setBaseParameter(getJaxbElement());
 
-      sel.getBaseUpdate().add(of.createChange(ct));
+      sel.setChange(ct);
     }
 
     return sel;

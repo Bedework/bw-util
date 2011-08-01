@@ -19,8 +19,8 @@
 package edu.rpi.cmt.calendar.diff;
 
 import org.apache.log4j.Logger;
+import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import ietf.params.xml.ns.icalendar_2.IcalendarType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
@@ -44,9 +44,9 @@ public class XmlIcalCompare {
    * @param oldval
    * @return SelectElementType if val1 and val2 differ else null.
    */
-  public SelectElementType diff(final ObjectFactory of,
-                                final IcalendarType newval,
-                                final IcalendarType oldval) {
+  public ComponentSelectionType diff(final ObjectFactory of,
+                                     final IcalendarType newval,
+                                     final IcalendarType oldval) {
     VcalendarType nv = newval.getVcalendar().get(0);
     VcalendarType ov = oldval.getVcalendar().get(0);
 

@@ -21,7 +21,6 @@ package edu.rpi.cmt.calendar.diff;
 import edu.rpi.sss.util.xml.NsContext;
 
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
-import org.oasis_open.docs.ns.wscal.calws_soap.SelectElementType;
 
 import javax.xml.namespace.QName;
 
@@ -62,8 +61,6 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
   QName getName() {
     return name;
   }
-
-  abstract SelectElementType getSelect(final SelectElementType val);
 
   void appendNsName(final StringBuilder sb,
                     final NsContext nsContext) {
