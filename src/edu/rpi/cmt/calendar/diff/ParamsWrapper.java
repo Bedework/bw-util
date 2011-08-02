@@ -26,6 +26,8 @@ import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -48,8 +50,12 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
   }
 
   @Override
-  ParamWrapper getWrapped(final JAXBElement<? extends BaseParameterType> el) {
-    return new ParamWrapper(this, el.getName(), el.getValue());
+  Set<ParamWrapper> getWrapped(final JAXBElement<? extends BaseParameterType> el) {
+    Set<ParamWrapper> res = new TreeSet<ParamWrapper>();
+
+    res.add(new ParamWrapper(this, el.getName(), el.getValue()));
+
+    return res;
   }
 
   /** Return a list of differences between this (the new object) and that (the

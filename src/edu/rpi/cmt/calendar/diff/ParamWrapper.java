@@ -33,7 +33,7 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
                                              ParamsWrapper,
                                              BaseParameterType>
                    implements Comparable<ParamWrapper> {
-  private ValueMatcher matcher;
+  private ValueComparator comparator;
 
   ParamWrapper(final ParamsWrapper parent,
                final QName name,
@@ -97,19 +97,19 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
   }
 
   public boolean equalValue(final ParamWrapper that) {
-    return getMatcher().equals(that.getMatcher());
+    return getComparator().equals(that.getComparator());
   }
 
   public int compareValue(final ParamWrapper that) {
-    return getMatcher().compareTo(that.getMatcher());
+    return getComparator().compareTo(that.getComparator());
   }
 
-  ValueMatcher getMatcher() {
-    if (matcher == null) {
-      matcher = new ValueMatcher(getEntity());
+  ValueComparator getComparator() {
+    if (comparator == null) {
+      comparator = getMatcher().getComparator(getEntity());
     }
 
-    return matcher;
+    return comparator;
   }
 
   public int compareTo(final ParamWrapper o) {
@@ -129,7 +129,7 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
 
   @Override
   public int hashCode() {
-    return getName().hashCode() * getMatcher().hashCode();
+    return getName().hashCode() * getComparator().hashCode();
   }
 
   @Override
@@ -144,7 +144,7 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
     super.toStringSegment(sb);
 
     sb.append(", matcher=\"");
-    sb.append(getMatcher());
+    sb.append(getComparator());
     sb.append("\"");
 
     sb.append("}");

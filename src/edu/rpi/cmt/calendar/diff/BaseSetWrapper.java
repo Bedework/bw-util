@@ -50,14 +50,14 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
     }
 
     for (ListT el: elsList) {
-      T t = getWrapped(el);
+      Set<T> t = getWrapped(el);
 
       if (t == null) {
         // Skip this one
         continue;
       }
 
-      els.add(t);
+      els.addAll(t);
     }
 
     /* The set is ordered - use that to produce ordered array */
@@ -71,7 +71,15 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
     }
   }
 
-  abstract T getWrapped(ListT el);
+  /** Some multi-valued elements, e.g. categories, are better handled as a set
+   * of separate values. In general this method will just return the wrapped
+   * object. For those special cases it will return a set of the wrapped
+   * objects.
+   *
+   * @param el
+   * @return null if the property is skipped, one or more wrapped objects otherwise.
+   */
+  abstract Set<T> getWrapped(ListT el);
 
   abstract T[] getTarray(int len);
 

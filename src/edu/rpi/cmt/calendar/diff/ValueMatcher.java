@@ -19,7 +19,6 @@
 package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.cmt.calendar.XcalUtil;
-import edu.rpi.sss.util.xml.NsContext;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
@@ -28,6 +27,7 @@ import ietf.params.xml.ns.icalendar_2.CalAddressListParamType;
 import ietf.params.xml.ns.icalendar_2.CalAddressParamType;
 import ietf.params.xml.ns.icalendar_2.CalAddressPropertyType;
 import ietf.params.xml.ns.icalendar_2.CalscalePropType;
+import ietf.params.xml.ns.icalendar_2.CategoriesPropType;
 import ietf.params.xml.ns.icalendar_2.CutypeParamType;
 import ietf.params.xml.ns.icalendar_2.DateDatetimePropertyType;
 import ietf.params.xml.ns.icalendar_2.DatetimePropertyType;
@@ -62,7 +62,6 @@ import ietf.params.xml.ns.icalendar_2.UtcOffsetPropertyType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,23 +74,24 @@ import javax.xml.namespace.QName;
  * compared to another to determine if the values are equal.
  *
  * @author Mike Douglass
- *
  */
-public class ValueMatcher implements Comparable<ValueMatcher> {
+public class ValueMatcher {
   /**
    * @author douglm
+   *
+   * @param <T>
    */
-  public interface ValueConverter {
-    /** Called to convert an object of a registered class. Converter implementing
+  public interface ValueConverter<T> {
+    /** Called to convert an object of a registered class. Converters implementing
      * this interface are registered with a value matcher
      *
      * Note that standard value types (those defined in the standard schema)
      * are all registered once only at system initialization.
      *
-     * @param matcher
      * @param val
+     * @return a ValueComparator
      */
-    void convert(ValueMatcher matcher, Object val);
+    ValueComparator convert(T val);
 
     /** Called to get a property or parameter object containing only the value.
      * The property or parameter object is a new instance. Its value is copied.
@@ -99,7 +99,15 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
      * @param val
      * @return property object containing value only
      */
-    Object getElementAndValue(Object val);
+    T getElementAndValue(T val);
+
+    /** Return either a single valued set or a set with the values split into
+     * separate objects
+     *
+     * @param val
+     * @return set containing the object or the split object
+     */
+    List<T> getNormalized(T val);
   }
 
   private static class ValueMatcherRegistry {
@@ -168,99 +176,38 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
 
   private Map<Class, ValueConverter> instanceConverters;
 
-  private static class ValueTypeEntry implements Comparable<ValueTypeEntry> {
-    QName typeElement;
-    String value;
-
-    public ValueTypeEntry(final QName typeElement,
-                          final String value) {
-      this.typeElement = typeElement;
-      this.value = value;
-    }
-
-    public String toString(final NsContext nsContext) {
-      StringBuilder sb = new StringBuilder();
-
-      sb.append("<");
-      nsContext.appendNsName(sb, typeElement);
-      sb.append(">");
-      sb.append(value);
-      sb.append("</");
-      nsContext.appendNsName(sb, typeElement);
-      sb.append(">");
-
-      return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      sb.append(" (");
-      sb.append(typeElement);
-      sb.append(", ");
-      sb.append(value);
-      sb.append(")");
-
-      return sb.toString();
-    }
-
-    public int compareTo(final ValueTypeEntry o) {
-      int res = typeElement.getNamespaceURI().compareTo(o.typeElement.getNamespaceURI());
-      if (res != 0) {
-        return res;
-      }
-
-      res = typeElement.getLocalPart().compareTo(o.typeElement.getLocalPart());
-      if (res != 0) {
-        return res;
-      }
-
-      return value.compareTo(o.value);
-    }
-
-    @Override
-    public int hashCode() {
-      return typeElement.hashCode() * value.hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      return compareTo((ValueTypeEntry)o) == 0;
-    }
+  /**
+   */
+  public ValueMatcher() {
   }
-
-  private List<ValueTypeEntry> vtes = new ArrayList<ValueTypeEntry>();
-
-  private Object theObject;
-
-  private ValueConverter converter;
 
   /**
    * @param val - value to match
+   * @return comparator
    */
-  public ValueMatcher(final Object val) {
-    converter = getConverter(val);
-    theObject = val;
-    converter.convert(this, val);
+  @SuppressWarnings("unchecked")
+  public ValueComparator getComparator(final Object val) {
+    return getConverter(val).convert(val);
   }
 
   /** Called to get a property or parameter object containing only the value.
    * The property or parameter object is a new instance. Its value is copied.
    *
+   * @param val
    * @return property object containing value only
    */
-  public Object getElementAndValue() {
-    return converter.getElementAndValue(theObject);
+  @SuppressWarnings("unchecked")
+  public Object getElementAndValue(final Object val) {
+    return getConverter(val).getElementAndValue(val);
   }
 
   /**
-   * @param typeElement
-   * @param value
+   * @param val
+   * @return normalized set of objects
    */
-  void addValue(final QName typeElement,
-                       final String value) {
-    vtes.add(new ValueTypeEntry(typeElement, value));
+  @SuppressWarnings("unchecked")
+  public List getNormalized(final Object val) {
+    return getConverter(val).getNormalized(val);
   }
 
   /** Register a converter used by all instances of the value matcher.
@@ -285,70 +232,6 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
 
     instanceConverters.put(cl, vc);
-  }
-
-  /**
-   * @param nsContext
-   * @return String representation
-   */
-  public String toString(final NsContext nsContext) {
-    StringBuilder sb = new StringBuilder();
-
-    for (ValueTypeEntry vte: vtes) {
-      sb.append(vte.toString(nsContext));
-    }
-
-    return sb.toString();
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-
-    for (ValueTypeEntry vte: vtes) {
-      sb.append(vte.toString());
-    }
-
-    return sb.toString();
-  }
-
-  public int compareTo(final ValueMatcher o) {
-    Integer thisSz = vtes.size();
-    Integer thatSz = o.vtes.size();
-
-    int res = thisSz.compareTo(thatSz);
-    if (res != 0) {
-      return res;
-    }
-
-    Iterator<ValueTypeEntry> thatIt = o.vtes.iterator();
-
-    for (ValueTypeEntry vte: vtes) {
-      ValueTypeEntry thatVte = thatIt.next();
-
-      res = vte.compareTo(thatVte);
-      if (res != 0) {
-        return res;
-      }
-    }
-
-    return 0;
-  }
-
-  @Override
-  public int hashCode() {
-    int res = vtes.size();
-
-    for (ValueTypeEntry vte: vtes) {
-      res *= vte.hashCode();
-    }
-
-    return res;
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    return compareTo((ValueMatcher)o) == 0;
   }
 
   private ValueConverter getConverter(final Object o) {
@@ -481,21 +364,35 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
                            new ScheduleForceSendParamConverter());
   }
 
+  private static abstract class DefaultConverter<T> implements ValueConverter<T> {
+    public List<T> getNormalized(final T val) {
+      List<T> res = new ArrayList<T>();
+
+      res.add(val);
+
+      return res;
+    }
+  }
+
   /* ========================================================================
    *          Property values
    * ======================================================================== */
 
-  private static class ActionPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((ActionPropType)val).getText().toString());
+  private static class ActionPropConverter extends DefaultConverter<ActionPropType> {
+    public ValueComparator convert(final ActionPropType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal,
+                       val.getText().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public ActionPropType getElementAndValue(final ActionPropType val) {
       try {
-        ActionPropType prop = (ActionPropType)val.getClass().newInstance();
+        ActionPropType prop = val.getClass().newInstance();
 
-        prop.setText(((ActionPropType)val).getText());
+        prop.setText(val.getText());
 
         return prop;
       } catch (Throwable t) {
@@ -504,9 +401,10 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class FreebusyPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      List<PeriodType> ps = ((FreebusyPropType)val).getPeriod();
+  private static class FreebusyPropConverter implements ValueConverter<FreebusyPropType> {
+    public ValueComparator convert(final FreebusyPropType val) {
+      List<PeriodType> ps = val.getPeriod();
+      ValueComparator vc = new ValueComparator();
 
       for (PeriodType p: ps) {
         StringBuilder sb = new StringBuilder(p.getStart().toXMLFormat());
@@ -516,15 +414,17 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
         } else {
           sb.append(p.getEnd().toXMLFormat());
         }
-        matcher.addValue(XcalTags.periodVal, sb.toString());
+        vc.addValue(XcalTags.periodVal, sb.toString());
       }
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public FreebusyPropType getElementAndValue(final FreebusyPropType val) {
       try {
-        FreebusyPropType prop = (FreebusyPropType)val.getClass().newInstance();
+        FreebusyPropType prop = val.getClass().newInstance();
 
-        List<PeriodType> ps = ((FreebusyPropType)val).getPeriod();
+        List<PeriodType> ps = val.getPeriod();
 
         for (PeriodType p: ps) {
           prop.getPeriod().add(p);
@@ -535,27 +435,48 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
         throw new RuntimeException(t);
       }
     }
+
+    public List<FreebusyPropType> getNormalized(final FreebusyPropType val) {
+      try {
+        List<FreebusyPropType> res = new ArrayList<FreebusyPropType>();
+        List<PeriodType> ps = val.getPeriod();
+
+        for (PeriodType p: ps) {
+          FreebusyPropType prop = val.getClass().newInstance();
+          prop.getPeriod().add(p);
+          res.add(prop);
+          prop.setParameters(val.getParameters());
+        }
+
+        return res;
+      } catch (Throwable t) {
+        throw new RuntimeException(t);
+      }
+    }
   }
 
-  private static class RequestStatusPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      RequestStatusPropType rs = (RequestStatusPropType)val;
+  private static class RequestStatusPropConverter extends DefaultConverter<RequestStatusPropType> {
+    public ValueComparator convert(final RequestStatusPropType val) {
+      RequestStatusPropType rs = val;
+      ValueComparator vc = new ValueComparator();
 
-      matcher.addValue(XcalTags.codeVal, rs.getCode());
+      vc.addValue(XcalTags.codeVal, rs.getCode());
 
       if (rs.getDescription() != null) {
-        matcher.addValue(XcalTags.descriptionVal, rs.getDescription());
+        vc.addValue(XcalTags.descriptionVal, rs.getDescription());
       }
 
       if (rs.getExtdata() != null) {
-        matcher.addValue(XcalTags.extdataVal, rs.getExtdata());
+        vc.addValue(XcalTags.extdataVal, rs.getExtdata());
       }
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public RequestStatusPropType getElementAndValue(final RequestStatusPropType val) {
       try {
-        RequestStatusPropType prop = (RequestStatusPropType)val.getClass().newInstance();
-        RequestStatusPropType rs = (RequestStatusPropType)val;
+        RequestStatusPropType prop = val.getClass().newInstance();
+        RequestStatusPropType rs = val;
 
         prop.setCode(rs.getCode());
 
@@ -574,20 +495,23 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class GeoPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      GeoPropType gp = (GeoPropType)val;
+  private static class GeoPropConverter extends DefaultConverter<GeoPropType> {
+    public ValueComparator convert(final GeoPropType val) {
+      GeoPropType gp = val;
+      ValueComparator vc = new ValueComparator();
 
-      matcher.addValue(XcalTags.latitudeVal,
+      vc.addValue(XcalTags.latitudeVal,
                        String.valueOf(gp.getLatitude()));
-      matcher.addValue(XcalTags.longitudeVal,
+      vc.addValue(XcalTags.longitudeVal,
                        String.valueOf(gp.getLongitude()));
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public GeoPropType getElementAndValue(final GeoPropType val) {
       try {
-        GeoPropType prop = (GeoPropType)val.getClass().newInstance();
-        GeoPropType gp = (GeoPropType)val;
+        GeoPropType prop = val.getClass().newInstance();
+        GeoPropType gp = val;
 
         prop.setLatitude(gp.getLatitude());
         prop.setLongitude(gp.getLongitude());
@@ -599,17 +523,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class StatusPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((StatusPropType)val).getText().toString());
+  private static class StatusPropConverter extends DefaultConverter<StatusPropType> {
+    public ValueComparator convert(final StatusPropType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public StatusPropType getElementAndValue(final StatusPropType val) {
       try {
-        StatusPropType prop = (StatusPropType)val.getClass().newInstance();
+        StatusPropType prop = val.getClass().newInstance();
 
-        prop.setText(((StatusPropType)val).getText());
+        prop.setText(val.getText());
 
         return prop;
       } catch (Throwable t) {
@@ -618,17 +545,21 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class TranspPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((TranspPropType)val).getText().toString());
+  private static class TranspPropConverter extends DefaultConverter<TranspPropType> {
+    public ValueComparator convert(final TranspPropType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal,
+                       val.getText().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public TranspPropType getElementAndValue(final TranspPropType val) {
       try {
-        TranspPropType prop = (TranspPropType)val.getClass().newInstance();
+        TranspPropType prop = val.getClass().newInstance();
 
-        prop.setText(((TranspPropType)val).getText());
+        prop.setText(val.getText());
 
         return prop;
       } catch (Throwable t) {
@@ -637,17 +568,21 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class CalscalePropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((CalscalePropType)val).getText().toString());
+  private static class CalscalePropConverter extends DefaultConverter<CalscalePropType> {
+    public ValueComparator convert(final CalscalePropType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal,
+                       val.getText().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public CalscalePropType getElementAndValue(final CalscalePropType val) {
       try {
-        CalscalePropType prop = (CalscalePropType)val.getClass().newInstance();
+        CalscalePropType prop = val.getClass().newInstance();
 
-        prop.setText(((CalscalePropType)val).getText());
+        prop.setText(val.getText());
 
         return prop;
       } catch (Throwable t) {
@@ -656,23 +591,26 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class TriggerPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      TriggerPropType tp = (TriggerPropType)val;
+  private static class TriggerPropConverter extends DefaultConverter<TriggerPropType> {
+    public ValueComparator convert(final TriggerPropType val) {
+      TriggerPropType tp = val;
+      ValueComparator vc = new ValueComparator();
 
       if (tp.getDuration() != null) {
-        matcher.addValue(XcalTags.durationVal,
+        vc.addValue(XcalTags.durationVal,
                          tp.getDuration().toString());
       } else {
-        matcher.addValue(XcalTags.dateTimeVal,
+        vc.addValue(XcalTags.dateTimeVal,
                          tp.getDateTime().toString());
       }
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public TriggerPropType getElementAndValue(final TriggerPropType val) {
       try {
-        TriggerPropType prop = (TriggerPropType)val.getClass().newInstance();
-        TriggerPropType tp = (TriggerPropType)val;
+        TriggerPropType prop = val.getClass().newInstance();
+        TriggerPropType tp = val;
 
         if (tp.getDuration() != null) {
           prop.setDuration(tp.getDuration());
@@ -687,17 +625,21 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class DurationPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.durationVal,
-                       ((DurationPropType)val).getDuration().toString());
+  private static class DurationPropConverter extends DefaultConverter<DurationPropType> {
+    public ValueComparator convert(final DurationPropType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.durationVal,
+                       val.getDuration().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public DurationPropType getElementAndValue(final DurationPropType val) {
       try {
-        DurationPropType prop = (DurationPropType)val.getClass().newInstance();
+        DurationPropType prop = val.getClass().newInstance();
 
-        prop.setDuration(((DurationPropType)val).getDuration());
+        prop.setDuration(val.getDuration());
 
         return prop;
       } catch (Throwable t) {
@@ -706,21 +648,24 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class AttachPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      AttachPropType ap = (AttachPropType)val;
+  private static class AttachPropConverter extends DefaultConverter<AttachPropType> {
+    public ValueComparator convert(final AttachPropType val) {
+      AttachPropType ap = val;
+      ValueComparator vc = new ValueComparator();
 
       if (ap.getBinary() !=  null) {
-        matcher.addValue(XcalTags.binaryVal, ap.getBinary());
+        vc.addValue(XcalTags.binaryVal, ap.getBinary());
       } else {
-        matcher.addValue(XcalTags.uriVal, ap.getUri());
+        vc.addValue(XcalTags.uriVal, ap.getUri());
       }
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public AttachPropType getElementAndValue(final AttachPropType val) {
       try {
-        AttachPropType prop = (AttachPropType)val.getClass().newInstance();
-        AttachPropType ap = (AttachPropType)val;
+        AttachPropType prop = val.getClass().newInstance();
+        AttachPropType ap = val;
 
         if (ap.getBinary() !=  null) {
           prop.setBinary(ap.getBinary());
@@ -735,23 +680,26 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class DateDatetimePropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      XcalUtil.DtTzid dtTzid = XcalUtil.getDtTzid((DateDatetimePropertyType)val);
+  private static class DateDatetimePropConverter extends DefaultConverter<DateDatetimePropertyType> {
+    public ValueComparator convert(final DateDatetimePropertyType val) {
+      XcalUtil.DtTzid dtTzid = XcalUtil.getDtTzid(val);
+      ValueComparator vc = new ValueComparator();
 
       if (dtTzid.dateOnly) {
-        matcher.addValue(XcalTags.dateVal, dtTzid.dt);
+        vc.addValue(XcalTags.dateVal, dtTzid.dt);
       } else {
-        matcher.addValue(XcalTags.dateTimeVal, dtTzid.dt);
+        vc.addValue(XcalTags.dateTimeVal, dtTzid.dt);
       }
 
       /* Note we deal with tzid separately as a parameter */
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public DateDatetimePropertyType getElementAndValue(final DateDatetimePropertyType val) {
       try {
-        DateDatetimePropertyType prop = (DateDatetimePropertyType)val.getClass().newInstance();
-        DateDatetimePropertyType dt = (DateDatetimePropertyType)val;
+        DateDatetimePropertyType prop = val.getClass().newInstance();
+        DateDatetimePropertyType dt = val;
 
         if (dt.getDate() != null) {
           prop.setDate(dt.getDate());
@@ -766,18 +714,22 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class DatetimePropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.dateTimeVal,
+  private static class DatetimePropConverter extends DefaultConverter<DatetimePropertyType> {
+    public ValueComparator convert(final DatetimePropertyType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.dateTimeVal,
                        XcalUtil.getIcalFormatDateTime(
-                         ((DatetimePropertyType)val).getDateTime().toString()));
+                         val.getDateTime().toString()));
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public DatetimePropertyType getElementAndValue(final DatetimePropertyType val) {
       try {
-        DatetimePropertyType prop = (DatetimePropertyType)val.getClass().newInstance();
+        DatetimePropertyType prop = val.getClass().newInstance();
 
-        prop.setDateTime(((DatetimePropertyType)val).getDateTime());
+        prop.setDateTime(val.getDateTime());
 
         return prop;
       } catch (Throwable t) {
@@ -786,18 +738,22 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class UtcDatetimePropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.utcDateTimeVal,
+  private static class UtcDatetimePropConverter extends DefaultConverter<UtcDatetimePropertyType> {
+    public ValueComparator convert(final UtcDatetimePropertyType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.utcDateTimeVal,
                 XcalUtil.getIcalFormatDateTime(
-                    ((UtcDatetimePropertyType)val).getUtcDateTime().toString()));
+                    val.getUtcDateTime().toString()));
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public UtcDatetimePropertyType getElementAndValue(final UtcDatetimePropertyType val) {
       try {
-        UtcDatetimePropertyType prop = (UtcDatetimePropertyType)val.getClass().newInstance();
+        UtcDatetimePropertyType prop = val.getClass().newInstance();
 
-        prop.setUtcDateTime(((UtcDatetimePropertyType)val).getUtcDateTime());
+        prop.setUtcDateTime(val.getUtcDateTime());
 
         return prop;
       } catch (Throwable t) {
@@ -806,17 +762,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class CalAddressPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.calAddressVal,
-                       ((CalAddressPropertyType)val).getCalAddress());
+  private static class CalAddressPropConverter extends DefaultConverter<CalAddressPropertyType> {
+    public ValueComparator convert(final CalAddressPropertyType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.calAddressVal, val.getCalAddress());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public CalAddressPropertyType getElementAndValue(final CalAddressPropertyType val) {
       try {
-        CalAddressPropertyType prop = (CalAddressPropertyType)val.getClass().newInstance();
+        CalAddressPropertyType prop = val.getClass().newInstance();
 
-        prop.setCalAddress(((CalAddressPropertyType)val).getCalAddress());
+        prop.setCalAddress(val.getCalAddress());
 
         return prop;
       } catch (Throwable t) {
@@ -825,17 +784,21 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class UtcOffsetPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.utcOffsetVal,
-                       ((UtcOffsetPropertyType)val).getUtcOffset());
+  private static class UtcOffsetPropConverter extends DefaultConverter<UtcOffsetPropertyType> {
+    public ValueComparator convert(final UtcOffsetPropertyType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.utcOffsetVal,
+                       val.getUtcOffset());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public UtcOffsetPropertyType getElementAndValue(final UtcOffsetPropertyType val) {
       try {
-        UtcOffsetPropertyType prop = (UtcOffsetPropertyType)val.getClass().newInstance();
+        UtcOffsetPropertyType prop = val.getClass().newInstance();
 
-        prop.setUtcOffset(((UtcOffsetPropertyType)val).getUtcOffset());
+        prop.setUtcOffset(val.getUtcOffset());
 
         return prop;
       } catch (Throwable t) {
@@ -844,19 +807,22 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class TextListPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      List<String> ss = ((TextListPropertyType)val).getText();
+  private static class TextListPropConverter extends DefaultConverter<TextListPropertyType> {
+    public ValueComparator convert(final TextListPropertyType val) {
+      List<String> ss = val.getText();
+      ValueComparator vc = new ValueComparator();
 
       for (String s: ss) {
-        matcher.addValue(XcalTags.textVal, s);
+        vc.addValue(XcalTags.textVal, s);
       }
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public TextListPropertyType getElementAndValue(final TextListPropertyType val) {
       try {
-        TextListPropertyType prop = (TextListPropertyType)val.getClass().newInstance();
-        List<String> ss = ((TextListPropertyType)val).getText();
+        TextListPropertyType prop = val.getClass().newInstance();
+        List<String> ss = val.getText();
 
         for (String s: ss) {
           prop.getText().add(s);
@@ -867,19 +833,44 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
         throw new RuntimeException(t);
       }
     }
+
+    @Override
+    public List<TextListPropertyType> getNormalized(final TextListPropertyType val) {
+      if (!(val instanceof CategoriesPropType)) {
+        return super.getNormalized(val);
+      }
+
+      try {
+        List<TextListPropertyType> res = new ArrayList<TextListPropertyType>();
+
+        for (String s: val.getText()) {
+          TextListPropertyType prop = val.getClass().newInstance();
+          prop.getText().add(s);
+          res.add(prop);
+          prop.setParameters(val.getParameters());
+        }
+
+        return res;
+      } catch (Throwable t) {
+        throw new RuntimeException(t);
+      }
+    }
   }
 
-  private static class TextPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((TextPropertyType)val).getText());
+  private static class TextPropConverter extends DefaultConverter<TextPropertyType> {
+    public ValueComparator convert(final TextPropertyType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public TextPropertyType getElementAndValue(final TextPropertyType val) {
       try {
-        TextPropertyType prop = (TextPropertyType)val.getClass().newInstance();
+        TextPropertyType prop = val.getClass().newInstance();
 
-        prop.setText(((TextPropertyType)val).getText());
+        prop.setText(val.getText());
 
         return prop;
       } catch (Throwable t) {
@@ -888,31 +879,34 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class RecurPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      RecurType r = ((RecurPropertyType)val).getRecur();
+  private static class RecurPropConverter extends DefaultConverter<RecurPropertyType> {
+    public ValueComparator convert(final RecurPropertyType val) {
+      RecurType r = val.getRecur();
+      ValueComparator vc = new ValueComparator();
 
-      append(matcher, XcalTags.freq, r.getFreq().toString());
-      append(matcher, XcalTags.count, r.getCount());
-      append(matcher, XcalTags.until, r.getUntil());
-      append(matcher, XcalTags.interval, r.getInterval());
-      append(matcher, XcalTags.bysecond, r.getBysecond());
-      append(matcher, XcalTags.byminute, r.getByminute());
-      append(matcher, XcalTags.byhour, r.getByhour());
-      append(matcher, XcalTags.byday, r.getByday());
-      append(matcher, XcalTags.byyearday, r.getByyearday());
-      append(matcher, XcalTags.bymonthday, r.getBymonthday());
-      append(matcher, XcalTags.byweekno, r.getByweekno());
-      append(matcher, XcalTags.bymonth, r.getBymonth());
-      append(matcher, XcalTags.bysetpos, r.getBysetpos());
-      append(matcher, XcalTags.wkst, r.getWkst().toString());
+      append(vc, XcalTags.freq, r.getFreq().toString());
+      append(vc, XcalTags.count, r.getCount());
+      append(vc, XcalTags.until, r.getUntil());
+      append(vc, XcalTags.interval, r.getInterval());
+      append(vc, XcalTags.bysecond, r.getBysecond());
+      append(vc, XcalTags.byminute, r.getByminute());
+      append(vc, XcalTags.byhour, r.getByhour());
+      append(vc, XcalTags.byday, r.getByday());
+      append(vc, XcalTags.byyearday, r.getByyearday());
+      append(vc, XcalTags.bymonthday, r.getBymonthday());
+      append(vc, XcalTags.byweekno, r.getByweekno());
+      append(vc, XcalTags.bymonth, r.getBymonth());
+      append(vc, XcalTags.bysetpos, r.getBysetpos());
+      append(vc, XcalTags.wkst, r.getWkst().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public RecurPropertyType getElementAndValue(final RecurPropertyType val) {
       try {
-        RecurPropertyType prop = (RecurPropertyType)val.getClass().newInstance();
+        RecurPropertyType prop = val.getClass().newInstance();
 
-        prop.setRecur(((RecurPropertyType)val).getRecur());
+        prop.setRecur(val.getRecur());
 
         return prop;
       } catch (Throwable t) {
@@ -920,7 +914,7 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
       }
     }
 
-    private void append(final ValueMatcher vt,
+    private void append(final ValueComparator vc,
                         final QName nm,
                         final List val) {
       if (val == null) {
@@ -928,32 +922,36 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
       }
 
       for (Object o: val) {
-        append(vt, nm, o);
+        append(vc, nm, o);
       }
     }
 
-    private void append(final ValueMatcher vt,
+    private void append(final ValueComparator vc,
                         final QName nm,
                         final Object val) {
       if (val == null) {
         return;
       }
 
-      vt.addValue(nm, String.valueOf(val));
+      vc.addValue(nm, String.valueOf(val));
     }
   }
 
-  private static class IntegerPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.integerVal,
-                       String.valueOf(((IntegerPropertyType)val).getInteger()));
+  private static class IntegerPropConverter extends DefaultConverter<IntegerPropertyType> {
+    public ValueComparator convert(final IntegerPropertyType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.integerVal,
+                       String.valueOf(val.getInteger()));
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public IntegerPropertyType getElementAndValue(final IntegerPropertyType val) {
       try {
-        IntegerPropertyType prop = (IntegerPropertyType)val.getClass().newInstance();
+        IntegerPropertyType prop = val.getClass().newInstance();
 
-        prop.setInteger(((IntegerPropertyType)val).getInteger());
+        prop.setInteger(val.getInteger());
 
         return prop;
       } catch (Throwable t) {
@@ -962,17 +960,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class UriPropConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.uriVal,
-                       ((UriPropertyType)val).getUri());
+  private static class UriPropConverter extends DefaultConverter<UriPropertyType> {
+    public ValueComparator convert(final UriPropertyType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.uriVal, val.getUri());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public UriPropertyType getElementAndValue(final UriPropertyType val) {
       try {
-        UriPropertyType prop = (UriPropertyType)val.getClass().newInstance();
+        UriPropertyType prop = val.getClass().newInstance();
 
-        prop.setUri(((UriPropertyType)val).getUri());
+        prop.setUri(val.getUri());
 
         return prop;
       } catch (Throwable t) {
@@ -985,17 +986,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
    *          Parameter values
    * ======================================================================== */
 
-  private static class CalAddressParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.calAddressVal,
-                       ((CalAddressParamType)val).getCalAddress());
+  private static class CalAddressParamConverter extends DefaultConverter<CalAddressParamType> {
+    public ValueComparator convert(final CalAddressParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.calAddressVal, val.getCalAddress());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public CalAddressParamType getElementAndValue(final CalAddressParamType val) {
       try {
-        CalAddressParamType param = (CalAddressParamType)val.getClass().newInstance();
+        CalAddressParamType param = val.getClass().newInstance();
 
-        param.setCalAddress(((CalAddressParamType)val).getCalAddress());
+        param.setCalAddress(val.getCalAddress());
 
         return param;
       } catch (Throwable t) {
@@ -1004,19 +1008,22 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class CalAddressListParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      List<String> ss = ((CalAddressListParamType)val).getCalAddress();
+  private static class CalAddressListParamConverter extends DefaultConverter<CalAddressListParamType> {
+    public ValueComparator convert(final CalAddressListParamType val) {
+      List<String> ss = val.getCalAddress();
+      ValueComparator vc = new ValueComparator();
 
       for (String s: ss) {
-        matcher.addValue(XcalTags.calAddressVal, s);
+        vc.addValue(XcalTags.calAddressVal, s);
       }
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public CalAddressListParamType getElementAndValue(final CalAddressListParamType val) {
       try {
-        CalAddressListParamType param = (CalAddressListParamType)val.getClass().newInstance();
-        List<String> ss = ((CalAddressListParamType)val).getCalAddress();
+        CalAddressListParamType param = val.getClass().newInstance();
+        List<String> ss = val.getCalAddress();
 
         for (String s: ss) {
           param.getCalAddress().add(s);
@@ -1029,17 +1036,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class TextParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((TextParameterType)val).getText());
+  private static class TextParamConverter extends DefaultConverter<TextParameterType> {
+    public ValueComparator convert(final TextParameterType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public TextParameterType getElementAndValue(final TextParameterType val) {
       try {
-        TextParameterType param = (TextParameterType)val.getClass().newInstance();
+        TextParameterType param = val.getClass().newInstance();
 
-        param.setText(((TextParameterType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1048,17 +1058,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class UriParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.uriVal,
-                       ((UriParameterType)val).getUri());
+  private static class UriParamConverter extends DefaultConverter<UriParameterType> {
+    public ValueComparator convert(final UriParameterType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.uriVal, val.getUri());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public UriParameterType getElementAndValue(final UriParameterType val) {
       try {
-        UriParameterType param = (UriParameterType)val.getClass().newInstance();
+        UriParameterType param = val.getClass().newInstance();
 
-        param.setUri(((UriParameterType)val).getUri());
+        param.setUri(val.getUri());
 
         return param;
       } catch (Throwable t) {
@@ -1067,17 +1080,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class CutypeParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((CutypeParamType)val).getText());
+  private static class CutypeParamConverter extends DefaultConverter<CutypeParamType> {
+    public ValueComparator convert(final CutypeParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public CutypeParamType getElementAndValue(final CutypeParamType val) {
       try {
-        CutypeParamType param = (CutypeParamType)val.getClass().newInstance();
+        CutypeParamType param = val.getClass().newInstance();
 
-        param.setText(((CutypeParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1086,17 +1102,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class EncodingParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((EncodingParamType)val).getText());
+  private static class EncodingParamConverter extends DefaultConverter<EncodingParamType> {
+    public ValueComparator convert(final EncodingParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public EncodingParamType getElementAndValue(final EncodingParamType val) {
       try {
-        EncodingParamType param = (EncodingParamType)val.getClass().newInstance();
+        EncodingParamType param = val.getClass().newInstance();
 
-        param.setText(((EncodingParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1105,17 +1124,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class FbtypeParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((FbtypeParamType)val).getText());
+  private static class FbtypeParamConverter extends DefaultConverter<FbtypeParamType> {
+    public ValueComparator convert(final FbtypeParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public FbtypeParamType getElementAndValue(final FbtypeParamType val) {
       try {
-        FbtypeParamType param = (FbtypeParamType)val.getClass().newInstance();
+        FbtypeParamType param = val.getClass().newInstance();
 
-        param.setText(((FbtypeParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1124,17 +1146,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class PartstatParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((PartstatParamType)val).getText());
+  private static class PartstatParamConverter extends DefaultConverter<PartstatParamType> {
+    public ValueComparator convert(final PartstatParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public PartstatParamType getElementAndValue(final PartstatParamType val) {
       try {
-        PartstatParamType param = (PartstatParamType)val.getClass().newInstance();
+        PartstatParamType param = val.getClass().newInstance();
 
-        param.setText(((PartstatParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1143,17 +1168,21 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class RangeParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((RangeParamType)val).getText().toString());
+  private static class RangeParamConverter extends DefaultConverter<RangeParamType> {
+    public ValueComparator convert(final RangeParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal,
+                       val.getText().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public RangeParamType getElementAndValue(final RangeParamType val) {
       try {
-        RangeParamType param = (RangeParamType)val.getClass().newInstance();
+        RangeParamType param = val.getClass().newInstance();
 
-        param.setText(((RangeParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1162,17 +1191,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class RelatedParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((RelatedParamType)val).getText());
+  private static class RelatedParamConverter extends DefaultConverter<RelatedParamType> {
+    public ValueComparator convert(final RelatedParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public RelatedParamType getElementAndValue(final RelatedParamType val) {
       try {
-        RelatedParamType param = (RelatedParamType)val.getClass().newInstance();
+        RelatedParamType param = val.getClass().newInstance();
 
-        param.setText(((RelatedParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1181,17 +1213,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class ReltypeParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((ReltypeParamType)val).getText().toString());
+  private static class ReltypeParamConverter extends DefaultConverter<ReltypeParamType> {
+    public ValueComparator convert(final ReltypeParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText().toString());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public ReltypeParamType getElementAndValue(final ReltypeParamType val) {
       try {
-        ReltypeParamType param = (ReltypeParamType)val.getClass().newInstance();
+        ReltypeParamType param = val.getClass().newInstance();
 
-        param.setText(((ReltypeParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1200,17 +1235,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class RoleParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((RoleParamType)val).getText());
+  private static class RoleParamConverter extends DefaultConverter<RoleParamType> {
+    public ValueComparator convert(final RoleParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public RoleParamType getElementAndValue(final RoleParamType val) {
       try {
-        RoleParamType param = (RoleParamType)val.getClass().newInstance();
+        RoleParamType param = val.getClass().newInstance();
 
-        param.setText(((RoleParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1219,17 +1257,21 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class RsvpParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.booleanVal,
-                       String.valueOf(((RsvpParamType)val).isBoolean()));
+  private static class RsvpParamConverter extends DefaultConverter<RsvpParamType> {
+    public ValueComparator convert(final RsvpParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.booleanVal,
+                       String.valueOf(val.isBoolean()));
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public RsvpParamType getElementAndValue(final RsvpParamType val) {
       try {
-        RsvpParamType param = (RsvpParamType)val.getClass().newInstance();
+        RsvpParamType param = val.getClass().newInstance();
 
-        param.setBoolean(((RsvpParamType)val).isBoolean());
+        param.setBoolean(val.isBoolean());
 
         return param;
       } catch (Throwable t) {
@@ -1238,17 +1280,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class ScheduleAgentParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((ScheduleAgentParamType)val).getText());
+  private static class ScheduleAgentParamConverter extends DefaultConverter<ScheduleAgentParamType> {
+    public ValueComparator convert(final ScheduleAgentParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public ScheduleAgentParamType getElementAndValue(final ScheduleAgentParamType val) {
       try {
-        ScheduleAgentParamType param = (ScheduleAgentParamType)val.getClass().newInstance();
+        ScheduleAgentParamType param = val.getClass().newInstance();
 
-        param.setText(((ScheduleAgentParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {
@@ -1257,17 +1302,20 @@ public class ValueMatcher implements Comparable<ValueMatcher> {
     }
   }
 
-  private static class ScheduleForceSendParamConverter implements ValueConverter {
-    public void convert(final ValueMatcher matcher, final Object val) {
-      matcher.addValue(XcalTags.textVal,
-                       ((ScheduleForceSendParamType)val).getText());
+  private static class ScheduleForceSendParamConverter extends DefaultConverter<ScheduleForceSendParamType> {
+    public ValueComparator convert(final ScheduleForceSendParamType val) {
+      ValueComparator vc = new ValueComparator();
+
+      vc.addValue(XcalTags.textVal, val.getText());
+
+      return vc;
     }
 
-    public Object getElementAndValue(final Object val) {
+    public ScheduleForceSendParamType getElementAndValue(final ScheduleForceSendParamType val) {
       try {
-        ScheduleForceSendParamType param = (ScheduleForceSendParamType)val.getClass().newInstance();
+        ScheduleForceSendParamType param = val.getClass().newInstance();
 
-        param.setText(((ScheduleForceSendParamType)val).getText());
+        param.setText(val.getText());
 
         return param;
       } catch (Throwable t) {

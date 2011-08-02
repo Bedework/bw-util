@@ -26,6 +26,8 @@ import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -48,8 +50,12 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
   }
 
   @Override
-  CompWrapper getWrapped(final JAXBElement<? extends BaseComponentType> el) {
-    return new CompWrapper(this, el.getName(), el.getValue());
+  Set<CompWrapper> getWrapped(final JAXBElement<? extends BaseComponentType> el) {
+    Set<CompWrapper> res = new TreeSet<CompWrapper>();
+
+    res.add(new CompWrapper(this, el.getName(), el.getValue()));
+
+    return res;
   }
 
   public ComponentsSelectionType diff(final CompsWrapper that) {

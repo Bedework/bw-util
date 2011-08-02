@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -77,8 +79,9 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
     return new PropWrapper[len];
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  PropWrapper getWrapped(final JAXBElement<? extends BasePropertyType> el) {
+  Set<PropWrapper> getWrapped(final JAXBElement<? extends BasePropertyType> el) {
     QName nm = el.getName();
 
     /* We skip certain properties as they only appear on one side
@@ -88,7 +91,15 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
       return null;
     }
 
-    return new PropWrapper(this, nm, el.getValue());
+    Set<PropWrapper> res = new TreeSet<PropWrapper>();
+    List<BasePropertyType> normed = getMatcher().getNormalized(el.getValue());
+
+    for (BasePropertyType bp: normed) {
+      res.add(new PropWrapper(this, nm, bp));
+      return res;
+    }
+
+    return res;
   }
 
   /** Return a list of differences between this (the new object) and that (the

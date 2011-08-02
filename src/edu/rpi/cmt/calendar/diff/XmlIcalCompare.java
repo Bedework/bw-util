@@ -32,9 +32,19 @@ import ietf.params.xml.ns.icalendar_2.VcalendarType;
 public class XmlIcalCompare {
   protected transient Logger log;
 
+  private ValueMatcher matcher;
+
   /**
    */
   public XmlIcalCompare() {
+    matcher = new ValueMatcher();
+  }
+
+  /**
+   * @return object used to match values.
+   */
+  public ValueMatcher getMatcher() {
+    return matcher;
   }
 
   /** Compare the parameters. Return null for equal or a select element.
@@ -50,10 +60,10 @@ public class XmlIcalCompare {
     VcalendarType nv = newval.getVcalendar().get(0);
     VcalendarType ov = oldval.getVcalendar().get(0);
 
-    CompWrapper ncw = new CompWrapper(of,
+    CompWrapper ncw = new CompWrapper(of, getMatcher(),
                                       CompWrapper.compNames.get(nv.getClass()),
                                       nv);
-    CompWrapper ocw = new CompWrapper(of,
+    CompWrapper ocw = new CompWrapper(of, getMatcher(),
                                       CompWrapper.compNames.get(ov.getClass()),
                                       ov);
 
@@ -68,6 +78,7 @@ public class XmlIcalCompare {
     return log;
   }
 
+  @SuppressWarnings("unused")
   private void trace(final String msg) {
     getLogger().debug(msg);
   }

@@ -42,7 +42,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
             implements Comparable<PropWrapper> {
   private ParamsWrapper params;
 
-  private ValueMatcher matcher;
+  private ValueComparator comparator;
 
   /* Key is the real name of the property - result is null for no mapping or a
    * QName we treat it as for comparison.
@@ -128,7 +128,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       PropertyReferenceType ct = new PropertyReferenceType();
 
       JAXBElement jel = getJaxbElement();
-      jel.setValue(getMatcher().getElementAndValue());
+      jel.setValue(getMatcher().getElementAndValue(getEntity()));
       ct.setBaseProperty(jel);
 
       sel.setChange(ct);
@@ -138,19 +138,19 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
   }
 
   public boolean equalValue(final PropWrapper that) {
-    return getMatcher().equals(that.getMatcher());
+    return getComparator().equals(that.getComparator());
   }
 
   public int compareValue(final PropWrapper that) {
-    return getMatcher().compareTo(that.getMatcher());
+    return getComparator().compareTo(that.getComparator());
   }
 
-  ValueMatcher getMatcher() {
-    if (matcher == null) {
-      matcher = new ValueMatcher(getEntity());
+  ValueComparator getComparator() {
+    if (comparator == null) {
+      comparator = getMatcher().getComparator(getEntity());
     }
 
-    return matcher;
+    return comparator;
   }
 
   public int compareTo(final PropWrapper o) {
@@ -172,7 +172,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
   @Override
   public int hashCode() {
-    return getName().hashCode() * getMatcher().hashCode();
+    return getName().hashCode() * getComparator().hashCode();
   }
 
   @Override

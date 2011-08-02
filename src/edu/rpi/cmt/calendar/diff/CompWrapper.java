@@ -123,11 +123,13 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
   }
 
   CompWrapper(final ObjectFactory of,
+              final ValueMatcher matcher,
               final QName name,
               final BaseComponentType c) {
     super(null, name, c);
 
     setObjectFactory(of);
+    setMatcher(matcher);
 
     if (c.getProperties() != null) {
       props = new PropsWrapper(this, c.getProperties().getBasePropertyOrTzid());

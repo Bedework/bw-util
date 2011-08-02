@@ -40,6 +40,8 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
 
   protected ObjectFactory of;
 
+  private ValueMatcher matcher;
+
   BaseWrapper(final ParentT parent,
               final QName name) {
     this.parent = parent;
@@ -47,6 +49,7 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
 
     if (parent != null) {
       of = parent.of;
+      matcher = parent.matcher;
     }
   }
 
@@ -56,6 +59,14 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
 
   void setObjectFactory(final ObjectFactory val) {
     of = val;
+  }
+
+  void setMatcher(final ValueMatcher val) {
+    matcher = val;
+  }
+
+  ValueMatcher getMatcher() {
+    return matcher;
   }
 
   QName getName() {
