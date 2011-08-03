@@ -159,15 +159,15 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       return res;
     }
 
-    res = compareValue(o);
+    // Try params
+
+    res = params.compareTo(o.params);
 
     if (res != 0) {
       return res;
     }
 
-    // Try params
-
-    return params.compareTo(o.params);
+    return res = compareValue(o);
   }
 
   @Override

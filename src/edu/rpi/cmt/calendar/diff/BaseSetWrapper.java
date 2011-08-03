@@ -62,7 +62,7 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
 
     /* The set is ordered - use that to produce ordered array */
 
-    tarray = getTarray(elsList.size());
+    tarray = getTarray(els.size());
     int i = 0;
 
     for (T t: els) {

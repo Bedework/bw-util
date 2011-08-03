@@ -96,7 +96,6 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
 
     for (BasePropertyType bp: normed) {
       res.add(new PropWrapper(this, nm, bp));
-      return res;
     }
 
     return res;
