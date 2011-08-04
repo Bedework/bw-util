@@ -89,15 +89,21 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
       if (ncmp == 0) {
         // Names match - it's a modify
         sel = select(sel, thisOne.diff(thatOne));
-      } else if (ncmp < 0) {
+        thisI++;
+        thatI++;
+        continue;
+      }
+
+      if (ncmp < 0) {
         // in this but not that - addition
         sel = add(sel, thisOne.makeRef());
         thisI++;
-      } else {
-        // in that but not this - deletion
-        sel = remove(sel, thatOne.makeRef());
-        thatI++;
+        continue;
       }
+
+      // in that but not this - deletion
+      sel = remove(sel, thatOne.makeRef());
+      thatI++;
     }
 
     while (thisI < size()) {
