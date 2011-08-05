@@ -24,10 +24,8 @@ import org.oasis_open.docs.ns.wscal.calws_soap.PropertySelectionType;
 
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -43,10 +41,6 @@ import javax.xml.namespace.QName;
 class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
                                           JAXBElement<? extends BasePropertyType>>
                    implements Comparable<PropsWrapper> {
-  /* Set of properties we skip during comparison.
-   */
-  private static Map<QName, QName> skipped = new HashMap<QName, QName>();
-
   static {
     addSkipped(new QName(icalendarNs, "prodid"));
     addSkipped(new QName(icalendarNs, "version"));
@@ -310,9 +304,5 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
     sb.append("}");
 
     return sb.toString();
-  }
-
-  private static void addSkipped(final QName nm) {
-    skipped.put(nm, nm);
   }
 }

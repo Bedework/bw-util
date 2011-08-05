@@ -39,6 +39,10 @@ import javax.xml.namespace.QName;
 class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
                                           JAXBElement<? extends BaseParameterType>>
                     implements Comparable<ParamsWrapper> {
+  static {
+    addSkipped(new QName(icalendarNs, "x-bedework-uid"));
+  }
+
   ParamsWrapper(final PropWrapper parent,
                 final List<JAXBElement<? extends BaseParameterType>> plist) {
     super(parent, new QName(icalendarNs, "parameters"), plist);
@@ -51,6 +55,15 @@ class ParamsWrapper extends BaseSetWrapper<ParamWrapper, PropWrapper,
 
   @Override
   Set<ParamWrapper> getWrapped(final JAXBElement<? extends BaseParameterType> el) {
+    QName nm = el.getName();
+
+    /* We skip certain properties as they only appear on one side
+     * If this is one we skip return null.
+     */
+    if (skipped.containsKey(nm)) {
+      return null;
+    }
+
     Set<ParamWrapper> res = new TreeSet<ParamWrapper>();
 
     res.add(new ParamWrapper(this, el.getName(), el.getValue()));

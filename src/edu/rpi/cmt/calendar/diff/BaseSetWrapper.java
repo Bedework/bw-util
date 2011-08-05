@@ -19,7 +19,9 @@
 package edu.rpi.cmt.calendar.diff;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,6 +38,10 @@ import javax.xml.namespace.QName;
 abstract class BaseSetWrapper<T extends BaseWrapper,
                               ParentT extends BaseWrapper, ListT>
         extends BaseWrapper<ParentT> {
+  /* Set of entities we skip during comparison.
+   */
+  protected static Map<QName, QName> skipped = new HashMap<QName, QName>();
+
   private Set<T> els = new TreeSet<T>();
 
   private T[] tarray;
@@ -126,5 +132,9 @@ abstract class BaseSetWrapper<T extends BaseWrapper,
       sb.append(",\n   ");
       sb.append(t.toString());
     }
+  }
+
+  protected static void addSkipped(final QName nm) {
+    skipped.put(nm, nm);
   }
 }
