@@ -49,16 +49,16 @@ public class XmlIcalCompare {
 
   /** Compare the parameters. Return null for equal or a select element.
    *
-   * @param of - so we can get soap elements
    * @param newval
    * @param oldval
    * @return SelectElementType if val1 and val2 differ else null.
    */
-  public ComponentSelectionType diff(final ObjectFactory of,
-                                     final IcalendarType newval,
+  public ComponentSelectionType diff(final IcalendarType newval,
                                      final IcalendarType oldval) {
     VcalendarType nv = newval.getVcalendar().get(0);
     VcalendarType ov = oldval.getVcalendar().get(0);
+
+    ObjectFactory of = new ObjectFactory();
 
     CompWrapper ncw = new CompWrapper(of, getMatcher(),
                                       CompWrapper.compNames.get(nv.getClass()),
