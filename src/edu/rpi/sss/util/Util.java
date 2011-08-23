@@ -88,6 +88,38 @@ public class Util {
     }
   }
 
+  /** Given a class name return an object of that class.
+   * The class parameter is used to check that the
+   * named class is an instance of that class.
+   *
+   * @param className String class name
+   * @param cl   Class expected
+   * @return     Object checked to be an instance of that class
+   * @throws Exception
+   */
+  public static Object getObject(final String className,
+                                 final Class cl) throws Exception {
+    try {
+      Object o = Class.forName(className).newInstance();
+
+      if (o == null) {
+        throw new Exception("Class " + className + " not found");
+      }
+
+      if (!cl.isInstance(o)) {
+        throw new Exception("Class " + className +
+                            " is not a subclass of " +
+                            cl.getName());
+      }
+
+      return o;
+    } catch (Exception e) {
+      throw e;
+    } catch (Throwable t) {
+      throw new Exception(t);
+    }
+  }
+
   /** Format a message consisting of a format string
    *
    * @param fmt

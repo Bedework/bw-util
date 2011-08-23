@@ -200,6 +200,9 @@ public class XcalTags {
   /**   */
   public static final QName scheduleStatus = new QName(namespace, "schedule-status");
 
+  /**   */
+  public static final QName xBedeworkUidParam = new QName(namespace, "x-bedework-uid");
+
   /* =====================================================================
                               geo
      ===================================================================== */
@@ -436,4 +439,10 @@ public class XcalTags {
   /** VAVAILABILITY only */
   public static final QName busytype = new QName(namespace, "busytype");
 
+  /* =====================================================================
+                        x-properties in the schema
+     ===================================================================== */
+
+  /**   */
+  public static final QName xBedeworkCost = new QName(namespace, "x-bedework-cost");
 }
