@@ -48,7 +48,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
   private int[] sqlTypes;
 
   public void setParameterValues(final Properties parameters) {
-    String enumClassName = parameters.getProperty("enumClass");
+    String enumClassName = parameters.getProperty("enumClassname");
     try {
       enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
     } catch (ClassNotFoundException cfne) {
