@@ -60,6 +60,8 @@
     <getJar name="servletapi" version="2.4" />
     <getJar name="struts" version="1.2.9" />
 
+    <getJar name="jboss-j2se" version="5.1.0.GA" />
+
     <getJar name="bw-icalschema" 
             version="${org.bedework.bwxml.version}" project="bwxml" 
             projecthome="${bedework.home}/../bwxml" />
