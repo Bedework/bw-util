@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -103,12 +103,10 @@ public final class XmlUtil implements Serializable {
    * @param  id           String to identify input
    * @param  val          String to tidy
    * @param  crs          Object to hold results
-   * @param debug
    */
   public static void tidyString(final String id,
                                 final String val,
-                                final CheckStringResult crs,
-                                final boolean debug) {
+                                final CheckStringResult crs) {
     crs.errStr = null;
     crs.tidyState = xmlOk;
     crs.newContent = null;
@@ -125,11 +123,6 @@ public final class XmlUtil implements Serializable {
     } catch (Exception e) {
       crs.tidyState = xmlTidyException;
       e.printStackTrace(err);
-      if (debug) {
-        System.out.println("************* Exception tidying html/xml for " + id + ":");
-        System.out.println(e.getMessage());
-        e.printStackTrace();
-      }
 
       return;
     }
@@ -139,10 +132,6 @@ public final class XmlUtil implements Serializable {
     if ((crs.errStr != null) && (crs.errStr.length() != 0)) {
       // Presume an error
       crs.tidyState = xmlError;
-      if (debug) {
-        System.out.println("************* Errors tidying html/xml for " + id + ":");
-        System.out.println(crs.errStr);
-      }
 
       return;
     }
@@ -229,14 +218,12 @@ public final class XmlUtil implements Serializable {
    * @param  val          String to tidy
    * @param  crs          Object to hold results
    * @param  emptyOk      True if empty text is not special
-   * @param debug
    */
   public static void checkString(final String id,
                                  final String val,
                                  final CheckStringResult crs,
-                                 final boolean emptyOk,
-                                 final boolean debug) {
-    tidyString(id, val, crs, /*tagUntagged,*/ debug);
+                                 final boolean emptyOk) {
+    tidyString(id, val, crs);
 
     if ((crs.tidyState == xmlOk) &&
         (crs.newContent == null)) {

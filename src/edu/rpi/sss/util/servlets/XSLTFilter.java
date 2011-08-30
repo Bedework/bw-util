@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,23 +20,26 @@ package edu.rpi.sss.util.servlets;
 
 import edu.rpi.sss.util.servlets.io.ByteArrayWrappedResponse;
 
+import org.apache.log4j.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
+
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -44,7 +47,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.log4j.Logger;
 
 /** Class to implement a basic XSLT filter. The final configuration of this
  *  object can be carried out by overriding init.
@@ -88,13 +90,14 @@ public class XSLTFilter extends AbstractFilter {
    * @param req
    * @return our globals
    */
-  public XsltGlobals getXsltGlobals(HttpServletRequest req) {
+  public XsltGlobals getXsltGlobals(final HttpServletRequest req) {
     return (XsltGlobals)getGlobals(req);
   }
 
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.servlets.AbstractFilter#newFilterGlobals()
    */
+  @Override
   public AbstractFilter.FilterGlobals newFilterGlobals() {
     return new XsltGlobals();
   }
@@ -104,7 +107,7 @@ public class XSLTFilter extends AbstractFilter {
    * @param req
    * @param ideal
    */
-  public void setUrl(HttpServletRequest req, String ideal) {
+  public void setUrl(final HttpServletRequest req, final String ideal) {
     getXsltGlobals(req).url = ideal;
   }
 
@@ -113,7 +116,7 @@ public class XSLTFilter extends AbstractFilter {
    * @param req
    * @return url
    */
-  public String getUrl(HttpServletRequest req) {
+  public String getUrl(final HttpServletRequest req) {
     return getXsltGlobals(req).url;
   }
 
@@ -122,7 +125,7 @@ public class XSLTFilter extends AbstractFilter {
    * @param ideal
    * @param actual
    */
-  public void setPath(String ideal, String actual) {
+  public void setPath(final String ideal, final String actual) {
     synchronized (transformers) {
       pathMap.put(ideal, actual);
     }
@@ -133,7 +136,7 @@ public class XSLTFilter extends AbstractFilter {
    * @param ideal
    * @return url
    */
-  public String lookupPath(String ideal) {
+  public String lookupPath(final String ideal) {
     return pathMap.get(ideal);
   }
 
@@ -158,7 +161,7 @@ public class XSLTFilter extends AbstractFilter {
    * @throws ServletException
    * @throws FileNotFoundException
    */
-  public Transformer getXmlTransformer(String ideal)
+  public Transformer getXmlTransformer(final String ideal)
       throws TransformerException, ServletException, FileNotFoundException {
     String url = lookupPath(ideal);
     if (debug) {
@@ -215,7 +218,8 @@ public class XSLTFilter extends AbstractFilter {
   /* (non-Javadoc)
    * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
    */
-  public void init(FilterConfig filterConfig) throws ServletException {
+  @Override
+  public void init(final FilterConfig filterConfig) throws ServletException {
     super.init(filterConfig);
 
     configUrl = filterConfig.getInitParameter("xslt");
@@ -230,9 +234,10 @@ public class XSLTFilter extends AbstractFilter {
     ignoreContentType = "true".equals(temp);
   }
 
-  public void doFilter(ServletRequest req,
-                       ServletResponse response,
-                       FilterChain filterChain)
+  @Override
+  public void doFilter(final ServletRequest req,
+                       final ServletResponse response,
+                       final FilterChain filterChain)
          throws IOException, ServletException {
     HttpServletRequest hreq = (HttpServletRequest)req;
     final HttpServletResponse resp = (HttpServletResponse)response;
@@ -252,7 +257,7 @@ public class XSLTFilter extends AbstractFilter {
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    WrappedResponse wrappedResp = new WrappedResponse(resp, hreq, getLogger(), debug);
+    WrappedResponse wrappedResp = new WrappedResponse(resp, hreq, getLogger());
 
     filterChain.doFilter(req, wrappedResp);
 
@@ -274,7 +279,7 @@ public class XSLTFilter extends AbstractFilter {
     doPreFilter(hreq);
 
     byte[] bytes = wrappedResp.toByteArray();
-    if (bytes == null || (bytes.length == 0)) {
+    if ((bytes == null) || (bytes.length == 0)) {
       if (debug) {
         getLogger().debug("No content");
       }
@@ -456,20 +461,18 @@ public class XSLTFilter extends AbstractFilter {
      * @param response
      * @param req
      * @param log
-     * @param debug
      */
-    public WrappedResponse(HttpServletResponse response,
-                           HttpServletRequest req,
-                           Logger log,
-                           boolean debug) {
-      super(response, log, debug);
+    public WrappedResponse(final HttpServletResponse response,
+                           final HttpServletRequest req,
+                           final Logger log) {
+      super(response, log);
       this.req = req;
     }
 
     /**
      * @param val
      */
-    public void setTransformNeeded(boolean val) {
+    public void setTransformNeeded(final boolean val) {
       transformNeeded = val;
     }
 
@@ -480,7 +483,8 @@ public class XSLTFilter extends AbstractFilter {
       return transformNeeded;
     }
 
-    public void setContentType(String type) {
+    @Override
+    public void setContentType(final String type) {
       XsltGlobals glob = getXsltGlobals(req);
 
       if (ignoreContentType) {
@@ -500,11 +504,12 @@ public class XSLTFilter extends AbstractFilter {
     }
   }
 
+  @Override
   public void destroy() {
     super.destroy();
   }
 
-  private void outputInitErrorInfo(TransformerException te, ByteArrayOutputStream wtr) {
+  private void outputInitErrorInfo(final TransformerException te, final ByteArrayOutputStream wtr) {
     PrintWriter pw = new PrintWriter(wtr);
 
     outputErrorHtmlHead(pw, "XSLT initialization errors");
@@ -525,8 +530,8 @@ public class XSLTFilter extends AbstractFilter {
     pw.println("</html>");
   }
 
-  private void outputTransformErrorInfo(Exception e,
-                                        ByteArrayOutputStream wtr) {
+  private void outputTransformErrorInfo(final Exception e,
+                                        final ByteArrayOutputStream wtr) {
     PrintWriter pw = new PrintWriter(wtr);
 
     outputErrorHtmlHead(pw, "XSLT transform error");
@@ -543,8 +548,8 @@ public class XSLTFilter extends AbstractFilter {
     pw.println("</html>");
   }
 
-  private void outputErrorMessage(String title, String para,
-                                  ByteArrayOutputStream wtr) {
+  private void outputErrorMessage(final String title, final String para,
+                                  final ByteArrayOutputStream wtr) {
     PrintWriter pw = new PrintWriter(wtr);
 
     outputErrorHtmlHead(pw, title);
@@ -555,27 +560,27 @@ public class XSLTFilter extends AbstractFilter {
     pw.println("</html>");
   }
 
-  private void outputErrorHtmlHead(PrintWriter pw, String head) {
+  private void outputErrorHtmlHead(final PrintWriter pw, final String head) {
     pw.println("<html>");
     pw.println("<head>");
     pw.println("<title>" + head + "</title>");
     pw.println("</head>");
   }
 
-  private void outputErrorTr(PrintWriter pw, String s1, String s2) {
+  private void outputErrorTr(final PrintWriter pw, final String s1, final String s2) {
     pw.println("<tr>");
     pw.println("<td>" + s1 + "</td>");
     pw.println("<td>" + s2 + "</td>");
     pw.println("</tr>");
   }
 
-  private void outputErrorPara(PrintWriter pw, String s) {
+  private void outputErrorPara(final PrintWriter pw, final String s) {
     pw.println("<p>");
     pw.println(s);
     pw.println("</p>");
   }
 
-  private void outputErrorException(PrintWriter pw, Throwable e) {
+  private void outputErrorException(final PrintWriter pw, final Throwable e) {
     pw.println("<h2>Cause:</h2>");
 
     if (e == null) {
@@ -587,7 +592,7 @@ public class XSLTFilter extends AbstractFilter {
     }
   }
 
-  private void logTime(String recId, String sessId, long timeVal) {
+  private void logTime(final String recId, final String sessId, final long timeVal) {
     StringBuffer sb = new StringBuffer(recId);
 
     sb.append(":");

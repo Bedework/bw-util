@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,12 +21,13 @@ package edu.rpi.sss.util.jsp;
 import edu.rpi.sss.util.log.MessageEmit;
 import edu.rpi.sss.util.servlets.HttpServletUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * This class provides some convenience methods for use by ActionForm objects.
@@ -47,9 +48,9 @@ public class JspUtil extends HttpServletUtils {
    * @return String  property value or default (may be null)
    * @throws Throwable
    */
-  public static String getProperty(MessageResources msg,
-                                   String pname,
-                                   String def) throws Throwable {
+  public static String getProperty(final MessageResources msg,
+                                   final String pname,
+                                   final String def) throws Throwable {
     String p = msg.getMessage(pname);
     if (p == null) {
       return def;
@@ -65,8 +66,8 @@ public class JspUtil extends HttpServletUtils {
    * @return String  property value
    * @throws Throwable
    */
-  public static String getReqProperty(MessageResources msg,
-                                      String pname) throws Throwable {
+  public static String getReqProperty(final MessageResources msg,
+                                      final String pname) throws Throwable {
     String p = getProperty(msg, pname, null);
     if (p == null) {
       getLogger().error("No definition for property " + pname);
@@ -85,9 +86,9 @@ public class JspUtil extends HttpServletUtils {
    * @return boolean property value or default
    * @throws Throwable
    */
-  public static boolean getBoolProperty(MessageResources msg,
-                                        String pname,
-                                        boolean def) throws Throwable {
+  public static boolean getBoolProperty(final MessageResources msg,
+                                        final String pname,
+                                        final boolean def) throws Throwable {
     String p = msg.getMessage(pname);
     if (p == null) {
       return def;
@@ -104,9 +105,9 @@ public class JspUtil extends HttpServletUtils {
    * @return int     property value or default
    * @throws Throwable
    */
-  public static int getIntProperty(MessageResources msg,
-                                   String pname,
-                                   int def) throws Throwable {
+  public static int getIntProperty(final MessageResources msg,
+                                   final String pname,
+                                   final int def) throws Throwable {
     String p = msg.getMessage(pname);
     if (p == null) {
       return def;
@@ -131,18 +132,16 @@ public class JspUtil extends HttpServletUtils {
    * @param errProp  name of exception message property
    * @param noActionErrors
    * @param clear
-   * @param debug
    * @return MessageEmit null on failure
    */
-  public static MessageEmit getErrorObj(String id,
-                                        Object caller,
-                                        HttpServletRequest request,
-                                        MessageResources messages,
-                                        String errorObjAttrName,
-                                        String errProp,
-                                        boolean noActionErrors,
-                                        boolean clear,
-                                        boolean debug) {
+  public static MessageEmit getErrorObj(final String id,
+                                        final Object caller,
+                                        final HttpServletRequest request,
+                                        final MessageResources messages,
+                                        final String errorObjAttrName,
+                                        final String errProp,
+                                        final boolean noActionErrors,
+                                        final boolean clear) {
     if (errorObjAttrName == null) {
       // don't set
       return null;
@@ -166,7 +165,7 @@ public class JspUtil extends HttpServletUtils {
     }
 
     if (err == null) {
-      err = new ErrorEmitSvlt(debug);
+      err = new ErrorEmitSvlt();
     }
 
     ActionErrors ae = null;
@@ -189,8 +188,8 @@ public class JspUtil extends HttpServletUtils {
    * @param errorObjAttrName  name of session attribute
    * @return MessageEmit null on none found
    */
-  public static MessageEmit getErrorObj(HttpServletRequest request,
-                                        String errorObjAttrName) {
+  public static MessageEmit getErrorObj(final HttpServletRequest request,
+                                        final String errorObjAttrName) {
     if (errorObjAttrName == null) {
       // don't set
       return null;
@@ -226,17 +225,15 @@ public class JspUtil extends HttpServletUtils {
    * @param messageObjAttrName  name of session attribute
    * @param errProp           name of exception message property
    * @param clear
-   * @param debug
    * @return MessageEmit      null on failure
    */
-  public static MessageEmit getMessageObj(String id,
-                                          Object caller,
-                                          HttpServletRequest request,
-                                          MessageResources messages,
-                                          String messageObjAttrName,
-                                          String errProp,
-                                          boolean clear,
-                                          boolean debug) {
+  public static MessageEmit getMessageObj(final String id,
+                                          final Object caller,
+                                          final HttpServletRequest request,
+                                          final MessageResources messages,
+                                          final String messageObjAttrName,
+                                          final String errProp,
+                                          final boolean clear) {
     if (messageObjAttrName == null) {
       // don't set
       return null;
@@ -260,7 +257,7 @@ public class JspUtil extends HttpServletUtils {
     }
 
     if (msg == null) {
-      msg = new MessageEmitSvlt(debug);
+      msg = new MessageEmitSvlt();
     }
 
     ((MessageEmitSvlt)msg).reinit(id, caller, messages, new ActionMessages(),
@@ -279,8 +276,8 @@ public class JspUtil extends HttpServletUtils {
    * @param messageObjAttrName  name of session attribute
    * @return MessageEmit null on none found
    */
-  public static MessageEmit getMessageObj(HttpServletRequest request,
-                                          String messageObjAttrName) {
+  public static MessageEmit getMessageObj(final HttpServletRequest request,
+                                          final String messageObjAttrName) {
     if (messageObjAttrName == null) {
       // don't set
       return null;

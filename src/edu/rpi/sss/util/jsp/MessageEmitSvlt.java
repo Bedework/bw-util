@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,14 +34,6 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
    *
    */
   public MessageEmitSvlt() {
-    this(false);
-  }
-
-  /**
-   * @param debug
-   */
-  public MessageEmitSvlt(boolean debug) {
-    this.debug = debug;
   }
 
   /** Generation of errors in the servlet world means adding them to the
@@ -55,17 +47,18 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
    * @param exceptionPname Property name for exceptions
    * @param clear
    */
-  public void reinit(String id,
-                     Object caller,
-                     MessageResources messages,
-                     ActionMessages msgs,
-                     String exceptionPname,
-                     boolean clear) {
+  public void reinit(final String id,
+                     final Object caller,
+                     final MessageResources messages,
+                     final ActionMessages msgs,
+                     final String exceptionPname,
+                     final boolean clear) {
     super.reinit(id, caller, messages, null, exceptionPname, clear);
     this.msgs = msgs;
   }
 
-  public void emit(String pname) {
+  @Override
+  public void emit(final String pname) {
     if (debug) {
       debugMsg(pname, null, null);
     }
@@ -83,7 +76,8 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     }
   }
 
-  public void emit(String pname, Object o){
+  @Override
+  public void emit(final String pname, final Object o){
     if (debug) {
       debugMsg(pname, "object", String.valueOf(o));
     }
@@ -101,7 +95,8 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     }
   }
 
-  public void emit(String pname, Object o1, Object o2){
+  @Override
+  public void emit(final String pname, final Object o1, final Object o2){
     if (debug) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
@@ -121,7 +116,8 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     }
   }
 
-  public void emit(String pname, Object o1, Object o2, Object o3){
+  @Override
+  public void emit(final String pname, final Object o1, final Object o2, final Object o3){
     if (debug) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
@@ -145,6 +141,7 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.log.MessageEmit#messagesEmitted()
    */
+  @Override
   public boolean messagesEmitted() {
     return !msgs.isEmpty();
   }
@@ -156,10 +153,12 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     return msgs;
   }
 
+  @Override
   protected String className() {
     return "MessageEmitSvlt";
   }
 
+  @Override
   protected boolean haveOutputObject() {
     return msgs != null;
   }

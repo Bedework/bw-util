@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,12 +18,14 @@
 */
 package edu.rpi.sss.util.servlets.io;
 
+import org.apache.log4j.Logger;
+
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.http.HttpServletResponse;
+
 import javax.servlet.ServletOutputStream;
-import org.apache.log4j.Logger;
+import javax.servlet.http.HttpServletResponse;
 
 /** This class provides a useful form of the wrapped response.
  */
@@ -34,23 +36,19 @@ public class CharArrayWrappedResponse extends WrappedResponse {
   /** Constructor
    *
    * @param response
-   * @param debug
    */
-  public CharArrayWrappedResponse(HttpServletResponse response,
-                                  boolean debug) {
-    super(response, debug);
+  public CharArrayWrappedResponse(final HttpServletResponse response) {
+    super(response);
   }
 
   /** Constructor
    *
    * @param response
    * @param log
-   * @param debug
    */
-  public CharArrayWrappedResponse(HttpServletResponse response,
-                                  Logger log,
-                                  boolean debug) {
-    super(response, log, debug);
+  public CharArrayWrappedResponse(final HttpServletResponse response,
+                                  final Logger log) {
+    super(response, log);
   }
 
   /**
@@ -63,6 +61,7 @@ public class CharArrayWrappedResponse extends WrappedResponse {
   /* (non-Javadoc)
    * @see javax.servlet.ServletResponse#getWriter()
    */
+  @Override
   public PrintWriter getWriter() {
     if (debug) {
       getLogger().debug("getWriter called");
@@ -74,6 +73,7 @@ public class CharArrayWrappedResponse extends WrappedResponse {
   /* (non-Javadoc)
    * @see javax.servlet.ServletResponse#getOutputStream()
    */
+  @Override
   public ServletOutputStream getOutputStream() throws IOException {
     if (debug) {
       getLogger().debug("getOutputStream called");
@@ -86,6 +86,7 @@ public class CharArrayWrappedResponse extends WrappedResponse {
   /* (non-Javadoc)
    * @see java.lang.Object#toString()
    */
+  @Override
   public String toString() {
     if (caw == null) {
       return null;

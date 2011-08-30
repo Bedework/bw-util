@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,10 +18,12 @@
 */
 package edu.rpi.sss.util.servlets.io;
 
-import java.io.PrintWriter;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletOutputStream;
 import org.apache.log4j.Logger;
+
+import java.io.PrintWriter;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 /** This class provides a useful form of the wrapped response.
  */
@@ -31,28 +33,25 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
   /** Constructor
    *
    * @param response
-   * @param debug
    */
-  public ByteArrayWrappedResponse(HttpServletResponse response,
-                                  boolean debug) {
-    super(response, debug);
+  public ByteArrayWrappedResponse(final HttpServletResponse response) {
+    super(response);
   }
 
   /** Constructor
    *
    * @param response
    * @param log
-   * @param debug
    */
-  public ByteArrayWrappedResponse(HttpServletResponse response,
-                                  Logger log,
-                                  boolean debug) {
-    super(response, log, debug);
+  public ByteArrayWrappedResponse(final HttpServletResponse response,
+                                  final Logger log) {
+    super(response, log);
   }
 
   /* (non-Javadoc)
    * @see javax.servlet.ServletResponse#getWriter()
    */
+  @Override
   public PrintWriter getWriter() {
     if (debug) {
       getLogger().debug("getWriter called");
@@ -64,6 +63,7 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
   /* (non-Javadoc)
    * @see javax.servlet.ServletResponse#getOutputStream()
    */
+  @Override
   public ServletOutputStream getOutputStream() {
     if (debug) {
       getLogger().debug("getOutputStream called");
@@ -86,6 +86,7 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
   /**
    *
    */
+  @Override
   public void close() {
     if (pw != null) {
       try {

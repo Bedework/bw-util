@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,20 +18,22 @@
 */
 package edu.rpi.sss.util.servlets;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.io.StringReader;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import org.apache.log4j.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /** An abstract filter class to help build filters.
  *  <p>We provide abstract methods for the three required filter methods,
@@ -48,7 +50,6 @@ public abstract class AbstractFilter implements Filter {
   protected boolean debug = false;
 
   private transient Logger log;
-
   /** One per session
    */
   public static class FilterGlobals implements Serializable {
@@ -65,12 +66,16 @@ public abstract class AbstractFilter implements Filter {
   private static final String globalsName =
         "edu.rpi.sss.util.servlets.AbstractFilter.FilterGlobals";
 
+  public AbstractFilter() {
+    debug = getLogger().isDebugEnabled();
+  }
+
   /** Get the globals from the session
    *
    * @param req
    * @return globals object
    */
-  public FilterGlobals getGlobals(HttpServletRequest req) {
+  public FilterGlobals getGlobals(final HttpServletRequest req) {
     HttpSession sess = req.getSession();
 
     if (sess == null) {
@@ -109,22 +114,18 @@ public abstract class AbstractFilter implements Filter {
   /* (non-Javadoc)
    * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
    */
-  public void init(FilterConfig filterConfig) throws ServletException {
+  @Override
+  public void init(final FilterConfig filterConfig) throws ServletException {
     ctx = filterConfig.getServletContext();
-    String temp = filterConfig.getInitParameter("debug");
-
-    try {
-      int debugVal = Integer.parseInt(temp);
-
-      debug = (debugVal > 2);
-    } catch (Exception e) {}
   }
 
+  @Override
   public abstract void doFilter(ServletRequest req,
                                 ServletResponse response,
                                 FilterChain filterChain)
          throws IOException, ServletException;
 
+  @Override
   public void destroy() {
     if ((debug) && (ctx != null)) {
       ctx.log("Destroying filter...");
@@ -137,7 +138,7 @@ public abstract class AbstractFilter implements Filter {
    * @param   request    Incoming HttpServletRequest object
    * @throws ServletException
    */
-  public void doPreFilter(HttpServletRequest request)
+  public void doPreFilter(final HttpServletRequest request)
     throws ServletException {
   }
 
@@ -146,7 +147,7 @@ public abstract class AbstractFilter implements Filter {
    * @param req
    * @param val
    */
-  public void setContentType(HttpServletRequest req, String val) {
+  public void setContentType(final HttpServletRequest req, final String val) {
     getGlobals(req).contentType = val;
   }
 
@@ -154,7 +155,7 @@ public abstract class AbstractFilter implements Filter {
    * @param req
    * @return current content type
    */
-  public String getContentType(HttpServletRequest req) {
+  public String getContentType(final HttpServletRequest req) {
     return getGlobals(req).contentType;
   }
 
@@ -163,7 +164,7 @@ public abstract class AbstractFilter implements Filter {
    * @param req
    * @param val
    */
-  public void setDontFilter(HttpServletRequest req, boolean val) {
+  public void setDontFilter(final HttpServletRequest req, final boolean val) {
     getGlobals(req).dontFilter = val;
   }
 
@@ -171,14 +172,14 @@ public abstract class AbstractFilter implements Filter {
    * @param req
    * @return true for no filtering
    */
-  public boolean getDontFilter(HttpServletRequest req) {
+  public boolean getDontFilter(final HttpServletRequest req) {
     return getGlobals(req).dontFilter;
   }
 
   /**
    * @param val
    */
-  public void setDebug(boolean val) {
+  public void setDebug(final boolean val) {
     debug = val;
   }
 
@@ -206,7 +207,7 @@ public abstract class AbstractFilter implements Filter {
    * @param val
    * @param log
    */
-  public static void dumpIt(String val, Logger log) {
+  public static void dumpIt(final String val, final Logger log) {
     StringReader dsr = new StringReader(val);
     LineNumberReader dlnr = new LineNumberReader(dsr);
     int i = 1;

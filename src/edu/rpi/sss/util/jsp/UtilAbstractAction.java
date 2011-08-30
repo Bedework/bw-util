@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,17 +23,6 @@ import edu.rpi.sss.util.log.HttpAppLogger;
 import edu.rpi.sss.util.servlets.HttpServletUtils;
 import edu.rpi.sss.util.servlets.PresentationState;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
@@ -43,6 +32,19 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ActionConfig;
 import org.apache.struts.util.MessageResources;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Abstract implementation of <strong>Action</strong> which sets up frequently
@@ -171,10 +173,11 @@ public abstract class UtilAbstractAction extends Action
                                        MessageResources messages)
                throws Throwable;
 
-  public ActionForward execute(ActionMapping mapping,
-                               ActionForm frm,
-                               HttpServletRequest request,
-                               HttpServletResponse response)
+  @Override
+  public ActionForward execute(final ActionMapping mapping,
+                               final ActionForm frm,
+                               final HttpServletRequest request,
+                               final HttpServletResponse response)
                                throws IOException, ServletException {
     ErrorEmitSvlt err = null;
     MessageEmitSvlt msg = null;
@@ -185,14 +188,7 @@ public abstract class UtilAbstractAction extends Action
     try {
       messages = getResources(request);
 
-      /* Explicitly set logging on/off with an init parameter.
-         Basing debugging off the state of log4j turns out to be too
-         inflexible - for example, we have many applications with exactly the
-         same code, basing logging on class names doesn't work. */
-      String debugVal = servlet.getServletConfig().getServletContext().getInitParameter("debug");
-      debug = !"0".equals(debugVal);
-
-      checkDebug(request, form);
+      debug = getLogger().isDebugEnabled();
 
       isPortlet = isPortletRequest(request);
 
@@ -345,12 +341,12 @@ public abstract class UtilAbstractAction extends Action
       } else if (err.messagesEmitted()) {
         if (noActionErrors) {
         } else {
-          ActionErrors aes = ((ErrorEmitSvlt)err).getErrors();
+          ActionErrors aes = err.getErrors();
           saveErrors(request, aes);
         }
 
         if (debug) {
-          getLogger().debug(((ErrorEmitSvlt)err).getMsgList().size() + " errors emitted");
+          getLogger().debug(err.getMsgList().size() + " errors emitted");
         }
       } else if (debug) {
         getLogger().debug("No errors emitted");
@@ -359,7 +355,7 @@ public abstract class UtilAbstractAction extends Action
       if (msg == null) {
         getLogger().warn("No messages object");
       } else if (msg.messagesEmitted()) {
-        ActionMessages ams = ((MessageEmitSvlt)msg).getMessages();
+        ActionMessages ams = msg.getMessages();
         saveMessages(request, ams);
 
         if (debug) {
@@ -388,7 +384,7 @@ public abstract class UtilAbstractAction extends Action
     return (mapping.findForward(forward));
   }
 
-  protected void traceConfig(Request req) {
+  protected void traceConfig(final Request req) {
     ActionConfig[] actions = req.getMapping().getModuleConfig().findActionConfigs();
 
     getLogger().debug("========== Action configs ===========");
@@ -417,9 +413,9 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  private String traceConfigParam(StringBuilder sb,
-                                  String name, String param,
-                                  UtilActionForm form) {
+  private String traceConfigParam(final StringBuilder sb,
+                                  final String name, final String param,
+                                  final UtilActionForm form) {
     String res = getStringActionPar(name, param, form);
     if (res == null) {
       return null;
@@ -438,7 +434,7 @@ public abstract class UtilAbstractAction extends Action
    * @param form
    * @return String name of content
    */
-  public String getContentName(UtilActionForm form) {
+  public String getContentName(final UtilActionForm form) {
     String contentName = form.getPresentationState().getContentName();
 
     form.setContentName(contentName);
@@ -506,32 +502,8 @@ public abstract class UtilAbstractAction extends Action
    * @param name
    * @return message identified by name
    */
-  public String getMessage(String name) {
+  public String getMessage(final String name) {
     return messages.getMessage(name);
-  }
-
-  /** Allow user to explicitly set debugging.
-   *
-   * @param request  Needed to locate session
-   * @param form     Action form
-   */
-  private void checkDebug(HttpServletRequest request,
-                          UtilActionForm form) {
-    String reqpar = request.getParameter("debug");
-
-    if (reqpar == null) {
-      return;
-    }
-
-    boolean newDebug = (reqpar.equals("yes"));
-    if (debug == newDebug) {
-      // No change
-      return;
-    }
-
-    debug = newDebug;
-
-    form.setDebug(debug);
   }
 
   /* ====================================================================
@@ -542,8 +514,8 @@ public abstract class UtilAbstractAction extends Action
     StringBuffer sb;
     HttpAppLogger logger;
 
-    LogEntryImpl(StringBuffer sb,
-                 HttpAppLogger logger){
+    LogEntryImpl(final StringBuffer sb,
+                 final HttpAppLogger logger){
       this.sb = sb;
       this.logger = logger;
     }
@@ -553,7 +525,8 @@ public abstract class UtilAbstractAction extends Action
      *
      * @param val    String element to append
      */
-    public void append(String val) {
+    @Override
+    public void append(final String val) {
       sb.append(":");
       sb.append(val);
     }
@@ -562,12 +535,14 @@ public abstract class UtilAbstractAction extends Action
      *
      * @param val    String to concat
      */
-    public void concat(String val) {
+    @Override
+    public void concat(final String val) {
       sb.append(val);
     }
 
     /** Emit the log entry
      */
+    @Override
     public void emit() {
       logger.logIt(sb.toString());
     }
@@ -579,8 +554,9 @@ public abstract class UtilAbstractAction extends Action
    * @param logname    String name for the log entry
    * @return LogEntry    containing prefix
    */
-  public LogEntry getLogEntry(HttpServletRequest request,
-                              String logname) {
+  @Override
+  public LogEntry getLogEntry(final HttpServletRequest request,
+                              final String logname) {
     StringBuffer sb = new StringBuffer(logname);
 
     sb.append(":");
@@ -597,9 +573,10 @@ public abstract class UtilAbstractAction extends Action
    * @param logname    String name for the log entry
    * @param info       String information to log
    */
-  public void logInfo(HttpServletRequest request,
-                      String logname,
-                      String info) {
+  @Override
+  public void logInfo(final HttpServletRequest request,
+                      final String logname,
+                      final String info) {
     LogEntry le = getLogEntry(request, logname);
 
     le.append(info);
@@ -610,7 +587,8 @@ public abstract class UtilAbstractAction extends Action
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.log.HttpAppLogger#logRequest(javax.servlet.http.HttpServletRequest)
    */
-  public void logRequest(HttpServletRequest request) throws Throwable {
+  @Override
+  public void logRequest(final HttpServletRequest request) throws Throwable {
     LogEntry le = getLogEntry(request, "REQUEST");
 
     le.append(request.getRemoteAddr());
@@ -640,10 +618,11 @@ public abstract class UtilAbstractAction extends Action
    * @param sessionNum long number of session
    * @param sessions   long number of concurrent sessions
    */
-  public void logSessionCounts(HttpServletRequest request,
-                               boolean start,
-                               long sessionNum,
-                               long sessions) {
+  @Override
+  public void logSessionCounts(final HttpServletRequest request,
+                               final boolean start,
+                               final long sessionNum,
+                               final long sessions) {
     LogEntry le;
 
     if (start) {
@@ -658,11 +637,13 @@ public abstract class UtilAbstractAction extends Action
     le.emit();
   }
 
-  public void debugOut(String msg) {
+  @Override
+  public void debugOut(final String msg) {
     getLogger().debug(msg);
   }
 
-  public void logIt(String msg) {
+  @Override
+  public void logIt(final String msg) {
     getLogger().info(msg);
   }
 
@@ -671,7 +652,7 @@ public abstract class UtilAbstractAction extends Action
    * @param request    HttpServletRequest
    * @return  String    log prefix
    */
-  protected String getLogPrefix(HttpServletRequest request) {
+  protected String getLogPrefix(final HttpServletRequest request) {
     try {
       if (logPrefix == null) {
         logPrefix = JspUtil.getProperty(getMessages(),
@@ -691,7 +672,7 @@ public abstract class UtilAbstractAction extends Action
    * @param request
    * @return  String    session id
    */
-  private String getSessionId(HttpServletRequest request) {
+  private String getSessionId(final HttpServletRequest request) {
     try {
       HttpSession sess = request.getSession(false);
 
@@ -716,8 +697,8 @@ public abstract class UtilAbstractAction extends Action
    * @param form
    * @return boolean true for OK to log out. False - not allowed - ignore it.
    */
-  protected boolean logOutCleanup(HttpServletRequest request,
-                                  UtilActionForm form) {
+  protected boolean logOutCleanup(final HttpServletRequest request,
+                                  final UtilActionForm form) {
     return true;
   }
 
@@ -728,8 +709,8 @@ public abstract class UtilAbstractAction extends Action
    * @return null for continue, forwardLoggedOut to end session.
    * @throws Throwable
    */
-  protected String checkLogOut(HttpServletRequest request,
-                               UtilActionForm form)
+  protected String checkLogOut(final HttpServletRequest request,
+                               final UtilActionForm form)
                throws Throwable {
     String temp = request.getParameter(requestLogout);
     if (temp != null) {
@@ -757,9 +738,9 @@ public abstract class UtilAbstractAction extends Action
    * supposed to be delivering.
    *
    */
-  private void checkNocache(HttpServletRequest request,
-                            HttpServletResponse response,
-                            UtilActionForm form) {
+  private void checkNocache(final HttpServletRequest request,
+                            final HttpServletResponse response,
+                            final UtilActionForm form) {
     String reqpar = request.getParameter("nocacheSticky");
 
     if (reqpar != null) {
@@ -799,7 +780,7 @@ public abstract class UtilAbstractAction extends Action
    * We see session serialization errors in the web container if an
    * unserializable object class gets embedded in the session somewhere
    */
-  private void checkSerialize(HttpServletRequest request) {
+  private void checkSerialize(final HttpServletRequest request) {
     String reqpar = request.getParameter("serialize");
 
     if (reqpar == null) {
@@ -847,11 +828,11 @@ public abstract class UtilAbstractAction extends Action
    * @param refreshAction
    * @param form
    */
-  public void setRefreshInterval(HttpServletRequest request,
-                                 HttpServletResponse response,
-                                 int refreshInterval,
-                                 String refreshAction,
-                                 UtilActionForm form) {
+  public void setRefreshInterval(final HttpServletRequest request,
+                                 final HttpServletResponse response,
+                                 final int refreshInterval,
+                                 final String refreshAction,
+                                 final UtilActionForm form) {
     if (refreshInterval != 0) {
       StringBuilder sb = new StringBuilder(250);
 
@@ -866,24 +847,24 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  protected Integer getRefreshInt(UtilActionForm form) {
+  protected Integer getRefreshInt(final UtilActionForm form) {
     return getIntActionPar(refreshIntervalKey, form);
   }
 
-  protected String getRefreshAction(UtilActionForm form) {
+  protected String getRefreshAction(final UtilActionForm form) {
     return getStringActionPar(refreshActionKey, form);
   }
 
-  protected Integer getIntActionPar(String name, UtilActionForm form) {
+  protected Integer getIntActionPar(final String name, final UtilActionForm form) {
     return getIntActionPar(name, form.getActionParameter(), form);
   }
 
-  protected String getStringActionPar(String name, UtilActionForm form) {
+  protected String getStringActionPar(final String name, final UtilActionForm form) {
     return getStringActionPar(name, form.getActionParameter(), form);
   }
 
-  protected Integer getIntActionPar(String name, String par,
-                                    UtilActionForm form) {
+  protected Integer getIntActionPar(final String name, final String par,
+                                    final UtilActionForm form) {
     if (par == null) {
       return null;
     }
@@ -907,8 +888,8 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  protected String getStringActionPar(String name, String par,
-                                      UtilActionForm form) {
+  protected String getStringActionPar(final String name, final String par,
+                                      final UtilActionForm form) {
     if (par == null) {
       return null;
     }
@@ -941,7 +922,7 @@ public abstract class UtilAbstractAction extends Action
    * @return app vars
    */
   @SuppressWarnings("unchecked")
-  public HashMap<String, String> getAppVars(Request request) {
+  public HashMap<String, String> getAppVars(final Request request) {
     Object o = request.getSessionAttr("edu.rpi.sss.util.UtilAbstractAction.appVars");
     if ((o == null) || (!(o instanceof HashMap))) {
       o = new HashMap<String, String>();
@@ -966,8 +947,8 @@ public abstract class UtilAbstractAction extends Action
    * @return String  forward to here. null if no error found.
    * @throws Throwable
    */
-  private String checkVarReq(Request request,
-                             UtilActionForm form) throws Throwable {
+  private String checkVarReq(final Request request,
+                             final UtilActionForm form) throws Throwable {
     Collection<String> avs = request.getReqPars("setappvar");
     if (avs == null) {
       return null;
@@ -1014,8 +995,8 @@ public abstract class UtilAbstractAction extends Action
    * @param appVars
    * @return  boolean  True if ok - false for too many vars
    */
-  public boolean setAppVar(String name, String val,
-                           HashMap<String, String> appVars) {
+  public boolean setAppVar(final String name, final String val,
+                           final HashMap<String, String> appVars) {
     if (val == null) {
       appVars.remove(name);
       return true;
@@ -1041,7 +1022,7 @@ public abstract class UtilAbstractAction extends Action
    * @return String  forward to here. null if no forward found.
    * @throws Throwable
    */
-  private String checkForwardto(HttpServletRequest request) throws Throwable {
+  private String checkForwardto(final HttpServletRequest request) throws Throwable {
     String reqpar = request.getParameter("forwardto");
     return reqpar;
   }
@@ -1063,8 +1044,8 @@ public abstract class UtilAbstractAction extends Action
    * @return String  forward to here on error. null for OK.
    * @throws Throwable
    */
-  protected String checkConfirmationId(HttpServletRequest request,
-                                       UtilActionForm form)
+  protected String checkConfirmationId(final HttpServletRequest request,
+                                       final UtilActionForm form)
           throws Throwable {
     String reqpar = request.getParameter("confirmationid");
 
@@ -1092,8 +1073,8 @@ public abstract class UtilAbstractAction extends Action
    * @return String  forward to here on error. null for OK.
    * @throws Throwable
    */
-  protected String requireConfirmationId(HttpServletRequest request,
-                                         UtilActionForm form)
+  protected String requireConfirmationId(final HttpServletRequest request,
+                                         final UtilActionForm form)
           throws Throwable {
     String reqpar = request.getParameter("confirmationid");
 
@@ -1116,8 +1097,8 @@ public abstract class UtilAbstractAction extends Action
    * @param request
    * @param form
    */
-  public void doPresentation(Request request,
-                             UtilActionForm form) {
+  public void doPresentation(final Request request,
+                             final UtilActionForm form) {
     PresentationState ps = getPresentationState(request, form);
 
     if (ps == null) {
@@ -1153,8 +1134,8 @@ public abstract class UtilAbstractAction extends Action
    * @param form
    * @return PresentationState
    */
-  public PresentationState getPresentationState(Request request,
-                                                UtilActionForm form) {
+  public PresentationState getPresentationState(final Request request,
+                                                final UtilActionForm form) {
     String attrName = getPresentationAttrName();
 
     if ((attrName == null) || (attrName.equals("NONE"))) {
@@ -1228,7 +1209,7 @@ public abstract class UtilAbstractAction extends Action
    * @return String     Resource value or null
    * @throws Throwable
    */
-  public String getReqRes(String resName) throws Throwable {
+  public String getReqRes(final String resName) throws Throwable {
     return JspUtil.getReqProperty(messages, resName);
   }
 
@@ -1236,7 +1217,7 @@ public abstract class UtilAbstractAction extends Action
    * @param req
    * @return boolean true for portlet
    */
-  public boolean isPortletRequest(HttpServletRequest req) {
+  public boolean isPortletRequest(final HttpServletRequest req) {
     // JSR 168 requires this attribute be present
     return req.getAttribute("javax.portlet.request") != null;
   }
@@ -1249,7 +1230,7 @@ public abstract class UtilAbstractAction extends Action
    * @return  String   value
    * @throws Throwable
    */
-  protected String getReqPar(HttpServletRequest req, String name) throws Throwable {
+  protected String getReqPar(final HttpServletRequest req, final String name) throws Throwable {
     return Util.checkNull(req.getParameter(name));
   }
 
@@ -1261,8 +1242,8 @@ public abstract class UtilAbstractAction extends Action
    * @return  Collection<String> or null
    * @throws Throwable
    */
-  protected Collection<String> getReqPars(HttpServletRequest req,
-                                          String name) throws Throwable {
+  protected Collection<String> getReqPars(final HttpServletRequest req,
+                                          final String name) throws Throwable {
     String[] s = req.getParameterValues(name);
     ArrayList<String> res = null;
 
@@ -1448,15 +1429,14 @@ public abstract class UtilAbstractAction extends Action
    * @param messages Resources
    * @return ErrorEmitSvlt
    */
-  private ErrorEmitSvlt getErrorObj(HttpServletRequest request,
-                                    MessageResources messages) {
+  private ErrorEmitSvlt getErrorObj(final HttpServletRequest request,
+                                    final MessageResources messages) {
     return (ErrorEmitSvlt)JspUtil.getErrorObj(getId(), this, request,
                                               messages,
                                               getErrorObjAttrName(),
                                               getErrorObjErrProp(),
                                               noActionErrors,
-                                              clearMessages(),
-                                              debug);
+                                              clearMessages());
   }
 
   /** Get the message object. If we haven't already got one and
@@ -1467,20 +1447,19 @@ public abstract class UtilAbstractAction extends Action
    * @param messages Resources
    * @return MessageEmitSvlt
    */
-  private MessageEmitSvlt getMessageObj(HttpServletRequest request,
-                                        MessageResources messages) {
+  private MessageEmitSvlt getMessageObj(final HttpServletRequest request,
+                                        final MessageResources messages) {
     return (MessageEmitSvlt)JspUtil.getMessageObj(getId(), this, request,
                                                   messages,
                                                   getMessageObjAttrName(),
                                                   getErrorObjErrProp(),
-                                                  clearMessages(),
-                                                  debug);
+                                                  clearMessages());
   }
 
   /**
    * @param req
    */
-  public void dumpRequest(HttpServletRequest req) {
+  public void dumpRequest(final HttpServletRequest req) {
     Logger log = getLogger();
 
     try {
@@ -1526,7 +1505,7 @@ public abstract class UtilAbstractAction extends Action
    *
    * @param msg
    */
-  public void info(String msg) {
+  public void info(final String msg) {
     getLogger().info(msg);
   }
 
@@ -1534,21 +1513,21 @@ public abstract class UtilAbstractAction extends Action
    *
    * @param msg
    */
-  public void warn(String msg) {
+  public void warn(final String msg) {
     getLogger().warn(msg);
   }
 
   /**
    * @param msg
    */
-  public void debugMsg(String msg) {
+  public void debugMsg(final String msg) {
     getLogger().debug(msg);
   }
 
   /**
    * @param t
    */
-  public void error(Throwable t) {
+  public void error(final Throwable t) {
     getLogger().error(this, t);
   }
 }

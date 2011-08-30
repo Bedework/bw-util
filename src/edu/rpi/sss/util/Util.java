@@ -33,16 +33,13 @@ import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
-*
-* @author   Mike Douglass
-* @version  1.0
-*
-* A number of bitty utility routines.
-*/
+ *
+ * @author   Mike Douglass
+ * @version  1.0
+ *
+ * A number of bitty utility routines.
+ */
 public class Util {
-  /** set true to generate some output */
-  public static boolean debugTrace;
-
   private Util() {} // Don't instantiate this
 
   /** Load a named resource as a Properties object

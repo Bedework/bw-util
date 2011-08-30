@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -41,7 +41,7 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
    */
   public PwEncryptionDefault() throws Throwable {
     debug = getLog().isDebugEnabled();
-    pki = new PKITools(false /*verbose*/, debug);
+    pki = new PKITools(false);
   }
 
   /**
@@ -49,12 +49,14 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
    * @param pubKeys
    * @throws Throwable
    */
+  @Override
   public void init (final String privKeys,
                     final String pubKeys) throws Throwable {
     this.privKeys = privKeys;
     this.pubKeys = pubKeys;
   }
 
+  @Override
   public String encrypt(final String val) throws Throwable {
     int numKeys = pki.countKeys(privKeys);
 
@@ -77,15 +79,17 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
     return sb.toString();
   }
 
+  @Override
   public boolean match(final String plain,
                        final String encrypted) throws Throwable {
     return encrypt(plain).equals(encrypted);
   }
 
+  @Override
   public String decrypt(final String encrypted) throws Throwable {
     int pos = encrypted.indexOf("{");
 
-    if ((pos < 0) || (encrypted.lastIndexOf("}") != encrypted.length() - 1)) {
+    if ((pos < 0) || (encrypted.lastIndexOf("}") != (encrypted.length() - 1))) {
       throw new Exception(badPwFormat);
     }
 

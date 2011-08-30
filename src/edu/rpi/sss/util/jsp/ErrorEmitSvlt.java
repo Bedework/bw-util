@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,6 +34,8 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class ErrorEmitSvlt implements MessageEmit {
+  private transient Logger log;
+
   protected boolean debug;
 
   transient protected String id;
@@ -59,8 +61,8 @@ public class ErrorEmitSvlt implements MessageEmit {
      * @param messages
      * @param msgId
      */
-    public Msg(MessageResources messages,
-               String msgId) {
+    public Msg(final MessageResources messages,
+               final String msgId) {
       this.messages = messages;
       this.msgId = msgId;
     }
@@ -70,8 +72,8 @@ public class ErrorEmitSvlt implements MessageEmit {
      * @param msgId
      * @param o
      */
-    public Msg(MessageResources messages,
-               String msgId, Object o) {
+    public Msg(final MessageResources messages,
+               final String msgId, final Object o) {
       this.messages = messages;
       this.msgId = msgId;
       addParam(o);
@@ -84,8 +86,8 @@ public class ErrorEmitSvlt implements MessageEmit {
      * @param o1
      * @param o2
      */
-    public Msg(MessageResources messages,
-               String msgId, Object o1, Object o2) {
+    public Msg(final MessageResources messages,
+               final String msgId, final Object o1, final Object o2) {
       this.messages = messages;
       this.msgId = msgId;
       addParam(o1);
@@ -101,8 +103,8 @@ public class ErrorEmitSvlt implements MessageEmit {
      * @param o2
      * @param o3
      */
-    public Msg(MessageResources messages,
-               String msgId, Object o1, Object o2, Object o3) {
+    public Msg(final MessageResources messages,
+               final String msgId, final Object o1, final Object o2, final Object o3) {
       this.messages = messages;
       this.msgId = msgId;
       addParam(o1);
@@ -114,7 +116,7 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
 
     /**
-     * @return Strign message id
+     * @return String message id
      */
     public String getMsgId() {
       return msgId;
@@ -138,7 +140,7 @@ public class ErrorEmitSvlt implements MessageEmit {
       return messages.getMessage(msgId, p1, p2, p3);
     }
 
-    private void addParam(Object o) {
+    private void addParam(final Object o) {
       if (o != null) {
         params.add(o);
       }
@@ -151,14 +153,6 @@ public class ErrorEmitSvlt implements MessageEmit {
    *
    */
   public ErrorEmitSvlt() {
-    this(false);
-  }
-
-  /**
-   * @param debug
-   */
-  public ErrorEmitSvlt(boolean debug) {
-    this.debug = debug;
   }
 
   /** Generation of errors in the servlet world means adding them to the
@@ -172,17 +166,19 @@ public class ErrorEmitSvlt implements MessageEmit {
    * @param exceptionPname Property name for exceptions
    * @param clear
    */
-  public void reinit(String id,
-                     Object caller,
-                     MessageResources messages,
-                     ActionErrors errors,
-                     String exceptionPname,
-                     boolean clear) {
+  public void reinit(final String id,
+                     final Object caller,
+                     final MessageResources messages,
+                     final ActionErrors errors,
+                     final String exceptionPname,
+                     final boolean clear) {
     this.id = id;
     this.caller = caller;
     this.messages = messages;
     this.errors = errors;
     this.exceptionPname = exceptionPname;
+
+    debug = getLogger().isDebugEnabled();
 
     if (clear) {
       msgList.clear();
@@ -196,7 +192,8 @@ public class ErrorEmitSvlt implements MessageEmit {
     return msgList;
   }
 
-  public void emit(String pname) {
+  @Override
+  public void emit(final String pname) {
     if (debug) {
       debugMsg(pname, null, null);
     }
@@ -217,7 +214,8 @@ public class ErrorEmitSvlt implements MessageEmit {
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.log.MessageEmit#emit(java.lang.String, int)
    */
-  public void emit(String pname, int num) {
+  @Override
+  public void emit(final String pname, final int num) {
     if (debug) {
       debugMsg(pname, "int", String.valueOf(num));
     }
@@ -228,14 +226,16 @@ public class ErrorEmitSvlt implements MessageEmit {
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.log.MessageEmit#setExceptionPname(java.lang.String)
    */
-  public void setExceptionPname(String pname) {
+  @Override
+  public void setExceptionPname(final String pname) {
     exceptionPname = pname;
   }
 
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.log.MessageEmit#emit(java.lang.Throwable)
    */
-  public void emit(Throwable t) {
+  @Override
+  public void emit(final Throwable t) {
     if (debug) {
       debugMsg(exceptionPname, "Throwable", String.valueOf(t.getMessage()));
     }
@@ -250,7 +250,8 @@ public class ErrorEmitSvlt implements MessageEmit {
     emit(exceptionPname, t.getMessage());
   }
 
-  public void emit(String pname, Object o){
+  @Override
+  public void emit(final String pname, final Object o){
     if (debug) {
       if (o == null) {
         debugMsg(pname, "null object", String.valueOf(o));
@@ -276,7 +277,8 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
   }
 
-  public void emit(String pname, Object o1, Object o2){
+  @Override
+  public void emit(final String pname, final Object o1, final Object o2){
     if (debug) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
@@ -296,7 +298,8 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
   }
 
-  public void emit(String pname, Object o1, Object o2, Object o3){
+  @Override
+  public void emit(final String pname, final Object o1, final Object o2, final Object o3){
     if (debug) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
@@ -319,10 +322,12 @@ public class ErrorEmitSvlt implements MessageEmit {
 
   /** Indicate no messages emitted. Null in this implementation.
    */
+  @Override
   public void clear() {}
 
   /** @return true if any messages emitted
    */
+  @Override
   public boolean messagesEmitted() {
     return !msgList.isEmpty();
   }
@@ -334,20 +339,24 @@ public class ErrorEmitSvlt implements MessageEmit {
     return errors;
   }
 
+  protected Logger getLogger() {
+    if (log == null) {
+      log = Logger.getLogger(caller.getClass());
+    }
+
+    return log;
+  }
+
   /** Debugging
    *
    * @param msg
    */
-  public void debugOut(String msg) {
-    try {
-      Logger log = Logger.getLogger(caller.getClass());
-
-      if (log.isDebugEnabled()) {
-        log.debug(msg);
-      }
-    } catch (Throwable t) {
-      System.out.println(msg);
+  public void debugOut(final String msg) {
+    if (!debug) {
+      return;
     }
+
+    getLogger().debug(msg);
   }
 
   protected boolean haveOutputObject() {
@@ -358,22 +367,14 @@ public class ErrorEmitSvlt implements MessageEmit {
     return "ErrorEmitSvlt";
   }
 
-  protected void debugMsg(String pname, String ptype, String pval) {
+  protected void debugMsg(final String pname, final String ptype, final String pval) {
     debugOut("Emitted: property=" + pname +
              " ptype=" + ptype +
              " val(s)=" + pval);
   }
 
-  protected void logError(String msg, Throwable t) {
-    try {
-      Logger log = Logger.getLogger(caller.getClass());
-
-      log.error(msg, t);
-    } catch (Throwable t1) {
-      System.out.println(caller.getClass().getName() +
-                         "Error: " + msg);
-      t.printStackTrace();
-    }
+  protected void logError(final String msg, final Throwable t) {
+    getLogger().error(msg, t);
   }
 }
 
