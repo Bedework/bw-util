@@ -39,6 +39,7 @@ import net.fortuna.ical4j.model.component.VAlarm;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.component.VJournal;
+import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.model.parameter.Language;
 import net.fortuna.ical4j.model.parameter.Rsvp;
@@ -173,6 +174,10 @@ public class IcalToXcal {
     vcal.setComponents(aoc);
 
     for (Object o: icComps) {
+      if (o instanceof VTimeZone) {
+        // Skip these
+        continue;
+      }
       aoc.getVcalendarContainedComponent().add(toComponent((CalendarComponent)o,
                                                            pattern));
     }
