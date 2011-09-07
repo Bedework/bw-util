@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -69,6 +69,7 @@ public class Options implements OptionsI {
 
   private OptionElement localOptionsRoot;
 
+  @Override
   public void init(final String globalPrefix,
                    final String appPrefix,
                    final String optionsFile,
@@ -82,11 +83,13 @@ public class Options implements OptionsI {
     initOptions();
   }
 
+  @Override
   public void initFromStream(final InputStream is) throws OptionsException {
     useSystemwideValues = false;
     localOptionsRoot = parseOptions(is);
   }
 
+  @Override
   public OptionElement getOptions() {
     if (!useSystemwideValues) {
       // No screwing round with them
@@ -301,6 +304,7 @@ public class Options implements OptionsI {
    *
    * @return String app prefix
    */
+  @Override
   public String getAppPrefix() {
     return appPrefix;
   }
@@ -311,6 +315,7 @@ public class Options implements OptionsI {
    * @return Object value
    * @throws OptionsException
    */
+  @Override
   public Object getProperty(final String name) throws OptionsException {
     Object val = getOptProperty(name);
 
@@ -327,6 +332,7 @@ public class Options implements OptionsI {
    * @return Object value
    * @throws OptionsException
    */
+  @Override
   public Object getOptProperty(final String name) throws OptionsException {
     if (useSystemwideValues) {
       return findValue(optionsRoot, makePathElements(name), -1);
@@ -341,6 +347,7 @@ public class Options implements OptionsI {
    * @return String value of property
    * @throws OptionsException
    */
+  @Override
   public String getStringProperty(final String name) throws OptionsException {
     Object val = getProperty(name);
 
@@ -357,6 +364,7 @@ public class Options implements OptionsI {
    * @return String value
    * @throws OptionsException
    */
+  @Override
   public String getOptStringProperty(final String name) throws OptionsException {
     Object val = getOptProperty(name);
 
@@ -377,6 +385,7 @@ public class Options implements OptionsI {
    * @return boolean value of property
    * @throws OptionsException
    */
+  @Override
   public boolean getBoolProperty(final String name) throws OptionsException {
     String val = getStringProperty(name);
 
@@ -391,6 +400,7 @@ public class Options implements OptionsI {
    * @return int value of property
    * @throws OptionsException
    */
+  @Override
   public int getIntProperty(final String name) throws OptionsException {
     String val = getStringProperty(name);
 
@@ -408,6 +418,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalProperty(java.lang.String)
    */
+  @Override
   public Object getGlobalProperty(final String name) throws OptionsException {
     return getProperty(globalPrefix + name);
   }
@@ -415,6 +426,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalStringProperty(java.lang.String)
    */
+  @Override
   public String getGlobalStringProperty(final String name) throws OptionsException {
     return getStringProperty(globalPrefix + name);
   }
@@ -422,6 +434,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalBoolProperty(java.lang.String)
    */
+  @Override
   public boolean getGlobalBoolProperty(final String name) throws OptionsException {
     return getBoolProperty(globalPrefix + name);
   }
@@ -429,6 +442,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getGlobalIntProperty(java.lang.String)
    */
+  @Override
   public int getGlobalIntProperty(final String name) throws OptionsException {
     return getIntProperty(globalPrefix + name);
   }
@@ -443,6 +457,7 @@ public class Options implements OptionsI {
    * @return Object value
    * @throws OptionsException
    */
+  @Override
   public Object getAppProperty(final String name) throws OptionsException {
     return getProperty(appPrefix + name);
   }
@@ -453,6 +468,7 @@ public class Options implements OptionsI {
    * @return String value
    * @throws OptionsException
    */
+  @Override
   public String getAppStringProperty(final String name) throws OptionsException {
     return getStringProperty(appPrefix + name);
   }
@@ -463,6 +479,7 @@ public class Options implements OptionsI {
    * @return Object value or null
    * @throws OptionsException
    */
+  @Override
   public Object getAppOptProperty(final String name) throws OptionsException {
     return getOptProperty(appPrefix + name);
   }
@@ -473,6 +490,7 @@ public class Options implements OptionsI {
    * @return String value or null
    * @throws OptionsException
    */
+  @Override
   public String getAppOptStringProperty(final String name) throws OptionsException {
     return getOptStringProperty(appPrefix + name);
   }
@@ -483,6 +501,7 @@ public class Options implements OptionsI {
    * @return boolean value of global property
    * @throws OptionsException
    */
+  @Override
   public boolean getAppBoolProperty(final String name) throws OptionsException {
     return getBoolProperty(appPrefix + name);
   }
@@ -490,6 +509,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getAppIntProperty(java.lang.String)
    */
+  @Override
   public int getAppIntProperty(final String name) throws OptionsException {
     return getIntProperty(appPrefix + name);
   }
@@ -501,6 +521,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#setValue(java.lang.String, java.lang.String, java.lang.Object)
    */
+  @Override
   public void setValue(final String optionObjectName,
                        final String optionName,
                        final Object val) throws OptionsException {
@@ -525,6 +546,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see org.bedework.calfacade.env.CalOptionsI#getValue(java.lang.String, java.lang.String)
    */
+  @Override
   public Object getValue(final String optionObjectName,
                          final String optionName) throws OptionsException {
     if (useSystemwideValues) {
@@ -551,6 +573,7 @@ public class Options implements OptionsI {
   /* (non-Javadoc)
    * @see edu.rpi.sss.util.OptionsI#getNames(java.lang.String)
    */
+  @Override
   public Collection<String> getNames(final String name) throws OptionsException {
     if (useSystemwideValues) {
       return getNames(optionsRoot, makePathElements(name), -1);
@@ -630,6 +653,7 @@ public class Options implements OptionsI {
    * @param pos
    * @return Collection
    */
+  @SuppressWarnings("unchecked")
   private static Collection match(final OptionElement subroot,
                                   final String[] pathElements, int pos) {
 

@@ -93,6 +93,15 @@ public abstract class Timezones implements Serializable {
       return sb.toString();
     }
   }
+  /** Identify our exceptions.
+   * @author douglm
+   *
+   */
+  public static class TzUnknownHostException extends TimezonesException {
+    public TzUnknownHostException(final String msg) {
+      super(msg);
+    }
+  }
 
   private static ThreadLocal<String> threadTzid =
     new ThreadLocal<String>();
@@ -100,18 +109,22 @@ public abstract class Timezones implements Serializable {
   private static Timezones tzs;
 
   private static class TzRegistry implements TimeZoneRegistry {
+    @Override
     public void register(final TimeZone timezone) {
       // Do nothing
     }
 
+    @Override
     public void register(final TimeZone timezone, final boolean update) {
       // Do nothing
     }
 
+    @Override
     public void clear() {
       // Do nothing
     }
 
+    @Override
     public TimeZone getTimeZone(final String id) {
       try {
         return Timezones.getTimezones().getTimeZone(id);
@@ -160,6 +173,7 @@ public abstract class Timezones implements Serializable {
       return id;
     }
 
+    @Override
     public int compareTo(final TimeZoneName that) {
       if (that == this) {
         return 0;

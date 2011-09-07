@@ -40,6 +40,7 @@ import ietf.params.xml.ns.timezone_service.TimezoneListType;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -104,14 +105,6 @@ public class TimezonesImpl extends Timezones {
    *
    */
   public TimezonesImpl() {
-    this(false);
-  }
-
-  /**
-   * @param debug
-   */
-  public TimezonesImpl(final boolean debug) {
-    this.debug = debug;
   }
 
   @Override
@@ -517,7 +510,7 @@ public class TimezonesImpl extends Timezones {
     if ((len > 13) && (tzid.startsWith("/mozilla.org/"))) {
       int pos = tzid.indexOf('/', 13);
 
-      if ((pos < 0) || (pos == len - 1)) {
+      if ((pos < 0) || (pos == (len - 1))) {
         return tzid;
       }
       return tzid.substring(pos + 1);
@@ -621,24 +614,6 @@ public class TimezonesImpl extends Timezones {
       return callForStream("aliases");
     }
 
-    public String call(final String req) throws TimezonesException {
-      try {
-        doCall(req, null);
-
-        int status = getter.getStatusCode();
-
-        if (status != HttpServletResponse.SC_OK) {
-          return null;
-        }
-
-        return getter.getResponseBodyAsString();
-      } catch (TimezonesException cfe) {
-        throw cfe;
-      } catch (Throwable t) {
-        throw new TimezonesException(t);
-      }
-    }
-
     public JAXBElement getXml(final String req) throws TimezonesException {
       try {
         InputStream is = callForStream(req);
@@ -714,6 +689,8 @@ public class TimezonesImpl extends Timezones {
         client.executeMethod(getter);
       } catch (TimezonesException cfe) {
         throw cfe;
+      } catch (UnknownHostException uhe) {
+        throw new TzUnknownHostException(tzserverUri);
       } catch (Throwable t) {
         throw new TimezonesException(t);
       }
