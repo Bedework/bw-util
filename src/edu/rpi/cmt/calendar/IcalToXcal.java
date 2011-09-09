@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.calendar;
 
+import edu.rpi.cmt.calendar.PropertyIndex.ParameterInfoIndex;
 import edu.rpi.cmt.calendar.PropertyIndex.PropertyInfoIndex;
 import edu.rpi.sss.util.Util;
 
@@ -27,6 +28,7 @@ import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.NumberList;
 import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
@@ -41,15 +43,11 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.component.VJournal;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
-import net.fortuna.ical4j.model.parameter.Language;
-import net.fortuna.ical4j.model.parameter.Rsvp;
 import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.parameter.Value;
-import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Categories;
 import net.fortuna.ical4j.model.property.FreeBusy;
 import net.fortuna.ical4j.model.property.Geo;
-import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.PercentComplete;
 import net.fortuna.ical4j.model.property.Priority;
 import net.fortuna.ical4j.model.property.RRule;
@@ -114,7 +112,6 @@ import ietf.params.xml.ns.icalendar_2.RepeatPropType;
 import ietf.params.xml.ns.icalendar_2.ResourcesPropType;
 import ietf.params.xml.ns.icalendar_2.RoleParamType;
 import ietf.params.xml.ns.icalendar_2.RrulePropType;
-import ietf.params.xml.ns.icalendar_2.RsvpParamType;
 import ietf.params.xml.ns.icalendar_2.ScheduleStatusParamType;
 import ietf.params.xml.ns.icalendar_2.SentByParamType;
 import ietf.params.xml.ns.icalendar_2.SequencePropType;
@@ -287,6 +284,7 @@ public class IcalToXcal {
           doProperty(prop, pii);
 
       if (xmlprop != null) {
+        processParameters(prop.getParameters(), xmlprop.getValue());
         pl.add(xmlprop);
       }
     }
@@ -310,7 +308,9 @@ public class IcalToXcal {
       case ATTENDEE:
         /* ------------------- Attendees -------------------- */
 
-        return of.createAttendee(makeAttendee((Attendee)prop));
+        AttendeePropType att = new AttendeePropType();
+        att.setCalAddress(prop.getValue());
+        return of.createAttendee(att);
 
       case BUSYTYPE:
         return null;
@@ -328,8 +328,7 @@ public class IcalToXcal {
           c.getText().add((String)pit.next());
         }
 
-        return of.createCategories((CategoriesPropType)langProp(c,
-                                                                prop));
+        return of.createCategories(c);
 
       case CLASS:
         /* ------------------- Class -------------------- */
@@ -343,7 +342,7 @@ public class IcalToXcal {
 
         CommentPropType cm = new CommentPropType();
         cm.setText(prop.getValue());
-        return of.createComment((CommentPropType)langProp(cm, prop));
+        return of.createComment(cm);
 
       case COMPLETED:
         /* ------------------- Completed -------------------- */
@@ -359,8 +358,7 @@ public class IcalToXcal {
         ContactPropType ct = new ContactPropType();
         ct.setText(prop.getValue());
 
-        return of.createContact(
-                                (ContactPropType)langProp(ct, prop));
+        return of.createContact(ct);
 
       case CREATED:
         /* ------------------- Created -------------------- */
@@ -374,7 +372,7 @@ public class IcalToXcal {
 
         DescriptionPropType desc = new DescriptionPropType();
         desc.setText(prop.getValue());
-        return of.createDescription((DescriptionPropType)langProp(desc, prop));
+        return of.createDescription(desc);
 
       case DTEND:
         /* ------------------- DtEnd -------------------- */
@@ -484,7 +482,7 @@ public class IcalToXcal {
         LocationPropType l = new LocationPropType();
         l .setText(prop.getValue());
 
-        return of.createLocation((LocationPropType)langProp(l, prop));
+        return of.createLocation(l);
 
       case METHOD:
         /* ------------------- Method -------------------- */
@@ -497,7 +495,9 @@ public class IcalToXcal {
       case ORGANIZER:
         /* ------------------- Organizer -------------------- */
 
-        return of.createOrganizer(makeOrganizer((Organizer)prop));
+        OrganizerPropType org = new OrganizerPropType();
+        org.setCalAddress(prop.getValue());
+        return of.createOrganizer(org);
 
       case PERCENT_COMPLETE:
         /* ------------------- PercentComplete -------------------- */
@@ -631,9 +631,6 @@ public class IcalToXcal {
 
         SummaryPropType sum = new SummaryPropType();
         sum.setText(prop.getValue());
-
-        sum = (SummaryPropType)langProp(sum, prop);
-
         return of.createSummary(sum);
 
       case TRIGGER:
@@ -719,6 +716,140 @@ public class IcalToXcal {
 
           return null;
         }
+
+    } // switch (pii)
+
+    return null;
+  }
+
+  static void processParameters(final ParameterList icparams,
+                                final BasePropertyType prop) throws Throwable {
+    if ((icparams == null) || icparams.isEmpty()) {
+      return;
+    }
+
+    prop.setParameters(new ArrayOfParameters());
+    List<JAXBElement<? extends BaseParameterType>> pl = prop.getParameters().getBaseParameter();
+
+    Iterator it = icparams.iterator();
+
+    while (it.hasNext()) {
+      Parameter param = (Parameter)it.next();
+
+      ParameterInfoIndex pii = ParameterInfoIndex.lookupPname(param.getName());
+
+      if (pii == null) {
+        continue;
+      }
+
+      JAXBElement<? extends BaseParameterType> xmlprop =
+          doParameter(param, pii);
+
+      if (xmlprop != null) {
+        pl.add(xmlprop);
+      }
+    }
+  }
+
+  static JAXBElement<? extends BaseParameterType> doParameter(final Parameter param,
+                                                     final ParameterInfoIndex pii) throws Throwable {
+    switch (pii) {
+      case ALTREP:
+        AltrepParamType ar = new AltrepParamType();
+        ar.setUri(param.getValue());
+        return of.createAltrep(ar);
+
+      case CN:
+        CnParamType cn = new CnParamType();
+        cn.setText(param.getValue());
+        return of.createCn(cn);
+
+      case CUTYPE:
+        CutypeParamType c = new CutypeParamType();
+        c.setText(param.getValue());
+        return of.createCutype(c);
+
+      case DELEGATED_FROM:
+        DelegatedFromParamType df = new DelegatedFromParamType();
+        df.getCalAddress().add(param.getValue());
+        return of.createDelegatedFrom(df);
+
+      case DELEGATED_TO:
+        DelegatedToParamType dt = new DelegatedToParamType();
+        dt.getCalAddress().add(param.getValue());
+        return of.createDelegatedTo(dt);
+
+      case DIR:
+        DirParamType d = new DirParamType();
+        d.setUri(param.getValue());
+        return of.createDir(d);
+
+      case ENCODING:
+        return null;
+
+      case FMTTYPE:
+        return null;
+
+      case FBTYPE:
+        return null;
+
+      case LANGUAGE:
+        LanguageParamType l = new LanguageParamType();
+        l.setText(param.getValue());
+        return of.createLanguage(l);
+
+      case MEMBER:
+        MemberParamType m = new MemberParamType();
+        m.getCalAddress().add(param.getValue());
+        return of.createMember(m);
+
+      case PARTSTAT:
+        PartstatParamType partstat = new PartstatParamType();
+        partstat.setText(param.getValue());
+        return of.createPartstat(partstat);
+
+      case RANGE:
+        return null;
+
+      case RELATED:
+        return null;
+
+      case RELTYPE:
+        return null;
+
+      case ROLE:
+        RoleParamType r = new RoleParamType();
+        r.setText(param.getValue());
+        return of.createRole(r);
+
+      case RSVP:
+        return null;
+
+      case SCHEDULE_AGENT:
+        return null;
+
+      case SCHEDULE_STATUS:
+        ScheduleStatusParamType ss = new ScheduleStatusParamType();
+        ss.setText(param.getValue());
+        return of.createScheduleStatus(ss);
+
+      case SENT_BY:
+        SentByParamType sb = new SentByParamType();
+        sb.setCalAddress(param.getValue());
+        return of.createSentBy(sb);
+
+      case TYPE:
+        return null;
+
+      case TZID:
+        TzidParamType tzid = new TzidParamType();
+        tzid.setText(param.getValue());
+        return of.createTzid(tzid);
+
+      case VALUE:
+        return null;
+
+      default:
 
     } // switch (pii)
 
@@ -848,63 +979,6 @@ public class IcalToXcal {
     return param.getValue();
   }
 
-  private static BasePropertyType langProp(final BasePropertyType prop,
-                                           final Property p) {
-    Language langParam = (Language)p.getParameter(Parameter.LANGUAGE);
-
-    if (langParam == null) {
-      return prop;
-    }
-
-    String lang = langParam.getValue();
-
-    if (lang == null) {
-      return prop;
-    }
-
-    ArrayOfParameters pars = getAop(prop);
-
-    LanguageParamType l = new LanguageParamType();
-    l.setText(lang);
-
-    JAXBElement<LanguageParamType> param = of.createLanguage(l);
-    pars.getBaseParameter().add(param);
-
-    return prop;
-  }
-
-  private static BasePropertyType tzidProp(final BasePropertyType prop,
-                                           final String val) {
-    if (val == null) {
-      return prop;
-    }
-
-    ArrayOfParameters pars = getAop(prop);
-
-    TzidParamType tzid = new TzidParamType();
-    tzid.setText(val);
-    JAXBElement<TzidParamType> t = of.createTzid(tzid);
-    pars.getBaseParameter().add(t);
-
-    return prop;
-  }
-
-  private static BasePropertyType altrepProp(final BasePropertyType prop,
-                                             final String val) {
-    if (val == null) {
-      return prop;
-    }
-
-    ArrayOfParameters pars = getAop(prop);
-
-    AltrepParamType a = new AltrepParamType();
-    a.setUri(val);
-    JAXBElement<AltrepParamType> param = of.createAltrep(a);
-    pars.getBaseParameter().add(param);
-
-    return prop;
-  }
-
   private static ArrayOfParameters getAop(final BasePropertyType prop) {
     ArrayOfParameters pars = prop.getParameters();
 
@@ -975,166 +1049,4 @@ public class IcalToXcal {
 
     return false;
   }
-
-  /** make an attendee
-   *
-   * @param val
-   * @return Attendee
-   * @throws Throwable
-   */
-  public static AttendeePropType makeAttendee(final Attendee val) throws Throwable {
-    AttendeePropType prop = new AttendeePropType();
-
-    prop.setCalAddress(val.getValue());
-
-    ArrayOfParameters pars = new ArrayOfParameters();
-    JAXBElement<? extends BaseParameterType> param;
-    prop.setParameters(pars);
-
-    Rsvp rsvp = (Rsvp)val.getParameter(Parameter.RSVP);
-    if (rsvp.getRsvp()) {
-      RsvpParamType r = new RsvpParamType();
-      r.setBoolean(true);
-      param = of.createRsvp(r);
-      pars.getBaseParameter().add(param);
-    }
-
-    String temp = paramVal(val, Parameter.CN);
-    if (temp != null) {
-      CnParamType cn = new CnParamType();
-      cn.setText(temp);
-      param = of.createCn(cn);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.PARTSTAT);
-    if (temp == null) {
-      temp = IcalDefs.partstatValNeedsAction;
-    }
-
-    PartstatParamType partstat = new PartstatParamType();
-    partstat.setText(temp);
-    param = of.createPartstat(partstat);
-    pars.getBaseParameter().add(param);
-
-    temp = paramVal(val, Parameter.SCHEDULE_STATUS);
-    if (temp != null) {
-      ScheduleStatusParamType ss = new ScheduleStatusParamType();
-      ss.setText(temp);
-      param = of.createScheduleStatus(ss);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.CUTYPE);
-    if (temp != null) {
-      CutypeParamType c = new CutypeParamType();
-      c.setText(temp);
-      param = of.createCutype(c);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.DELEGATED_FROM);
-    if (temp != null) {
-      DelegatedFromParamType df = new DelegatedFromParamType();
-      df.getCalAddress().add(temp);
-      param = of.createDelegatedFrom(df);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.DELEGATED_TO);
-    if (temp != null) {
-      DelegatedToParamType dt = new DelegatedToParamType();
-      dt.getCalAddress().add(temp);
-      param = of.createDelegatedTo(dt);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.DIR);
-    if (temp != null) {
-      DirParamType d = new DirParamType();
-      d.setUri(temp);
-      param = of.createDir(d);
-      pars.getBaseParameter().add(param);
-    }
-
-    prop = (AttendeePropType)langProp(prop, val);
-
-    temp = paramVal(val, Parameter.MEMBER);
-    if (temp != null) {
-      MemberParamType m = new MemberParamType();
-      m.getCalAddress().add(temp);
-      param = of.createMember(m);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.ROLE);
-    if (temp != null) {
-      RoleParamType r = new RoleParamType();
-      r.setText(temp);
-      param = of.createRole(r);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.SENT_BY);
-    if (temp != null) {
-      SentByParamType sb = new SentByParamType();
-      sb.setCalAddress(temp);
-      param = of.createSentBy(sb);
-      pars.getBaseParameter().add(param);
-    }
-
-    return prop;
-  }
-
-  /**
-   * @param val
-   * @return Organizer
-   * @throws Throwable
-   */
-  public static OrganizerPropType makeOrganizer(final Organizer val) throws Throwable {
-    OrganizerPropType prop = new OrganizerPropType();
-
-    prop.setCalAddress(val.getValue());
-
-    ArrayOfParameters pars = new ArrayOfParameters();
-    JAXBElement<? extends BaseParameterType> param;
-    prop.setParameters(pars);
-
-    String temp = paramVal(val, Parameter.SCHEDULE_STATUS);
-    if (temp != null) {
-      ScheduleStatusParamType ss = new ScheduleStatusParamType();
-      ss.setText(temp);
-      param = of.createScheduleStatus(ss);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.CN);
-    if (temp != null) {
-      CnParamType cn = new CnParamType();
-      cn.setText(temp);
-      param = of.createCn(cn);
-      pars.getBaseParameter().add(param);
-    }
-
-    temp = paramVal(val, Parameter.DIR);
-    if (temp != null) {
-      DirParamType d = new DirParamType();
-      d.setUri(temp);
-      param = of.createDir(d);
-      pars.getBaseParameter().add(param);
-    }
-
-    prop = (OrganizerPropType)langProp(prop, val);
-
-    temp = paramVal(val, Parameter.SENT_BY);
-    if (temp != null) {
-      SentByParamType sb = new SentByParamType();
-      sb.setCalAddress(temp);
-      param = of.createSentBy(sb);
-      pars.getBaseParameter().add(param);
-    }
-
-    return prop;
-  }
-
 }
