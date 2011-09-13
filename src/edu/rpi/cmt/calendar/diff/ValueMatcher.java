@@ -365,6 +365,7 @@ public class ValueMatcher {
   }
 
   private static abstract class DefaultConverter<T> implements ValueConverter<T> {
+    @Override
     public List<T> getNormalized(final T val) {
       List<T> res = new ArrayList<T>();
 
@@ -379,6 +380,7 @@ public class ValueMatcher {
    * ======================================================================== */
 
   private static class ActionPropConverter extends DefaultConverter<ActionPropType> {
+    @Override
     public ValueComparator convert(final ActionPropType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -388,6 +390,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public ActionPropType getElementAndValue(final ActionPropType val) {
       try {
         ActionPropType prop = val.getClass().newInstance();
@@ -402,6 +405,7 @@ public class ValueMatcher {
   }
 
   private static class FreebusyPropConverter implements ValueConverter<FreebusyPropType> {
+    @Override
     public ValueComparator convert(final FreebusyPropType val) {
       List<PeriodType> ps = val.getPeriod();
       ValueComparator vc = new ValueComparator();
@@ -420,6 +424,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public FreebusyPropType getElementAndValue(final FreebusyPropType val) {
       try {
         FreebusyPropType prop = val.getClass().newInstance();
@@ -436,6 +441,7 @@ public class ValueMatcher {
       }
     }
 
+    @Override
     public List<FreebusyPropType> getNormalized(final FreebusyPropType val) {
       try {
         List<FreebusyPropType> res = new ArrayList<FreebusyPropType>();
@@ -456,6 +462,7 @@ public class ValueMatcher {
   }
 
   private static class RequestStatusPropConverter extends DefaultConverter<RequestStatusPropType> {
+    @Override
     public ValueComparator convert(final RequestStatusPropType val) {
       RequestStatusPropType rs = val;
       ValueComparator vc = new ValueComparator();
@@ -473,6 +480,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public RequestStatusPropType getElementAndValue(final RequestStatusPropType val) {
       try {
         RequestStatusPropType prop = val.getClass().newInstance();
@@ -496,6 +504,7 @@ public class ValueMatcher {
   }
 
   private static class GeoPropConverter extends DefaultConverter<GeoPropType> {
+    @Override
     public ValueComparator convert(final GeoPropType val) {
       GeoPropType gp = val;
       ValueComparator vc = new ValueComparator();
@@ -508,6 +517,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public GeoPropType getElementAndValue(final GeoPropType val) {
       try {
         GeoPropType prop = val.getClass().newInstance();
@@ -524,6 +534,7 @@ public class ValueMatcher {
   }
 
   private static class StatusPropConverter extends DefaultConverter<StatusPropType> {
+    @Override
     public ValueComparator convert(final StatusPropType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -532,6 +543,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public StatusPropType getElementAndValue(final StatusPropType val) {
       try {
         StatusPropType prop = val.getClass().newInstance();
@@ -546,6 +558,7 @@ public class ValueMatcher {
   }
 
   private static class TranspPropConverter extends DefaultConverter<TranspPropType> {
+    @Override
     public ValueComparator convert(final TranspPropType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -555,6 +568,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public TranspPropType getElementAndValue(final TranspPropType val) {
       try {
         TranspPropType prop = val.getClass().newInstance();
@@ -569,6 +583,7 @@ public class ValueMatcher {
   }
 
   private static class CalscalePropConverter extends DefaultConverter<CalscalePropType> {
+    @Override
     public ValueComparator convert(final CalscalePropType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -578,6 +593,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public CalscalePropType getElementAndValue(final CalscalePropType val) {
       try {
         CalscalePropType prop = val.getClass().newInstance();
@@ -592,6 +608,7 @@ public class ValueMatcher {
   }
 
   private static class TriggerPropConverter extends DefaultConverter<TriggerPropType> {
+    @Override
     public ValueComparator convert(final TriggerPropType val) {
       TriggerPropType tp = val;
       ValueComparator vc = new ValueComparator();
@@ -607,6 +624,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public TriggerPropType getElementAndValue(final TriggerPropType val) {
       try {
         TriggerPropType prop = val.getClass().newInstance();
@@ -626,6 +644,7 @@ public class ValueMatcher {
   }
 
   private static class DurationPropConverter extends DefaultConverter<DurationPropType> {
+    @Override
     public ValueComparator convert(final DurationPropType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -635,6 +654,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public DurationPropType getElementAndValue(final DurationPropType val) {
       try {
         DurationPropType prop = val.getClass().newInstance();
@@ -649,6 +669,7 @@ public class ValueMatcher {
   }
 
   private static class AttachPropConverter extends DefaultConverter<AttachPropType> {
+    @Override
     public ValueComparator convert(final AttachPropType val) {
       AttachPropType ap = val;
       ValueComparator vc = new ValueComparator();
@@ -662,6 +683,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public AttachPropType getElementAndValue(final AttachPropType val) {
       try {
         AttachPropType prop = val.getClass().newInstance();
@@ -681,6 +703,7 @@ public class ValueMatcher {
   }
 
   private static class DateDatetimePropConverter extends DefaultConverter<DateDatetimePropertyType> {
+    @Override
     public ValueComparator convert(final DateDatetimePropertyType val) {
       XcalUtil.DtTzid dtTzid = XcalUtil.getDtTzid(val);
       ValueComparator vc = new ValueComparator();
@@ -696,6 +719,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public DateDatetimePropertyType getElementAndValue(final DateDatetimePropertyType val) {
       try {
         DateDatetimePropertyType prop = val.getClass().newInstance();
@@ -715,6 +739,7 @@ public class ValueMatcher {
   }
 
   private static class DatetimePropConverter extends DefaultConverter<DatetimePropertyType> {
+    @Override
     public ValueComparator convert(final DatetimePropertyType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -725,6 +750,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public DatetimePropertyType getElementAndValue(final DatetimePropertyType val) {
       try {
         DatetimePropertyType prop = val.getClass().newInstance();
@@ -739,6 +765,7 @@ public class ValueMatcher {
   }
 
   private static class UtcDatetimePropConverter extends DefaultConverter<UtcDatetimePropertyType> {
+    @Override
     public ValueComparator convert(final UtcDatetimePropertyType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -749,6 +776,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public UtcDatetimePropertyType getElementAndValue(final UtcDatetimePropertyType val) {
       try {
         UtcDatetimePropertyType prop = val.getClass().newInstance();
@@ -763,6 +791,7 @@ public class ValueMatcher {
   }
 
   private static class CalAddressPropConverter extends DefaultConverter<CalAddressPropertyType> {
+    @Override
     public ValueComparator convert(final CalAddressPropertyType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -771,6 +800,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public CalAddressPropertyType getElementAndValue(final CalAddressPropertyType val) {
       try {
         CalAddressPropertyType prop = val.getClass().newInstance();
@@ -785,6 +815,7 @@ public class ValueMatcher {
   }
 
   private static class UtcOffsetPropConverter extends DefaultConverter<UtcOffsetPropertyType> {
+    @Override
     public ValueComparator convert(final UtcOffsetPropertyType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -794,6 +825,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public UtcOffsetPropertyType getElementAndValue(final UtcOffsetPropertyType val) {
       try {
         UtcOffsetPropertyType prop = val.getClass().newInstance();
@@ -808,6 +840,7 @@ public class ValueMatcher {
   }
 
   private static class TextListPropConverter extends DefaultConverter<TextListPropertyType> {
+    @Override
     public ValueComparator convert(final TextListPropertyType val) {
       List<String> ss = val.getText();
       ValueComparator vc = new ValueComparator();
@@ -819,6 +852,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public TextListPropertyType getElementAndValue(final TextListPropertyType val) {
       try {
         TextListPropertyType prop = val.getClass().newInstance();
@@ -858,6 +892,7 @@ public class ValueMatcher {
   }
 
   private static class TextPropConverter extends DefaultConverter<TextPropertyType> {
+    @Override
     public ValueComparator convert(final TextPropertyType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -866,6 +901,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public TextPropertyType getElementAndValue(final TextPropertyType val) {
       try {
         TextPropertyType prop = val.getClass().newInstance();
@@ -880,6 +916,7 @@ public class ValueMatcher {
   }
 
   private static class RecurPropConverter extends DefaultConverter<RecurPropertyType> {
+    @Override
     public ValueComparator convert(final RecurPropertyType val) {
       RecurType r = val.getRecur();
       ValueComparator vc = new ValueComparator();
@@ -897,11 +934,15 @@ public class ValueMatcher {
       append(vc, XcalTags.byweekno, r.getByweekno());
       append(vc, XcalTags.bymonth, r.getBymonth());
       append(vc, XcalTags.bysetpos, r.getBysetpos());
-      append(vc, XcalTags.wkst, r.getWkst().toString());
+
+      if (r.getWkst() != null) {
+        append(vc, XcalTags.wkst, r.getWkst().toString());
+      }
 
       return vc;
     }
 
+    @Override
     public RecurPropertyType getElementAndValue(final RecurPropertyType val) {
       try {
         RecurPropertyType prop = val.getClass().newInstance();
@@ -938,6 +979,7 @@ public class ValueMatcher {
   }
 
   private static class IntegerPropConverter extends DefaultConverter<IntegerPropertyType> {
+    @Override
     public ValueComparator convert(final IntegerPropertyType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -947,6 +989,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public IntegerPropertyType getElementAndValue(final IntegerPropertyType val) {
       try {
         IntegerPropertyType prop = val.getClass().newInstance();
@@ -961,6 +1004,7 @@ public class ValueMatcher {
   }
 
   private static class UriPropConverter extends DefaultConverter<UriPropertyType> {
+    @Override
     public ValueComparator convert(final UriPropertyType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -969,6 +1013,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public UriPropertyType getElementAndValue(final UriPropertyType val) {
       try {
         UriPropertyType prop = val.getClass().newInstance();
@@ -987,6 +1032,7 @@ public class ValueMatcher {
    * ======================================================================== */
 
   private static class CalAddressParamConverter extends DefaultConverter<CalAddressParamType> {
+    @Override
     public ValueComparator convert(final CalAddressParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -995,6 +1041,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public CalAddressParamType getElementAndValue(final CalAddressParamType val) {
       try {
         CalAddressParamType param = val.getClass().newInstance();
@@ -1009,6 +1056,7 @@ public class ValueMatcher {
   }
 
   private static class CalAddressListParamConverter extends DefaultConverter<CalAddressListParamType> {
+    @Override
     public ValueComparator convert(final CalAddressListParamType val) {
       List<String> ss = val.getCalAddress();
       ValueComparator vc = new ValueComparator();
@@ -1020,6 +1068,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public CalAddressListParamType getElementAndValue(final CalAddressListParamType val) {
       try {
         CalAddressListParamType param = val.getClass().newInstance();
@@ -1037,6 +1086,7 @@ public class ValueMatcher {
   }
 
   private static class TextParamConverter extends DefaultConverter<TextParameterType> {
+    @Override
     public ValueComparator convert(final TextParameterType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1045,6 +1095,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public TextParameterType getElementAndValue(final TextParameterType val) {
       try {
         TextParameterType param = val.getClass().newInstance();
@@ -1059,6 +1110,7 @@ public class ValueMatcher {
   }
 
   private static class UriParamConverter extends DefaultConverter<UriParameterType> {
+    @Override
     public ValueComparator convert(final UriParameterType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1067,6 +1119,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public UriParameterType getElementAndValue(final UriParameterType val) {
       try {
         UriParameterType param = val.getClass().newInstance();
@@ -1081,6 +1134,7 @@ public class ValueMatcher {
   }
 
   private static class CutypeParamConverter extends DefaultConverter<CutypeParamType> {
+    @Override
     public ValueComparator convert(final CutypeParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1089,6 +1143,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public CutypeParamType getElementAndValue(final CutypeParamType val) {
       try {
         CutypeParamType param = val.getClass().newInstance();
@@ -1103,6 +1158,7 @@ public class ValueMatcher {
   }
 
   private static class EncodingParamConverter extends DefaultConverter<EncodingParamType> {
+    @Override
     public ValueComparator convert(final EncodingParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1111,6 +1167,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public EncodingParamType getElementAndValue(final EncodingParamType val) {
       try {
         EncodingParamType param = val.getClass().newInstance();
@@ -1125,6 +1182,7 @@ public class ValueMatcher {
   }
 
   private static class FbtypeParamConverter extends DefaultConverter<FbtypeParamType> {
+    @Override
     public ValueComparator convert(final FbtypeParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1133,6 +1191,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public FbtypeParamType getElementAndValue(final FbtypeParamType val) {
       try {
         FbtypeParamType param = val.getClass().newInstance();
@@ -1147,6 +1206,7 @@ public class ValueMatcher {
   }
 
   private static class PartstatParamConverter extends DefaultConverter<PartstatParamType> {
+    @Override
     public ValueComparator convert(final PartstatParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1155,6 +1215,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public PartstatParamType getElementAndValue(final PartstatParamType val) {
       try {
         PartstatParamType param = val.getClass().newInstance();
@@ -1169,6 +1230,7 @@ public class ValueMatcher {
   }
 
   private static class RangeParamConverter extends DefaultConverter<RangeParamType> {
+    @Override
     public ValueComparator convert(final RangeParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1178,6 +1240,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public RangeParamType getElementAndValue(final RangeParamType val) {
       try {
         RangeParamType param = val.getClass().newInstance();
@@ -1192,6 +1255,7 @@ public class ValueMatcher {
   }
 
   private static class RelatedParamConverter extends DefaultConverter<RelatedParamType> {
+    @Override
     public ValueComparator convert(final RelatedParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1200,6 +1264,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public RelatedParamType getElementAndValue(final RelatedParamType val) {
       try {
         RelatedParamType param = val.getClass().newInstance();
@@ -1214,6 +1279,7 @@ public class ValueMatcher {
   }
 
   private static class ReltypeParamConverter extends DefaultConverter<ReltypeParamType> {
+    @Override
     public ValueComparator convert(final ReltypeParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1222,6 +1288,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public ReltypeParamType getElementAndValue(final ReltypeParamType val) {
       try {
         ReltypeParamType param = val.getClass().newInstance();
@@ -1236,6 +1303,7 @@ public class ValueMatcher {
   }
 
   private static class RoleParamConverter extends DefaultConverter<RoleParamType> {
+    @Override
     public ValueComparator convert(final RoleParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1244,6 +1312,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public RoleParamType getElementAndValue(final RoleParamType val) {
       try {
         RoleParamType param = val.getClass().newInstance();
@@ -1258,6 +1327,7 @@ public class ValueMatcher {
   }
 
   private static class RsvpParamConverter extends DefaultConverter<RsvpParamType> {
+    @Override
     public ValueComparator convert(final RsvpParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1267,6 +1337,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public RsvpParamType getElementAndValue(final RsvpParamType val) {
       try {
         RsvpParamType param = val.getClass().newInstance();
@@ -1281,6 +1352,7 @@ public class ValueMatcher {
   }
 
   private static class ScheduleAgentParamConverter extends DefaultConverter<ScheduleAgentParamType> {
+    @Override
     public ValueComparator convert(final ScheduleAgentParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1289,6 +1361,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public ScheduleAgentParamType getElementAndValue(final ScheduleAgentParamType val) {
       try {
         ScheduleAgentParamType param = val.getClass().newInstance();
@@ -1303,6 +1376,7 @@ public class ValueMatcher {
   }
 
   private static class ScheduleForceSendParamConverter extends DefaultConverter<ScheduleForceSendParamType> {
+    @Override
     public ValueComparator convert(final ScheduleForceSendParamType val) {
       ValueComparator vc = new ValueComparator();
 
@@ -1311,6 +1385,7 @@ public class ValueMatcher {
       return vc;
     }
 
+    @Override
     public ScheduleForceSendParamType getElementAndValue(final ScheduleForceSendParamType val) {
       try {
         ScheduleForceSendParamType param = val.getClass().newInstance();
