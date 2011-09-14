@@ -49,7 +49,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
-/** This class wraps a property.
+/** This class wraps a component.
  *
  * @author Mike Douglass
  */
@@ -339,6 +339,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     return sel;
   }
 
+  @Override
   public int compareTo(final CompWrapper o) {
     int res = super.compareTo(o);
     if (res != 0) {
@@ -389,11 +390,6 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
 
     if (kind == UidKind) {
       return props.compareTo(o.props);
-    }
-
-    res = o.props.find(XcalTags.uid).compareTo(props.find(XcalTags.uid));
-    if (res != 0) {
-      return res;
     }
 
     res = cmpRids(o);
