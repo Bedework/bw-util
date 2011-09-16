@@ -18,6 +18,8 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import edu.rpi.sss.util.xml.tagdefs.XcalTags;
+
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentReferenceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentsSelectionType;
@@ -30,7 +32,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 
 /** This class wraps an array of components.
  *
@@ -41,7 +42,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
                    implements Comparable<CompsWrapper> {
   CompsWrapper(final CompWrapper parent,
                final List<JAXBElement<? extends BaseComponentType>> clist) {
-    super(parent, new QName(icalendarNs, "components"), clist);
+    super(parent, XcalTags.components, clist);
   }
 
   @Override
@@ -179,6 +180,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
     return csel;
   }
 
+  @Override
   public int compareTo(final CompsWrapper that) {
     if (size() < that.size()) {
       return -1;

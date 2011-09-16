@@ -122,12 +122,14 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     kind = compKinds.get(name);
   }
 
-  CompWrapper(final ObjectFactory of,
+  CompWrapper(final Map<String, Object> skipMap,
+              final ObjectFactory of,
               final ValueMatcher matcher,
               final QName name,
               final BaseComponentType c) {
     super(null, name, c);
 
+    setSkipMap(skipMap);
     setObjectFactory(of);
     setMatcher(matcher);
 

@@ -24,6 +24,7 @@ import edu.rpi.sss.util.Util;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.CategoryList;
+import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.NumberList;
@@ -37,6 +38,8 @@ import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.ResourceList;
 import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.CalendarComponent;
+import net.fortuna.ical4j.model.component.Daylight;
+import net.fortuna.ical4j.model.component.Standard;
 import net.fortuna.ical4j.model.component.VAlarm;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VFreeBusy;
@@ -61,6 +64,7 @@ import ietf.params.xml.ns.icalendar_2.AltrepParamType;
 import ietf.params.xml.ns.icalendar_2.ArrayOfEventTodoContainedComponents;
 import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
+import ietf.params.xml.ns.icalendar_2.ArrayOfTimezoneContainedComponents;
 import ietf.params.xml.ns.icalendar_2.ArrayOfVcalendarContainedComponents;
 import ietf.params.xml.ns.icalendar_2.AttendeePropType;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
@@ -75,6 +79,7 @@ import ietf.params.xml.ns.icalendar_2.ContactPropType;
 import ietf.params.xml.ns.icalendar_2.CreatedPropType;
 import ietf.params.xml.ns.icalendar_2.CutypeParamType;
 import ietf.params.xml.ns.icalendar_2.DateDatetimePropertyType;
+import ietf.params.xml.ns.icalendar_2.DaylightType;
 import ietf.params.xml.ns.icalendar_2.DelegatedFromParamType;
 import ietf.params.xml.ns.icalendar_2.DelegatedToParamType;
 import ietf.params.xml.ns.icalendar_2.DescriptionPropType;
@@ -115,6 +120,7 @@ import ietf.params.xml.ns.icalendar_2.RrulePropType;
 import ietf.params.xml.ns.icalendar_2.ScheduleStatusParamType;
 import ietf.params.xml.ns.icalendar_2.SentByParamType;
 import ietf.params.xml.ns.icalendar_2.SequencePropType;
+import ietf.params.xml.ns.icalendar_2.StandardType;
 import ietf.params.xml.ns.icalendar_2.StatusPropType;
 import ietf.params.xml.ns.icalendar_2.SummaryPropType;
 import ietf.params.xml.ns.icalendar_2.TranspPropType;
@@ -129,6 +135,7 @@ import ietf.params.xml.ns.icalendar_2.VersionPropType;
 import ietf.params.xml.ns.icalendar_2.VeventType;
 import ietf.params.xml.ns.icalendar_2.VfreebusyType;
 import ietf.params.xml.ns.icalendar_2.VjournalType;
+import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkCostPropType;
 
@@ -154,6 +161,13 @@ public class IcalToXcal {
   @SuppressWarnings("unchecked")
   public static IcalendarType fromIcal(final Calendar cal,
                                        final BaseComponentType pattern) throws Throwable {
+    return fromIcal(cal, pattern, false);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static IcalendarType fromIcal(final Calendar cal,
+                                       final BaseComponentType pattern,
+                                       final boolean doTimezones) throws Throwable {
     IcalendarType ical = new IcalendarType();
     VcalendarType vcal = new VcalendarType();
 
@@ -171,7 +185,7 @@ public class IcalToXcal {
     vcal.setComponents(aoc);
 
     for (Object o: icComps) {
-      if (o instanceof VTimeZone) {
+      if (!doTimezones && (o instanceof VTimeZone)) {
         // Skip these
         continue;
       }
@@ -192,7 +206,7 @@ public class IcalToXcal {
    * @throws Throwable
    */
   public static JAXBElement
-                    toComponent(final CalendarComponent val,
+                    toComponent(final Component val,
                                 final BaseComponentType pattern) throws Throwable {
     if (val == null) {
       return null;
@@ -220,6 +234,13 @@ public class IcalToXcal {
       el = of.createVfreebusy(new VfreebusyType());
     } else if (val instanceof VAlarm) {
       el = of.createValarm(new ValarmType());
+    } else if (val instanceof VTimeZone) {
+      el = of.createVtimezone(new VtimezoneType());
+      icComps = ((VTimeZone)val).getObservances();
+    } else if (val instanceof Daylight) {
+      el = of.createDaylight(new DaylightType());
+    } else if (val instanceof Standard) {
+      el = of.createStandard(new StandardType());
     } else {
       throw new Exception("org.bedework.invalid.entity.type" +
           val.getClass().getName());
@@ -243,6 +264,19 @@ public class IcalToXcal {
         JAXBElement subel = toComponent((CalendarComponent)o,
                                         pattern);
         aetcc.getValarm().add((ValarmType)subel.getValue());
+      }
+    }
+
+    if (comp instanceof VtimezoneType) {
+      /* Process the sub-components */
+      ArrayOfTimezoneContainedComponents atcc =
+          new ArrayOfTimezoneContainedComponents();
+      ((VtimezoneType)comp).setComponents(atcc);
+
+      for (Object o: icComps) {
+        JAXBElement subel = toComponent((Component)o,
+                                        pattern);
+        atcc.getStandardOrDaylight().add((BaseComponentType)subel.getValue());
       }
     }
 
@@ -922,7 +956,7 @@ public class IcalToXcal {
     }
 
     for (Object o: nl) {
-      l.add((String)o);
+      l.add(String.valueOf(o));
     }
   }
 
@@ -933,7 +967,7 @@ public class IcalToXcal {
     }
 
     for (Object o: nl) {
-      l.add(Integer.valueOf((String)o));
+      l.add((Integer)o);
     }
   }
 
@@ -944,7 +978,7 @@ public class IcalToXcal {
     }
 
     for (Object o: nl) {
-      l.add(BigInteger.valueOf(Integer.valueOf((String)o)));
+      l.add(BigInteger.valueOf((Integer)o));
     }
   }
 

@@ -22,8 +22,19 @@ import org.apache.log4j.Logger;
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
 
+import ietf.params.xml.ns.icalendar_2.CreatedPropType;
+import ietf.params.xml.ns.icalendar_2.DtstampPropType;
 import ietf.params.xml.ns.icalendar_2.IcalendarType;
+import ietf.params.xml.ns.icalendar_2.LastModifiedPropType;
+import ietf.params.xml.ns.icalendar_2.ProdidPropType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
+import ietf.params.xml.ns.icalendar_2.VersionPropType;
+import ietf.params.xml.ns.icalendar_2.XBedeworkUidParamType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** This class compares 2 components.
 *
@@ -32,11 +43,42 @@ import ietf.params.xml.ns.icalendar_2.VcalendarType;
 public class XmlIcalCompare {
   protected transient Logger log;
 
+  public static final List<Object> defaultSkipList;
+
+  static {
+    defaultSkipList = new ArrayList<Object>();
+
+    /* Calendar properties */
+    defaultSkipList.add(new ProdidPropType());
+    defaultSkipList.add(new VersionPropType());
+
+    /* Entity properties */
+    defaultSkipList.add(new CreatedPropType());
+    defaultSkipList.add(new DtstampPropType());
+    defaultSkipList.add(new LastModifiedPropType());
+
+    /* Parameters */
+    defaultSkipList.add(new XBedeworkUidParamType());
+  }
+
   private ValueMatcher matcher;
 
-  /**
+  /* Set of entities we skip during comparison.
    */
-  public XmlIcalCompare() {
+  protected static Map<String, Object> skipMap = new HashMap<String, Object>();
+
+  /** The skippedEntities allow the diff process to ignore components,
+   * properties and/or parameters that should not take part in the comparison.
+   *
+   * <p>Populate the list with empty icalendar objects.
+   *
+   * @param skippedEntities Objects of the class that should be skipped
+   */
+  public XmlIcalCompare(final List<? extends Object> skippedEntities) {
+    for (Object o: skippedEntities) {
+      skipMap.put(o.getClass().getCanonicalName(), o);
+    }
+
     matcher = new ValueMatcher();
   }
 
@@ -60,10 +102,10 @@ public class XmlIcalCompare {
 
     ObjectFactory of = new ObjectFactory();
 
-    CompWrapper ncw = new CompWrapper(of, getMatcher(),
+    CompWrapper ncw = new CompWrapper(skipMap, of, getMatcher(),
                                       CompWrapper.compNames.get(nv.getClass()),
                                       nv);
-    CompWrapper ocw = new CompWrapper(of, getMatcher(),
+    CompWrapper ocw = new CompWrapper(skipMap, of, getMatcher(),
                                       CompWrapper.compNames.get(ov.getClass()),
                                       ov);
 

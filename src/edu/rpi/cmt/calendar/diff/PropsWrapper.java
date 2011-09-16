@@ -18,6 +18,8 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import edu.rpi.sss.util.xml.tagdefs.XcalTags;
+
 import org.oasis_open.docs.ns.wscal.calws_soap.PropertiesSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.PropertyReferenceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.PropertySelectionType;
@@ -41,15 +43,6 @@ import javax.xml.namespace.QName;
 class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
                                           JAXBElement<? extends BasePropertyType>>
                    implements Comparable<PropsWrapper> {
-  static {
-    addSkipped(new QName(icalendarNs, "prodid"));
-    addSkipped(new QName(icalendarNs, "version"));
-
-    addSkipped(new QName(icalendarNs, "created"));
-    addSkipped(new QName(icalendarNs, "dtstamp"));
-    addSkipped(new QName(icalendarNs, "last-modified"));
-  }
-
   /* Use this to find a candidate for matching when we get a mismatch
    * We're trying to deal with the situation where we have missing
    * properties: e.g.
@@ -65,7 +58,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
 
   PropsWrapper(final CompWrapper parent,
                final List<JAXBElement<? extends BasePropertyType>> propsList) {
-    super(parent, new QName(icalendarNs, "properties"), propsList);
+    super(parent, XcalTags.properties, propsList);
   }
 
   @Override
@@ -81,7 +74,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
     /* We skip certain properties as they only appear on one side
      * If this is one we skip return null.
      */
-    if (skipped.containsKey(nm)) {
+    if (skipThis(el.getValue())) {
       return null;
     }
 
@@ -225,6 +218,7 @@ class PropsWrapper extends BaseSetWrapper<PropWrapper, CompWrapper,
     return csel;
   }
 
+  @Override
   public int compareTo(final PropsWrapper that) {
     if (size() < that.size()) {
       return -1;

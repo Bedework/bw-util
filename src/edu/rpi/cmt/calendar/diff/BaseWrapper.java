@@ -22,6 +22,8 @@ import edu.rpi.sss.util.xml.NsContext;
 
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
 
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 
@@ -32,7 +34,9 @@ import javax.xml.namespace.QName;
  * @param <ParentT>
  */
 abstract class BaseWrapper<ParentT extends BaseWrapper> {
-  static final String icalendarNs = "urn:ietf:params:xml:ns:icalendar-2.0";
+  /* Set of entities we skip during comparison.
+   */
+  protected Map<String, Object> skipMap;
 
   private ParentT parent;
 
@@ -42,12 +46,14 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
 
   private ValueMatcher matcher;
 
+  @SuppressWarnings("unchecked")
   BaseWrapper(final ParentT parent,
               final QName name) {
     this.parent = parent;
     this.name = name;
 
     if (parent != null) {
+      skipMap = parent.skipMap;
       of = parent.of;
       matcher = parent.matcher;
     }
@@ -55,6 +61,10 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
 
   ParentT getParent() {
     return parent;
+  }
+
+  void setSkipMap(final Map<String, Object> val) {
+    skipMap = val;
   }
 
   void setObjectFactory(final ObjectFactory val) {
@@ -71,6 +81,10 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
 
   QName getName() {
     return name;
+  }
+
+  boolean skipThis(final Object val) {
+    return skipMap.containsKey(val.getClass().getCanonicalName());
   }
 
   void appendNsName(final StringBuilder sb,
