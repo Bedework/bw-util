@@ -108,7 +108,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
       if (cmp < 0) {
         // Add this side entry
 
-        sel = add(sel, thisOne.makeRef());
+        sel = add(sel, thisOne.makeRef(false));
         thisI++;
         continue;
       }
@@ -120,7 +120,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
 
       // Extra ones in the target
 
-      sel = remove(sel, thatOne.makeRef());
+      sel = remove(sel, thatOne.makeRef(true));
       thatI++;
     }
 
@@ -128,7 +128,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
       // Extra ones in the source
 
       CompWrapper thisOne = getTarray()[thisI];
-      sel = add(sel, thisOne.makeRef());
+      sel = add(sel, thisOne.makeRef(false));
       thisI++;
     }
 
@@ -136,7 +136,7 @@ class CompsWrapper extends BaseSetWrapper<CompWrapper, CompWrapper,
       // Extra ones in the target
 
       CompWrapper thatOne = that.getTarray()[thatI];
-      sel = remove(sel, thatOne.makeRef());
+      sel = remove(sel, thatOne.makeRef(true));
       thatI++;
     }
 

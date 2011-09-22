@@ -18,12 +18,15 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import edu.rpi.cmt.calendar.XcalUtil;
+
 import org.oasis_open.docs.ns.wscal.calws_soap.ParametersSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.PropertyReferenceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.PropertySelectionType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
+import ietf.params.xml.ns.icalendar_2.RecurrenceIdPropType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -128,7 +131,7 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
       PropertyReferenceType ct = new PropertyReferenceType();
 
       JAXBElement jel = getJaxbElement();
-      jel.setValue(getMatcher().getElementAndValue(getEntity()));
+      jel.setValue(globals.matcher.getElementAndValue(getEntity()));
       ct.setBaseProperty(jel);
 
       sel.setChange(ct);
@@ -147,13 +150,33 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
 
   ValueComparator getComparator() {
     if (comparator == null) {
-      comparator = getMatcher().getComparator(getEntity());
+      comparator = globals.matcher.getComparator(getEntity());
     }
 
     return comparator;
   }
 
+  @Override
   public int compareTo(final PropWrapper o) {
+    if (getEntity() instanceof RecurrenceIdPropType) {
+      /* Special case this one as the calculated UTC is what matters.
+       */
+
+      RecurrenceIdPropType thatRid = (RecurrenceIdPropType)o.getEntity();
+      RecurrenceIdPropType thisRid = (RecurrenceIdPropType)getEntity();
+
+      /* Get UTC value to compare */
+
+      try {
+        String thatUTC = XcalUtil.getUTC(thatRid, globals.tzs);
+        String thisUTC = XcalUtil.getUTC(thisRid, globals.tzs);
+
+        return thatUTC.compareTo(thisUTC);
+      } catch (Throwable t) {
+        throw new RuntimeException(t);
+      }
+    }
+
     int res = super.compareNameClass(o);
     if (res != 0) {
       return res;

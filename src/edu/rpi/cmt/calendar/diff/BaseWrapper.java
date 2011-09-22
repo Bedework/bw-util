@@ -18,11 +18,8 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import edu.rpi.cmt.calendar.diff.XmlIcalCompare.Globals;
 import edu.rpi.sss.util.xml.NsContext;
-
-import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
-
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -36,26 +33,19 @@ import javax.xml.namespace.QName;
 abstract class BaseWrapper<ParentT extends BaseWrapper> {
   /* Set of entities we skip during comparison.
    */
-  protected Map<String, Object> skipMap;
+  protected Globals globals;
 
   private ParentT parent;
 
   private QName name;
 
-  protected ObjectFactory of;
-
-  private ValueMatcher matcher;
-
-  @SuppressWarnings("unchecked")
   BaseWrapper(final ParentT parent,
               final QName name) {
     this.parent = parent;
     this.name = name;
 
     if (parent != null) {
-      skipMap = parent.skipMap;
-      of = parent.of;
-      matcher = parent.matcher;
+      globals = parent.globals;
     }
   }
 
@@ -63,20 +53,8 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
     return parent;
   }
 
-  void setSkipMap(final Map<String, Object> val) {
-    skipMap = val;
-  }
-
-  void setObjectFactory(final ObjectFactory val) {
-    of = val;
-  }
-
-  void setMatcher(final ValueMatcher val) {
-    matcher = val;
-  }
-
-  ValueMatcher getMatcher() {
-    return matcher;
+  void setGlobals(final Globals val) {
+    globals = val;
   }
 
   QName getName() {
@@ -84,7 +62,7 @@ abstract class BaseWrapper<ParentT extends BaseWrapper> {
   }
 
   boolean skipThis(final Object val) {
-    return skipMap.containsKey(val.getClass().getCanonicalName());
+    return globals.skipMap.containsKey(val.getClass().getCanonicalName());
   }
 
   void appendNsName(final StringBuilder sb,

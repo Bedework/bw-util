@@ -19,20 +19,18 @@
 package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.cmt.calendar.XcalUtil;
-import edu.rpi.sss.util.Util;
+import edu.rpi.cmt.calendar.diff.XmlIcalCompare.Globals;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentReferenceType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentsSelectionType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
 import org.oasis_open.docs.ns.wscal.calws_soap.PropertiesSelectionType;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.DaylightType;
-import ietf.params.xml.ns.icalendar_2.RecurrenceIdPropType;
 import ietf.params.xml.ns.icalendar_2.StandardType;
 import ietf.params.xml.ns.icalendar_2.UidPropType;
 import ietf.params.xml.ns.icalendar_2.ValarmType;
@@ -122,16 +120,12 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     kind = compKinds.get(name);
   }
 
-  CompWrapper(final Map<String, Object> skipMap,
-              final ObjectFactory of,
-              final ValueMatcher matcher,
+  CompWrapper(final Globals globals,
               final QName name,
               final BaseComponentType c) {
     super(null, name, c);
 
-    setSkipMap(skipMap);
-    setObjectFactory(of);
-    setMatcher(matcher);
+    setGlobals(globals);
 
     if (c.getProperties() != null) {
       props = new PropsWrapper(this, c.getProperties().getBasePropertyOrTzid());
@@ -146,11 +140,68 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     return null;
   }
 
-  ComponentReferenceType makeRef() {
+  @SuppressWarnings("unchecked")
+  ComponentReferenceType makeRef(final boolean forRemove) {
     ComponentReferenceType r = new ComponentReferenceType();
 
-    r.setBaseComponent(getJaxbElement());
-    return r;
+    boolean wholeComponent = !forRemove;
+
+    if (kind == AlarmKind) {
+      wholeComponent = true;
+    }
+
+    if (wholeComponent) {
+      // Put the whole entity in there
+      r.setBaseComponent(getJaxbElement());
+      return r;
+    }
+
+    // Just enough information to identify the entity, e.g. uid and recurrence-id
+
+    Class cl = getEntity().getClass();
+
+    try {
+      BaseComponentType copy = (BaseComponentType)cl.newInstance();
+
+      copy.setProperties(new ArrayOfProperties());
+
+      r.setBaseComponent(new JAXBElement<BaseComponentType>(getName(),
+          (Class<BaseComponentType>)copy.getClass(),
+          copy));
+
+      if (kind == TzKind) {
+        // TZid is the identifier
+        PropWrapper tzidw = props.find(XcalTags.tzid);
+
+        if (tzidw == null) {
+          throw new RuntimeException("No tzid for reference");
+        }
+
+        copy.getProperties().getBasePropertyOrTzid().add(tzidw.getJaxbElement());
+        return r;
+      }
+
+      PropWrapper uidw = props.find(XcalTags.uid);
+
+      if (uidw == null) {
+        throw new RuntimeException("No uid for reference");
+      }
+
+      copy.getProperties().getBasePropertyOrTzid().add(uidw.getJaxbElement());
+
+      if (kind == UidKind) {
+        return r;
+      }
+
+      PropWrapper ridw = props.find(XcalTags.recurrenceId);
+      if (ridw != null) {
+        copy.getProperties().getBasePropertyOrTzid().add(ridw.getJaxbElement());
+      }
+
+      return r;
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
+    }
   }
 
   @Override
@@ -223,19 +274,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return 1;
     }
 
-    RecurrenceIdPropType thatRid = (RecurrenceIdPropType)thatRidw.getEntity();
-    RecurrenceIdPropType thisRid = (RecurrenceIdPropType)thisRidw.getEntity();
-
-    XcalUtil.DtTzid thatDtTzid = XcalUtil.getDtTzid(thatRid);
-    XcalUtil.DtTzid thisDtTzid = XcalUtil.getDtTzid(thisRid);
-
-    int res = thatDtTzid.dt.compareTo(thisDtTzid.dt);
-
-    if (res != 0) {
-      return res;
-    }
-
-    return Util.cmpObjval(thisDtTzid.tzid, thatDtTzid.tzid);
+    return thatRidw.compareTo(thisRidw);
   }
 
   /**

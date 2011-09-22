@@ -18,6 +18,8 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
+import edu.rpi.cmt.calendar.XcalUtil.TzGetter;
+
 import org.apache.log4j.Logger;
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
 import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
@@ -61,11 +63,26 @@ public class XmlIcalCompare {
     defaultSkipList.add(new XBedeworkUidParamType());
   }
 
-  private ValueMatcher matcher;
-
-  /* Set of entities we skip during comparison.
+  /** Stuff to which all the generated objects need access.
    */
-  protected static Map<String, Object> skipMap = new HashMap<String, Object>();
+  static class Globals {
+    Map<String, Object> skipMap;
+    ObjectFactory of;
+    ValueMatcher matcher;
+    TzGetter tzs;
+
+    Globals(final Map<String, Object> skipMap,
+            final ObjectFactory of,
+            final ValueMatcher matcher,
+            final TzGetter tzs) {
+      this.skipMap = skipMap;
+      this.of = of;
+      this.matcher = matcher;
+      this.tzs = tzs;
+    }
+  }
+
+  private Globals globals;
 
   /** The skippedEntities allow the diff process to ignore components,
    * properties and/or parameters that should not take part in the comparison.
@@ -73,20 +90,18 @@ public class XmlIcalCompare {
    * <p>Populate the list with empty icalendar objects.
    *
    * @param skippedEntities Objects of the class that should be skipped
+   * @param tzs
    */
-  public XmlIcalCompare(final List<? extends Object> skippedEntities) {
+  public XmlIcalCompare(final List<? extends Object> skippedEntities,
+                        final TzGetter tzs) {
+    globals = new Globals(new HashMap<String, Object>(),
+                          new ObjectFactory(),
+                          new ValueMatcher(),
+                          tzs);
+
     for (Object o: skippedEntities) {
-      skipMap.put(o.getClass().getCanonicalName(), o);
+      globals.skipMap.put(o.getClass().getCanonicalName(), o);
     }
-
-    matcher = new ValueMatcher();
-  }
-
-  /**
-   * @return object used to match values.
-   */
-  public ValueMatcher getMatcher() {
-    return matcher;
   }
 
   /** Compare the parameters. Return null for equal or a select element.
@@ -100,12 +115,10 @@ public class XmlIcalCompare {
     VcalendarType nv = newval.getVcalendar().get(0);
     VcalendarType ov = oldval.getVcalendar().get(0);
 
-    ObjectFactory of = new ObjectFactory();
-
-    CompWrapper ncw = new CompWrapper(skipMap, of, getMatcher(),
+    CompWrapper ncw = new CompWrapper(globals,
                                       CompWrapper.compNames.get(nv.getClass()),
                                       nv);
-    CompWrapper ocw = new CompWrapper(skipMap, of, getMatcher(),
+    CompWrapper ocw = new CompWrapper(globals,
                                       CompWrapper.compNames.get(ov.getClass()),
                                       ov);
 

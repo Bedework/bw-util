@@ -106,12 +106,13 @@ class ParamWrapper extends BaseEntityWrapper<ParamWrapper,
 
   ValueComparator getComparator() {
     if (comparator == null) {
-      comparator = getMatcher().getComparator(getEntity());
+      comparator = globals.matcher.getComparator(getEntity());
     }
 
     return comparator;
   }
 
+  @Override
   public int compareTo(final ParamWrapper o) {
     int res = super.compareTo(o);
     if (res != 0) {

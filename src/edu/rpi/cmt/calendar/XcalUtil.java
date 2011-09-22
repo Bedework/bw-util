@@ -20,6 +20,9 @@ package edu.rpi.cmt.calendar;
 
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.TimeZone;
+
 import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.ArrayOfVcalendarContainedComponents;
@@ -155,6 +158,43 @@ public class XcalUtil {
 
     /** null or tzid from param */
     public String tzid;
+  }
+
+  public abstract static class TzGetter {
+    /**
+     * @param id
+     * @return A timezone or null if non found
+     * @throws Throwable
+     */
+    public abstract TimeZone getTz(final String id) throws Throwable;
+  }
+
+  /** For date only values and floating convert to local UTC. For UTC just return
+   * the value. For non-floating convert.
+   *
+   * @param dt
+   * @param tzs
+   * @return string UTC value
+   * @throws Throwable
+   */
+  public static String getUTC(final DateDatetimePropertyType dt,
+                              final TzGetter tzs) throws Throwable {
+    DtTzid dtz = getDtTzid(dt);
+
+    if ((dtz.dt.length() == 18) && (dtz.dt.charAt(17) == 'Z')) {
+      return dtz.dt;
+    }
+
+    TimeZone tz = null;
+    if (dtz.tzid != null) {
+      tz = tzs.getTz(dtz.tzid);
+    }
+
+    DateTime dtim = new DateTime(dtz.dt, tz);
+
+    dtim.setUtc(true);
+
+    return dtim.toString();
   }
 
   /**
