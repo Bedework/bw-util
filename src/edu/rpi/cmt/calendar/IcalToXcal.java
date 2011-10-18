@@ -61,11 +61,9 @@ import net.fortuna.ical4j.model.property.XProperty;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.AltrepParamType;
-import ietf.params.xml.ns.icalendar_2.ArrayOfEventTodoContainedComponents;
+import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
 import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
-import ietf.params.xml.ns.icalendar_2.ArrayOfTimezoneContainedComponents;
-import ietf.params.xml.ns.icalendar_2.ArrayOfVcalendarContainedComponents;
 import ietf.params.xml.ns.icalendar_2.AttendeePropType;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
@@ -89,7 +87,6 @@ import ietf.params.xml.ns.icalendar_2.DtstampPropType;
 import ietf.params.xml.ns.icalendar_2.DtstartPropType;
 import ietf.params.xml.ns.icalendar_2.DuePropType;
 import ietf.params.xml.ns.icalendar_2.DurationPropType;
-import ietf.params.xml.ns.icalendar_2.EventTodoComponentType;
 import ietf.params.xml.ns.icalendar_2.ExrulePropType;
 import ietf.params.xml.ns.icalendar_2.FbtypeParamType;
 import ietf.params.xml.ns.icalendar_2.FreebusyPropType;
@@ -181,7 +178,7 @@ public class IcalToXcal {
       return ical;
     }
 
-    ArrayOfVcalendarContainedComponents aoc = new ArrayOfVcalendarContainedComponents();
+    ArrayOfComponents aoc = new ArrayOfComponents();
     vcal.setComponents(aoc);
 
     for (Object o: icComps) {
@@ -189,7 +186,7 @@ public class IcalToXcal {
         // Skip these
         continue;
       }
-      aoc.getVcalendarContainedComponent().add(toComponent((CalendarComponent)o,
+      aoc.getBaseComponent().add(toComponent((CalendarComponent)o,
                                                            pattern));
     }
 
@@ -254,30 +251,14 @@ public class IcalToXcal {
       return el;
     }
 
-    if (comp instanceof EventTodoComponentType) {
-      /* Process any sub-components */
-      ArrayOfEventTodoContainedComponents aetcc =
-          new ArrayOfEventTodoContainedComponents();
-      ((EventTodoComponentType)comp).setComponents(aetcc);
+    /* Process any sub-components */
+    ArrayOfComponents aoc = new ArrayOfComponents();
+    comp.setComponents(aoc);
 
-      for (Object o: icComps) {
-        JAXBElement subel = toComponent((CalendarComponent)o,
-                                        pattern);
-        aetcc.getValarm().add((ValarmType)subel.getValue());
-      }
-    }
-
-    if (comp instanceof VtimezoneType) {
-      /* Process the sub-components */
-      ArrayOfTimezoneContainedComponents atcc =
-          new ArrayOfTimezoneContainedComponents();
-      ((VtimezoneType)comp).setComponents(atcc);
-
-      for (Object o: icComps) {
-        JAXBElement subel = toComponent((Component)o,
-                                        pattern);
-        atcc.getStandardOrDaylight().add((BaseComponentType)subel.getValue());
-      }
+    for (Object o: icComps) {
+      JAXBElement<? extends BaseComponentType> subel = toComponent((CalendarComponent)o,
+                                      pattern);
+      aoc.getBaseComponent().add(subel);
     }
 
     return el;

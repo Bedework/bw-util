@@ -22,7 +22,6 @@ import edu.rpi.sss.util.xml.tagdefs.BedeworkServerTags;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
-import ietf.params.xml.ns.icalendar_2.AlarmComponentType;
 import ietf.params.xml.ns.icalendar_2.AttachPropType;
 import ietf.params.xml.ns.icalendar_2.AttendeePropType;
 import ietf.params.xml.ns.icalendar_2.BusytypePropType;
@@ -819,7 +818,7 @@ public class PropertyIndex implements Serializable {
           NOT_PARAM, IS_IMMUTABLE),
 
     /** treat VALARM sub-component as a property */
-    VALARM(XcalTags.valarm, "VALARM", AlarmComponentType.class,
+    VALARM(XcalTags.valarm, "VALARM", ValarmType.class,
            IS_MULTI, notAlarm),
 
     /** ----------------------------- Following are parameters ----------- */
