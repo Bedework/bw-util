@@ -38,10 +38,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** This class compares 2 components.
-*
-* @author Mike Douglass
-*/
+/** This class compares 2 components. These components may contain other
+ * sub-components, for example alarms. What is produced is a set of updates
+ * to generate one from the other.
+ *
+ * <p>For this to work, and for updates to be applicable, we need well defined
+ * rules determining how we match components. For example, an event is matched
+ * if the UID and RECURRENCE-ID matches.
+ *
+ * <p>This is a little more difficult for some components which don't have a uid,
+ * alarms for example.
+ *
+ * @author Mike Douglass
+ */
 public class XmlIcalCompare {
   protected transient Logger log;
 

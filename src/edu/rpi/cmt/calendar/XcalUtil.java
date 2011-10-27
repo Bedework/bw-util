@@ -402,4 +402,30 @@ public class XcalUtil {
     return null;
   }
 
+  /** Searches the property for the named parameter.
+   *
+   * @param prop
+   * @param name
+   * @return null or first matching property
+   */
+  public static BaseParameterType findParam(final BasePropertyType prop,
+                                            final QName name) {
+    if (prop == null) {
+      return null;
+    }
+
+    ArrayOfParameters ps = prop.getParameters();
+    if (ps == null) {
+      return null;
+    }
+
+    for (JAXBElement<? extends BaseParameterType> bpel: ps.getBaseParameter()) {
+      if (bpel.getName().equals(name)) {
+        return bpel.getValue();
+      }
+    }
+
+    return null;
+  }
+
 }

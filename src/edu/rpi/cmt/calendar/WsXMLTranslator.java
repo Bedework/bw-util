@@ -198,56 +198,60 @@ public class WsXMLTranslator {
     bs.getContentHandler().endProperty(name);
   }
 
+  public String fromRecurProperty(final RecurPropertyType rp) {
+    RecurType r = rp.getRecur();
+
+    List<String> rels = new ArrayList<String>();;
+
+    /*
+    value-recur = element recur {
+      type-freq,
+      (type-until | type-count)?,
+      element interval  { text }?,
+      element bysecond  { text }*,
+      element byminute  { text }*,
+      element byhour    { text }*,
+      type-byday*,
+      type-bymonthday*,
+      type-byyearday*,
+      type-byweekno*,
+      element bymonth   { text }*,
+      type-bysetpos*,
+      element wkst { type-weekday }?
+    }
+
+     */
+    addRecurEl(rels, "freq", r.getFreq());
+
+    if (r.getUntil() != null) {
+      UntilRecurType until = r.getUntil();
+      if (until.getDate() != null) {
+        rels.add("until=" + until.getDate());
+      } else {
+        rels.add("until=" + until.getDateTime());
+      }
+    }
+
+    addRecurEl(rels, "count", r.getCount());
+    addRecurEl(rels, "interval", r.getInterval());
+    addRecurEl(rels, "bysecond", r.getBysecond());
+    addRecurEl(rels, "byminute", r.getByminute());
+    addRecurEl(rels, "byhour", r.getByhour());
+    addRecurEl(rels, "byday", r.getByday());
+    addRecurEl(rels, "bymonthday", r.getBymonthday());
+    addRecurEl(rels, "byyearday", r.getByyearday());
+    addRecurEl(rels, "byweekno", r.getByweekno());
+    addRecurEl(rels, "bymonth", r.getBymonth());
+    addRecurEl(rels, "bysetpos", r.getBysetpos());
+    addRecurEl(rels, "wkst", r.getWkst());
+
+    return fromList(rels, false);
+  }
+
   private boolean processValue(final BasePropertyType prop,
                                final BuildState bs) throws Throwable {
     if (prop instanceof RecurPropertyType) {
-      RecurType r = ((RecurPropertyType)prop).getRecur();
-
-      List<String> rels = new ArrayList<String>();;
-
-      /*
-      value-recur = element recur {
-        type-freq,
-        (type-until | type-count)?,
-        element interval  { text }?,
-        element bysecond  { text }*,
-        element byminute  { text }*,
-        element byhour    { text }*,
-        type-byday*,
-        type-bymonthday*,
-        type-byyearday*,
-        type-byweekno*,
-        element bymonth   { text }*,
-        type-bysetpos*,
-        element wkst { type-weekday }?
-      }
-
-       */
-      addRecurEl(rels, "freq", r.getFreq());
-
-      if (r.getUntil() != null) {
-        UntilRecurType until = r.getUntil();
-        if (until.getDate() != null) {
-          rels.add("until=" + until.getDate());
-        } else {
-          rels.add("until=" + until.getDateTime());
-        }
-      }
-
-      addRecurEl(rels, "count", r.getCount());
-      addRecurEl(rels, "interval", r.getInterval());
-      addRecurEl(rels, "bysecond", r.getBysecond());
-      addRecurEl(rels, "byminute", r.getByminute());
-      addRecurEl(rels, "byhour", r.getByhour());
-      addRecurEl(rels, "byday", r.getByday());
-      addRecurEl(rels, "bymonthday", r.getBymonthday());
-      addRecurEl(rels, "byyearday", r.getByyearday());
-      addRecurEl(rels, "byweekno", r.getByweekno());
-      addRecurEl(rels, "bymonth", r.getBymonth());
-      addRecurEl(rels, "bysetpos", r.getBysetpos());
-      addRecurEl(rels, "wkst", r.getWkst());
-
-      propVal(bs, fromList(rels, false));
+      propVal(bs, fromRecurProperty((RecurPropertyType)prop));
 
       return true;
     }

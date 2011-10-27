@@ -147,6 +147,15 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     boolean wholeComponent = !forRemove;
 
     if (kind == AlarmKind) {
+      /* XXX This could be done by providing just enough to identify a single
+       * alarm. The properties we need to test in order are:
+       *
+       * for all: action, trigger, duration, repeat
+       * !audio: description
+       * then: attach, summary, attendees
+       *
+       * After the first 4 it might just as well be the whole thing.
+       */
       wholeComponent = true;
     }
 
