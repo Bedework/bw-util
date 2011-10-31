@@ -256,7 +256,8 @@ public class IcalToXcal {
     comp.setComponents(aoc);
 
     for (Object o: icComps) {
-      JAXBElement<? extends BaseComponentType> subel = toComponent((CalendarComponent)o,
+      @SuppressWarnings("unchecked")
+      JAXBElement<? extends BaseComponentType> subel = toComponent((Component)o,
                                       pattern);
       aoc.getBaseComponent().add(subel);
     }
