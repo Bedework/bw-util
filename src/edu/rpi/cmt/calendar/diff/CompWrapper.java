@@ -30,19 +30,8 @@ import org.oasis_open.docs.ns.wscal.calws_soap.PropertiesSelectionType;
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
-import ietf.params.xml.ns.icalendar_2.DaylightType;
-import ietf.params.xml.ns.icalendar_2.StandardType;
 import ietf.params.xml.ns.icalendar_2.UidPropType;
-import ietf.params.xml.ns.icalendar_2.ValarmType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
-import ietf.params.xml.ns.icalendar_2.VeventType;
-import ietf.params.xml.ns.icalendar_2.VfreebusyType;
-import ietf.params.xml.ns.icalendar_2.VjournalType;
-import ietf.params.xml.ns.icalendar_2.VtimezoneType;
-import ietf.params.xml.ns.icalendar_2.VtodoType;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -59,54 +48,6 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
 
   private Integer kind;
 
-  static Map<Class, QName> compNames = new HashMap<Class, QName>();
-
-  public static final Integer OuterKind = 0;
-  public static final Integer RecurringKind = 1;
-  public static final Integer UidKind = 2;
-  public static final Integer AlarmKind = 3;
-  public static final Integer TzKind = 4;
-
-  static Map<QName, Integer> compKinds = new HashMap<QName, Integer>();
-
-  static {
-    // Outer container
-    addInfo(XcalTags.vcalendar,
-            OuterKind,
-            VcalendarType.class);
-
-    // Recurring style uid + optional recurrence id
-    addInfo(XcalTags.vtodo,
-            RecurringKind,
-            VtodoType.class);
-    addInfo(XcalTags.vjournal,
-            RecurringKind,
-            VjournalType.class);
-    addInfo(XcalTags.vevent,
-            RecurringKind,
-            VeventType.class);
-
-    // Uid only
-    addInfo(XcalTags.vfreebusy,
-            UidKind,
-            VfreebusyType.class);
-
-    addInfo(XcalTags.valarm,
-            AlarmKind,
-            ValarmType.class);
-
-    // Timezones
-    addInfo(XcalTags.standard,
-            TzKind,
-            StandardType.class);
-    addInfo(XcalTags.vtimezone,
-            TzKind,
-            VtimezoneType.class);
-    addInfo(XcalTags.daylight,
-            TzKind,
-            DaylightType.class);
-  }
-
   CompWrapper(final CompsWrapper parent,
               final QName name,
               final BaseComponentType c) {
@@ -117,7 +58,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     }
     comps = new CompsWrapper(this, XcalUtil.getComponents(c));
 
-    kind = compKinds.get(name);
+    kind = XcalUtil.getCompKind(name);
   }
 
   CompWrapper(final Globals globals,
@@ -132,7 +73,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     }
     comps = new CompsWrapper(this, XcalUtil.getComponents(c));
 
-    kind = compKinds.get(name);
+    kind = XcalUtil.getCompKind(name);
   }
 
   @Override
@@ -146,7 +87,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
 
     boolean wholeComponent = !forRemove;
 
-    if (kind == AlarmKind) {
+    if (kind == XcalUtil.AlarmKind) {
       /* XXX This could be done by providing just enough to identify a single
        * alarm. The properties we need to test in order are:
        *
@@ -178,7 +119,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
           (Class<BaseComponentType>)copy.getClass(),
           copy));
 
-      if (kind == TzKind) {
+      if (kind == XcalUtil.TzKind) {
         // TZid is the identifier
         PropWrapper tzidw = props.find(XcalTags.tzid);
 
@@ -198,7 +139,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
 
       copy.getProperties().getBasePropertyOrTzid().add(uidw.getJaxbElement());
 
-      if (kind == UidKind) {
+      if (kind == XcalUtil.UidKind) {
         return r;
       }
 
@@ -226,16 +167,16 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return false;
     }
 
-    if (kind == OuterKind) {
+    if (kind == XcalUtil.OuterKind) {
       return true;
     }
 
-    if (kind == TzKind) {
+    if (kind == XcalUtil.TzKind) {
       // Not dealing with that
       return true;
     }
 
-    if (kind == AlarmKind) {
+    if (kind == XcalUtil.AlarmKind) {
       PropWrapper thatw = that.props.find(XcalTags.action);
       PropWrapper thisw = props.find(XcalTags.action);
 
@@ -260,7 +201,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return false;
     }
 
-    if (kind == UidKind) {
+    if (kind == XcalUtil.UidKind) {
       return true;
     }
 
@@ -333,7 +274,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
   @Override
   @SuppressWarnings("unchecked")
   JAXBElement<? extends BaseComponentType> getJaxbElement() {
-    if (kind != OuterKind) {
+    if (kind != XcalUtil.OuterKind) {
       return super.getJaxbElement();
     }
 
@@ -353,7 +294,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
 
     sel.setBaseComponent(getJaxbElement());
 
-    if ((kind == OuterKind) || (kind == TzKind)) {
+    if ((kind == XcalUtil.OuterKind) || (kind == XcalUtil.TzKind)) {
       return sel;
     }
 
@@ -363,7 +304,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     ArrayOfProperties bprops = new ArrayOfProperties();
     bct.setProperties(bprops);
 
-    if (kind == AlarmKind) {
+    if (kind == XcalUtil.AlarmKind) {
       PropWrapper pw = props.find(XcalTags.action);
 
       bprops.getBasePropertyOrTzid().add(pw.getJaxbElement());
@@ -376,7 +317,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     PropWrapper pw = props.find(XcalTags.uid);
     bprops.getBasePropertyOrTzid().add(pw.getJaxbElement());
 
-    if (kind == UidKind) {
+    if (kind == XcalUtil.UidKind) {
       return sel;
     }
 
@@ -415,11 +356,11 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return res;
     }
 
-    if ((kind == OuterKind) || (kind == TzKind)) {
+    if ((kind == XcalUtil.OuterKind) || (kind == XcalUtil.TzKind)) {
       return props.compareTo(o.props);
     }
 
-    if (kind == AlarmKind) {
+    if (kind == XcalUtil.AlarmKind) {
       res = o.props.find(XcalTags.action).compareTo(props.find(XcalTags.action));
       if (res != 0) {
         return res;
@@ -438,7 +379,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return res;
     }
 
-    if (kind == UidKind) {
+    if (kind == XcalUtil.UidKind) {
       return props.compareTo(o.props);
     }
 
@@ -475,10 +416,5 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     sb.append("}");
 
     return sb.toString();
-  }
-
-  private static void addInfo(final QName nm, final Integer kind, final Class cl) {
-    compNames.put(cl, nm);
-    compKinds.put(nm, kind);
   }
 }

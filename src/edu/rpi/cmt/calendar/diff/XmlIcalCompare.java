@@ -19,6 +19,7 @@
 package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.cmt.calendar.XcalUtil.TzGetter;
+import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import org.apache.log4j.Logger;
 import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
@@ -125,10 +126,10 @@ public class XmlIcalCompare {
     VcalendarType ov = oldval.getVcalendar().get(0);
 
     CompWrapper ncw = new CompWrapper(globals,
-                                      CompWrapper.compNames.get(nv.getClass()),
+                                      XcalTags.vcalendar,
                                       nv);
     CompWrapper ocw = new CompWrapper(globals,
-                                      CompWrapper.compNames.get(ov.getClass()),
+                                      XcalTags.vcalendar,
                                       ov);
 
     return ncw.diff(ocw);

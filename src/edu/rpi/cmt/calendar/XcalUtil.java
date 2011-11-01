@@ -30,14 +30,24 @@ import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;
 import ietf.params.xml.ns.icalendar_2.DateDatetimePropertyType;
+import ietf.params.xml.ns.icalendar_2.DaylightType;
 import ietf.params.xml.ns.icalendar_2.IcalendarType;
 import ietf.params.xml.ns.icalendar_2.ObjectFactory;
+import ietf.params.xml.ns.icalendar_2.StandardType;
 import ietf.params.xml.ns.icalendar_2.TzidParamType;
 import ietf.params.xml.ns.icalendar_2.UntilRecurType;
+import ietf.params.xml.ns.icalendar_2.ValarmType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
+import ietf.params.xml.ns.icalendar_2.VeventType;
+import ietf.params.xml.ns.icalendar_2.VfreebusyType;
+import ietf.params.xml.ns.icalendar_2.VjournalType;
+import ietf.params.xml.ns.icalendar_2.VtimezoneType;
+import ietf.params.xml.ns.icalendar_2.VtodoType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeFactory;
@@ -51,6 +61,53 @@ import javax.xml.namespace.QName;
  */
 public class XcalUtil {
   private static final ObjectFactory icalOf = new ObjectFactory();
+  static Map<Class, QName> compNames = new HashMap<Class, QName>();
+
+  public static final Integer OuterKind = 0;
+  public static final Integer RecurringKind = 1;
+  public static final Integer UidKind = 2;
+  public static final Integer AlarmKind = 3;
+  public static final Integer TzKind = 4;
+
+  static Map<QName, Integer> compKinds = new HashMap<QName, Integer>();
+
+  static {
+    // Outer container
+    addInfo(XcalTags.vcalendar,
+            OuterKind,
+            VcalendarType.class);
+
+    // Recurring style uid + optional recurrence id
+    addInfo(XcalTags.vtodo,
+            RecurringKind,
+            VtodoType.class);
+    addInfo(XcalTags.vjournal,
+            RecurringKind,
+            VjournalType.class);
+    addInfo(XcalTags.vevent,
+            RecurringKind,
+            VeventType.class);
+
+    // Uid only
+    addInfo(XcalTags.vfreebusy,
+            UidKind,
+            VfreebusyType.class);
+
+    addInfo(XcalTags.valarm,
+            AlarmKind,
+            ValarmType.class);
+
+    // Timezones
+    addInfo(XcalTags.standard,
+            TzKind,
+            StandardType.class);
+    addInfo(XcalTags.vtimezone,
+            TzKind,
+            VtimezoneType.class);
+    addInfo(XcalTags.daylight,
+            TzKind,
+            DaylightType.class);
+  }
 
   /** Initialize the DateDatetimeProperty
    * @param dt
@@ -428,4 +485,24 @@ public class XcalUtil {
     return null;
   }
 
+  /**
+   * @param cl
+   * @return QName for component
+   */
+  public static QName getCompName(final Class cl) {
+    return compNames.get(cl);
+  }
+
+  /**
+   * @param name
+   * @return component kind
+   */
+  public static int getCompKind(final QName name) {
+    return compKinds.get(name);
+  }
+
+  private static void addInfo(final QName nm, final Integer kind, final Class cl) {
+    compNames.put(cl, nm);
+    compKinds.put(nm, kind);
+  }
 }
