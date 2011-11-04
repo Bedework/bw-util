@@ -155,7 +155,6 @@ public class IcalToXcal {
    * @return icalendar in XML
    * @throws Throwable
    */
-  @SuppressWarnings("unchecked")
   public static IcalendarType fromIcal(final Calendar cal,
                                        final BaseComponentType pattern) throws Throwable {
     return fromIcal(cal, pattern, false);

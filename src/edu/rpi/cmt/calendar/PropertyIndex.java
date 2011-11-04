@@ -1015,6 +1015,14 @@ public class PropertyIndex implements Serializable {
       return immutable;
     }
 
+    /** True if it's a vcalendar property
+     *
+     * @return boolean
+     */
+    public boolean getVcalendarProperty() {
+      return components.vcalendarProperty;
+    }
+
     /** True if it's an event property
      *
      * @return boolean

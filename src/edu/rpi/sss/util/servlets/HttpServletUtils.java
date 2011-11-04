@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,14 +18,15 @@
 */
 package edu.rpi.sss.util.servlets;
 
+import org.apache.log4j.Logger;
+import org.apache.struts.upload.MultipartRequestWrapper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
-import org.apache.struts.upload.MultipartRequestWrapper;
 
 /** Package of small useful methods
  *
@@ -55,7 +56,7 @@ public class HttpServletUtils {
    * @param   request Incoming HttpServletRequest object
    * @return  String  browser type
    */
-  public static String getBrowserType(HttpServletRequest request) {
+  public static String getBrowserType(final HttpServletRequest request) {
     if (request == null) {
       return "default";
     }
@@ -126,7 +127,7 @@ public class HttpServletUtils {
    * @param req
    * @return reconstructed request
    */
-  public static String getReqLine(HttpServletRequest req) {
+  public static String getReqLine(final HttpServletRequest req) {
     StringBuffer ret = new StringBuffer(getUrl(req));
     String query = req.getQueryString();
 
@@ -142,7 +143,7 @@ public class HttpServletUtils {
    *  @param   request     incoming request
    *  @return  String      url from the request
    */
-  public static String getUrl(HttpServletRequest request) {
+  public static String getUrl(final HttpServletRequest request) {
     try {
       if (request instanceof MultipartRequestWrapper) {
         return ((MultipartRequestWrapper)request).getRequest().
@@ -171,7 +172,7 @@ public class HttpServletUtils {
    * @param request
    * @return scheme + host + port
    */
-  public static String getURLshp(HttpServletRequest request) {
+  public static String getURLshp(final HttpServletRequest request) {
     /*
     String url = getUrl(request);
 
@@ -204,7 +205,7 @@ public class HttpServletUtils {
    * @param request
    * @return scheme + host + port + path
    */
-  public static String getURLPrefix(HttpServletRequest request) {
+  public static String getURLPrefix(final HttpServletRequest request) {
     return getURLshp(request) + getContext(request);
   }
 
@@ -217,7 +218,7 @@ public class HttpServletUtils {
    * @param request
    * @return context path
    */
-  public static String getContext(HttpServletRequest request) {
+  public static String getContext(final HttpServletRequest request) {
     String context = request.getContextPath();
     if ((context == null) || (context.equals("."))) {
       context = "";
@@ -231,7 +232,7 @@ public class HttpServletUtils {
    * @param   req    Incoming HttpServletRequest object
    * @return  header values
    */
-  public static String getHeaders(HttpServletRequest req) {
+  public static String getHeaders(final HttpServletRequest req) {
     Enumeration en = req.getHeaderNames();
     StringBuffer sb = new StringBuffer();
 
@@ -250,7 +251,7 @@ public class HttpServletUtils {
    * @param   req    Incoming HttpServletRequest object
    * @param log
    */
-  public static void dumpHeaders(HttpServletRequest req, Logger log) {
+  public static void dumpHeaders(final HttpServletRequest req, final Logger log) {
     Enumeration en = req.getHeaderNames();
     while (en.hasMoreElements()) {
       String name = (String) en.nextElement();
@@ -264,11 +265,12 @@ public class HttpServletUtils {
    * @param req
    * @return Collection of locales or null
    */
-  public static Collection<Locale> getLocales(HttpServletRequest req) {
+  public static Collection<Locale> getLocales(final HttpServletRequest req) {
     if (req.getHeader("Accept-Language") == null) {
       return null;
     }
 
+    @SuppressWarnings("unchecked")
     Enumeration<Locale> lcs = req.getLocales();
     ArrayList<Locale> locales = new ArrayList<Locale>();
     while (lcs.hasMoreElements()) {

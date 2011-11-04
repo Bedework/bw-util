@@ -753,6 +753,7 @@ public class Options implements OptionsI {
     return singleRes;
   }
 
+  @SuppressWarnings("unchecked")
   private static void appendResult(final Object res, final ArrayList<Object> multiRes) {
     if (res instanceof Collection) {
       multiRes.addAll((Collection<? extends Object>)res);

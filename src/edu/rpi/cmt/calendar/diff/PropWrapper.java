@@ -161,6 +161,9 @@ class PropWrapper extends BaseEntityWrapper<PropWrapper,
     if (getEntity() instanceof RecurrenceIdPropType) {
       /* Special case this one as the calculated UTC is what matters.
        */
+      if (!(o.getEntity() instanceof RecurrenceIdPropType)) {
+        return getName().getLocalPart().compareTo(o.getName().getLocalPart());
+      }
 
       RecurrenceIdPropType thatRid = (RecurrenceIdPropType)o.getEntity();
       RecurrenceIdPropType thisRid = (RecurrenceIdPropType)getEntity();

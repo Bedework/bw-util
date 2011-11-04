@@ -29,6 +29,7 @@ import net.fortuna.ical4j.model.TimeZoneRegistry;
 import org.apache.log4j.Logger;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
+import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
 import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.AttachPropType;
@@ -112,6 +113,27 @@ public class WsXMLTranslator {
     processVcalendar(vcts.get(0), bs);
 
     return bs.getCalendar();
+  }
+
+  /**
+   * @param comp
+   * @return Calendar object or null for no data
+   * @throws Throwable
+   */
+  public Calendar fromXcomp(final JAXBElement<? extends BaseComponentType> comp) throws Throwable {
+    IcalendarType ical = new IcalendarType();
+
+    List<VcalendarType> vcts = ical.getVcalendar();
+
+    VcalendarType vcal = new VcalendarType();
+    vcts.add(vcal);
+
+    ArrayOfComponents aop = new ArrayOfComponents();
+
+    vcal.setComponents(aop);
+    aop.getBaseComponent().add(comp);
+
+    return fromXcal(ical);
   }
 
   private void processVcalendar(final VcalendarType vcal,
@@ -221,31 +243,31 @@ public class WsXMLTranslator {
     }
 
      */
-    addRecurEl(rels, "freq", r.getFreq());
+    addRecurEl(rels, "FREQ", r.getFreq());
 
     if (r.getUntil() != null) {
       UntilRecurType until = r.getUntil();
       if (until.getDate() != null) {
-        rels.add("until=" + until.getDate());
+        rels.add("UNTIL=" + until.getDate());
       } else {
-        rels.add("until=" + until.getDateTime());
+        rels.add("UNTIL=" + until.getDateTime());
       }
     }
 
-    addRecurEl(rels, "count", r.getCount());
-    addRecurEl(rels, "interval", r.getInterval());
-    addRecurEl(rels, "bysecond", r.getBysecond());
-    addRecurEl(rels, "byminute", r.getByminute());
-    addRecurEl(rels, "byhour", r.getByhour());
-    addRecurEl(rels, "byday", r.getByday());
-    addRecurEl(rels, "bymonthday", r.getBymonthday());
-    addRecurEl(rels, "byyearday", r.getByyearday());
-    addRecurEl(rels, "byweekno", r.getByweekno());
-    addRecurEl(rels, "bymonth", r.getBymonth());
-    addRecurEl(rels, "bysetpos", r.getBysetpos());
-    addRecurEl(rels, "wkst", r.getWkst());
+    addRecurEl(rels, "COUNT", r.getCount());
+    addRecurEl(rels, "INTERVAL", r.getInterval());
+    addRecurEl(rels, "BYSECOND", r.getBysecond());
+    addRecurEl(rels, "BYMINUTE", r.getByminute());
+    addRecurEl(rels, "BYHOUR", r.getByhour());
+    addRecurEl(rels, "BYDAY", r.getByday());
+    addRecurEl(rels, "BYMONTHDAY", r.getBymonthday());
+    addRecurEl(rels, "BYYEARDAY", r.getByyearday());
+    addRecurEl(rels, "BYWEEKNO", r.getByweekno());
+    addRecurEl(rels, "BYMONTH", r.getBymonth());
+    addRecurEl(rels, "BYSETPOS", r.getBysetpos());
+    addRecurEl(rels, "WKST", r.getWkst());
 
-    return fromList(rels, false);
+    return fromList(rels, false, ";");
   }
 
   private boolean processValue(final BasePropertyType prop,
@@ -449,6 +471,9 @@ public class WsXMLTranslator {
 
     if (o instanceof List) {
       val = fromList((List<?>)o, false);
+      if (val == null) {
+        return;
+      }
     } else {
       val = String.valueOf(o);
     }
@@ -490,6 +515,16 @@ public class WsXMLTranslator {
   }
 
   private String fromList(final List<?> l, final boolean quote) {
+    return fromList(l, quote, ",");
+  }
+
+  private String fromList(final List<?> l,
+                          final boolean quote,
+                          final String delimChar) {
+    if ((l == null) || l.isEmpty()) {
+      return null;
+    }
+
     StringBuilder sb = new StringBuilder();
     String delim = "";
     String qt = "";
@@ -500,7 +535,7 @@ public class WsXMLTranslator {
 
     for (Object o: l) {
       sb.append(delim);
-      delim = ",";
+      delim = delimChar;
       sb.append(qt);
       sb.append(o);
       sb.append(qt);
