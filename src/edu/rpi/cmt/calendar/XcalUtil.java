@@ -350,6 +350,33 @@ public class XcalUtil {
   }
 
   /**
+   * @param comp
+   * @return cloned empty component
+   * @throws Throwable for illegal access exception
+   */
+  public static BaseComponentType cloneComponent(final BaseComponentType comp) throws Throwable {
+    return comp.getClass().newInstance();
+  }
+
+  /**
+   * @param prop
+   * @return cloned empty property
+   * @throws Throwable for illegal access exception
+   */
+  public static BasePropertyType cloneProperty(final BasePropertyType prop) throws Throwable {
+    return prop.getClass().newInstance();
+  }
+
+  /**
+   * @param param
+   * @return cloned empty parameter
+   * @throws Throwable for illegal access exception
+   */
+  public static BaseParameterType cloneProperty(final BaseParameterType param) throws Throwable {
+    return param.getClass().newInstance();
+  }
+
+  /**
    * @param ical
    * @param name
    * @return null or first matching component
