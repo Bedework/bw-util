@@ -24,7 +24,9 @@ import edu.rpi.cmt.calendar.XmlCalendarBuilder.BuildState;
 import edu.rpi.cmt.calendar.XmlCalendarBuilder.ContentHandlerImpl;
 
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.parameter.Value;
 
 import org.apache.log4j.Logger;
 
@@ -352,6 +354,11 @@ public class WsXMLTranslator {
 
     if (prop instanceof DateDatetimePropertyType) {
       XcalUtil.DtTzid dtTzid = XcalUtil.getDtTzid((DateDatetimePropertyType)prop);
+
+      if (dtTzid.dateOnly) {
+        bs.getContentHandler().parameter(Parameter.VALUE,
+                                         Value.DATE.getValue());
+      }
 
       propVal(bs, dtTzid.dt);
 

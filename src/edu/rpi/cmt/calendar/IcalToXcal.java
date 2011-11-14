@@ -743,9 +743,6 @@ public class IcalToXcal {
       return;
     }
 
-    prop.setParameters(new ArrayOfParameters());
-    List<JAXBElement<? extends BaseParameterType>> pl = prop.getParameters().getBaseParameter();
-
     Iterator it = icparams.iterator();
 
     while (it.hasNext()) {
@@ -761,7 +758,11 @@ public class IcalToXcal {
           doParameter(param, pii);
 
       if (xmlprop != null) {
-        pl.add(xmlprop);
+        if (prop.getParameters() == null) {
+          prop.setParameters(new ArrayOfParameters());
+        }
+
+        prop.getParameters().getBaseParameter().add(xmlprop);
       }
     }
   }
