@@ -75,6 +75,10 @@ public class ToString {
     return this;
   }
 
+  public ToString append(final String name, final boolean value) {
+    return append(name, String.valueOf(value));
+  }
+
   public ToString append(final String name, final int value) {
     return append(name, String.valueOf(value));
   }
