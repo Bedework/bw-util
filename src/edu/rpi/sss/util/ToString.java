@@ -18,6 +18,8 @@
 */
 package edu.rpi.sss.util;
 
+import java.util.List;
+
 
 /** Help with ToString. And yes I know there's an APache Commons one but I want
  * easier formatting and this is trivial.
@@ -49,7 +51,7 @@ public class ToString {
 
   public ToString delimit() {
     sb.append(delim);
-    delim = "";
+    delim = ", ";
     if (sb.length() > maxLen) {
       sb.append(",");
       sb.append(indent);
@@ -71,6 +73,25 @@ public class ToString {
     sb.append(name);
     sb.append("=");
     sb.append(value);
+
+    return this;
+  }
+
+  public ToString append(final String name, final List value) {
+    delimit();
+    sb.append(name);
+    sb.append("=[");
+
+    String saveDelim = delim;
+    delim= "";
+
+    for (Object o: value) {
+      delimit();
+      sb.append(o);
+    }
+    sb.append("]");
+
+    delim = saveDelim;
 
     return this;
   }
