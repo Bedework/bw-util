@@ -173,25 +173,24 @@ public class HttpServletUtils {
    * @return scheme + host + port
    */
   public static String getURLshp(final HttpServletRequest request) {
-    /*
-    String url = getUrl(request);
-
-    int pos = url.indexOf(request.getContextPath());
-
-    if (pos < 0) {
-      // Guess we just have to presume there is no context path
-      return url;
-    }
-
-    return url.substring(0, pos);
-    */
-
-    StringBuffer sb = new StringBuffer(request.getScheme());
+    String scheme = request.getScheme();
+    StringBuilder sb = new StringBuilder(scheme);
 
     sb.append("://");
     sb.append(request.getServerName());
+
+    int port = request.getServerPort();
+
+    if ("http".equalsIgnoreCase(scheme) && (port == 80)) {
+      return sb.toString();
+    }
+
+    if ("https".equalsIgnoreCase(scheme) && (port == 443)) {
+      return sb.toString();
+    }
+
     sb.append(":");
-    sb.append(request.getServerPort());
+    sb.append(port);
 
     return sb.toString();
   }
