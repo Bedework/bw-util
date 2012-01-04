@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -61,6 +61,10 @@ public class CalWSTags {
   public static final QName notCalendarData = new QName(namespace, "not-calendar-data");
 
   /**   */
+  public static final QName supportedCalendarComponentSet = new QName(namespace,
+                                                                      "supportedCalendarComponentSet");
+
+  /**   */
   public static final QName targetExists = new QName(namespace, "target-exists");
 
   /**   */
@@ -73,5 +77,6 @@ public class CalWSTags {
   public static final QName uidConflict = new QName(namespace, "uid-conflict");
 
   /**   */
-  public static final QName unsupportedCalendarComponent = new QName(namespace, "unsupported-calendar-component");
+  public static final QName unsupportedCalendarComponent = new QName(namespace,
+                                                                     "unsupported-calendar-component");
 }
