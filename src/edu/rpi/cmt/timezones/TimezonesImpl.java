@@ -28,10 +28,13 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.util.TimeZones;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import ietf.params.xml.ns.timezone_service.ObjectFactory;
@@ -559,7 +562,9 @@ public class TimezonesImpl extends Timezones {
 
     private static JAXBContext jc;
 
-    private GetMethod getter;
+    private HttpGet getter;
+    int status;
+    HttpResponse response;
 
     TzServer(final String uri) {
       tzserverUri = uri;
@@ -570,7 +575,7 @@ public class TimezonesImpl extends Timezones {
       try {
         doCall("action=get&tzid=" + id, etag);
 
-        int status = getter.getStatusCode();
+        int status = response.getStatusLine().getStatusCode();
 
         if (status == HttpServletResponse.SC_NO_CONTENT) {
           return new TaggedTimeZone(etag);
@@ -580,8 +585,8 @@ public class TimezonesImpl extends Timezones {
           return null;
         }
 
-        return new TaggedTimeZone(getter.getResponseHeader("Etag").getValue(),
-                                  getter.getResponseBodyAsString());
+        return new TaggedTimeZone(response.getFirstHeader("Etag").getValue(),
+                                  EntityUtils.toString(response.getEntity()));
       } catch (TimezonesException cfe) {
         throw cfe;
       } catch (Throwable t) {
@@ -615,12 +620,11 @@ public class TimezonesImpl extends Timezones {
     }
 
     public JAXBElement getXml(final String req) throws TimezonesException {
+      InputStream is = null;
       try {
-        InputStream is = callForStream(req);
+        is = callForStream(req);
 
-        int status = getter.getStatusCode();
-
-        if (status != HttpServletResponse.SC_OK) {
+        if ((is == null) || (status != HttpServletResponse.SC_OK)) {
           return null;
         }
 
@@ -640,6 +644,12 @@ public class TimezonesImpl extends Timezones {
         throw cfe;
       } catch (Throwable t) {
         throw new TimezonesException(t);
+      } finally {
+        if (is != null) {
+          try {
+            is.close();
+          } catch (Throwable t) {}
+        }
       }
     }
 
@@ -647,7 +657,13 @@ public class TimezonesImpl extends Timezones {
       try {
         doCall(req, null);
 
-        return getter.getResponseBodyAsStream();
+        if (status != HttpServletResponse.SC_OK) {
+          return null;
+        }
+
+        HttpEntity ent = response.getEntity();
+
+        return ent.getContent();
       } catch (TimezonesException cfe) {
         throw cfe;
       } catch (Throwable t) {
@@ -657,36 +673,41 @@ public class TimezonesImpl extends Timezones {
 
     public void close() throws TimezonesException {
       try {
-        if (getter == null) {
+        if (response == null) {
           return;
         }
 
-        getter.releaseConnection();
+        HttpEntity ent = response.getEntity();
+
+        if (ent != null) {
+          InputStream is = ent.getContent();
+          is.close();
+        }
+
         getter = null;
+        response = null;
       } catch (Throwable t) {
         throw new TimezonesException(t);
       }
     }
 
     private void doCall(final String req,
-                        final String etag) throws TimezonesException {
+                                final String etag) throws TimezonesException {
       try {
         if (tzserverUri == null) {
           throw new TimezonesException("No timezones server URI defined");
         }
 
-        HttpClient client = new HttpClient();
+        HttpClient client = new DefaultHttpClient();
 
-        getter = new GetMethod(tzserverUri + "?" + req);
+        getter = new HttpGet(tzserverUri + "?" + req);
 
         if (etag != null) {
-          getter.setRequestHeader("If-None-Match", etag);
+          getter.addHeader(new BasicHeader("If-None-Match", etag));
         }
 
-        client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                                        new DefaultHttpMethodRetryHandler());
-
-        client.executeMethod(getter);
+        response = client.execute(getter);
+        status = response.getStatusLine().getStatusCode();
       } catch (TimezonesException cfe) {
         throw cfe;
       } catch (UnknownHostException uhe) {
