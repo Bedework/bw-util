@@ -317,6 +317,9 @@ public class WebdavTags {
   public static final QName syncResponse = makeQName("sync-response");
 
   /** */
+  public static final QName synclevel = makeQName("sync-level");
+
+  /** */
   public static final QName syncToken = makeQName("sync-token");
 
   /** */
