@@ -34,6 +34,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
@@ -43,6 +44,7 @@ import ietf.params.xml.ns.timezone_service.TimezoneListType;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -692,7 +694,7 @@ public class TimezonesImpl extends Timezones {
     }
 
     private void doCall(final String req,
-                                final String etag) throws TimezonesException {
+                        final String etag) throws TimezonesException {
       try {
         if (tzserverUri == null) {
           throw new TimezonesException("No timezones server URI defined");
@@ -700,7 +702,8 @@ public class TimezonesImpl extends Timezones {
 
         HttpClient client = new DefaultHttpClient();
 
-        getter = new HttpGet(tzserverUri + "?" + req);
+        getter = new HttpGet(URLEncoder.encode(tzserverUri + "?" + req,
+                                               HTTP.DEFAULT_CONTENT_CHARSET));
 
         if (etag != null) {
           getter.addHeader(new BasicHeader("If-None-Match", etag));
