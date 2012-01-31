@@ -575,7 +575,9 @@ public class TimezonesImpl extends Timezones {
     public TaggedTimeZone getTz(final String id,
                                 final String etag) throws TimezonesException {
       try {
-        doCall("action=get&tzid=" + id, etag);
+        doCall("action=get&tzid=" +
+            URLEncoder.encode(id,
+                              HTTP.DEFAULT_CONTENT_CHARSET), etag);
 
         int status = response.getStatusLine().getStatusCode();
 
@@ -702,8 +704,7 @@ public class TimezonesImpl extends Timezones {
 
         HttpClient client = new DefaultHttpClient();
 
-        getter = new HttpGet(URLEncoder.encode(tzserverUri + "?" + req,
-                                               HTTP.DEFAULT_CONTENT_CHARSET));
+        getter = new HttpGet(tzserverUri + "?" + req);
 
         if (etag != null) {
           getter.addHeader(new BasicHeader("If-None-Match", etag));
