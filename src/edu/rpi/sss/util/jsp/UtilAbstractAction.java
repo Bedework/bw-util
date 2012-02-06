@@ -385,10 +385,19 @@ public abstract class UtilAbstractAction extends Action
     return (mapping.findForward(forward));
   }
 
+  private static Logger confLog =
+      Logger.getLogger(UtilAbstractAction.class.getName() + ".traceConfig");
+
   protected void traceConfig(final Request req) {
+
+
+    if (!confLog.isDebugEnabled()) {
+      return;
+    }
+
     ActionConfig[] actions = req.getMapping().getModuleConfig().findActionConfigs();
 
-    getLogger().debug("========== Action configs ===========");
+    confLog.debug("========== Action configs ===========");
 
     for (ActionConfig aconfig: actions) {
       StringBuilder sb = new StringBuilder();
@@ -406,10 +415,10 @@ public abstract class UtilAbstractAction extends Action
       traceConfigParam(sb, refreshIntervalKey, param, req.getForm());
       traceConfigParam(sb, refreshActionKey, param, req.getForm());
 
-      getLogger().debug(sb.toString());
+      confLog.debug(sb.toString());
 
       if (noActionType) {
-        getLogger().debug("***** Warning: no action type specified ****");
+        confLog.debug("***** Warning: no action type specified ****");
       }
     }
   }
