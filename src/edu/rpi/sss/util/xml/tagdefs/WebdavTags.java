@@ -250,6 +250,9 @@ public class WebdavTags {
   public static final QName _protected = makeQName("protected");
 
   /** */
+  public static final QName quotaNotExceeded = makeQName("quota-not-exceeded");
+
+  /** */
   public static final QName read = makeQName("read");
 
   /** */

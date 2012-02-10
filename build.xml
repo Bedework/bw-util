@@ -45,7 +45,7 @@
     <getJar name="derby" version="10.5.3.0" />
     <getJar name="derbynet" version="10.5.3.0" />
     <getJar name="fop" />
-    <getJar name="hibernate" version="3.3.1.ga" />
+    <getJar name="hibernate" version="3.6.9.Final" />
   	<getJar name="httpclient" version="4.1.2" />
   	<getJar name="httpcore" version="4.1.2" />
     <getJar name="h2" version="1.2.130" />

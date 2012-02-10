@@ -20,8 +20,9 @@
 package edu.rpi.cmt.db.hibernate;
 
 import org.hibernate.HibernateException;
-import org.hibernate.type.NullableType;
-import org.hibernate.type.TypeFactory;
+import org.hibernate.type.AbstractSingleColumnStandardBasicType;
+import org.hibernate.type.AbstractStandardBasicType;
+import org.hibernate.type.TypeResolver;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -32,21 +33,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-/** http://community.jboss.org/wiki/Java5EnumUserType
+/**
+ * Look here for more info on design.
+ * http://community.jboss.org/wiki/Java5EnumUserType
+ * modify to use AbstractStandardBasicType instead.
+ * @author Chun ping Wang.
  *
- * @author Anthony Patricio
  */
-public class GenericEnumUserType implements UserType, ParameterizedType {
+public class GenericEnumUserType  implements UserType, ParameterizedType {
   private static final String DEFAULT_IDENTIFIER_METHOD_NAME = "name";
   private static final String DEFAULT_VALUE_OF_METHOD_NAME = "valueOf";
 
+  @SuppressWarnings("rawtypes")
   private Class<? extends Enum> enumClass;
   private Class<?> identifierType;
   private Method identifierMethod;
   private Method valueOfMethod;
-  private NullableType type;
+  private AbstractStandardBasicType<? extends Object> type;
   private int[] sqlTypes;
 
+  @Override
+  @SuppressWarnings({ "unchecked"})
   public void setParameterValues(final Properties parameters) {
     String enumClassName = parameters.getProperty("enumClassname");
     try {
@@ -64,13 +71,13 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
       throw new HibernateException("Failed to obtain identifier method", e);
     }
 
-    type = (NullableType) TypeFactory.basic(identifierType.getName());
+    type = (AbstractSingleColumnStandardBasicType<? extends Object>) new TypeResolver().heuristicType(identifierType.getName(), parameters);
 
     if (type == null) {
       throw new HibernateException("Unsupported identifier type " + identifierType.getName());
     }
 
-    sqlTypes = new int[] { type.sqlType() };
+    sqlTypes = new int[] { ((AbstractSingleColumnStandardBasicType<?>)type).sqlType() };
 
     String valueOfMethodName = parameters.getProperty("valueOfMethod", DEFAULT_VALUE_OF_METHOD_NAME);
 
@@ -81,12 +88,15 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
     }
   }
 
-  public Class returnedClass() {
+  @Override
+  @SuppressWarnings("rawtypes")
+  public Class<? extends Enum> returnedClass() {
     return enumClass;
   }
 
+  @Override
   public Object nullSafeGet(final ResultSet rs, final String[] names, final Object owner) throws HibernateException, SQLException {
-    Object identifier = type.get(rs, names[0]);
+    Object identifier = type.get(rs, names[0], null);
     if (rs.wasNull()) {
       return null;
     }
@@ -99,13 +109,14 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
     }
   }
 
+  @Override
   public void nullSafeSet(final PreparedStatement st, final Object value, final int index) throws HibernateException, SQLException {
     try {
       if (value == null) {
-        st.setNull(index, type.sqlType());
+        st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());
       } else {
         Object identifier = identifierMethod.invoke(value, new Object[0]);
-        type.set(st, identifier, index);
+        type.nullSafeSet(st, identifier, index, null);
       }
     } catch (Exception e) {
       throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +
@@ -113,34 +124,42 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
     }
   }
 
+  @Override
   public int[] sqlTypes() {
     return sqlTypes;
   }
 
+  @Override
   public Object assemble(final Serializable cached, final Object owner) throws HibernateException {
     return cached;
   }
 
+  @Override
   public Object deepCopy(final Object value) throws HibernateException {
     return value;
   }
 
+  @Override
   public Serializable disassemble(final Object value) throws HibernateException {
     return (Serializable) value;
   }
 
+  @Override
   public boolean equals(final Object x, final Object y) throws HibernateException {
     return x == y;
   }
 
+  @Override
   public int hashCode(final Object x) throws HibernateException {
     return x.hashCode();
   }
 
+  @Override
   public boolean isMutable() {
     return false;
   }
 
+  @Override
   public Object replace(final Object original, final Object target, final Object owner) throws HibernateException {
     return original;
   }
