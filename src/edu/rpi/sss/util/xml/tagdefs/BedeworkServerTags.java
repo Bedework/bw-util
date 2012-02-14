@@ -34,10 +34,6 @@ public class BedeworkServerTags {
                                                 "isTopicalArea");
 
   /**   */
-  public static final QName systemIndexingOn = new QName(bedeworkCaldavNamespace,
-                                                         "systemIndexingOn");
-
-  /**   */
   public static final QName defaultFBPeriod = new QName(bedeworkCaldavNamespace,
                                                          "defaultFBPeriod");
 
