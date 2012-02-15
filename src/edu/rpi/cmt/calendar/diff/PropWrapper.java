@@ -20,9 +20,9 @@ package edu.rpi.cmt.calendar.diff;
 
 import edu.rpi.cmt.calendar.XcalUtil;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.ParametersSelectionType;
-import org.oasis_open.docs.ns.wscal.calws_soap.PropertyReferenceType;
-import org.oasis_open.docs.ns.wscal.calws_soap.PropertySelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ParametersSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.PropertyReferenceType;
+import org.oasis_open.docs.ws_calendar.ns.soap.PropertySelectionType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import ietf.params.xml.ns.icalendar_2.BasePropertyType;

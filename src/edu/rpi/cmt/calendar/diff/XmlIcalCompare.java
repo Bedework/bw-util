@@ -22,8 +22,8 @@ import edu.rpi.cmt.calendar.XcalUtil.TzGetter;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import org.apache.log4j.Logger;
-import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ObjectFactory;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ObjectFactory;
 
 import ietf.params.xml.ns.icalendar_2.CreatedPropType;
 import ietf.params.xml.ns.icalendar_2.DtstampPropType;

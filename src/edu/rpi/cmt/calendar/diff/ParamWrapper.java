@@ -18,8 +18,8 @@
 */
 package edu.rpi.cmt.calendar.diff;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.ParameterReferenceType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ParameterSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ParameterReferenceType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ParameterSelectionType;
 
 import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 

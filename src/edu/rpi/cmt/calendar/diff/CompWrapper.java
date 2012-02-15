@@ -22,10 +22,10 @@ import edu.rpi.cmt.calendar.XcalUtil;
 import edu.rpi.cmt.calendar.diff.XmlIcalCompare.Globals;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
-import org.oasis_open.docs.ns.wscal.calws_soap.ComponentReferenceType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ComponentSelectionType;
-import org.oasis_open.docs.ns.wscal.calws_soap.ComponentsSelectionType;
-import org.oasis_open.docs.ns.wscal.calws_soap.PropertiesSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentReferenceType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentsSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.PropertiesSelectionType;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
