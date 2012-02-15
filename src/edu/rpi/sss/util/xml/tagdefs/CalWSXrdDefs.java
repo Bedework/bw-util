@@ -19,7 +19,7 @@
 package edu.rpi.sss.util.xml.tagdefs;
 
 
-/** Define CalWS xrd link reltypes and property types for XMlEmit.
+/** Define CalWS-REST xrd link reltypes and property types for XMlEmit.
  *
  * @see "http://docs.oasis-open.org/xri/xrd/v1.0/xrd-1.0.html"
  *
@@ -27,7 +27,7 @@ package edu.rpi.sss.util.xml.tagdefs;
  */
 public class CalWSXrdDefs {
   /** */
-  public static final String namespace = "http://docs.oasis-open.org/ns/wscal/calws";
+  public static final String namespace = "http://docs.oasis-open.org/ws-calendar/ns/rest";
 
   /* ====================================================================
    *                   Property types
