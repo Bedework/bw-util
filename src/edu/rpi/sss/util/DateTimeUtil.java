@@ -117,7 +117,7 @@ public class DateTimeUtil {
   public static String isoDate(final Date val) {
     synchronized (isoDateFormat) {
       try {
-        isoDateTimeTZFormat.setTimeZone(Timezones.getDefaultTz());
+        isoDateFormat.setTimeZone(Timezones.getDefaultTz());
       } catch (TimezonesException tze) {
         throw new RuntimeException(tze);
       }
