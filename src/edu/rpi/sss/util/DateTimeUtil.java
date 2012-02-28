@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,9 @@
     under the License.
 */
 package edu.rpi.sss.util;
+
+import edu.rpi.cmt.timezones.Timezones;
+import edu.rpi.cmt.timezones.Timezones.TimezonesException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -88,7 +91,7 @@ public class DateTimeUtil {
     /**
      * @param msg
      */
-    public BadDateException(String msg) {
+    public BadDateException(final String msg) {
       super(msg);
     }
   }
@@ -111,8 +114,13 @@ public class DateTimeUtil {
    * @param val date
    * @return String "yyyyMMdd"
    */
-  public static String isoDate(Date val) {
+  public static String isoDate(final Date val) {
     synchronized (isoDateFormat) {
+      try {
+        isoDateTimeTZFormat.setTimeZone(Timezones.getDefaultTz());
+      } catch (TimezonesException tze) {
+        throw new RuntimeException(tze);
+      }
       return isoDateFormat.format(val);
     }
   }
@@ -130,7 +138,7 @@ public class DateTimeUtil {
    * @param val date
    * @return String "yyyy-MM-dd"
    */
-  public static String rfcDate(Date val) {
+  public static String rfcDate(final Date val) {
     synchronized (rfcDateFormat) {
       return rfcDateFormat.format(val);
     }
@@ -149,8 +157,13 @@ public class DateTimeUtil {
    * @param val date
    * @return String "yyyyMMddTHHmmss"
    */
-  public static String isoDateTime(Date val) {
+  public static String isoDateTime(final Date val) {
     synchronized (isoDateTimeFormat) {
+      try {
+        isoDateTimeTZFormat.setTimeZone(Timezones.getDefaultTz());
+      } catch (TimezonesException tze) {
+        throw new RuntimeException(tze);
+      }
       return isoDateTimeFormat.format(val);
     }
   }
@@ -169,7 +182,7 @@ public class DateTimeUtil {
    * @param tz TimeZone
    * @return String "yyyyMMddTHHmmss"
    */
-  public static String isoDateTime(Date val, TimeZone tz) {
+  public static String isoDateTime(final Date val, final TimeZone tz) {
     synchronized (isoDateTimeTZFormat) {
       isoDateTimeTZFormat.setTimeZone(tz);
       return isoDateTimeTZFormat.format(val);
@@ -181,8 +194,13 @@ public class DateTimeUtil {
    * @param val date
    * @return String "yyyy-MM-ddTHH:mm:ss"
    */
-  public static String rfcDateTime(Date val) {
+  public static String rfcDateTime(final Date val) {
     synchronized (rfcDateTimeFormat) {
+      try {
+        rfcDateTimeFormat.setTimeZone(Timezones.getDefaultTz());
+      } catch (TimezonesException tze) {
+        throw new RuntimeException(tze);
+      }
       return rfcDateTimeFormat.format(val);
     }
   }
@@ -201,7 +219,7 @@ public class DateTimeUtil {
    * @param tz TimeZone
    * @return String "yyyy-MM-ddTHH:mm:ss"
    */
-  public static String rfcDateTime(Date val, TimeZone tz) {
+  public static String rfcDateTime(final Date val, final TimeZone tz) {
     synchronized (rfcDateTimeTZFormat) {
       rfcDateTimeTZFormat.setTimeZone(tz);
       return rfcDateTimeTZFormat.format(val);
@@ -213,7 +231,7 @@ public class DateTimeUtil {
    * @param val date
    * @return String "yyyyMMddTHHmmssZ"
    */
-  public static String isoDateTimeUTC(Date val) {
+  public static String isoDateTimeUTC(final Date val) {
     synchronized (isoDateTimeUTCFormat) {
       return isoDateTimeUTCFormat.format(val);
     }
@@ -224,7 +242,7 @@ public class DateTimeUtil {
    * @param val date
    * @return String "yyyy-MM-ddTHH:mm:ssZ"
    */
-  public static String rfcDateTimeUTC(Date val) {
+  public static String rfcDateTimeUTC(final Date val) {
     synchronized (rfcDateTimeUTCFormat) {
       return rfcDateTimeUTCFormat.format(val);
     }
@@ -235,7 +253,7 @@ public class DateTimeUtil {
    * @param val date
    * @return String "???"
    */
-  public static String rfc822Date(Date val) {
+  public static String rfc822Date(final Date val) {
     synchronized (rfc822GMTFormat) {
       return rfc822GMTFormat.format(val);
     }
@@ -247,7 +265,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromISODate(String val) throws BadDateException {
+  public static Date fromISODate(final String val) throws BadDateException {
     try {
       synchronized (isoDateFormat) {
         return isoDateFormat.parse(val);
@@ -263,7 +281,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromRfcDate(String val) throws BadDateException {
+  public static Date fromRfcDate(final String val) throws BadDateException {
     try {
       synchronized (rfcDateFormat) {
         return rfcDateFormat.parse(val);
@@ -279,7 +297,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromISODateTime(String val) throws BadDateException {
+  public static Date fromISODateTime(final String val) throws BadDateException {
     try {
       synchronized (isoDateTimeFormat) {
         return isoDateTimeFormat.parse(val);
@@ -295,7 +313,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromRfcDateTime(String val) throws BadDateException {
+  public static Date fromRfcDateTime(final String val) throws BadDateException {
     try {
       synchronized (rfcDateTimeFormat) {
         return rfcDateTimeFormat.parse(val);
@@ -312,8 +330,8 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromISODateTime(String val,
-                                     TimeZone tz) throws BadDateException {
+  public static Date fromISODateTime(final String val,
+                                     final TimeZone tz) throws BadDateException {
     try {
       synchronized (isoDateTimeTZFormat) {
         isoDateTimeTZFormat.setTimeZone(tz);
@@ -331,8 +349,8 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromRfcDateTime(String val,
-                                     TimeZone tz) throws BadDateException {
+  public static Date fromRfcDateTime(final String val,
+                                     final TimeZone tz) throws BadDateException {
     try {
       synchronized (rfcDateTimeTZFormat) {
         rfcDateTimeTZFormat.setTimeZone(tz);
@@ -350,8 +368,8 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromISODateTimeUTC(String val,
-                                        TimeZone tz) throws BadDateException {
+  public static Date fromISODateTimeUTC(final String val,
+                                        final TimeZone tz) throws BadDateException {
     try {
       synchronized (isoDateTimeUTCTZFormat) {
         isoDateTimeUTCTZFormat.setTimeZone(tz);
@@ -368,7 +386,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromISODateTimeUTC(String val) throws BadDateException {
+  public static Date fromISODateTimeUTC(final String val) throws BadDateException {
     try {
       synchronized (isoDateTimeUTCFormat) {
         return isoDateTimeUTCFormat.parse(val);
@@ -384,7 +402,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromRfcDateTimeUTC(String val) throws BadDateException {
+  public static Date fromRfcDateTimeUTC(final String val) throws BadDateException {
     try {
       synchronized (rfcDateTimeUTCFormat) {
         return rfcDateTimeUTCFormat.parse(val);
@@ -400,7 +418,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static String fromISODateTimeUTCtoRfc822(String val) throws BadDateException {
+  public static String fromISODateTimeUTCtoRfc822(final String val) throws BadDateException {
     try {
       synchronized (isoDateTimeUTCFormat) {
         return rfc822Date(isoDateTimeUTCFormat.parse(val));
@@ -416,7 +434,7 @@ public class DateTimeUtil {
    * @return boolean
    * @throws BadDateException
    */
-  public static boolean isISODate(String val) throws BadDateException {
+  public static boolean isISODate(final String val) throws BadDateException {
     try {
       if (val.length() != 8) {
         return false;
@@ -434,7 +452,7 @@ public class DateTimeUtil {
    * @return boolean
    * @throws BadDateException
    */
-  public static boolean isISODateTimeUTC(String val) throws BadDateException {
+  public static boolean isISODateTimeUTC(final String val) throws BadDateException {
     try {
       if (val.length() != 16) {
         return false;
@@ -452,7 +470,7 @@ public class DateTimeUtil {
    * @return boolean
    * @throws BadDateException
    */
-  public static boolean isISODateTime(String val) throws BadDateException {
+  public static boolean isISODateTime(final String val) throws BadDateException {
     try {
       if (val.length() != 15) {
         return false;
@@ -470,7 +488,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromDate(String dt) throws BadDateException {
+  public static Date fromDate(final String dt) throws BadDateException {
     try {
       if (dt == null) {
         return null;
@@ -496,7 +514,7 @@ public class DateTimeUtil {
    * @return Date
    * @throws BadDateException
    */
-  public static Date fromDateTime(String dt) throws BadDateException {
+  public static Date fromDateTime(final String dt) throws BadDateException {
     try {
       if (dt == null) {
         return null;
