@@ -140,6 +140,11 @@ public class DateTimeUtil {
    */
   public static String rfcDate(final Date val) {
     synchronized (rfcDateFormat) {
+      try {
+        rfcDateFormat.setTimeZone(Timezones.getDefaultTz());
+      } catch (TimezonesException tze) {
+        throw new RuntimeException(tze);
+      }
       return rfcDateFormat.format(val);
     }
   }
@@ -268,6 +273,11 @@ public class DateTimeUtil {
   public static Date fromISODate(final String val) throws BadDateException {
     try {
       synchronized (isoDateFormat) {
+        try {
+          isoDateFormat.setTimeZone(Timezones.getDefaultTz());
+        } catch (TimezonesException tze) {
+          throw new RuntimeException(tze);
+        }
         return isoDateFormat.parse(val);
       }
     } catch (Throwable t) {
@@ -284,6 +294,11 @@ public class DateTimeUtil {
   public static Date fromRfcDate(final String val) throws BadDateException {
     try {
       synchronized (rfcDateFormat) {
+        try {
+          rfcDateFormat.setTimeZone(Timezones.getDefaultTz());
+        } catch (TimezonesException tze) {
+          throw new RuntimeException(tze);
+        }
         return rfcDateFormat.parse(val);
       }
     } catch (Throwable t) {
@@ -300,6 +315,11 @@ public class DateTimeUtil {
   public static Date fromISODateTime(final String val) throws BadDateException {
     try {
       synchronized (isoDateTimeFormat) {
+        try {
+          isoDateTimeFormat.setTimeZone(Timezones.getDefaultTz());
+        } catch (TimezonesException tze) {
+          throw new RuntimeException(tze);
+        }
         return isoDateTimeFormat.parse(val);
       }
     } catch (Throwable t) {
@@ -316,6 +336,11 @@ public class DateTimeUtil {
   public static Date fromRfcDateTime(final String val) throws BadDateException {
     try {
       synchronized (rfcDateTimeFormat) {
+        try {
+          rfcDateTimeFormat.setTimeZone(Timezones.getDefaultTz());
+        } catch (TimezonesException tze) {
+          throw new RuntimeException(tze);
+        }
         return rfcDateTimeFormat.parse(val);
       }
     } catch (Throwable t) {

@@ -41,9 +41,9 @@
   </target>
   
   <target name="build-init" depends="init">
-    <getJar name="commons-codec" version="1.5" />
+    <!--    <getJar name="commons-codec" version="1.5" />
     <getJar name="derby" version="10.5.3.0" />
-    <getJar name="derbynet" version="10.5.3.0" />
+    <getJar name="derbynet" version="10.5.3.0" /> 
     <getJar name="fop" />
     <getJar name="hibernate" version="3.6.9.Final" />
   	<getJar name="httpclient" version="4.1.2" />
@@ -54,23 +54,142 @@
     <getJar name="junit" version="4.4" />
     <getJar name="log4j" version="1.2.8" />
     <getJar name="lucene-core" version="2.0.0" />
-    <getJar name="lucene-misc" version="2.0.0" />
+    <getJar name="lucene-misc" version="2.0.0" /> 
     <getJar name="servlet-api" version="2.4" />
     <getJar name="struts" version="1.2.9" />
-
+    
     <getJar name="jboss-j2se" version="5.1.0.GA" />
-
+-->    
+    <dependencies>
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.5</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.5.3.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbynet</artifactId>
+        <version>10.5.3.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>fop</artifactId>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate</artifactId>
+        <version>3.6.9.Final</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>httpclient</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.1.2</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>httpcore</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.1.2</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>1.2.130</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.mnode.ical4j</groupId>
+        <artifactId>ical4j</artifactId>
+        <version>head-20100601</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.w3c.tidy</groupId>
+        <artifactId>jtidy</artifactId>
+      </dependency>
+      
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.4</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.8</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-core</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-misc</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>struts</groupId>
+        <artifactId>struts</artifactId>
+        <version>1.2.9</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-j2se</artifactId>
+        <version>5.1.0.GA</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.bedework.bwxml</groupId>
+        <artifactId>bw-icalschema</artifactId>
+        <version>${org.bedework.bwxml.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.bedework.bwxml</groupId>
+        <artifactId>bw-tzschema</artifactId>
+        <version>${org.bedework.bwxml.version}</version>
+      </dependency>
+          
+      <dependency>
+        <groupId>org.bedework.bwxml</groupId>
+        <artifactId>bw-calws-soapschema</artifactId>
+        <version>${org.bedework.bwxml.version}</version>
+      </dependency>
+    </dependencies>
+    
+<!--
+    <echo message="*************dependencies: ${org.bedework.project.dependencies}" />
     <getJar name="bw-icalschema" 
-            version="${org.bedework.bwxml.version}" project="bwxml" 
-            projecthome="${bedework.home}/../bwxml" />
+            version="${org.bedework.bwxml.version}" project="bwxml" />
 
     <getJar name="bw-tzschema" 
-            version="${org.bedework.bwxml.version}" project="bwxml" 
-            projecthome="${bedework.home}/../bwxml" />
+            version="${org.bedework.bwxml.version}" project="bwxml" />
 
     <getJar name="bw-calws-soapschema" 
-            version="${org.bedework.bwxml.version}" project="bwxml" 
-            projecthome="${bedework.home}/../bwxml" />
+            version="${org.bedework.bwxml.version}" project="bwxml" />-->
   </target>
 
   <target name="build-source" depends="build-init">
