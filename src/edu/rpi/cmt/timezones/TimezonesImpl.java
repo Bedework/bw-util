@@ -20,6 +20,7 @@ package edu.rpi.cmt.timezones;
 
 import edu.rpi.sss.util.DateTimeUtil;
 import edu.rpi.sss.util.DateTimeUtil.BadDateException;
+import edu.rpi.sss.util.FlushMap;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.UnfoldingReader;
@@ -51,7 +52,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.TreeSet;
 
@@ -86,19 +86,74 @@ public class TimezonesImpl extends Timezones {
   protected transient TimeZone defaultTimeZone;
 
   /* Map of user TimezoneInfo */
-  protected HashMap<String, TimeZone> timezones = new HashMap<String, TimeZone>();
+  protected FlushMap<String, TimeZone> timezones =
+      new FlushMap<String, TimeZone>(60 * 1000 * 60, // 1 hour
+                                     100); // 100 timezones
 
   protected static volatile Collection<TimeZoneName> timezoneNames;
 
   /* Cache date only UTC values - we do a lot of those but the number of
    * different dates should be limited.
    *
-   * We have one cache per timezone
+   * We have one cache per timezone - we preserve the default timezone entries.
    */
-  private HashMap<String, HashMap<String, String>> dateCaches =
-    new HashMap<String, HashMap<String, String>>();
 
-  private HashMap<String, String> defaultDateCache = new HashMap<String, String>();
+  private static class UTCDateCache extends FlushMap<String, String> {
+    String tzid;
+    TimeZone tz;
+
+    private UTCDateCache(final String tzid,
+                         final TimeZone tz) {
+      super(100, 0, 1000);
+
+      this.tzid = tzid;
+      this.tz = tz;
+    }
+  }
+
+  /** A flushed map that preserves the values for the default system timezone
+   *
+   */
+  private class UTCDateCaches extends FlushMap<String, UTCDateCache> {
+    private UTCDateCache defaultDateCache;
+
+    private boolean isDefault(final String tzid) {
+      return (defaultTimeZoneId != null) && defaultTimeZoneId.equals(tzid);
+    }
+
+    @Override
+    public boolean containsKey(final Object key) {
+      if (isDefault((String)key)) {
+        return defaultDateCache != null;
+      }
+
+      return super.containsKey(key);
+    }
+
+    @Override
+    public synchronized UTCDateCache put(final String key,
+                                         final UTCDateCache val) {
+      if (!isDefault(key)) {
+        return super.put(key, val);
+      }
+
+      UTCDateCache cache = defaultDateCache;
+
+      defaultDateCache = val;
+      return cache;
+    }
+
+    @Override
+    public UTCDateCache get(final Object key) {
+      if (!isDefault((String)key)) {
+        return super.get(key);
+      }
+
+      return defaultDateCache;
+    }
+  };
+
+  private UTCDateCaches dateCaches = new UTCDateCaches();
 
   private static Properties aliases;
 
@@ -190,7 +245,7 @@ public class TimezonesImpl extends Timezones {
   @Override
   public synchronized void refreshTimezones() throws TimezonesException {
     timezoneNames = null;
-    timezones = new HashMap<String, TimeZone>();
+    timezones.clear();
   }
 
   /* (non-Javadoc)
@@ -234,8 +289,7 @@ public class TimezonesImpl extends Timezones {
 //  private static DateFormat formatTd  = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
   private static Calendar cal = Calendar.getInstance();
   private static java.util.TimeZone utctz;
-  private static java.util.TimeZone lasttz;
-  private static String lasttzid;
+
   static {
     try {
       utctz = TimeZone.getTimeZone(TimeZones.UTC_ID);
@@ -275,43 +329,39 @@ public class TimezonesImpl extends Timezones {
   }
 
   /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#getUtc(java.lang.String, java.lang.String, net.fortuna.ical4j.model.TimeZone)
+   * @see edu.rpi.cmt.timezones.Timezones#calculateUtc(java.lang.String, java.lang.String)
    */
   @Override
-  public synchronized String getUtc(String time, String tzid,
-                                    final TimeZone tz) throws TimezonesException {
+  public synchronized String calculateUtc(final String timePar,
+                                          final String tzidPar) throws TimezonesException {
     try {
       //if (debug) {
       //  trace("Get utc for " + time + " tzid=" + tzid + " tz =" + tz);
       //}
-      if (DateTimeUtil.isISODateTimeUTC(time)) {
+      if (DateTimeUtil.isISODateTimeUTC(timePar)) {
         // Already UTC
-        return time;
+        return timePar;
       }
 
+      String time = timePar;
       String dateKey = null;
-      HashMap<String, String> cache = null;
+      String tzid = tzidPar;
+      if (tzid == null) {
+        tzid = getThreadDefaultTzid();
+      }
+
+      UTCDateCache cache = dateCaches.get(tzid);
 
       if ((time.length() == 8) && DateTimeUtil.isISODate(time)) {
         /* See if we have it cached */
 
-        if (tzid == null) {
-          cache = defaultDateCache;
-        } else if (tzid.equals(getDefaultTimeZoneId())) {
-          cache = defaultDateCache;
-        } else {
-          cache = dateCaches.get(tzid);
-          if (cache == null) {
-            cache = new HashMap<String, String>();
-            dateCaches.put(tzid, cache);
+        if (cache != null) {
+          String utc = cache.get(time);
+
+          if (utc != null) {
+            dateCacheHits++;
+            return utc;
           }
-        }
-
-        String utc = cache.get(time);
-
-        if (utc != null) {
-          dateCacheHits++;
-          return utc;
         }
 
         /* Not in the cache - calculate it */
@@ -323,61 +373,29 @@ public class TimezonesImpl extends Timezones {
         throw new BadDateException(time);
       }
 
-      boolean tzchanged = false;
+      TimeZone tz = null;
 
-      /* If we get a null timezone and id we are being asked for the default.
-       * If we get a null tz and the tzid is the default id same again.
-       *
-       * Otherwise we are asked for something other than the default.
-       *
-       * So lasttzid is either
-       *    1. null - never been called
-       *    2. the default tzid
-       *    3. Some other tzid.
-       */
-
-      if (tz == null) {
-        if (tzid == null) {
-          tzid = getDefaultTimeZoneId();
+      if (cache != null) {
+        // Sanity check
+        if (!tzid.equals(cache.tzid)) {
+          dateCaches.clear();  // Try to contain the error
+          throw new TimezonesException(TimezonesException.cacheError, tzid);
         }
 
-        if ((lasttzid == null) || (!lasttzid.equals(tzid))) {
-          if (tzid.equals(getDefaultTimeZoneId())) {
-            lasttz = getDefaultTimeZone();
-          } else {
-            lasttz = getTimeZone(tzid);
-          }
-
-          if (lasttz == null) {
-            lasttzid = null;
-            throw new TimezonesException(TimezonesException.unknownTimezone, tzid);
-          }
-          tzchanged = true;
-          lasttzid = tzid;
-        }
+        tz = cache.tz;
       } else {
-        // tz supplied
-        if (tz != lasttz) {
-          /* Yes, that's a !=. I'm looking for it being the same object.
-           * If I were sure that equals were correct and fast I'd use
-           * that.
-           */
-          tzchanged = true;
-          tzid = tz.getID();
-          lasttz = tz;
+        tz = getTimeZone(tzid);
+
+        if (tz == null) {
+          throw new TimezonesException(TimezonesException.unknownTimezone, tzid);
         }
+
+        cache = new UTCDateCache(tzid, tz);
+        dateCaches.put(tzid, cache);
       }
 
-
-      if (tzchanged) {
-        if (debug) {
-          trace("**********tzchanged for tzid " + tzid);
-        }
-//XX        formatTd.setTimeZone(lasttz);
-        lasttzid = tzid;
-      }
       DateFormat formatTd  = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-      formatTd.setTimeZone(lasttz);
+      formatTd.setTimeZone(tz);
 
       java.util.Date date = formatTd.parse(time);
 
@@ -408,7 +426,7 @@ public class TimezonesImpl extends Timezones {
     } catch (TimezonesException cfe) {
       throw cfe;
     } catch (BadDateException bde) {
-      throw new TimezonesException(TimezonesException.badDate, time);
+      throw new TimezonesException(TimezonesException.badDate, timePar);
     } catch (Throwable t) {
       //t.printStackTrace();
       throw new TimezonesException(t);
@@ -761,6 +779,7 @@ public class TimezonesImpl extends Timezones {
     getLogger().error(msg);
   }
 
+  @SuppressWarnings("unused")
   private void trace(final String msg) {
     getLogger().debug(msg);
   }

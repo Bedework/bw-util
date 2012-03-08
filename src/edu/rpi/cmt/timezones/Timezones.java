@@ -41,6 +41,9 @@ public abstract class Timezones implements Serializable {
     /** */
     public static String unknownTimezone = "edu.rpi.cmt.timezones.exc.unknownTimezone";
 
+    /** Implementation error */
+    public static String cacheError = "edu.rpi.cmt.timezones.exc.cacheerror";
+
     /** */
     public static String badDate = "edu.rpi.cmt.timezones.exc.baddate";
 
@@ -306,7 +309,7 @@ public abstract class Timezones implements Serializable {
    */
   public static String getUtc(final String time,
                               final String tzid) throws TimezonesException {
-    return getTimezones().getUtc(time, tzid, null);
+    return getTimezones().calculateUtc(time, tzid);
   }
 
   /** Register a timezone object in the current session.
@@ -463,28 +466,26 @@ public abstract class Timezones implements Serializable {
                                 TimeZone timezone)
            throws TimezonesException;
 
-  /** Given a String time value and a possibly null tzid and/or timezone
+  /** Given a String time value and a possibly null tzid
    *  will return a UTC formatted value. The supplied time should be of the
    *  form yyyyMMdd or yyyyMMddThhmmss or yyyyMMddThhmmssZ
    *
    *  <p>The last form will be returned untouched, it's already UTC.
    *
-   *  <p>the first will have T000000 appended to the parameter value then the
-   *  first and second will be converted to the equivalent UTC time.
+   *  <p>the others will be converted to the equivalent UTC time.
    *
    *  <p>The returned value is used internally as a value for indexes and
    *  recurrence ids.
    *
-   *  <p>Both tzid and tz null mean this is local or floating time
+   *  <p>tzid null mean this is local or floating time
    *
    * @param time  String time to convert.
    * @param tzid  String tzid.
-   * @param tz    If set used in preference to tzid.
    * @return String always of form yyyyMMddThhmmssZ
    * @throws TimezonesException for bad parameters or timezone
    */
-  public abstract String getUtc(String time, String tzid,
-                                TimeZone tz) throws TimezonesException;
+  public abstract String calculateUtc(String time,
+                                      String tzid) throws TimezonesException;
 
   /**
    * @return Number of utc values cached
