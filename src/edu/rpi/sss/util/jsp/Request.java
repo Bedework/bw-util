@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionMapping;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -107,10 +108,10 @@ public class Request implements Serializable {
    * @param form
    * @param action
    */
-  public Request(HttpServletRequest request,
-                 HttpServletResponse response,
-                 UtilActionForm form,
-                 Action action) {
+  public Request(final HttpServletRequest request,
+                 final HttpServletResponse response,
+                 final UtilActionForm form,
+                 final Action action) {
     this.request = request;
     this.response = response;
     this.form = form;
@@ -170,7 +171,7 @@ public class Request implements Serializable {
   /**
    * @param val
    */
-  public void setErrFlag(boolean val) {
+  public void setErrFlag(final boolean val) {
     errFlag = val;
   }
 
@@ -184,7 +185,7 @@ public class Request implements Serializable {
   /**
    * @param val
    */
-  public void setActionType(int val) {
+  public void setActionType(final int val) {
     actionType = val;
   }
 
@@ -198,7 +199,7 @@ public class Request implements Serializable {
   /**
    * @param val
    */
-  public void setConversationType(int val) {
+  public void setConversationType(final int val) {
     conversationType = val;
   }
 
@@ -216,7 +217,7 @@ public class Request implements Serializable {
    * @return  String   value
    * @throws Throwable
    */
-  public String getReqPar(String name) throws Throwable {
+  public String getReqPar(final String name) throws Throwable {
     return Util.checkNull(request.getParameter(name));
   }
 
@@ -226,7 +227,7 @@ public class Request implements Serializable {
    * @return  boolean true for present
    * @throws Throwable
    */
-  public boolean present(String name) throws Throwable {
+  public boolean present(final String name) throws Throwable {
     return request.getParameter(name) != null;
   }
 
@@ -236,7 +237,7 @@ public class Request implements Serializable {
    * @return  boolean true for present and not null
    * @throws Throwable
    */
-  public boolean notNull(String name) throws Throwable {
+  public boolean notNull(final String name) throws Throwable {
     return getReqPar(name) != null;
   }
 
@@ -244,10 +245,10 @@ public class Request implements Serializable {
    * Return null for zero length.
    *
    * @param name    name of parameter
-   * @return  Collection<String> or null
+   * @return  List<String> or null
    * @throws Throwable
    */
-  public Collection<String> getReqPars(String name) throws Throwable {
+  public List<String> getReqPars(final String name) throws Throwable {
     String[] s = request.getParameterValues(name);
     ArrayList<String> res = null;
 
@@ -275,7 +276,7 @@ public class Request implements Serializable {
    * @return  Integer   value or null
    * @throws Throwable
    */
-  public Integer getIntReqPar(String name) throws Throwable {
+  public Integer getIntReqPar(final String name) throws Throwable {
     String reqpar = getReqPar(name);
 
     if (reqpar == null) {
@@ -293,8 +294,8 @@ public class Request implements Serializable {
    * @return  Integer   value or null
    * @throws Throwable
    */
-  public Integer getIntReqPar(String name,
-                              String errProp) throws Throwable {
+  public Integer getIntReqPar(final String name,
+                              final String errProp) throws Throwable {
     String reqpar = getReqPar(name);
 
     if (reqpar == null) {
@@ -316,8 +317,8 @@ public class Request implements Serializable {
    * @return  int   value
    * @throws Throwable
    */
-  public int getIntReqPar(String name,
-                          int defaultVal) throws Throwable {
+  public int getIntReqPar(final String name,
+                          final int defaultVal) throws Throwable {
     String reqpar = getReqPar(name);
 
     if (reqpar == null) {
@@ -337,7 +338,7 @@ public class Request implements Serializable {
    * @return  Long   value or null
    * @throws Throwable
    */
-  public Long getLongReqPar(String name) throws Throwable {
+  public Long getLongReqPar(final String name) throws Throwable {
     String reqpar = getReqPar(name);
 
     if (reqpar == null) {
@@ -354,8 +355,8 @@ public class Request implements Serializable {
    * @return  long  value
    * @throws Throwable
    */
-  public long getLongReqPar(String name,
-                            long defaultVal) throws Throwable {
+  public long getLongReqPar(final String name,
+                            final long defaultVal) throws Throwable {
     String reqpar = getReqPar(name);
 
     if (reqpar == null) {
@@ -375,7 +376,7 @@ public class Request implements Serializable {
    * @return  Boolean   value or null for absent parameter
    * @throws Throwable
    */
-  public Boolean getBooleanReqPar(String name) throws Throwable {
+  public Boolean getBooleanReqPar(final String name) throws Throwable {
     String reqpar = getReqPar(name);
 
     if (reqpar == null) {
@@ -396,8 +397,8 @@ public class Request implements Serializable {
    * @return  boolean   value
    * @throws Throwable
    */
-  public boolean getBooleanReqPar(String name,
-                                  boolean defVal) throws Throwable {
+  public boolean getBooleanReqPar(final String name,
+                                  final boolean defVal) throws Throwable {
     boolean val = defVal;
     Boolean valB = getBooleanReqPar(name);
     if (valB != null) {
@@ -412,8 +413,8 @@ public class Request implements Serializable {
    * @param attrName    Name of the attribute
    * @param val         Object
    */
-  public void setSessionAttr(String attrName,
-                             Object val) {
+  public void setSessionAttr(final String attrName,
+                             final Object val) {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
@@ -428,7 +429,7 @@ public class Request implements Serializable {
    * @param attrName    Name of the attribute
    * @return Object     Attribute value or null
    */
-  public Object getSessionAttr(String attrName) {
+  public Object getSessionAttr(final String attrName) {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
