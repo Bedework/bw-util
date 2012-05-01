@@ -1,0 +1,15 @@
+<bundle xmlns="http://www.jeremias-maerki.ch/ns/osgi-bundle">
+  <name>RPI utility packages</name>
+  <symbolic-name>org.bedework.rpiutil</symbolic-name>
+  <!-- 
+  <headers>
+
+  </headers>
+   -->
+  <imports>
+    <import match="org.xml.sax" add="true"/>
+  </imports>
+  <exports>
+    <export>edu.rpi.*</export>
+  </exports>
+</bundle>

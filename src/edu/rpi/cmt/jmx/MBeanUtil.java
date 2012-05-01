@@ -16,15 +16,15 @@
     specific language governing permissions and limitations
     under the License.
 */
-package edu.rpi.cmt.jboss;
+package edu.rpi.cmt.jmx;
 
-import org.jboss.mx.util.MBeanProxyExt;
-import org.jboss.mx.util.MBeanServerLocator;
-
+import javax.management.JMX;
+import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
 
-/** For the moment (?) this will be JBoss (5) specific. later we may manage to make
- * it less dependent on jboss.
+/**
  *
  * @author douglm
  *
@@ -41,11 +41,33 @@ public class MBeanUtil {
    * @return proxy to the mbean
    * @throws Throwable
    */
+  @SuppressWarnings("unchecked")
   public static Object getMBean(final Class c,
                                 final String name) throws Throwable {
     MBeanServer server = getMbeanServer();
 
-    return MBeanProxyExt.create(c, name, server);
+//    return MBeanProxyExt.create(c, name, server);
+    return JMX.newMBeanProxy(server, new ObjectName(name), c);
+  }
+
+  public static MBeanAttributeInfo stringAttrInfo(final String name,
+                                                  final String desc) {
+    return new MBeanAttributeInfo(name,
+                                  "java.lang.String",
+                                  desc,
+                                  true,   // isReadable
+                                  true,   // isWritable
+                                  false); // isIs;
+  }
+
+  public static MBeanAttributeInfo boolAttrInfo(final String name,
+                                                final String desc) {
+    return new MBeanAttributeInfo(name,
+                                  "boolean",
+                                  desc,
+                                  true,   // isReadable
+                                  true,   // isWritable
+                                  false); // isIs;
   }
 
   private static MBeanServer getMbeanServer() {
@@ -54,7 +76,8 @@ public class MBeanUtil {
         return mbeanServer;
       }
 
-      mbeanServer = MBeanServerLocator.locate();
+//      mbeanServer = MBeanServerLocator.locate();
+      mbeanServer = MBeanServerFactory.findMBeanServer(null).iterator().next();
     }
 
     return mbeanServer;

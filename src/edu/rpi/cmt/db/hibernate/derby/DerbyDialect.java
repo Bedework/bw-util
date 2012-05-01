@@ -40,7 +40,7 @@
  * Boston, MA  02110-1301  USA
  *
  */
-package edu.rpi.cmt.jboss.jdbc;
+package edu.rpi.cmt.db.hibernate.derby;
 
 import java.sql.Types;
 

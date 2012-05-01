@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.
 */
-package edu.rpi.cmt.jboss.jdbc;
+package edu.rpi.cmt.db.hibernate.h2;
 
 import org.apache.log4j.Logger;
 import org.h2.tools.Server;

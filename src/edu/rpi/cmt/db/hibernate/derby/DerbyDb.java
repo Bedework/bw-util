@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.
 */
-package edu.rpi.cmt.jboss.jdbc;
+package edu.rpi.cmt.db.hibernate.derby;
 
 import org.apache.derby.drda.NetworkServerControl;
 import org.apache.log4j.Logger;

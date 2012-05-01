@@ -8,7 +8,8 @@
      Authors: Mike Douglass   douglm rpi.edu
 -->
 
-<project name="rpiutil" default="build">
+<project name="rpiutil" default="deploy"
+         xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <taskdef resource="net/sf/antcontrib/antcontrib.properties" />
 
   <property environment="env"/>
@@ -60,6 +61,7 @@
     
     <getJar name="jboss-j2se" version="5.1.0.GA" />
 -->    
+    <!--
     <dependencies>
       <dependency>
         <groupId>commons-codec</groupId>
@@ -180,7 +182,6 @@
       </dependency>
     </dependencies>
     
-<!--
     <echo message="*************dependencies: ${org.bedework.project.dependencies}" />
     <getJar name="bw-icalschema" 
             version="${org.bedework.bwxml.version}" project="bwxml" />
@@ -190,16 +191,45 @@
 
     <getJar name="bw-calws-soapschema" 
             version="${org.bedework.bwxml.version}" project="bwxml" />-->
+    
+    <!--
+    <artifact:pom id="the-pom" file="pom.xml" />
+
+    < ! - -
+                               useScope="runtime" 
+    - - >
+    <artifact:dependencies filesetId="dependency.fileset" 
+                           useScope="compile" 
+                           pomRefId="the-pom">
+    </artifact:dependencies>
+    
+    <copy todir="${lib.dir}">
+      <fileset refid="dependency.fileset" />
+      <mapper type="flatten" />
+    </copy>
+    -->
+    <resolveDependencies pomFile="pom.xml" />
   </target>
 
   <target name="build-source" depends="build-init">
     <build-jar module-base="${org.bedework.rpiutil.base}" 
-               jar-file="${generated.jar.file}" />
+               jar-file="${generated.jar.file}" 
+               bundle-xml="${project.home}/bundle.xml"
+               jar-name="rpiutil"
+               jar-version="${org.bedework.rpiutil.version}"
+     />
+    
+    <installJar dir="${org.bedework.rpiutil.base}" name="${generated.jar.file}"/>
   </target>
 
   <target name="build-test" depends="build-init">
     <build-jar module-base="${org.bedework.rpiutiltests.base}" 
                jar-file="${test.jar.file}" />
+  </target>
+  
+  <target name="deploy" depends="deploy-init,build" >
+    <deployJar dir="${org.bedework.rpiutil.base}" name="${generated.jar.file}"/>
+    <!--<deployBundle bundle="${generated.jar.file}" />-->
   </target>
 
   <!-- =================================================================

@@ -16,18 +16,14 @@
     specific language governing permissions and limitations
     under the License.
 */
-package edu.rpi.cmt.jboss.jdbc;
+package edu.rpi.cmt.db.hibernate.h2;
 
-/** I think, to set most of the derby server properties, without conflicting with
- * other derby instances on the same server, we need to set proerties in a
- * derby.properties file on the class path.
- *
- * <p>We set the minimum required properties in the bean.
+/**
  *
  * @author douglm
  *
  */
-public interface DerbyDbMBean {
+public interface H2DbMBean {
   /** Name apparently must be the same as the name attribute in the
    * jboss service definition
    *
@@ -56,6 +52,17 @@ public interface DerbyDbMBean {
    * @return String password
    */
   public String getPw();
+
+  /** Tracing
+   *
+   * @param val
+   */
+  public void setTrace(boolean val);
+
+  /**
+   * @return boolean
+   */
+  public boolean getTrace();
 
   /** An absolute path
    *

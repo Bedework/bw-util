@@ -146,8 +146,7 @@ public class HttpServletUtils {
   public static String getUrl(final HttpServletRequest request) {
     try {
       if (request instanceof MultipartRequestWrapper) {
-        return ((MultipartRequestWrapper)request).getRequest().
-        getRequestURL().toString();
+        return ((MultipartRequestWrapper)request).getRequestURL().toString();
       }
 
       StringBuffer sb = request.getRequestURL();
