@@ -212,9 +212,16 @@
   </target>
 
   <target name="build-source" depends="build-init">
+    <!-- Bundle version
     <build-jar module-base="${org.bedework.rpiutil.base}" 
                jar-file="${generated.jar.file}" 
                bundle-xml="${project.home}/bundle.xml"
+               jar-name="rpiutil"
+               jar-version="${org.bedework.rpiutil.version}"
+     />
+    -->
+    <build-jar module-base="${org.bedework.rpiutil.base}" 
+               jar-file="${generated.jar.file}" 
                jar-name="rpiutil"
                jar-version="${org.bedework.rpiutil.version}"
      />
