@@ -21,7 +21,7 @@ package edu.rpi.sss.util;
 import java.util.List;
 
 
-/** Help with ToString. And yes I know there's an APache Commons one but I want
+/** Help with ToString. And yes I know there's an Apache Commons one but I want
  * easier formatting and this is trivial.
  *
  * @author douglm
@@ -35,20 +35,35 @@ public class ToString {
   private final static int maxLen = 80;
   private final static String indentVal = "  ";
 
+  /** Create an instance for the given object
+   *
+   * @param o
+   */
   public ToString(final Object o) {
     sb = new StringBuilder(o.getClass().getSimpleName()).append("{");
   }
 
+  /** Create an instance for the given object and indentation
+   *
+   * @param o
+   * @param indent
+   */
   public ToString(final Object o, final String indent) {
     sb = new StringBuilder(indent);
     sb.append(o.getClass().getSimpleName()).append("{");
     this.indent = indent;
   }
 
+  /**
+   * @return the StringBuilder we use
+   */
   public StringBuilder getSb() {
     return sb;
   }
 
+  /**
+   * @return add list delimiter
+   */
   public ToString delimit() {
     sb.append(delim);
     delim = ", ";
@@ -61,6 +76,10 @@ public class ToString {
     return this;
   }
 
+  /**
+   * @param value to append
+   * @return this object
+   */
   public ToString append(final String value) {
     delimit();
     sb.append(value);
@@ -68,6 +87,11 @@ public class ToString {
     return this;
   }
 
+  /**
+   * @param name
+   * @param value
+   * @return this object
+   */
   public ToString append(final String name, final String value) {
     delimit();
     sb.append(name);
@@ -77,6 +101,11 @@ public class ToString {
     return this;
   }
 
+  /**
+   * @param name
+   * @param value - list of values
+   * @return this object
+   */
   public ToString append(final String name, final List value) {
     delimit();
     sb.append(name);
@@ -96,14 +125,28 @@ public class ToString {
     return this;
   }
 
+  /**
+   * @param name
+   * @param value boolean
+   * @return this object
+   */
   public ToString append(final String name, final boolean value) {
     return append(name, String.valueOf(value));
   }
 
+  /**
+   * @param name
+   * @param value int
+   * @return this object
+   */
   public ToString append(final String name, final int value) {
     return append(name, String.valueOf(value));
   }
 
+  /**
+   * @param t - throwable to output
+   * @return this object
+   */
   public ToString append(final Throwable t) {
     append("Exception building toString");
     return append(t.getMessage());
