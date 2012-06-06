@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -85,6 +85,22 @@ public class CaldavTags implements CaldavDefs {
   /**   */
   public static final QName compFilter = new QName(caldavNamespace,
                                                    "comp-filter");
+
+  /**   */
+  public static final QName defaultAlarmVeventDate = new QName(caldavNamespace,
+      "default-alarm-vevent-date");
+
+  /**   */
+  public static final QName defaultAlarmVeventDatetime = new QName(caldavNamespace,
+      "default-alarm-vevent-datetime");
+
+  /**   */
+  public static final QName defaultAlarmVtodoDate = new QName(caldavNamespace,
+      "default-alarm-vtodo-date");
+
+  /**   */
+  public static final QName defaultAlarmVtodoDatetime = new QName(caldavNamespace,
+      "default-alarm-vtodo-datetime");
 
   /**   */
   public static final QName expand = new QName(caldavNamespace,
