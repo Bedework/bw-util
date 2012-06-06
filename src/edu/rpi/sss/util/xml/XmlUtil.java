@@ -689,11 +689,13 @@ public final class XmlUtil implements Serializable {
    * <p>This is only intended for an element with no child elements.
    *
    * @param el
+   * @param trim true to trim surrounding white-space
    * @return element content
    * @throws SAXException
    */
-  public static String getElementContent(final Element el) throws SAXException {
-    StringBuffer sb = new StringBuffer();
+  public static String getElementContent(final Element el,
+                                         final boolean trim) throws SAXException {
+    StringBuilder sb = new StringBuilder();
 
     NodeList children = el.getChildNodes();
 
@@ -712,7 +714,24 @@ public final class XmlUtil implements Serializable {
       }
     }
 
+    if (!trim) {
+      return sb.toString();
+    }
+
     return sb.toString().trim();
+  }
+
+  /** Return the content for the current element. All leading and trailing
+   * whitespace and embedded comments will be removed.
+   *
+   * <p>This is only intended for an element with no child elements.
+   *
+   * @param el
+   * @return element content
+   * @throws SAXException
+   */
+  public static String getElementContent(final Element el) throws SAXException {
+    return getElementContent(el, true);
   }
 
   /** Return true if the current element has non zero length content.
