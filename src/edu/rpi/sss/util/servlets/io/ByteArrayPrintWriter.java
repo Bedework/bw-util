@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,8 +18,11 @@
 */
 package edu.rpi.sss.util.servlets.io;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+
 import javax.servlet.ServletOutputStream;
 
 /** PrintWriter which uses an underlying ByteArrayOutputStream
@@ -27,7 +30,7 @@ import javax.servlet.ServletOutputStream;
  * @author Mike Douglass  douglm @ rpi.edu
  */
 public class ByteArrayPrintWriter {
-  private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+  private PooledBufferedOutputStream pbos = new PooledBufferedOutputStream();
 
   /* Try this to get a dump of all the output
   private ByteArrayOutputStream baos = new ByteArrayOutputStream() {
@@ -56,7 +59,7 @@ public class ByteArrayPrintWriter {
    */
   public PrintWriter getWriter() {
     if (pw == null) {
-      pw = new PrintWriter(baos);
+      pw = new PrintWriter(pbos);
     }
     return pw;
   }
@@ -66,19 +69,60 @@ public class ByteArrayPrintWriter {
    */
   public ServletOutputStream getStream() {
     if (sos == null) {
-      sos = new ByteArrayServletStream(baos);
+      sos = new ByteArrayServletStream(pbos);
     }
     return sos;
   }
 
+  /** Get an InputStream for the bytes in the buffer. No guarantees if writes
+   * take place after this is called.
+   *
+   * @return InputStream
+   * @throws IOException
+   */
+  public synchronized InputStream getInputStream() throws IOException {
+    return pbos.getInputStream();
+  }
+
+  /**
+   * Writes the complete contents of this byte array output stream to
+   * the specified output stream argument, as if by calling the output
+   * stream's write method using <code>out.write(buf, 0, count)</code>.
+   *
+   * @param      out   the output stream to which to write the data.
+   * @exception  IOException  if an I/O error occurs.
+   */
+  public synchronized void writeTo(final OutputStream out) throws IOException {
+    pbos.writeTo(out);
+  }
+
+  /**
+   * Returns the current size of the buffer.
+   *
+   * @return  the value of the <code>count</code> field, which is the number
+   *          of valid bytes in this output stream.
+   * @see     java.io.ByteArrayOutputStream#count
+   */
+  public synchronized int size() {
+    return pbos.size();
+  }
+
   byte[] toByteArray() {
-    return baos.toByteArray();
+    return pbos.toByteArray();
+  }
+
+  public void release() throws IOException {
+    if (pbos != null) {
+      try {
+        pbos.release();
+      } catch (Exception bae) {}
+    }
   }
 
   void close() {
-    if (baos != null) {
+    if (pbos != null) {
       try {
-        baos.close();
+        pbos.close();
       } catch (Exception bae) {}
     }
     if (pw != null) {
@@ -91,7 +135,7 @@ public class ByteArrayPrintWriter {
         sos.close();
       } catch (Exception bae) {}
     }
-    baos = null;
+    pbos = null;
     pw = null;
     sos = null;
   }

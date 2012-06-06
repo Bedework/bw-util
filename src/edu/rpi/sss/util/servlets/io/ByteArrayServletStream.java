@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,8 +18,8 @@
 */
 package edu.rpi.sss.util.servlets.io;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
 import javax.servlet.ServletOutputStream;
 
 /** Useful I/O classes for filtering etc.
@@ -27,24 +27,26 @@ import javax.servlet.ServletOutputStream;
  * @author Mike Douglass douglm@rpi.edu.
  */
 public class ByteArrayServletStream extends ServletOutputStream {
-  ByteArrayOutputStream baos;
+  PooledBufferedOutputStream pbos;
 
   /** Constructor
    *
    * @param baos
    */
-  public ByteArrayServletStream(ByteArrayOutputStream baos) {
-    this.baos = baos;
+  public ByteArrayServletStream(final PooledBufferedOutputStream pbos) {
+    this.pbos = pbos;
   }
 
-  public void write(int param) throws IOException {
-    baos.write(param);
+  @Override
+  public void write(final int param) throws IOException {
+    pbos.write(param);
   }
 
+  @Override
   public void close() {
-    if (baos != null) {
+    if (pbos != null) {
       try {
-        baos.close();
+        pbos.close();
       } catch (Exception bae) {}
     }
 

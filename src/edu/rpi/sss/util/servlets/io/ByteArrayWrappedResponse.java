@@ -20,6 +20,9 @@ package edu.rpi.sss.util.servlets.io;
 
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletOutputStream;
@@ -73,6 +76,39 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
   }
 
   /**
+   * Returns the current size of the buffer.
+   *
+   * @return  the value of the <code>count</code> field, which is the number
+   *          of valid bytes in this output stream.
+   * @see     java.io.ByteArrayOutputStream#count
+   */
+  public synchronized int size() {
+    return pw.size();
+  }
+
+  /** Get an InputStream for the bytes in the buffer. No guarantees if writes
+   * take place after this is called.
+   *
+   * @return InputStream
+   * @throws IOException
+   */
+  public synchronized InputStream getInputStream() throws IOException {
+    return pw.getInputStream();
+  }
+
+  /**
+   * Writes the complete contents of this byte array output stream to
+   * the specified output stream argument, as if by calling the output
+   * stream's write method using <code>out.write(buf, 0, count)</code>.
+   *
+   * @param      out   the output stream to which to write the data.
+   * @exception  IOException  if an I/O error occurs.
+   */
+  public synchronized void writeTo(final OutputStream out) throws IOException {
+    pw.writeTo(out);
+  }
+
+  /**
    * @return resulting byte array
    */
   public byte[] toByteArray() {
@@ -81,6 +117,14 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
     }
 
     return pw.toByteArray();
+  }
+
+  public void release() throws IOException {
+    if (pw != null) {
+      try {
+        pw.release();
+      } catch (Exception bae) {}
+    }
   }
 
   /**

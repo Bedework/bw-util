@@ -19,14 +19,14 @@
 package edu.rpi.sss.util.servlets;
 
 import edu.rpi.sss.util.servlets.io.ByteArrayWrappedResponse;
+import edu.rpi.sss.util.servlets.io.PooledBufferedOutputStream;
 
 import org.apache.log4j.Logger;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -255,7 +255,7 @@ public class XSLTFilter extends AbstractFilter {
       getLogger().debug("XSLTFilter: response: " + resp);
     }
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    PooledBufferedOutputStream pbos = new PooledBufferedOutputStream();
 
     WrappedResponse wrappedResp = new WrappedResponse(resp, hreq, getLogger());
 
@@ -278,8 +278,9 @@ public class XSLTFilter extends AbstractFilter {
      */
     doPreFilter(hreq);
 
-    byte[] bytes = wrappedResp.toByteArray();
-    if ((bytes == null) || (bytes.length == 0)) {
+    //byte[] bytes = wrappedResp.toByteArray();
+
+    if (wrappedResp.size() == 0) {
       if (debug) {
         getLogger().debug("No content");
       }
@@ -293,7 +294,7 @@ public class XSLTFilter extends AbstractFilter {
       if ((!glob.dontFilter) && (wrappedResp.getTransformNeeded())) {
         if (debug) {
           getLogger().debug("+*+*+*+*+*+*+*+*+*+*+* about to transform: len=" +
-                            bytes.length);
+              wrappedResp.size());
         }
         //getLogger().debug(new String(bytes));
 
@@ -311,17 +312,17 @@ public class XSLTFilter extends AbstractFilter {
                              "Unable to obtain an XML transformer probably " +
                                  "due to a previous error. Server logs may " +
                                  "help determine the cause.",
-                             baos);
+                                 pbos);
           glob.contentType = "text/html";
         } else if (te != null) {
           /** We had an exception getting the transformer.
               Output error information instead of the transformed output
            */
 
-          outputInitErrorInfo(te, baos);
+          outputInitErrorInfo(te, pbos);
           glob.contentType = "text/html";
         } else {
-          /** We seem to be getting invalid bytes occassionally
+          /** We seem to be getting invalid bytes occasionally
           for (int i = 0; i < bytes.length; i++) {
             if ((bytes[i] & 0x0ff) > 128) {
               getLogger().warn("Found byte > 128 at " + i +
@@ -343,12 +344,12 @@ public class XSLTFilter extends AbstractFilter {
             synchronized (xmlt) {
               xmlt.transform(
                   new StreamSource(
-                       new InputStreamReader(new ByteArrayInputStream(bytes),
+                       new InputStreamReader(wrappedResp.getInputStream(),
                                              "UTF-8")),
-                            new StreamResult(baos));
+                            new StreamResult(pbos));
             }
           } catch (TransformerException e) {
-            outputTransformErrorInfo(e, baos);
+            outputTransformErrorInfo(e, pbos);
             glob.contentType = "text/html";
           }
 
@@ -393,15 +394,12 @@ public class XSLTFilter extends AbstractFilter {
           }
         }
 
-        byte[] xformBytes = baos.toByteArray();
-
-        resp.setContentLength(xformBytes.length);
-        resp.getOutputStream().write(xformBytes);
+        resp.setContentLength(pbos.size());
+        pbos.writeTo(resp.getOutputStream());
 
         if (debug) {
           getLogger().debug("XML -> HTML conversion completed");
         }
-        xformBytes = null;
       } else {
         if (debug) {
           if (glob.dontFilter) {
@@ -415,8 +413,8 @@ public class XSLTFilter extends AbstractFilter {
           getLogger().debug("+*+*+*+*+*+*+*+*+*+*+* transform suppressed" +
                           " reason = " + glob.reason);
         }
-        resp.setContentLength(bytes.length);
-        resp.getOutputStream().write(bytes);
+        resp.setContentLength(wrappedResp.size());
+        wrappedResp.writeTo(resp.getOutputStream());
         if (glob.contentType != null) {
           /** Set explicitly by caller.
            */
@@ -435,17 +433,17 @@ public class XSLTFilter extends AbstractFilter {
       }
     } finally {
       if (wrappedResp != null) {
+        wrappedResp.release();
         wrappedResp.close();
       }
       wrappedResp = null;
-      if (baos != null) {
+      if (pbos != null) {
         try {
-          baos.close();
+          pbos.release();
         } catch (Exception bae) {}
       }
 
-      baos = null;
-      bytes = null;
+      pbos = null;
     }
 
     logTime("POSTTRANSFORM", sessId,
@@ -509,7 +507,8 @@ public class XSLTFilter extends AbstractFilter {
     super.destroy();
   }
 
-  private void outputInitErrorInfo(final TransformerException te, final ByteArrayOutputStream wtr) {
+  private void outputInitErrorInfo(final TransformerException te,
+                                   final OutputStream wtr) {
     PrintWriter pw = new PrintWriter(wtr);
 
     outputErrorHtmlHead(pw, "XSLT initialization errors");
@@ -531,7 +530,7 @@ public class XSLTFilter extends AbstractFilter {
   }
 
   private void outputTransformErrorInfo(final Exception e,
-                                        final ByteArrayOutputStream wtr) {
+                                        final OutputStream wtr) {
     PrintWriter pw = new PrintWriter(wtr);
 
     outputErrorHtmlHead(pw, "XSLT transform error");
@@ -549,7 +548,7 @@ public class XSLTFilter extends AbstractFilter {
   }
 
   private void outputErrorMessage(final String title, final String para,
-                                  final ByteArrayOutputStream wtr) {
+                                  final OutputStream wtr) {
     PrintWriter pw = new PrintWriter(wtr);
 
     outputErrorHtmlHead(pw, title);
