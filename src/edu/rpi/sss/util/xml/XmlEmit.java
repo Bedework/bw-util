@@ -39,6 +39,26 @@ public class XmlEmit {
 
   private XmlEmitNamespaces nameSpaces = new XmlEmitNamespaces();
 
+  private Notifier notifier;
+
+  /** Called (frequently) if set. May be used to allow higher level to
+   * carry out actions when some output happens, e.g. open surrounding elements.
+   *
+   * @author douglm
+   */
+  public static abstract class Notifier {
+    /** Called on output if isEnabled returns false
+     *
+     * @throws Throwable
+     */
+    public abstract void doNotification() throws Throwable;
+
+    /**
+     * @return true if doNotification should be called
+     */
+    public abstract boolean isEnabled();
+  }
+
   /**
    * @author douglm
    */
@@ -113,6 +133,13 @@ public class XmlEmit {
   public void startEmit(final Writer wtr, final String dtd) throws IOException {
     this.wtr = wtr;
     this.dtd = dtd;
+  }
+
+  /** At the moment fairly primitive - no stacking etc.
+   * @param n
+   */
+  public void setNotifier(final Notifier n) {
+    notifier = n;
   }
 
   /* ===================================== Tag start ======================== */
@@ -613,6 +640,16 @@ public class XmlEmit {
   }
 
   private void out(final String val) throws IOException {
+    if ((notifier != null) && notifier.isEnabled()){
+      try {
+        notifier.doNotification();
+      } catch (IOException ioe) {
+        throw ioe;
+      } catch (Throwable t) {
+        throw new IOException(t);
+      }
+    }
+
     if (!started) {
       started = true;
 
