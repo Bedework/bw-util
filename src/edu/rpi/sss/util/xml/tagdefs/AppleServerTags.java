@@ -86,6 +86,10 @@ public class AppleServerTags {
                                                 "in-reply-to");
 
   /**   */
+  public static final QName invite = new QName(appleCaldavNamespace,
+                                                "invite");
+
+  /**   */
   public static final QName inviteAccepted = new QName(appleCaldavNamespace,
                                                 "invite-accepted");
 
@@ -120,6 +124,10 @@ public class AppleServerTags {
   /**   */
   public static final QName notification = new QName(appleCaldavNamespace,
                                                "notification");
+
+  /**   */
+  public static final QName notificationtype = new QName(appleCaldavNamespace,
+                                               "notificationtype");
 
   /**   */
   public static final QName organizer = new QName(appleCaldavNamespace,
