@@ -190,6 +190,10 @@ public class AppleServerTags {
                                                         "shared-owner");
 
   /**   */
+  public static final QName sharedUrl = new QName(appleCaldavNamespace,
+                                                        "shared-url");
+
+  /**   */
   public static final QName summary = new QName(appleCaldavNamespace,
                                                         "summary");
 
