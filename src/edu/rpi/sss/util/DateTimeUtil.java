@@ -335,13 +335,27 @@ public class DateTimeUtil {
    */
   public static Date fromRfcDateTime(final String val) throws BadDateException {
     try {
-      synchronized (rfcDateTimeFormat) {
-        try {
-          rfcDateTimeFormat.setTimeZone(Timezones.getDefaultTz());
-        } catch (TimezonesException tze) {
-          throw new RuntimeException(tze);
-        }
-        return rfcDateTimeFormat.parse(val);
+      return fromRfcDateTime(val, Timezones.getDefaultTz());
+    } catch (BadDateException bde) {
+      throw bde;
+    } catch (Throwable t) {
+      throw new BadDateException();
+    }
+  }
+
+  /** Get Date from "yyyy-MM-ddThh:mm:ss" with timezone
+   *
+   * @param val String "yyyy-ddThh:mm:ss"
+   * @param tz TimeZone
+   * @return Date
+   * @throws BadDateException
+   */
+  public static Date fromRfcDateTime(final String val,
+                                     final TimeZone tz) throws BadDateException {
+    try {
+      synchronized (rfcDateTimeTZFormat) {
+        rfcDateTimeTZFormat.setTimeZone(tz);
+        return rfcDateTimeTZFormat.parse(val);
       }
     } catch (Throwable t) {
       throw new BadDateException();
@@ -361,25 +375,6 @@ public class DateTimeUtil {
       synchronized (isoDateTimeTZFormat) {
         isoDateTimeTZFormat.setTimeZone(tz);
         return isoDateTimeTZFormat.parse(val);
-      }
-    } catch (Throwable t) {
-      throw new BadDateException();
-    }
-  }
-
-  /** Get Date from "yyyy-MM-ddThh:mm:ss" with timezone
-   *
-   * @param val String "yyyy-ddThh:mm:ss"
-   * @param tz TimeZone
-   * @return Date
-   * @throws BadDateException
-   */
-  public static Date fromRfcDateTime(final String val,
-                                     final TimeZone tz) throws BadDateException {
-    try {
-      synchronized (rfcDateTimeTZFormat) {
-        rfcDateTimeTZFormat.setTimeZone(tz);
-        return rfcDateTimeTZFormat.parse(val);
       }
     } catch (Throwable t) {
       throw new BadDateException();
