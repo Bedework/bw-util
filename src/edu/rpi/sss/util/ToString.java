@@ -103,6 +103,20 @@ public class ToString {
 
   /**
    * @param name
+   * @param value
+   * @return this object
+   */
+  public ToString append(final String name, final Long value) {
+    delimit();
+    sb.append(name);
+    sb.append("=");
+    sb.append(value);
+
+    return this;
+  }
+
+  /**
+   * @param name
    * @param value - list of values
    * @return this object
    */
