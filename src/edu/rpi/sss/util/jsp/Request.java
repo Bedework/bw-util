@@ -18,30 +18,20 @@
 */
 package edu.rpi.sss.util.jsp;
 
-import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.log.MessageEmit;
-import edu.rpi.sss.util.servlets.HttpServletUtils;
+import edu.rpi.sss.util.servlets.ReqUtil;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMapping;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /** Class to handle the incoming request.
  *
  * @author Mike Douglass
  */
-public class Request implements Serializable {
-  protected HttpServletRequest request;
-  protected HttpServletResponse response;
+public class Request extends ReqUtil {
   protected UtilActionForm form;
   protected Action action;
 
@@ -100,8 +90,6 @@ public class Request implements Serializable {
 
   protected int conversationType;
 
-  protected boolean errFlag;
-
   /**
    * @param request
    * @param response
@@ -112,24 +100,9 @@ public class Request implements Serializable {
                  final HttpServletResponse response,
                  final UtilActionForm form,
                  final Action action) {
-    this.request = request;
-    this.response = response;
+    super(request, response);
     this.form = form;
     this.action = action;
-  }
-
-  /**
-   * @return HttpServletRequest
-   */
-  public HttpServletRequest getRequest() {
-    return request;
-  }
-
-  /**
-   * @return HttpServletResponse
-   */
-  public HttpServletResponse getResponse() {
-    return response;
   }
 
   /**
@@ -171,20 +144,6 @@ public class Request implements Serializable {
   /**
    * @param val
    */
-  public void setErrFlag(final boolean val) {
-    errFlag = val;
-  }
-
-  /**
-   * @return boolean
-   */
-  public boolean getErrFlag() {
-    return errFlag;
-  }
-
-  /**
-   * @param val
-   */
   public void setActionType(final int val) {
     actionType = val;
   }
@@ -210,82 +169,6 @@ public class Request implements Serializable {
     return conversationType;
   }
 
-  /** Get a request parameter stripped of white space. Return null for zero
-   * length.
-   *
-   * @param name    name of parameter
-   * @return  String   value
-   * @throws Throwable
-   */
-  public String getReqPar(final String name) throws Throwable {
-    return Util.checkNull(request.getParameter(name));
-  }
-
-  /** See if a request parameter is present
-   *
-   * @param name    name of parameter
-   * @return  boolean true for present
-   * @throws Throwable
-   */
-  public boolean present(final String name) throws Throwable {
-    return request.getParameter(name) != null;
-  }
-
-  /** See if a request parameter is present and not null or empty
-   *
-   * @param name    name of parameter
-   * @return  boolean true for present and not null
-   * @throws Throwable
-   */
-  public boolean notNull(final String name) throws Throwable {
-    return getReqPar(name) != null;
-  }
-
-  /** Get a multi-valued request parameter stripped of white space.
-   * Return null for zero length.
-   *
-   * @param name    name of parameter
-   * @return  List<String> or null
-   * @throws Throwable
-   */
-  public List<String> getReqPars(final String name) throws Throwable {
-    String[] s = request.getParameterValues(name);
-    ArrayList<String> res = null;
-
-    if ((s == null) || (s.length == 0)) {
-      return null;
-    }
-
-    for (String par: s) {
-      par = Util.checkNull(par);
-      if (par != null) {
-        if (res == null) {
-          res = new ArrayList<String>();
-        }
-
-        res.add(par);
-      }
-    }
-
-    return res;
-  }
-
-  /** Get an Integer request parameter or null.
-   *
-   * @param name    name of parameter
-   * @return  Integer   value or null
-   * @throws Throwable
-   */
-  public Integer getIntReqPar(final String name) throws Throwable {
-    String reqpar = getReqPar(name);
-
-    if (reqpar == null) {
-      return null;
-    }
-
-    return Integer.valueOf(reqpar);
-  }
-
   /** Get an Integer request parameter or null. Emit error for non-null and
    * non integer
    *
@@ -296,176 +179,11 @@ public class Request implements Serializable {
    */
   public Integer getIntReqPar(final String name,
                               final String errProp) throws Throwable {
-    String reqpar = getReqPar(name);
-
-    if (reqpar == null) {
-      return null;
-    }
-
     try {
-      return Integer.valueOf(reqpar);
+      return super.getIntReqPar(name);
     } catch (Throwable t) {
-      getErr().emit(errProp, reqpar);
+      getErr().emit(errProp, getReqPar(name));
       return null;
     }
-  }
-
-  /** Get an integer valued request parameter.
-   *
-   * @param name    name of parameter
-   * @param defaultVal
-   * @return  int   value
-   * @throws Throwable
-   */
-  public int getIntReqPar(final String name,
-                          final int defaultVal) throws Throwable {
-    String reqpar = getReqPar(name);
-
-    if (reqpar == null) {
-      return defaultVal;
-    }
-
-    try {
-      return Integer.parseInt(reqpar);
-    } catch (Throwable t) {
-      return defaultVal; // XXX exception?
-    }
-  }
-
-  /** Get a Long request parameter or null.
-   *
-   * @param name    name of parameter
-   * @return  Long   value or null
-   * @throws Throwable
-   */
-  public Long getLongReqPar(final String name) throws Throwable {
-    String reqpar = getReqPar(name);
-
-    if (reqpar == null) {
-      return null;
-    }
-
-    return Long.valueOf(reqpar);
-  }
-
-  /** Get an long valued request parameter.
-   *
-   * @param name    name of parameter
-   * @param defaultVal
-   * @return  long  value
-   * @throws Throwable
-   */
-  public long getLongReqPar(final String name,
-                            final long defaultVal) throws Throwable {
-    String reqpar = getReqPar(name);
-
-    if (reqpar == null) {
-      return defaultVal;
-    }
-
-    try {
-      return Long.parseLong(reqpar);
-    } catch (Throwable t) {
-      return defaultVal; // XXX exception?
-    }
-  }
-
-  /** Get a boolean valued request parameter.
-   *
-   * @param name    name of parameter
-   * @return  Boolean   value or null for absent parameter
-   * @throws Throwable
-   */
-  public Boolean getBooleanReqPar(final String name) throws Throwable {
-    String reqpar = getReqPar(name);
-
-    if (reqpar == null) {
-      return null;
-    }
-
-    try {
-      return Boolean.valueOf(reqpar);
-    } catch (Throwable t) {
-      return null; // XXX exception?
-    }
-  }
-
-  /** Get a boolean valued request parameter giving a default value.
-   *
-   * @param name    name of parameter
-   * @param defVal default value for absent parameter
-   * @return  boolean   value
-   * @throws Throwable
-   */
-  public boolean getBooleanReqPar(final String name,
-                                  final boolean defVal) throws Throwable {
-    boolean val = defVal;
-    Boolean valB = getBooleanReqPar(name);
-    if (valB != null) {
-      val = valB.booleanValue();
-    }
-
-    return val;
-  }
-
-  /** Set the value of a named session attribute.
-   *
-   * @param attrName    Name of the attribute
-   * @param val         Object
-   */
-  public void setSessionAttr(final String attrName,
-                             final Object val) {
-    HttpSession sess = request.getSession(false);
-
-    if (sess == null) {
-      return;
-    }
-
-    sess.setAttribute(attrName, val);
-  }
-
-  /** Return the value of a named session attribute.
-   *
-   * @param attrName    Name of the attribute
-   * @return Object     Attribute value or null
-   */
-  public Object getSessionAttr(final String attrName) {
-    HttpSession sess = request.getSession(false);
-
-    if (sess == null) {
-      return null;
-    }
-
-    return sess.getAttribute(attrName);
-  }
-
-  /**
-   * @return String remoe address
-   */
-  public String getRemoteAddr() {
-    return request.getRemoteAddr();
-  }
-
-  /**
-   * @return String remote host
-   */
-  public String getRemoteHost() {
-    return request.getRemoteHost();
-  }
-
-  /**
-   * @return int remote port
-   */
-  public int getRemotePort() {
-    return request.getRemotePort();
-  }
-
-  /** If there is no Accept-Language header returns null, otherwise returns a
-   * collection of Locales ordered with preferred first.
-   *
-   * @return Collection of locales or null
-   */
-  public Collection<Locale> getLocales() {
-    return HttpServletUtils.getLocales(request);
   }
 }
