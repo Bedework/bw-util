@@ -19,6 +19,7 @@
 package edu.rpi.cmt.calendar;
 
 import edu.rpi.sss.util.xml.tagdefs.BedeworkServerTags;
+import edu.rpi.sss.util.xml.tagdefs.WebdavTags;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
@@ -810,6 +811,12 @@ public class PropertyIndex implements Serializable {
                 DataType.INTEGER,
                 IS_SINGLE, event_Todo_Journal,
                 NOT_PARAM, IS_IMMUTABLE),
+
+    /** non ical */
+    HREF(WebdavTags.href, "HREF", null,
+          DataType.HREF,
+          IS_SINGLE, allComponents,
+          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     OWNER(BedeworkServerTags.owner, "OWNER", null,
