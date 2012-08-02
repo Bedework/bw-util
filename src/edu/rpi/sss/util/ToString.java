@@ -61,17 +61,32 @@ public class ToString {
     return sb;
   }
 
-  /**
-   * @return add list delimiter
+  /** add list delimiter
+   *
+   * @return this
    */
   public ToString delimit() {
     sb.append(delim);
     delim = ", ";
     if (sb.length() > maxLen) {
-      sb.append(",");
+      sb.append("\n");
       sb.append(indent);
       sb.append(indentVal);
     }
+
+    return this;
+  }
+
+  /** add new line and list delimiter
+   *
+   * @return this
+   */
+  public ToString newLine() {
+    sb.append(delim);
+    delim = "";
+    sb.append("\n");
+    sb.append(indent);
+    sb.append(indentVal);
 
     return this;
   }
@@ -83,6 +98,17 @@ public class ToString {
   public ToString append(final String value) {
     delimit();
     sb.append(value);
+
+    return this;
+  }
+
+  /**
+   * @param value to append
+   * @return this object
+   */
+  public ToString append(final Object value) {
+    delimit();
+    sb.append(String.valueOf(value));
 
     return this;
   }
