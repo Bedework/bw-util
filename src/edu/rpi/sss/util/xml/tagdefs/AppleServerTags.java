@@ -126,6 +126,14 @@ public class AppleServerTags {
                                                "notification");
 
   /**   */
+  public static final QName notifications = new QName(appleCaldavNamespace,
+                                               "notifications");
+
+  /**   */
+  public static final QName notificationURL = new QName(appleCaldavNamespace,
+                                                       "notification-URL");
+
+  /**   */
   public static final QName notificationtype = new QName(appleCaldavNamespace,
                                                "notificationtype");
 
