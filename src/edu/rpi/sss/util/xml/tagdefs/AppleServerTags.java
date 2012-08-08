@@ -42,6 +42,10 @@ public class AppleServerTags {
                                                  "attendee");
 
   /**   */
+  public static final QName calendarChanges = new QName(appleCaldavNamespace,
+                               "calendar-changes");
+
+  /**   */
   public static final QName canBePublished = new QName(appleCaldavNamespace,
                                                "can-be-published");
 
@@ -68,6 +72,30 @@ public class AppleServerTags {
   /**   */
   public static final QName create = new QName(appleCaldavNamespace,
                                                "create");
+
+  /**   */
+  public static final QName deletedComponent = new QName(appleCaldavNamespace,
+                                "deleted-component");
+
+  /**   */
+  public static final QName deletedDetails = new QName(appleCaldavNamespace,
+                              "deleted-details");
+
+  /**   */
+  public static final QName deletedDisplayname = new QName(appleCaldavNamespace,
+                                  "deleted-displayname");
+
+  /**   */
+  public static final QName deletedHadMoreInstances = new QName(appleCaldavNamespace,
+                                         "deleted-had-more-instances");
+
+  /**   */
+  public static final QName deletedNextInstance = new QName(appleCaldavNamespace,
+                                    "deleted-next-instance");
+
+  /**   */
+  public static final QName deletedSummary = new QName(appleCaldavNamespace,
+                              "deleted-summary");
 
   /**   */
   public static final QName dtstamp = new QName(appleCaldavNamespace,
@@ -136,6 +164,10 @@ public class AppleServerTags {
   /**   */
   public static final QName notificationtype = new QName(appleCaldavNamespace,
                                                "notificationtype");
+
+  /**   */
+  public static final QName notifyChanges  = new QName(appleCaldavNamespace,
+                                                       "notify-changes");
 
   /**   */
   public static final QName organizer = new QName(appleCaldavNamespace,
