@@ -59,6 +59,16 @@ public class IcalDefs {
                                                   "available"
   };
 
+  /** */
+  public static final String[] entityTypeIcalNames = {"VEVENT",
+                                                      "VALARM",
+                                                      "VTODO",
+                                                      "VJOURNAL",
+                                                      "VFREEBUSY",
+                                                      "VAVAILABILITY",
+                                                      "AVAILABLE"
+  };
+
   /** Used to identify types of components within a calendar object */
   public enum IcalComponentType {
     /** */

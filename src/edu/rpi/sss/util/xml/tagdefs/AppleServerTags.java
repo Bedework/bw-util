@@ -58,20 +58,51 @@ public class AppleServerTags {
                                                "cancel");
 
   /**   */
+  public static final QName changedBy = new QName(appleCaldavNamespace,
+                                                 "changed-by");
+
+  /**   */
   public static final QName changedProperty = new QName(appleCaldavNamespace,
                                                         "changed-property");
 
   /**   */
   public static final QName changes = new QName(appleCaldavNamespace,
                                                 "changes");
+  /**   */
+  public static final QName childCreated = new QName(appleCaldavNamespace,
+                            "child-created");
+
+  /**   */
+  public static final QName childDeleted = new QName(appleCaldavNamespace,
+                            "child-deleted");
+
+  /**   */
+  public static final QName childUpdated = new QName(appleCaldavNamespace,
+                            "child-updated");
+
+  /**   */
+  public static final QName collectionChanges = new QName(appleCaldavNamespace,
+                                                "collection-changes");
 
   /**   */
   public static final QName commonName = new QName(appleCaldavNamespace,
                                                "common-name");
 
   /**   */
+  public static final QName content = new QName(appleCaldavNamespace,
+                                               "content");
+
+  /**   */
   public static final QName create = new QName(appleCaldavNamespace,
                                                "create");
+
+  /**   */
+  public static final QName created = new QName(appleCaldavNamespace,
+                                                "created");
+
+  /**   */
+  public static final QName deleted = new QName(appleCaldavNamespace,
+                                                "deleted");
 
   /**   */
   public static final QName deletedComponent = new QName(appleCaldavNamespace,
@@ -100,6 +131,10 @@ public class AppleServerTags {
   /**   */
   public static final QName dtstamp = new QName(appleCaldavNamespace,
                                                 "dtstamp");
+
+  /**   */
+  public static final QName firstName = new QName(appleCaldavNamespace,
+                                                  "first-name");
 
   /**   */
   public static final QName getctag = new QName(appleCaldavNamespace,
@@ -144,6 +179,10 @@ public class AppleServerTags {
   /**   */
   public static final QName inviteReply = new QName(appleCaldavNamespace,
                                                 "invite-reply");
+
+  /**   */
+  public static final QName lastName = new QName(appleCaldavNamespace,
+                                                 "last-name");
 
   /**   */
   public static final QName master = new QName(appleCaldavNamespace,
@@ -206,6 +245,10 @@ public class AppleServerTags {
                                               "reply");
 
   /**   */
+  public static final QName resourceChange = new QName(appleCaldavNamespace,
+                                              "resource-change");
+
+  /**   */
   public static final QName scheduleChanges = new QName(appleCaldavNamespace,
                                                         "schedule-changes");
 
@@ -244,6 +287,10 @@ public class AppleServerTags {
   /**   */
   public static final QName update = new QName(appleCaldavNamespace,
                                                "update");
+
+  /**   */
+  public static final QName updated = new QName(appleCaldavNamespace,
+                                               "updated");
 
   /**   */
   public static final QName user = new QName(appleCaldavNamespace,
