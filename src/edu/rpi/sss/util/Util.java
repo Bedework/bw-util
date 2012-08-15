@@ -42,6 +42,45 @@ import java.util.StringTokenizer;
 public class Util {
   private Util() {} // Don't instantiate this
 
+  /** Build a path out of the given elements. If the element is a "/" we check
+   * to see if the path already has a "/" before appending it.
+   *
+   * Examples:
+   * <pre>
+   * "user/mike/", "/", "calendar", "/"</pre>
+   * produces
+   * <pre>
+   * "user/mike/calendar/"
+   * </pre>
+   * and
+   * <pre>
+   * "user/mike/", "/", "calendar", "/", "myevent", ".ics" </pre>
+   * produces
+   * <pre>
+   * "user/mike/calendar/myevent.ics"
+   * </pre>
+   *
+   * @param val - list of elements and path separators.
+   * @return completed path
+   */
+  public static String buildPath(final String... val) {
+    StringBuilder path = new StringBuilder();
+
+    for (String s: val) {
+      if (s.equals("/")) {
+        if ((path.length() > 0) && (path.lastIndexOf("/") != (path.length() - 1))) {
+          path.append("/");
+        }
+
+        continue;
+      }
+
+      path.append(s);
+    }
+
+    return path.toString();
+  }
+
   /** Load a named resource as a Properties object
    *
    * @param name    String resource name
