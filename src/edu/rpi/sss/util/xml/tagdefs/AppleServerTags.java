@@ -38,6 +38,10 @@ public class AppleServerTags {
                                                "action");
 
   /**   */
+  public static final QName allowedSharingModes = new QName(appleCaldavNamespace,
+                                               "allowed-sharing-modes");
+
+  /**   */
   public static final QName attendee = new QName(appleCaldavNamespace,
                                                  "attendee");
 
