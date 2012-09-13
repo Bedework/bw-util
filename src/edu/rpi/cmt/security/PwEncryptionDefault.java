@@ -22,6 +22,8 @@ import edu.rpi.cmt.security.pki.PKITools;
 
 import org.apache.log4j.Logger;
 
+import java.security.PrivateKey;
+
 /**
  * @author Mike Douglass
  */
@@ -97,6 +99,16 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
     return pki.decryptWithKeyFile(privKeys,
                                   encrypted.substring(pos + 1, encrypted.length() - 1),
                                   keyNum);
+  }
+
+  @Override
+  public byte[] getPublicKey() throws Throwable {
+    return pki.getPublicKey(pubKeys);
+  }
+
+  @Override
+  public PrivateKey getPrivateKey() throws Throwable {
+    return pki.getPrivateKey(pubKeys);
   }
 
   private Logger getLog() {

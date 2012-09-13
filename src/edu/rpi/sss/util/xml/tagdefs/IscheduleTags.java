@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,24 +33,48 @@ public class IscheduleTags implements CaldavDefs {
                                                       "administrator");
 
   /**   */
+  public static final QName attachments = new QName(namespace,
+                                                    "attachments");
+
+  /**   */
+  public static final QName attachmentTypeNotSupported = new QName(namespace,
+                                                    "attachment-type-not-supported");
+
+  /**   */
   public static final QName calendarData = new QName(namespace,
                                                      "calendar-data");
 
   /**   */
-  public static final QName capabilitySet = new QName(namespace,
-                                                      "capability-set");
+  public static final QName calendarDataTypes = new QName(namespace,
+                                                     "calendar-data-types");
 
   /**   */
-  public static final QName comp = new QName(namespace,
-                                             "comp");
+  public static final QName capabilities = new QName(namespace,
+                                                     "capabilities");
 
   /**   */
-  public static final QName externalAttachment = new QName(namespace,
-                                                        "external-attachment");
+  public static final QName component = new QName(namespace,
+                                             "component");
 
   /**   */
-  public static final QName inlineAttachment = new QName(namespace,
-                                                         "inline-attachment");
+  public static final QName external = new QName(namespace,
+                                                 "external");
+
+  /**   */
+  public static final QName inline = new QName(namespace,
+                                               "inline");
+
+  /**   */
+  public static final QName invalidCalendarData = new QName(namespace,
+                                                     "invalid-calendar-data");
+
+  /**   */
+  public static final QName invalidCalendarDataType = new QName(namespace,
+                                                     "invalid-calendar-data-type");
+
+  /**   */
+  public static final QName invalidSchedulingMessage = new QName(namespace,
+                                              "invalid-scheduling-message");
 
   /**   */
   public static final QName maxContentLength = new QName(namespace,
@@ -77,8 +101,8 @@ public class IscheduleTags implements CaldavDefs {
                                                     "min-date-time");
 
   /**   */
-  public static final QName originatorSpecified = new QName(namespace,
-                                                   "originator-specified");
+  public static final QName originatorMissing = new QName(namespace,
+                                                   "originator-missing");
 
   /**   */
   public static final QName queryResult = new QName(namespace,
@@ -93,8 +117,8 @@ public class IscheduleTags implements CaldavDefs {
                                                   "recipient-permissions");
 
   /**   */
-  public static final QName recipientSpecified = new QName(namespace,
-                                                  "recipient-specified");
+  public static final QName recipientMissing = new QName(namespace,
+                                                  "recipient-missing");
 
   /**   */
   public static final QName requestStatus = new QName(namespace,
@@ -108,36 +132,31 @@ public class IscheduleTags implements CaldavDefs {
   public static final QName scheduleResponse = new QName(namespace,
                                                          "schedule-response");
 
-  /**   */
+  /**   * /
   public static final QName scheme = new QName(namespace,
                                                "scheme");
 
-  /**   */
-  public static final QName supportedAttachmentValues = new QName(namespace,
-                                                      "supported-attachment-values");
-
-  /**   */
-  public static final QName supportedCalendarDataType = new QName(namespace,
-                                                      "supported-calendar-data-type");
-
-  /**   */
+  / **   * /
   public static final QName supportedRecipientUriSchemeSet = new QName(namespace,
-                                       "supported-recipient-uri-scheme-set");
+                                       "supported-recipient-uri-scheme-set");*/
 
   /**   */
-  public static final QName supportedSchedulingMessageSet = new QName(namespace,
-                                              "supported-scheduling-message-set");
+  public static final QName schedulingMessages = new QName(namespace,
+                                              "scheduling-messages");
 
   /**   */
-  public static final QName supportedVersionSet = new QName(namespace,
-                                                      "supported-version-set");
-
-  /**   */
-  public static final QName validCalendarData = new QName(namespace,
-                                                          "valid-calendar-data");
+  public static final QName verificationFailed = new QName(namespace,
+                                                           "verification-failed");
 
   /**   */
   public static final QName version = new QName(namespace, "version");
+
+  /**   */
+  public static final QName versionNotSupported = new QName(namespace,
+                                                            "version-not-supported");
+
+  /**   */
+  public static final QName versions = new QName(namespace, "versions");
 
 }
 

@@ -139,6 +139,28 @@ public class PKITools {
   }
 
   /**
+   * @param pubKeyFile
+   * @return the current public key
+   * @throws PKIException
+   */
+  public byte[] getPublicKey(final String pubKeyFile) throws PKIException {
+    int keyNum = countKeys(pubKeyFile) - 1;
+
+    return b64.decode(getEncryptedKey(pubKeyFile, keyNum));
+  }
+
+  /**
+   * @param privKeyFile
+   * @return the current private key
+   * @throws PKIException
+   */
+  public PrivateKey getPrivateKey(final String privKeyFile) throws PKIException {
+    int keyNum = countKeys(privKeyFile) - 1;
+
+    return makePrivateKey(b64.decode(getEncryptedKey(privKeyFile, keyNum)));
+  }
+
+  /**
    * @param privKeyFile
    * @param pubKeyFile
    * @param append     true to add the key to the files.
@@ -306,27 +328,35 @@ public class PKITools {
     try {
       byte[] eVal = b64.decode(hexVal.getBytes());
 
-      PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
-      PrivateKey privateKey;
-
       if (curSchema.pName == null) {
-        KeyFactory kf = KeyFactory.getInstance(curSchema.algorithm);
-        privateKey = kf.generatePrivate(privateKeySpec);
-
         asymmetricCipher = Cipher.getInstance(curSchema.algorithm);
       } else {
-        KeyFactory kf = KeyFactory.getInstance(curSchema.algorithm,
-                                               curSchema.pName);
-        privateKey = kf.generatePrivate(privateKeySpec);
-
         asymmetricCipher = Cipher.getInstance(curSchema.algorithm,
                                               curSchema.pName);
       }
 
-      asymmetricCipher.init(Cipher.DECRYPT_MODE, privateKey);
+      asymmetricCipher.init(Cipher.DECRYPT_MODE, makePrivateKey(privKeyBytes));
       byte[] decryptedItem = asymmetricCipher.doFinal(eVal);
 
       return new String(decryptedItem);
+    } catch(Throwable t) {
+      throw new PKIException(t);
+    }
+  }
+
+  private PrivateKey makePrivateKey(final byte[] privKeyBytes) throws PKIException {
+    try {
+      PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyBytes);
+      KeyFactory kf;
+
+      if (curSchema.pName == null) {
+        kf = KeyFactory.getInstance(curSchema.algorithm);
+      } else {
+        kf = KeyFactory.getInstance(curSchema.algorithm,
+                                    curSchema.pName);
+      }
+
+      return kf.generatePrivate(privateKeySpec);
     } catch(Throwable t) {
       throw new PKIException(t);
     }
