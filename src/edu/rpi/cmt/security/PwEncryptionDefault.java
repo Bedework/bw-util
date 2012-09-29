@@ -108,7 +108,7 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
 
   @Override
   public PrivateKey getPrivateKey() throws Throwable {
-    return pki.getPrivateKey(pubKeys);
+    return pki.getPrivateKey(privKeys);
   }
 
   private Logger getLog() {
