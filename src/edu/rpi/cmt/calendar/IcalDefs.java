@@ -106,6 +106,10 @@ public class IcalDefs {
   public static final String requestStatusInvalidProperty =
            "3.0;Invalid Property Name:";
 
+  /** Append CUA */
+  public static final String requestStatusInvalidUser =
+           "3.7;Invalid User:";
+
   /**  */
   public static final String requestStatusUnsupportedCapability =
            "3.14;Unsupported capability";
@@ -113,6 +117,14 @@ public class IcalDefs {
   /** */
   public static final String requestStatusNoAccess =
            "4.2;No Access";
+
+  /** */
+  public static final String requestStatusUnavailable =
+           "5.1;Unavailable";
+
+  /** */
+  public static final String requestStatusNoSupport =
+           "5.3;No Support";
 
   /* ====================================================================
    *                      Transparency
