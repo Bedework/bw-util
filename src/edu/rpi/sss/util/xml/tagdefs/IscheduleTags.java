@@ -57,6 +57,10 @@ public class IscheduleTags implements CaldavDefs {
                                              "component");
 
   /**   */
+  public static final QName error = new QName(namespace,
+                                              "error");
+
+  /**   */
   public static final QName external = new QName(namespace,
                                                  "external");
 
@@ -127,6 +131,10 @@ public class IscheduleTags implements CaldavDefs {
   /**   */
   public static final QName response = new QName(namespace,
                                                  "response");
+
+  /** */
+  public static final QName responseDescription = new QName(namespace,
+                                                            "response-description");
 
   /**   */
   public static final QName scheduleResponse = new QName(namespace,
