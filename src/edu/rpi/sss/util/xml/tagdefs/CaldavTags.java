@@ -67,6 +67,10 @@ public class CaldavTags implements CaldavDefs {
                                                          "calendar-multiget");
 
   /**   */
+  public static final QName calendarOrder = new QName(caldavNamespace,
+                                                      "calendar-order");
+
+  /**   */
   public static final QName calendarQuery = new QName(caldavNamespace,
                                                       "calendar-query");
 
