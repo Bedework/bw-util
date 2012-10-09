@@ -320,6 +320,9 @@ public class WebdavTags {
   public static final QName syncResponse = makeQName("sync-response");
 
   /** */
+  public static final QName syncTraversalSupported = makeQName("sync-traversal-supported");
+
+  /** */
   public static final QName synclevel = makeQName("sync-level");
 
   /** */
