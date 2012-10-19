@@ -119,6 +119,19 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
           (Class<BaseComponentType>)copy.getClass(),
           copy));
 
+      if ((kind == XcalUtil.TzDaylight) ||
+          (kind == XcalUtil.TzStandard)) {
+        // DTSTART is the identifier
+        PropWrapper dts = props.find(XcalTags.dtstart);
+
+        if (dts == null) {
+          throw new RuntimeException("No DTSTART for reference");
+        }
+
+        copy.getProperties().getBasePropertyOrTzid().add(dts.getJaxbElement());
+        return r;
+      }
+
       if (kind == XcalUtil.TzKind) {
         // TZid is the identifier
         PropWrapper tzidw = props.find(XcalTags.tzid);
@@ -171,7 +184,9 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return true;
     }
 
-    if (kind == XcalUtil.TzKind) {
+    if ((kind == XcalUtil.TzKind) ||
+        (kind == XcalUtil.TzDaylight) ||
+        (kind == XcalUtil.TzStandard)) {
       // Not dealing with that
       return true;
     }
@@ -294,7 +309,10 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
 
     sel.setBaseComponent(getJaxbElement());
 
-    if ((kind == XcalUtil.OuterKind) || (kind == XcalUtil.TzKind)) {
+    if ((kind == XcalUtil.OuterKind) ||
+        (kind == XcalUtil.TzKind) ||
+        (kind == XcalUtil.TzDaylight) ||
+        (kind == XcalUtil.TzStandard)) {
       return sel;
     }
 
@@ -356,7 +374,10 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
       return res;
     }
 
-    if ((kind == XcalUtil.OuterKind) || (kind == XcalUtil.TzKind)) {
+    if ((kind == XcalUtil.OuterKind) ||
+        (kind == XcalUtil.TzKind) ||
+        (kind == XcalUtil.TzDaylight) ||
+        (kind == XcalUtil.TzStandard)) {
       return props.compareTo(o.props);
     }
 

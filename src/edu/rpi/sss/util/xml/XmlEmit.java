@@ -163,7 +163,8 @@ public class XmlEmit {
    * @throws IOException
    */
   public void openTag(final QName tag,
-                      final String attrName, final String attrVal) throws IOException {
+                      final String attrName,
+                      final String attrVal) throws IOException {
     blanks();
     openTagSameLine(tag, attrName, attrVal);
     newline();
@@ -351,6 +352,24 @@ public class XmlEmit {
   public void emptyTag(final QName tag) throws IOException {
     blanks();
     emptyTagSameLine(tag);
+    newline();
+  }
+
+  /**
+   * @param tag
+  * @param attrName
+  * @param attrVal
+   * @throws IOException
+   */
+  public void emptyTag(final QName tag,
+                       final String attrName,
+                       final String attrVal) throws IOException {
+    blanks();
+    lb();
+    emitQName(tag);
+    attribute(attrName, attrVal);
+    out("/");
+    rb();
     newline();
   }
 

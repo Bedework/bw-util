@@ -63,11 +63,20 @@ public class XcalUtil {
   private static final ObjectFactory icalOf = new ObjectFactory();
   static Map<Class, QName> compNames = new HashMap<Class, QName>();
 
+  /** */
   public static final Integer OuterKind = 0;
+  /** */
   public static final Integer RecurringKind = 1;
+  /** */
   public static final Integer UidKind = 2;
+  /** */
   public static final Integer AlarmKind = 3;
+  /** */
   public static final Integer TzKind = 4;
+  /** */
+  public static final Integer TzDaylight = 5;
+  /** */
+  public static final Integer TzStandard = 6;
 
   static Map<QName, Integer> compKinds = new HashMap<QName, Integer>();
 
@@ -99,13 +108,13 @@ public class XcalUtil {
 
     // Timezones
     addInfo(XcalTags.standard,
-            TzKind,
+            TzStandard,
             StandardType.class);
     addInfo(XcalTags.vtimezone,
             TzKind,
             VtimezoneType.class);
     addInfo(XcalTags.daylight,
-            TzKind,
+            TzDaylight,
             DaylightType.class);
   }
 
