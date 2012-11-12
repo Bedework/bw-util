@@ -66,6 +66,8 @@ public abstract class AbstractFilter implements Filter {
   private static final String globalsName =
         "edu.rpi.sss.util.servlets.AbstractFilter.FilterGlobals";
 
+  /**
+   */
   public AbstractFilter() {
     debug = getLogger().isDebugEnabled();
   }

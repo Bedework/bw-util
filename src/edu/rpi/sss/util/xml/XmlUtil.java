@@ -826,6 +826,24 @@ public final class XmlUtil implements Serializable {
     return true;
   }
 
+  /** Return a QName for the node
+   *
+   * @param nd
+   * @param tag
+   * @return boolean true for match
+   */
+  public static QName fromNode(final Node nd) {
+    String ns = nd.getNamespaceURI();
+
+    if (ns == null) {
+      /* It appears a node can have a NULL namespace but a QName has a zero length
+       */
+      ns = "";
+    }
+
+    return new QName(ns, nd.getLocalName());
+  }
+
   /**
    * @param nd
    * @return only child node

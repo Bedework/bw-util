@@ -38,6 +38,10 @@ public class AppleServerTags {
                                                "action");
 
   /**   */
+  public static final QName added = new QName(appleCaldavNamespace,
+                                               "added");
+
+  /**   */
   public static final QName allowedSharingModes = new QName(appleCaldavNamespace,
                                                "allowed-sharing-modes");
 
@@ -64,6 +68,10 @@ public class AppleServerTags {
   /**   */
   public static final QName changedBy = new QName(appleCaldavNamespace,
                                                  "changed-by");
+
+  /**   */
+  public static final QName changedParameter = new QName(appleCaldavNamespace,
+                                                        "changed-parameter");
 
   /**   */
   public static final QName changedProperty = new QName(appleCaldavNamespace,
@@ -240,6 +248,10 @@ public class AppleServerTags {
   /**   */
   public static final QName remove = new QName(appleCaldavNamespace,
                                               "remove");
+
+  /**   */
+  public static final QName removed = new QName(appleCaldavNamespace,
+                                              "removed");
 
   /**   */
   public static final QName reply = new QName(appleCaldavNamespace,
