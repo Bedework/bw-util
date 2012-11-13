@@ -30,32 +30,40 @@ public class BedeworkServerTags {
   public static final String bedeworkCaldavNamespace = "http://bedeworkcalserver.org/ns/";
 
   /**   */
-  public static final QName isTopicalArea = new QName(bedeworkCaldavNamespace,
-                                                "isTopicalArea");
+  public static final QName adminContact = new QName(bedeworkCaldavNamespace,
+                                                     "admin-contact");
+
+  /**   */
+  public static final QName dataFrom = new QName(bedeworkCaldavNamespace,
+                                                         "dataFrom");
+
+  /**   */
+  public static final QName dataTo = new QName(bedeworkCaldavNamespace,
+                                                         "dataTo");
 
   /**   */
   public static final QName defaultFBPeriod = new QName(bedeworkCaldavNamespace,
                                                          "defaultFBPeriod");
 
   /**   */
-  public static final QName maxFBPeriod = new QName(bedeworkCaldavNamespace,
-                                                         "maxFBPeriod");
-
-  /**   */
   public static final QName defaultWebCalPeriod = new QName(bedeworkCaldavNamespace,
                                                          "defaultWebCalPeriod");
 
   /**   */
-  public static final QName maxWebCalPeriod = new QName(bedeworkCaldavNamespace,
-                                                         "maxWebCalPeriod");
+  public static final QName isTopicalArea = new QName(bedeworkCaldavNamespace,
+                                                "isTopicalArea");
 
   /**   */
   public static final QName maxAttendees = new QName(bedeworkCaldavNamespace,
                                                      "maxAttendees");
 
   /**   */
-  public static final QName adminContact = new QName(bedeworkCaldavNamespace,
-                                                     "admin-contact");
+  public static final QName maxFBPeriod = new QName(bedeworkCaldavNamespace,
+                                                         "maxFBPeriod");
+
+  /**   */
+  public static final QName maxWebCalPeriod = new QName(bedeworkCaldavNamespace,
+                                                         "maxWebCalPeriod");
 
   /* used for property index */
 

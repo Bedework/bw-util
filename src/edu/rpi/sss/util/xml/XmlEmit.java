@@ -21,6 +21,7 @@ package edu.rpi.sss.util.xml;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
@@ -40,6 +41,8 @@ public class XmlEmit {
   private XmlEmitNamespaces nameSpaces = new XmlEmitNamespaces();
 
   private Notifier notifier;
+
+  private Properties props;
 
   /** Called (frequently) if set. May be used to allow higher level to
    * carry out actions when some output happens, e.g. open surrounding elements.
@@ -113,6 +116,34 @@ public class XmlEmit {
    */
   public XmlEmit(final boolean noHeaders) {
     this.noHeaders = noHeaders;
+  }
+
+  /** Allows applications to provide parameters to methods using this object class,
+   *
+   * <p>For example, a parameter "full" with value "true" might indicate a full
+   * XML dump is required.
+   *
+   * @param name
+   * @param val
+   */
+  public void setProperty(final String name, final String val) {
+    if (props == null) {
+      props = new Properties();
+    }
+
+    props.setProperty(name, val);
+  }
+
+  /**
+   * @param name
+   * @return value or null
+   */
+  public String getProperty(final String name) {
+    if (props == null) {
+      return null;
+    }
+
+    return props.getProperty(name);
   }
 
   /** Emit any headers and namespace declarations
