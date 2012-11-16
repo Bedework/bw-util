@@ -68,7 +68,12 @@ public class Util {
 
     for (String s: val) {
       if (s.equals("/")) {
-        if ((path.length() > 0) && (path.lastIndexOf("/") != (path.length() - 1))) {
+        if (path.length() == 0) {
+          path.append("/");
+          continue;
+        }
+
+        if (path.lastIndexOf("/") != (path.length() - 1)) {
           path.append("/");
         }
 

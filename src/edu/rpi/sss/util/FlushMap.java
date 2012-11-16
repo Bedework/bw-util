@@ -56,7 +56,7 @@ public class FlushMap<K,V> extends HashMap<K,V> {
 
   /** Create a FlushMap with default size and specified maxsize and flush period.
    *
-   * @param flushTime 0 means no flush time
+   * @param flushTime millis - 0 means no flush time
    * @param maxSize - 0 means no max size
    */
   public FlushMap(final long flushTime,
@@ -68,7 +68,7 @@ public class FlushMap<K,V> extends HashMap<K,V> {
   /** Create a FlushMap with specified size, maxsize and flush period.
    *
    * @param size
-   * @param flushTime 0 means no flush time
+   * @param flushTime millis - 0 means no flush time
    * @param maxSize - 0 means no max size
    */
   public FlushMap(final int size,
