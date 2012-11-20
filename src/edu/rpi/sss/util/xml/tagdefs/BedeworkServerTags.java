@@ -104,10 +104,14 @@ public class BedeworkServerTags {
                                                      "entity-type");
 
   /**   */
-  public static final QName xprop = new QName(bedeworkCaldavNamespace,
-                                                     "xprop");
-
-  /**   */
   public static final QName language = new QName(bedeworkCaldavNamespace,
                                                      "language");
+
+  /**   */
+  public static final QName name = new QName(bedeworkCaldavNamespace,
+                                                     "namee");
+
+  /**   */
+  public static final QName xprop = new QName(bedeworkCaldavNamespace,
+                                                     "xprop");
 }
