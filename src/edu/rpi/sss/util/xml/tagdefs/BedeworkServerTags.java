@@ -50,6 +50,10 @@ public class BedeworkServerTags {
                                                          "defaultWebCalPeriod");
 
   /**   */
+  public static final QName defaultPageSize = new QName(bedeworkCaldavNamespace,
+                                                        "defaultPageSize");
+
+  /**   */
   public static final QName isTopicalArea = new QName(bedeworkCaldavNamespace,
                                                 "isTopicalArea");
 
