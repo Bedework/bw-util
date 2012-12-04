@@ -20,6 +20,8 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/bw-calws-soapschema-3.9.jar"/>
 	<classpathentry kind="lib" path="lib/bw-icalschema-3.9.jar"/>
-	<classpathentry kind="lib" path="lib/bw-tzschema-3.9.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.1.1.jar" sourcepath="/home/douglm/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.1.1/jackson-annotations-2.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.1.1.jar" sourcepath="/home/douglm/drop2/java/jackson/jackson-databind-2.1.1-sources"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.1.1.jar"/>
 	<classpathentry kind="output" path="bin/eclipse-build"/>
 </classpath>

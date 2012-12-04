@@ -18,10 +18,10 @@
 */
 package edu.rpi.cmt.timezones;
 
+import edu.rpi.cmt.timezones.model.TimezoneListType;
+
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
-
-import ietf.params.xml.ns.timezone_service.TimezoneListType;
 
 import java.io.Serializable;
 import java.util.Collection;

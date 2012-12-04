@@ -18,6 +18,8 @@
 */
 package edu.rpi.cmt.timezones;
 
+import edu.rpi.cmt.timezones.model.TimezoneListType;
+import edu.rpi.cmt.timezones.model.TimezoneType;
 import edu.rpi.sss.util.DateTimeUtil;
 import edu.rpi.sss.util.DateTimeUtil.BadDateException;
 import edu.rpi.sss.util.FlushMap;
@@ -39,10 +41,6 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
-import ietf.params.xml.ns.timezone_service.ObjectFactory;
-import ietf.params.xml.ns.timezone_service.SummaryType;
-import ietf.params.xml.ns.timezone_service.TimezoneListType;
-
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URLEncoder;
@@ -56,9 +54,8 @@ import java.util.Properties;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /** Handle caching, retrieval and registration of timezones. There are possibly
  * two sets of timezones, public or system - shared across a system, and user owned,
@@ -213,7 +210,7 @@ public class TimezonesImpl extends Timezones {
 
       Collection<TimeZoneName> ids = new TreeSet<TimeZoneName>();
 
-      for (SummaryType s: tzlist.getSummary()) {
+      for (TimezoneType s: tzlist.getTimezones()) {
         ids.add(new TimeZoneName(s.getTzid()));
       }
 
@@ -580,7 +577,7 @@ public class TimezonesImpl extends Timezones {
   private static class TzServer {
     private static String tzserverUri;
 
-    private static JAXBContext jc;
+    private ObjectMapper om;
 
     private HttpGet getter;
     int status;
@@ -628,20 +625,15 @@ public class TimezonesImpl extends Timezones {
         req = req + "&changedsince=" + changedSince;
       }
 
-      JAXBElement jel = getXml(req);
-
-      if (jel == null) {
-        return null;
-      }
-
-      return (TimezoneListType)jel.getValue();
+      return getJson(req, TimezoneListType.class);
     }
 
     public InputStream getAliases() throws TimezonesException {
       return callForStream("aliases");
     }
 
-    public JAXBElement getXml(final String req) throws TimezonesException {
+    public <T> T getJson(final String req,
+                         final Class<T> valueType) throws TimezonesException {
       InputStream is = null;
       try {
         is = callForStream(req);
@@ -650,18 +642,9 @@ public class TimezonesImpl extends Timezones {
           return null;
         }
 
-        if (jc == null) {
-          synchronized (this) {
-            if (jc == null) {
-              jc = JAXBContext.newInstance(ObjectFactory.class);
-            }
-          }
+        synchronized (this) {
+          return om.readValue(is, valueType);
         }
-
-        Unmarshaller u = jc.createUnmarshaller();
-
-        JAXBElement jel = (JAXBElement)u.unmarshal(is);
-        return jel;
       } catch (TimezonesException cfe) {
         throw cfe;
       } catch (Throwable t) {
