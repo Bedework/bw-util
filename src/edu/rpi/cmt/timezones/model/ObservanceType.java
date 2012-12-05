@@ -15,7 +15,7 @@
     KIND, either express or implied. See the License for the
     specific language governing permissions and limitations
     under the License.
-*/
+ */
 package edu.rpi.cmt.timezones.model;
 
 import edu.rpi.sss.util.ToString;
@@ -38,170 +38,178 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         minutes at and after the start of this observance.
  *
  *
- * <p>Java class for ObservanceType complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
  * <pre>
- * &lt;complexType name="ObservanceType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="local-name" type="{urn:ietf:params:xml:ns:timezone-service}LocalNameType" maxOccurs="unbounded"/>
- *         &lt;element name="onset" type="{urn:ietf:params:xml:ns:timezone-service}OnsetType"/>
- *         &lt;element name="utc-offset-from" type="{urn:ietf:params:xml:ns:timezone-service}UtcOffsetType"/>
- *         &lt;element name="utc-offset-to" type="{urn:ietf:params:xml:ns:timezone-service}UtcOffsetType"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+   ; Information about a timezone available on the server
+   observance : {
+     oname,
+     ?olocal_names,
+     onset,
+     utc_offset_from,
+     utc_offset_to
+   }
+
+   ; Observance name
+   oname "name" : string
+
+   ; Array of localized observance names
+   olocal_names "local-names" : [ * :string]
+
+   ; The local time at which the observance takes effect
+   ; [RFC3339] value modified to exclude "time-offset" part
+   onset "onset" : date-time
+
+   ; The UTC offset in seconds before the start of this observance
+   utc_offset_from "utc-offset-from" : integer
+
+   ; The UTC offset in seconds at and after the start of this observance
+   utc_offset_to "utc-offset-to" : integer
+
  * </pre>
  *
  *
  */
 public class ObservanceType {
-    protected String name;
-    protected List<LocalNameType> localName;
-    protected String onset;
-    protected String utcOffsetFrom;
-    protected String utcOffsetTo;
+  protected String name;
+  protected List<LocalNameType> localName;
+  protected String onset;
+  protected String utcOffsetFrom;
+  protected String utcOffsetTo;
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getName() {
-        return name;
+  /**
+   * Gets the value of the name property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Sets the value of the name property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setName(final String value) {
+    name = value;
+  }
+
+  /**
+   * Gets the value of the localName property.
+   *
+   * <p>
+   * This accessor method returns a reference to the live list,
+   * not a snapshot. Therefore any modification you make to the
+   * returned list will be present inside the JAXB object.
+   * This is why there is not a <CODE>set</CODE> method for the localName property.
+   *
+   * <p>
+   * For example, to add a new item, do as follows:
+   * <pre>
+   *    getLocalName().add(newItem);
+   * </pre>
+   *
+   *
+   * <p>
+   * Objects of the following type(s) are allowed in the list
+   * {@link LocalNameType }
+   *
+   *
+   */
+  public List<LocalNameType> getLocalName() {
+    if (localName == null) {
+      localName = new ArrayList<LocalNameType>();
     }
+    return localName;
+  }
 
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setName(final String value) {
-        name = value;
-    }
+  /**
+   * Gets the value of the onset property.
+   *
+   * @return
+   *     possible object is
+   *     {@link XMLGregorianCalendar }
+   *
+   */
+  public String getOnset() {
+    return onset;
+  }
 
-    /**
-     * Gets the value of the localName property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the localName property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLocalName().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link LocalNameType }
-     *
-     *
-     */
-    public List<LocalNameType> getLocalName() {
-        if (localName == null) {
-            localName = new ArrayList<LocalNameType>();
-        }
-        return localName;
-    }
+  /**
+   * Sets the value of the onset property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link XMLGregorianCalendar }
+   *
+   */
+  public void setOnset(final String value) {
+    onset = value;
+  }
 
-    /**
-     * Gets the value of the onset property.
-     *
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *
-     */
-    public String getOnset() {
-        return onset;
-    }
+  /**
+   * Gets the value of the utcOffsetFrom property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  public String getUtcOffsetFrom() {
+    return utcOffsetFrom;
+  }
 
-    /**
-     * Sets the value of the onset property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *
-     */
-    public void setOnset(final String value) {
-        onset = value;
-    }
+  /**
+   * Sets the value of the utcOffsetFrom property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setUtcOffsetFrom(final String value) {
+    utcOffsetFrom = value;
+  }
 
-    /**
-     * Gets the value of the utcOffsetFrom property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getUtcOffsetFrom() {
-        return utcOffsetFrom;
-    }
+  /**
+   * Gets the value of the utcOffsetTo property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  public String getUtcOffsetTo() {
+    return utcOffsetTo;
+  }
 
-    /**
-     * Sets the value of the utcOffsetFrom property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setUtcOffsetFrom(final String value) {
-        utcOffsetFrom = value;
-    }
+  /**
+   * Sets the value of the utcOffsetTo property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setUtcOffsetTo(final String value) {
+    utcOffsetTo = value;
+  }
 
-    /**
-     * Gets the value of the utcOffsetTo property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getUtcOffsetTo() {
-        return utcOffsetTo;
-    }
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
 
-    /**
-     * Sets the value of the utcOffsetTo property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setUtcOffsetTo(final String value) {
-        utcOffsetTo = value;
-    }
+    ts.append("name", getName());
+    ts.append("onset", getOnset());
+    ts.append("offset-from", getUtcOffsetFrom());
+    ts.append("offset-to", getUtcOffsetTo());
 
-    @Override
-    public String toString() {
-      ToString ts = new ToString(this);
-
-      ts.append("name", getName());
-      ts.append("onset", getOnset());
-      ts.append("offset-from", getUtcOffsetFrom());
-      ts.append("offset-to", getUtcOffsetTo());
-
-      return ts.toString();
-    }
+    return ts.toString();
+  }
 
 }

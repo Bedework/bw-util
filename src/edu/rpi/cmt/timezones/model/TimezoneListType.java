@@ -18,6 +18,8 @@
  */
 package edu.rpi.cmt.timezones.model;
 
+import edu.rpi.sss.util.ToString;
+
 import java.util.Date;
 import java.util.List;
 
@@ -81,5 +83,15 @@ public class TimezoneListType extends BaseResultType {
    */
   public void setTimezones(final List<TimezoneType> val) {
     timezones = val;
+  }
+
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
+
+    ts.append("dtstamp", getDtstamp());
+    ts.append("timezones", getTimezones(), true);
+
+    return ts.toString();
   }
 }

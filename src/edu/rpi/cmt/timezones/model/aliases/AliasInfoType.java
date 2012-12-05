@@ -8,7 +8,9 @@
 
 package edu.rpi.cmt.timezones.model.aliases;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+import edu.rpi.sss.util.ToString;
+
+import java.util.Date;
 
 
 /**
@@ -38,105 +40,116 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  */
 public class AliasInfoType {
-    protected String alias;
-    protected XMLGregorianCalendar lastModified;
-    protected String description;
-    protected String source;
+  protected String alias;
+  protected Date lastModified;
+  protected String description;
+  protected String source;
 
-    /**
-     * Gets the value of the alias property.
-     *
-     * @return
-     *     possible object is
-     *     {@link AliasType }
-     *
-     */
-    public String getAlias() {
-        return alias;
-    }
+  /**
+   * Gets the value of the alias property.
+   *
+   * @return
+   *     possible object is
+   *     {@link AliasType }
+   *
+   */
+  public String getAlias() {
+    return alias;
+  }
 
-    /**
-     * Sets the value of the alias property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link AliasType }
-     *
-     */
-    public void setAlias(final String value) {
-        alias = value;
-    }
+  /**
+   * Sets the value of the alias property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link AliasType }
+   *
+   */
+  public void setAlias(final String value) {
+    alias = value;
+  }
 
-    /**
-     * Gets the value of the lastModified property.
-     *
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *
-     */
-    public XMLGregorianCalendar getLastModified() {
-        return lastModified;
-    }
+  /**
+   * Gets the value of the lastModified property.
+   *
+   * @return
+   *     possible object is
+   *     {@link Date }
+   *
+   */
+  public Date getLastModified() {
+    return lastModified;
+  }
 
-    /**
-     * Sets the value of the lastModified property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *
-     */
-    public void setLastModified(final XMLGregorianCalendar value) {
-        lastModified = value;
-    }
+  /**
+   * Sets the value of the lastModified property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link Date }
+   *
+   */
+  public void setLastModified(final Date value) {
+    lastModified = value;
+  }
 
-    /**
-     * Gets the value of the description property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getDescription() {
-        return description;
-    }
+  /**
+   * Gets the value of the description property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  public String getDescription() {
+    return description;
+  }
 
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setDescription(final String value) {
-        description = value;
-    }
+  /**
+   * Sets the value of the description property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setDescription(final String value) {
+    description = value;
+  }
 
-    /**
-     * Gets the value of the source property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getSource() {
-        return source;
-    }
+  /**
+   * Gets the value of the source property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  public String getSource() {
+    return source;
+  }
 
-    /**
-     * Sets the value of the source property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setSource(final String value) {
-        source = value;
-    }
+  /**
+   * Sets the value of the source property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setSource(final String value) {
+    source = value;
+  }
 
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
+
+    ts.append("alias", getAlias());
+    ts.append("lastModified", getLastModified());
+    ts.append("description", getDescription());
+    ts.append("source", getSource());
+
+    return ts.toString();
+  }
 }

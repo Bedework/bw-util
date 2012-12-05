@@ -115,10 +115,41 @@ public class ToString {
 
   /**
    * @param name
+   * @param val value to append
+   * @param withNewLines
+   * @return this object
+   */
+  public ToString append(final String name,
+                         final Iterable<? extends Object> val,
+                         final boolean withNewLines) {
+    delimit();
+    sb.append(name);
+    sb.append("=[");
+
+    if (val == null) {
+      sb.append("]");
+      return this;
+    }
+
+    for (Object o: val){
+      if (withNewLines) {
+        newLine();
+      }
+
+      append(o);
+    }
+
+    sb.append("]");
+
+    return this;
+  }
+
+  /**
+   * @param name
    * @param value
    * @return this object
    */
-  public ToString append(final String name, final String value) {
+  public ToString append(final String name, final Object value) {
     delimit();
     sb.append(name);
     sb.append("=");

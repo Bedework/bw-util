@@ -18,6 +18,8 @@
  */
 package edu.rpi.cmt.timezones.model;
 
+import edu.rpi.sss.util.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,4 +129,14 @@ public class CapabilitiesInfoType {
     return contacts;
   }
 
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
+
+    ts.append("source", getSource());
+    ts.append("primarySource", getPrimarySource());
+    ts.append("contacts", getContacts(), true);
+
+    return ts.toString();
+  }
 }

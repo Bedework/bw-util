@@ -124,12 +124,8 @@ public class TzdataType {
   public String toString() {
     ToString ts = new ToString(this);
 
-    ts.append("tzid=", getTzid());
-
-    for (ObservanceType ot: getObservances()) {
-      ts.newLine();
-      ts.append(ot);
-    }
+    ts.append("tzid", getTzid());
+    ts.append("observances", getObservances(), true);
 
     return ts.toString();
   }

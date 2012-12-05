@@ -18,6 +18,8 @@
  */
 package edu.rpi.cmt.timezones.model;
 
+import edu.rpi.sss.util.ToString;
+
 import java.util.Date;
 import java.util.List;
 
@@ -172,5 +174,18 @@ public class TimezoneType {
    */
   public void setLocalNames(final List<LocalNameType> val) {
     localNames = val;
+  }
+
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
+
+    ts.append("tzid", getTzid());
+    ts.append("lastModified", getLastModified());
+    ts.append("inactive", getInactive());
+    ts.append("aliases", getAliases(), true);
+    ts.append("localNames", getLocalNames(), true);
+
+    return ts.toString();
   }
 }

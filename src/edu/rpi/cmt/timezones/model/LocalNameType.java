@@ -18,6 +18,8 @@
  */
 package edu.rpi.cmt.timezones.model;
 
+import edu.rpi.sss.util.ToString;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 
@@ -135,4 +137,14 @@ public class LocalNameType {
     pref = value;
   }
 
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
+
+    ts.append("value", getValue());
+    ts.append("lang", getLang());
+    ts.append("pref", isPref());
+
+    return ts.toString();
+  }
 }

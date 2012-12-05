@@ -15,164 +15,145 @@
     KIND, either express or implied. See the License for the
     specific language governing permissions and limitations
     under the License.
-*/
+ */
 package edu.rpi.cmt.timezones.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import edu.rpi.sss.util.ToString;
+
 
 
 /**
- * 
- *         This defines the name, type and characteristics of an operation 
- *         parameter. 
- *       
- * 
- * <p>Java class for CapabilitiesAcceptParameterType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *         This defines the name, type and characteristics of an operation
+ *         parameter.
+ *
+ *
  * <pre>
- * &lt;complexType name="CapabilitiesAcceptParameterType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="required" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="multi" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+   ; Object defining an action parameter
+   parameter = {
+     param_name,
+     ?param_required,
+     ?param_multi,
+     ?param_values
+   }
+
+   ; Name of the parameter
+   param_name  "name" : string
+
+   ; If true the parameter has to be present in the request-URI
+   ; default is false
+   param_required "required" : boolean
+
+   ; If true the parameter can occur more than once in the request-URI
+   ; default is false
+   param_multi "multi" : boolean,
+
+   ; An array that defines the allowed set of values for the parameter
+   ; In the absence of this member, any string value is acceptable
+   param_values "values" : [ * : string ]
  * </pre>
- * 
- * 
+ *
+ *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CapabilitiesAcceptParameterType", propOrder = {
-    "name",
-    "required",
-    "multi",
-    "value",
-    "description"
-})
 public class CapabilitiesAcceptParameterType {
+  protected String name;
+  protected boolean required;
+  protected boolean multi;
+  protected String value;
 
-    @XmlElement(required = true)
-    protected String name;
-    protected boolean required;
-    protected boolean multi;
-    @XmlElement(required = true)
-    protected String value;
-    @XmlElement(required = true)
-    protected String description;
+  /**
+   * Gets the value of the name property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  public String getName() {
+    return name;
+  }
 
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
+  /**
+   * Sets the value of the name property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setName(final String value) {
+    name = value;
+  }
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+  /**
+   * Gets the value of the required property.
+   *
+   * @return true for a required param
+   */
+  public boolean isRequired() {
+    return required;
+  }
 
-    /**
-     * Gets the value of the required property.
-     * 
-     */
-    public boolean isRequired() {
-        return required;
-    }
+  /**
+   * Sets the value of the required property.
+   *
+   * @param value
+   */
+  public void setRequired(final boolean value) {
+    required = value;
+  }
 
-    /**
-     * Sets the value of the required property.
-     * 
-     */
-    public void setRequired(boolean value) {
-        this.required = value;
-    }
+  /**
+   * Gets the value of the multi property.
+   *
+   * @return true for multi-valued
+   */
+  public boolean isMulti() {
+    return multi;
+  }
 
-    /**
-     * Gets the value of the multi property.
-     * 
-     */
-    public boolean isMulti() {
-        return multi;
-    }
+  /**
+   * Sets the value of the multi property.
+   *
+   * @param value
+   */
+  public void setMulti(final boolean value) {
+    multi = value;
+  }
 
-    /**
-     * Sets the value of the multi property.
-     * 
-     */
-    public void setMulti(boolean value) {
-        this.multi = value;
-    }
+  /**
+   * Gets the value of the value property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  public String getValue() {
+    return value;
+  }
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getValue() {
-        return value;
-    }
+  /**
+   * Sets the value of the value property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setValue(final String value) {
+    this.value = value;
+  }
 
-    /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDescription() {
-        return description;
-    }
+    ts.append("name", getName());
+    ts.append("required", isRequired());
+    ts.append("multi", isMulti());
+    ts.append("value", getValue());
 
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
+    return ts.toString();
+  }
 }

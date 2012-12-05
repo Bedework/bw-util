@@ -18,6 +18,8 @@
  */
 package edu.rpi.cmt.timezones.model;
 
+import edu.rpi.sss.util.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,82 +38,35 @@ import java.util.List;
    ; Array of request-URI query parameters supported by the action
    action_params = "parameters" : [ * parameter ]
 
-   ; Object defining an action parameter
-   parameter = {
-     param_name,
-     ?param_required,
-     ?param_multi,
-     ?param_values
-   }
-
-   ; Name of the parameter
-   param_name  "name" : string
-
-   ; If true the parameter has to be present in the request-URI
-   ; default is false
-   param_required "required" : boolean
-
-   ; If true the parameter can occur more than once in the request-URI
-   ; default is false
-   param_multi "multi" : boolean,
-
-   ; An array that defines the allowed set of values for the parameter
-   ; In the absence of this member, any string value is acceptable
-   param_values "values" : [ * : string ]
  * </pre>
  *
  */
 public class CapabilitiesActionType {
-  protected String action;
-  protected String description;
+  protected String name;
   protected List<CapabilitiesAcceptParameterType> parameters;
 
   /**
-   * Gets the value of the action property.
+   * Gets the value of the name property.
    *
    * @return
    *     possible object is
    *     {@link String }
    *
    */
-  public String getAction() {
-    return action;
+  public String getName() {
+    return name;
   }
 
   /**
-   * Sets the value of the action property.
+   * Sets the value of the name property.
    *
    * @param value
    *     allowed object is
    *     {@link String }
    *
    */
-  public void setAction(final String value) {
-    action = value;
-  }
-
-  /**
-   * Gets the value of the description property.
-   *
-   * @return
-   *     possible object is
-   *     {@link String }
-   *
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  /**
-   * Sets the value of the description property.
-   *
-   * @param value
-   *     allowed object is
-   *     {@link String }
-   *
-   */
-  public void setDescription(final String value) {
-    description = value;
+  public void setName(final String value) {
+    name = value;
   }
 
   /**
@@ -120,7 +75,7 @@ public class CapabilitiesActionType {
    * <p>
    * This accessor method returns a reference to the live list,
    * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
+   * returned list will be present inside the Json object.
    * This is why there is not a <CODE>set</CODE> method for the acceptParameter property.
    *
    * <p>
@@ -144,4 +99,13 @@ public class CapabilitiesActionType {
     return parameters;
   }
 
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
+
+    ts.append("name", getName());
+    ts.append("parameters", getParameters(), true);
+
+    return ts.toString();
+  }
 }

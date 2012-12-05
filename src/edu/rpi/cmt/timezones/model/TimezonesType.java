@@ -100,7 +100,7 @@ public class TimezonesType extends BaseResultType {
   public String toString() {
     ToString ts = new ToString(this);
 
-    ts.append("dtstamp=", getDtstamp().toString());
+    ts.append("dtstamp", getDtstamp().toString());
 
     for (TzdataType tzd: getTzdata()){
       ts.newLine();

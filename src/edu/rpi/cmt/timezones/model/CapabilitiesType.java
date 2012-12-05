@@ -18,6 +18,8 @@
 */
 package edu.rpi.cmt.timezones.model;
 
+import edu.rpi.sss.util.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,5 +102,15 @@ public class CapabilitiesType extends BaseResultType {
       actions = new ArrayList<CapabilitiesActionType>();
     }
     return actions;
+  }
+
+  @Override
+  public String toString() {
+    ToString ts = new ToString(this);
+
+    ts.append("info", getInfo());
+    ts.append("actions", getActions(), true);
+
+    return ts.toString();
   }
 }
