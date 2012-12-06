@@ -19,9 +19,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /** CLass to allow us to call the server
@@ -48,6 +51,12 @@ public class TzServer {
    */
   public TzServer(final String uri) throws TimezonesException {
     debug = getLogger().isDebugEnabled();
+    om = new ObjectMapper();
+    DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
+
+    om.setDateFormat(df);
+
+    om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     tzserverUri = discover(uri);
   }
 
