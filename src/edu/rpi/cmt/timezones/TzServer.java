@@ -1,6 +1,7 @@
 package edu.rpi.cmt.timezones;
 
 import edu.rpi.cmt.timezones.Timezones.TaggedTimeZone;
+import edu.rpi.cmt.timezones.model.CapabilitiesType;
 import edu.rpi.cmt.timezones.model.TimezoneListType;
 
 import org.apache.http.Header;
@@ -31,6 +32,8 @@ public class TzServer {
   protected boolean debug;
 
   private static String tzserverUri;
+
+  private CapabilitiesType capabilities;
 
   private ObjectMapper om;
 
@@ -109,15 +112,17 @@ public class TzServer {
   }
 
   /**
+   * @return capabilities obtained at discovery phase
+   */
+  public CapabilitiesType getCapabilities() {
+    return capabilities;
+  }
+
+  /**
    * @throws TimezonesException
    */
   public void close() throws TimezonesException {
     try {
-      if (client != null) {
-        client.getConnectionManager().shutdown();
-        client = null;
-      }
-
       if (response == null) {
         return;
       }
@@ -131,6 +136,11 @@ public class TzServer {
 
       getter = null;
       response = null;
+
+      if (client != null) {
+        client.getConnectionManager().shutdown();
+        client = null;
+      }
     } catch (Throwable t) {
       throw new TimezonesException(t);
     }
@@ -218,12 +228,11 @@ public class TzServer {
   //    domain = domain.substring(lpos2 + 1);
     //}
 
-    boolean isUrl = false;
     String realUrl;
 
     try {
-      URL u = new URL(url);
-      isUrl = true;
+      /* See if it's a real url */
+      new URL(url);
       realUrl = url;
     } catch (Throwable t) {
       realUrl = "https://" + url + "/.well-known/timezone";
@@ -279,6 +288,8 @@ public class TzServer {
         }
 
         /* Should have a capabilities record. */
+        capabilities = om.readValue(response.getEntity().getContent(),
+                                    CapabilitiesType.class);
 
         return realUrl;
       }
@@ -346,7 +357,6 @@ public class TzServer {
     getLogger().error(msg);
   }
 
-  @SuppressWarnings("unused")
   private void debug(final String msg) {
     getLogger().debug(msg);
   }
