@@ -8,8 +8,6 @@
 	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-misc-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-4.1.2.jar" sourcepath="/httpclient-4.1"/>
-	<classpathentry kind="lib" path="lib/httpcore-4.1.2.jar" sourcepath="/http-core-4.1"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/derby-10.8.2.2.jar"/>
@@ -23,5 +21,7 @@
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.1.1.jar" sourcepath="/home/douglm/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.1.1/jackson-annotations-2.1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.1.1.jar" sourcepath="/home/douglm/drop2/java/jackson/jackson-databind-2.1.1-sources"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.2.2.jar" sourcepath="/home/douglm/.m2/repository/org/apache/httpcomponents/httpcore/4.2.2/httpcore-4.2.2-sources.jar"/>
 	<classpathentry kind="output" path="bin/eclipse-build"/>
 </classpath>

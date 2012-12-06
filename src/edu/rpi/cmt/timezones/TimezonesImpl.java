@@ -31,20 +31,10 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.util.TimeZones;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -53,21 +43,9 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.TreeSet;
 
-import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-/** Handle caching, retrieval and registration of timezones. There are possibly
- * two sets of timezones, public or system - shared across a system, and user owned,
- * private to the current user.
+/** Handle caching, retrieval and registration of timezones.
  *
- * <p>System timezones are typically initialised once per system while user
- * timezones are initialised once per session.
- *
- * <p>As there is a limited set of timezones (currently around 350) it makes sense
- * to hold all the system timezones in memory. Thus, there will be no updates to
- * the pool of system timezones. Any updates therefore are assumed to be to the
- * set of user timezones.
+ * <p>As there is a limited set of timezones used we can cache most or all of them.
  *
  * @author Mike Douglass
  *
@@ -82,7 +60,7 @@ public class TimezonesImpl extends Timezones {
   protected String defaultTimeZoneId;
   protected transient TimeZone defaultTimeZone;
 
-  /* Map of user TimezoneInfo */
+  /* TimezoneInfo cache */
   protected FlushMap<String, TimeZone> timezones =
       new FlushMap<String, TimeZone>(60 * 1000 * 60, // 1 hour
                                      100); // 100 timezones
@@ -165,7 +143,7 @@ public class TimezonesImpl extends Timezones {
   }
 
   @Override
-  public void init(final String serverUrl) {
+  public void init(final String serverUrl) throws TimezonesException {
     this.serverUrl = serverUrl;
     debug = getLogger().isDebugEnabled();
   }
@@ -200,7 +178,7 @@ public class TimezonesImpl extends Timezones {
   @Override
   public Collection<TimeZoneName> getTimeZoneNames() throws TimezonesException {
     if (timezoneNames != null) {
-      return Collections.unmodifiableCollection(timezoneNames);
+      return timezoneNames;
     }
 
     TzServer server = new TzServer(serverUrl);
@@ -214,9 +192,9 @@ public class TimezonesImpl extends Timezones {
         ids.add(new TimeZoneName(s.getTzid()));
       }
 
-      timezoneNames = ids;
+      timezoneNames = Collections.unmodifiableCollection(ids);
 
-      return Collections.unmodifiableCollection(timezoneNames);
+      return timezoneNames;
     } finally {
       server.close();
     }
@@ -572,157 +550,6 @@ public class TimezonesImpl extends Timezones {
     }
   }
 
-  /** CLass to allow us to call the server
-   */
-  private static class TzServer {
-    private static String tzserverUri;
-
-    private ObjectMapper om;
-
-    private HttpGet getter;
-    int status;
-    HttpResponse response;
-
-    TzServer(final String uri) {
-      tzserverUri = uri;
-    }
-
-    public TaggedTimeZone getTz(final String id,
-                                final String etag) throws TimezonesException {
-      try {
-        doCall("action=get&tzid=" +
-            URLEncoder.encode(id,
-                              HTTP.DEFAULT_CONTENT_CHARSET), etag);
-
-        int status = response.getStatusLine().getStatusCode();
-
-        if (status == HttpServletResponse.SC_NO_CONTENT) {
-          return new TaggedTimeZone(etag);
-        }
-
-        if (status != HttpServletResponse.SC_OK) {
-          return null;
-        }
-
-        return new TaggedTimeZone(response.getFirstHeader("Etag").getValue(),
-                                  EntityUtils.toString(response.getEntity()));
-      } catch (TimezonesException cfe) {
-        throw cfe;
-      } catch (Throwable t) {
-        throw new TimezonesException(t);
-      }
-    }
-
-    /* Not used - remove from server
-    public String getNames() throws TimezonesException {
-      return call("names");
-    }*/
-
-    public TimezoneListType getList(final String changedSince) throws TimezonesException {
-      String req = "action=list";
-
-      if (changedSince != null) {
-        req = req + "&changedsince=" + changedSince;
-      }
-
-      return getJson(req, TimezoneListType.class);
-    }
-
-    public InputStream getAliases() throws TimezonesException {
-      return callForStream("aliases");
-    }
-
-    public <T> T getJson(final String req,
-                         final Class<T> valueType) throws TimezonesException {
-      InputStream is = null;
-      try {
-        is = callForStream(req);
-
-        if ((is == null) || (status != HttpServletResponse.SC_OK)) {
-          return null;
-        }
-
-        synchronized (this) {
-          return om.readValue(is, valueType);
-        }
-      } catch (TimezonesException cfe) {
-        throw cfe;
-      } catch (Throwable t) {
-        throw new TimezonesException(t);
-      } finally {
-        if (is != null) {
-          try {
-            is.close();
-          } catch (Throwable t) {}
-        }
-      }
-    }
-
-    public InputStream callForStream(final String req) throws TimezonesException {
-      try {
-        doCall(req, null);
-
-        if (status != HttpServletResponse.SC_OK) {
-          return null;
-        }
-
-        HttpEntity ent = response.getEntity();
-
-        return ent.getContent();
-      } catch (TimezonesException cfe) {
-        throw cfe;
-      } catch (Throwable t) {
-        throw new TimezonesException(t);
-      }
-    }
-
-    public void close() throws TimezonesException {
-      try {
-        if (response == null) {
-          return;
-        }
-
-        HttpEntity ent = response.getEntity();
-
-        if (ent != null) {
-          InputStream is = ent.getContent();
-          is.close();
-        }
-
-        getter = null;
-        response = null;
-      } catch (Throwable t) {
-        throw new TimezonesException(t);
-      }
-    }
-
-    private void doCall(final String req,
-                        final String etag) throws TimezonesException {
-      try {
-        if (tzserverUri == null) {
-          throw new TimezonesException("No timezones server URI defined");
-        }
-
-        HttpClient client = new DefaultHttpClient();
-
-        getter = new HttpGet(tzserverUri + "?" + req);
-
-        if (etag != null) {
-          getter.addHeader(new BasicHeader("If-None-Match", etag));
-        }
-
-        response = client.execute(getter);
-        status = response.getStatusLine().getStatusCode();
-      } catch (TimezonesException cfe) {
-        throw cfe;
-      } catch (UnknownHostException uhe) {
-        throw new TzUnknownHostException(tzserverUri);
-      } catch (Throwable t) {
-        throw new TimezonesException(t);
-      }
-    }
-
-  }
 
   private void digit2(final StringBuilder sb, final int val) throws BadDateException {
     if (val > 99) {

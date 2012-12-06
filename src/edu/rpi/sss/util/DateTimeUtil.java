@@ -19,7 +19,7 @@
 package edu.rpi.sss.util;
 
 import edu.rpi.cmt.timezones.Timezones;
-import edu.rpi.cmt.timezones.Timezones.TimezonesException;
+import edu.rpi.cmt.timezones.TimezonesException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

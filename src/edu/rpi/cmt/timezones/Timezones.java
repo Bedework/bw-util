@@ -33,79 +33,6 @@ import java.util.Collection;
  *
  */
 public abstract class Timezones implements Serializable {
-  /** Identify our exceptions.
-   * @author douglm
-   *
-   */
-  public static class TimezonesException extends Throwable {
-    /** */
-    public static String unknownTimezone = "edu.rpi.cmt.timezones.exc.unknownTimezone";
-
-    /** Implementation error */
-    public static String cacheError = "edu.rpi.cmt.timezones.exc.cacheerror";
-
-    /** */
-    public static String badDate = "edu.rpi.cmt.timezones.exc.baddate";
-
-    private String extra;
-
-    /**
-     */
-    public TimezonesException() {
-      super();
-    }
-
-    /**
-     * @param t
-     */
-    public TimezonesException(final Throwable t) {
-      super(t);
-    }
-
-    /**
-     * @param msg
-     */
-    public TimezonesException(final String msg) {
-      super(msg);
-    }
-
-    /**
-     * @param msg
-     * @param extra
-     */
-    public TimezonesException(final String msg, final String extra) {
-      super(msg);
-      this.extra = extra;
-    }
-
-    /**
-     * @return String
-     */
-    public String getExtra() {
-      return extra;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder(super.toString());
-      if (extra != null) {
-        sb.append(": ");
-        sb.append(extra);
-      }
-
-      return sb.toString();
-    }
-  }
-  /** Identify our exceptions.
-   * @author douglm
-   *
-   */
-  public static class TzUnknownHostException extends TimezonesException {
-    public TzUnknownHostException(final String msg) {
-      super(msg);
-    }
-  }
-
   private static ThreadLocal<String> threadTzid =
     new ThreadLocal<String>();
 
@@ -146,55 +73,6 @@ public abstract class Timezones implements Serializable {
     return tzRegistry;
   }
 
-  /** Printable (language specific) name + internal id
-   */
-  public static class TimeZoneName implements Comparable<TimeZoneName>, Serializable {
-    /** Name for timezone */
-    public String name;
-    /** Id for timezone */
-    public String id;
-
-    /**
-     * @param name
-     */
-    public TimeZoneName(final String name) {
-      this.name = name;
-      id = name;
-    }
-
-    /**
-     * @return tz name
-     */
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * @return tz id
-     */
-    public String getId() {
-      return id;
-    }
-
-    @Override
-    public int compareTo(final TimeZoneName that) {
-      if (that == this) {
-        return 0;
-      }
-
-      return name.compareTo(that.name);
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      return compareTo((TimeZoneName)o) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-      return name.hashCode();
-    }
-  }
   /* ====================================================================
    *                   Static methods
    * ==================================================================== */
@@ -211,6 +89,8 @@ public abstract class Timezones implements Serializable {
       }
 
       tzs.init(serverUrl);
+    } catch (TimezonesException te) {
+      throw te;
     } catch (Throwable t) {
       throw new TimezonesException(t);
     }
@@ -349,8 +229,9 @@ public abstract class Timezones implements Serializable {
   /** Initialise the object supplying the url of the timezones server.
    *
    * @param serverUrl
+   * @throws TimezonesException
    */
-  public abstract void init(String serverUrl);
+  public abstract void init(String serverUrl) throws TimezonesException;
 
   /** Get a timezone object given the id. This method will attempt to retrieve
    * a cached timezone and if that fails a will try to fetch the tz from the
@@ -362,7 +243,7 @@ public abstract class Timezones implements Serializable {
    */
   public abstract TimeZone getTimeZone(String id) throws TimezonesException;
 
-  /** A non-null object means tz exists.A null tz means that it has identical
+  /** A non-null object means tz exists. A null tz means that it has identical
    * etags.
    *
    * @author douglm
@@ -396,7 +277,7 @@ public abstract class Timezones implements Serializable {
   }
 
   /** Get a timezone object given the id and etag. This method will bypass the
-   * cach and call a remote servicedirectly.
+   * cach and call a remote service directly.
    *
    * @param id
    * @param etag - null for unconditional fetch
