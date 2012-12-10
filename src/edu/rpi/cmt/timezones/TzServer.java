@@ -297,8 +297,13 @@ public class TzServer {
         }
 
         /* Should have a capabilities record. */
-        capabilities = om.readValue(response.getEntity().getContent(),
-                                    CapabilitiesType.class);
+        try {
+          capabilities = om.readValue(response.getEntity().getContent(),
+                                      CapabilitiesType.class);
+        } catch (Throwable t) {
+          // Bad data - we'll just go with the url for the moment?
+          error(t);
+        }
 
         return realUrl;
       }
