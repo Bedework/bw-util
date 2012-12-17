@@ -51,16 +51,26 @@ import java.util.List;
  *
  */
 public class CapabilitiesType extends BaseResultType {
+  protected int version;
   protected CapabilitiesInfoType info;
   protected List<CapabilitiesActionType> actions;
 
   /**
-   * Gets the value of the info property.
+   * Sets the value of the version property.
    *
-   * @return CapabilitiesInfoType
+   * @param value
    */
-  public CapabilitiesInfoType getInfo() {
-    return info;
+  public void setVersion(final int value) {
+    version = value;
+  }
+
+  /**
+   * Sets the value of the version property.
+   *
+   * @return int version
+   */
+  public int getVersion() {
+    return version;
   }
 
   /**
@@ -73,6 +83,15 @@ public class CapabilitiesType extends BaseResultType {
    */
   public void setInfo(final CapabilitiesInfoType value) {
     info = value;
+  }
+
+  /**
+   * Gets the value of the info property.
+   *
+   * @return CapabilitiesInfoType
+   */
+  public CapabilitiesInfoType getInfo() {
+    return info;
   }
 
   /**
@@ -108,6 +127,7 @@ public class CapabilitiesType extends BaseResultType {
   public String toString() {
     ToString ts = new ToString(this);
 
+    ts.append("version", getVersion());
     ts.append("info", getInfo());
     ts.append("actions", getActions(), true);
 

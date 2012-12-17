@@ -34,7 +34,7 @@ import edu.rpi.sss.util.ToString;
    }
 
    ; Error code
-   error "error" : integer
+   error "error" : string
 
    ; Description of the error
    description "description" : string
@@ -42,24 +42,34 @@ import edu.rpi.sss.util.ToString;
  *
  */
 public class ErrorResponseType {
-  protected int error;
+  protected String error;
   protected String description;
+
+  /**
+   * @param error
+   * @param description
+   */
+  public ErrorResponseType(final String error,
+                           final String description) {
+    this.error = error;
+    this.description = description;
+  }
 
   /**
    * Gets the value of the error property.
    *
-   * @return int
+   * @return String
    */
-  public int getError() {
+  public String getError() {
       return error;
   }
 
   /**
    * Sets the value of the error property.
    *
-   * @param value int code
+   * @param value String code
    */
-  public void setError(final int value) {
+  public void setError(final String value) {
     error = value;
   }
 
