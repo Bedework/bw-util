@@ -32,6 +32,8 @@ public class ToString {
   private String indent = "";
   private String delim = "";
 
+  private boolean valuesOnly;
+
   private final static int maxLen = 80;
   private final static String indentVal = "  ";
 
@@ -41,6 +43,21 @@ public class ToString {
    */
   public ToString(final Object o) {
     sb = new StringBuilder(o.getClass().getSimpleName()).append("{");
+  }
+
+  private ToString() {
+  }
+
+  /**
+   * @return ToString configured to output mostly just the values.
+   */
+  public static ToString valuesOnly() {
+    ToString ts = new ToString();
+
+    ts.valuesOnly = true;
+    ts.sb = new StringBuilder();
+
+    return ts;
   }
 
   /** Create an instance for the given object and indentation
@@ -225,7 +242,9 @@ public class ToString {
 
   @Override
   public String toString() {
-    sb.append("}");
+    if (!valuesOnly) {
+      sb.append("}");
+    }
 
     return sb.toString();
   }
