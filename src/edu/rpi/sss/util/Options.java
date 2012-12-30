@@ -790,6 +790,14 @@ public class Options implements OptionsI {
         Object val = objStack.peek();
         Method meth = findSetter(val, name);
 
+        if (meth == null) {
+          // Treat as leaf node
+          oel.isValue = true;
+          oel.val = ndval;
+
+          return;
+        }
+
         Class[] parClasses = meth.getParameterTypes();
         if (parClasses.length != 1) {
           error("Invalid setter method " + name);
@@ -905,7 +913,7 @@ public class Options implements OptionsI {
       Logger.getLogger(Options.class).error("No setter method for property " +
                                                name + " for class " +
                                                val.getClass().getName());
-      throw new OptionsException("org.bedework.calenv.no.setters");
+      return null;
     }
 
     return meth;

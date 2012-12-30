@@ -27,6 +27,9 @@ import javax.xml.namespace.QName;
  */
 public class BedeworkServerTags {
   /** */
+  public static final String bedeworkSystemNamespace = "http://bedework.org/ns/";
+
+  /** */
   public static final String bedeworkCaldavNamespace = "http://bedeworkcalserver.org/ns/";
 
   /**   */
@@ -113,7 +116,7 @@ public class BedeworkServerTags {
 
   /**   */
   public static final QName name = new QName(bedeworkCaldavNamespace,
-                                                     "namee");
+                                                     "name");
 
   /**   */
   public static final QName xprop = new QName(bedeworkCaldavNamespace,
