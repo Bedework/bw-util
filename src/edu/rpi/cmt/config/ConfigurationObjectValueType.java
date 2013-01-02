@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.config;
 
+import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.XmlEmit;
 import edu.rpi.sss.util.xml.XmlUtil;
 
@@ -29,10 +30,11 @@ import javax.xml.namespace.QName;
  *
  * @author Mike Douglass douglm
  */
-public class ConfigurationObjectValueType extends ConfigurationValueType<Object> {
+public class ConfigurationObjectValueType
+    extends ConfigurationValueType<Comparable, ConfigurationObjectValueType> {
   private QName elementName;
   private String elementType;
-  private Object value;
+  private Comparable value;
 
   /**
    * @param elementName
@@ -55,12 +57,12 @@ public class ConfigurationObjectValueType extends ConfigurationValueType<Object>
   }
 
   @Override
-  public void setValue(final Object val) throws ConfigException {
+  public void setValue(final Comparable val) throws ConfigException {
     value = val;
   }
 
   @Override
-  public Object getValue() throws ConfigException {
+  public Comparable getValue() throws ConfigException {
     return value;
   }
 
@@ -70,7 +72,7 @@ public class ConfigurationObjectValueType extends ConfigurationValueType<Object>
       String s = XmlUtil.getOneNodeVal(nd);
 
       if (s != null) {
-        setValue(new Boolean(s));
+        setValue(s);
       }
     } catch (Throwable t) {
       throw new ConfigException(t);
@@ -83,6 +85,20 @@ public class ConfigurationObjectValueType extends ConfigurationValueType<Object>
       xml.value(getValue().toString());
     } catch (Throwable t) {
       throw new ConfigException(t);
+    }
+  }
+
+  @Override
+  public int compareTo(final ConfigurationElementType that) {
+    try {
+      if (that instanceof ConfigurationObjectValueType) {
+        return Util.cmpObjval(getValue(),
+                              ((ConfigurationObjectValueType)that).getValue());
+      }
+
+      return getClass().getName().compareTo(that.getClass().getName());
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
     }
   }
 }

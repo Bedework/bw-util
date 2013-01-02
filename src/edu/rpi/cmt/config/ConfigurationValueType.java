@@ -24,8 +24,10 @@ package edu.rpi.cmt.config;
  *
  * @author Mike Douglass douglm
  * @param <T>
+ * @param <C>
  */
-public abstract class ConfigurationValueType<T> extends ConfigurationElementType {
+public abstract class ConfigurationValueType<T, C extends ConfigurationValueType>
+    extends ConfigurationElementType<C> {
   /** Set the value
    *
    * @param val

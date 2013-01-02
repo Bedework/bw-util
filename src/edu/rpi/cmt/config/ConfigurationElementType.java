@@ -37,8 +37,10 @@ import javax.xml.namespace.QName;
  * <p>The default is "java.lang.String" and may be omitted for that type.
  *
  * @author Mike Douglass douglm
+ * @param <C>
  */
-public abstract class ConfigurationElementType {
+public abstract class ConfigurationElementType<C extends ConfigurationElementType>
+    implements Comparable<ConfigurationElementType> {
   /**
    * @return a name to identify the element
    */
@@ -161,5 +163,11 @@ public abstract class ConfigurationElementType {
     } catch (Throwable t) {
       throw new ConfigException(t);
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public boolean equals(final Object o) {
+    return compareTo((ConfigurationElementType)o) == 0;
   }
 }

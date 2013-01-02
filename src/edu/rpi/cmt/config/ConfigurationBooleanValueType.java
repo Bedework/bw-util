@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.config;
 
+import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.XmlEmit;
 import edu.rpi.sss.util.xml.XmlUtil;
 
@@ -29,7 +30,8 @@ import javax.xml.namespace.QName;
  *
  * @author Mike Douglass douglm
  */
-public class ConfigurationBooleanValueType extends ConfigurationValueType<Boolean> {
+public class ConfigurationBooleanValueType
+    extends ConfigurationValueType<Boolean, ConfigurationBooleanValueType> {
   private QName elementName;
   private Boolean value;
 
@@ -79,6 +81,20 @@ public class ConfigurationBooleanValueType extends ConfigurationValueType<Boolea
       xml.value(getValue().toString());
     } catch (Throwable t) {
       throw new ConfigException(t);
+    }
+  }
+
+  @Override
+  public int compareTo(final ConfigurationElementType that) {
+    try {
+      if (that instanceof ConfigurationBooleanValueType) {
+        return Util.cmpObjval(getValue(),
+                              ((ConfigurationBooleanValueType)that).getValue());
+      }
+
+      return getClass().getName().compareTo(that.getClass().getName());
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
     }
   }
 }

@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.config;
 
+import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.XmlEmit;
 import edu.rpi.sss.util.xml.XmlUtil;
 
@@ -29,7 +30,8 @@ import javax.xml.namespace.QName;
  *
  * @author Mike Douglass douglm
  */
-public class ConfigurationStringValueType extends ConfigurationValueType<String> {
+public class ConfigurationStringValueType
+    extends ConfigurationValueType<String, ConfigurationStringValueType> {
   private QName elementName;
   private String value;
 
@@ -79,6 +81,20 @@ public class ConfigurationStringValueType extends ConfigurationValueType<String>
       xml.value(getValue());
     } catch (Throwable t) {
       throw new ConfigException(t);
+    }
+  }
+
+  @Override
+  public int compareTo(final ConfigurationElementType that) {
+    try {
+      if (that instanceof ConfigurationStringValueType) {
+        return Util.cmpObjval(getValue(),
+                              ((ConfigurationStringValueType)that).getValue());
+      }
+
+      return getClass().getName().compareTo(that.getClass().getName());
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
     }
   }
 }

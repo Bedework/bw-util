@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.config;
 
+import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.XmlEmit;
 import edu.rpi.sss.util.xml.XmlUtil;
 
@@ -29,7 +30,8 @@ import javax.xml.namespace.QName;
  *
  * @author Mike Douglass douglm
  */
-public class ConfigurationLongValueType extends ConfigurationValueType<Long> {
+public class ConfigurationLongValueType
+    extends ConfigurationValueType<Long, ConfigurationLongValueType> {
   private QName elementName;
   private Long value;
 
@@ -79,6 +81,20 @@ public class ConfigurationLongValueType extends ConfigurationValueType<Long> {
       xml.value(getValue().toString());
     } catch (Throwable t) {
       throw new ConfigException(t);
+    }
+  }
+
+  @Override
+  public int compareTo(final ConfigurationElementType that) {
+    try {
+      if (that instanceof ConfigurationLongValueType) {
+        return Util.cmpObjval(getValue(),
+                              ((ConfigurationLongValueType)that).getValue());
+      }
+
+      return getClass().getName().compareTo(that.getClass().getName());
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
     }
   }
 }

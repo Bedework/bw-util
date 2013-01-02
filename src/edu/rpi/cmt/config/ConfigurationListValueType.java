@@ -18,6 +18,7 @@
 */
 package edu.rpi.cmt.config;
 
+import edu.rpi.sss.util.Util;
 import edu.rpi.sss.util.xml.XmlEmit;
 import edu.rpi.sss.util.xml.XmlUtil;
 import edu.rpi.sss.util.xml.tagdefs.BedeworkServerTags;
@@ -33,7 +34,9 @@ import javax.xml.namespace.QName;
  *
  * @author Mike Douglass douglm
  */
-public class ConfigurationListValueType extends ConfigurationValueType<List<ConfigurationElementType>> {
+public class ConfigurationListValueType
+    extends ConfigurationValueType<List<ConfigurationElementType>,
+    ConfigurationListValueType> {
   private QName elementName;
   private List<ConfigurationElementType> value;
 
@@ -131,6 +134,201 @@ public class ConfigurationListValueType extends ConfigurationValueType<List<Conf
     }
 
     return els;
+  }
+
+  /**
+   * @param name
+   * @return list of values
+   * @throws ConfigException
+   */
+  public List<String> getAll(final QName name) throws ConfigException {
+    List<ConfigurationElementType> els = findAll(name);
+    List<String> vals = new ArrayList<String>();
+
+    if (els.isEmpty()) {
+      return vals;
+    }
+
+    for (ConfigurationElementType ce: els) {
+      if (!(ce instanceof ConfigurationValueType)) {
+        continue;
+      }
+
+      vals.add(((ConfigurationValueType)ce).getValue().toString());
+    }
+
+    return vals;
+  }
+
+  /** Add a property
+   *
+   * @param name
+   * @param value
+   * @throws ConfigException
+   */
+  public void addProperty(final QName name,
+                          final String value) throws ConfigException {
+    ConfigurationStringValueType cv = new ConfigurationStringValueType(name);
+    cv.setValue(value);
+    getValue().add(cv);
+  }
+
+  /**
+   * @param name
+   * @param value
+   * @return true if removed
+   * @throws ConfigException
+   */
+  public boolean removeProperty(final QName name,
+                                final String value) throws ConfigException {
+    ConfigurationStringValueType cv = new ConfigurationStringValueType(name);
+    cv.setValue(value);
+    return removeProperty(cv);
+  }
+
+  /**
+   * @param val
+   * @return true if removed
+   * @throws ConfigException
+   */
+  public boolean removeProperty(final ConfigurationElementType val) throws ConfigException {
+    return getValue().remove(val);
+  }
+
+  /**
+   * @param name
+   * @return element or null
+   * @throws ConfigException if more than one value found
+   */
+  public ConfigurationElementType findSingleValueProperty(final QName name) throws ConfigException {
+    List<ConfigurationElementType> ps = findAll(name);
+
+    if (ps.size() == 0) {
+      return null;
+    }
+
+    if (ps.size() > 1) {
+      throw new ConfigException("Multiple values for single valued property " + name);
+    }
+
+    return ps.get(0);
+  }
+
+  /** Set the single valued property
+  *
+  * @param name
+  * @param value
+   * @throws ConfigException if more than one value found
+  */
+  public void setProperty(final QName name,
+                          final String value) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      addString(name, value);
+      return;
+    }
+
+    ConfigurationStringValueType p = (ConfigurationStringValueType)ce;
+
+    if (!p.getValue().equals(value)) {
+      p.setValue(value);
+    }
+  }
+
+  /**
+   * @param name
+   * @return single value of valued property with given name
+   * @throws ConfigException if more than one value found
+   */
+  public String getPropertyValue(final QName name) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      return null;
+    }
+
+    return ((ConfigurationStringValueType)ce).getValue();
+  }
+
+  /** Set the single valued property
+   *
+   * @param name
+   * @param value
+   * @throws ConfigException if more than one value found
+   */
+  public void setBooleanProperty(final QName name,
+                                 final Boolean value) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      addBoolean(name, value);
+      return;
+    }
+
+    ConfigurationBooleanValueType p = (ConfigurationBooleanValueType)ce;
+
+    if (!p.getValue().equals(value)) {
+      p.setValue(value);
+    }
+  }
+
+  /**
+   * @param name
+   * @return single value of valued property with given name
+   * @throws ConfigException if more than one value found
+   */
+  public Boolean getBooleanPropertyValue(final QName name) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      return false;
+    }
+
+    Boolean bval = ((ConfigurationBooleanValueType)ce).getValue();
+
+    if (bval == null) {
+      return false;
+    }
+
+    return bval;
+  }
+
+  /** Set the single valued property
+  *
+  * @param name
+  * @param value
+   * @throws ConfigException if more than one value found
+  */
+  public void setIntegerProperty(final QName name,
+                                 final Integer value) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      addInteger(name, value);
+      return;
+    }
+
+    ConfigurationIntegerValueType p = (ConfigurationIntegerValueType)ce;
+
+    if (!p.getValue().equals(value)) {
+      p.setValue(value);
+    }
+  }
+
+  /**
+   * @param name
+   * @return single value of valued property with given name
+   * @throws ConfigException if more than one value found
+   */
+  public Integer getIntegerPropertyValue(final QName name) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      return null;
+    }
+
+    return ((ConfigurationIntegerValueType)ce).getValue();
   }
 
   /** Add a Boolean value in the default namespace
@@ -251,5 +449,19 @@ public class ConfigurationListValueType extends ConfigurationValueType<List<Conf
     getValue().add(cv);
 
     return cv;
+  }
+
+  @Override
+  public int compareTo(final ConfigurationElementType that) {
+    try {
+      if (that instanceof ConfigurationListValueType) {
+        return Util.cmpObjval(getValue(),
+                              ((ConfigurationListValueType)that).getValue());
+      }
+
+      return getClass().getName().compareTo(that.getClass().getName());
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
+    }
   }
 }
