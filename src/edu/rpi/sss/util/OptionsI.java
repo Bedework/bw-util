@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-        
+
     http://www.apache.org/licenses/LICENSE-2.0
-        
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -78,6 +78,19 @@ public interface OptionsI extends Serializable {
                    String optionsFile,
                    String outerTagName) throws OptionsException;
 
+  /** Called after object is created
+   *
+   * @param globalPrefix
+   * @param appPrefix
+   * @param optionsFileStream -
+   * @param outerTagName - surrounding tag in options file e.g. bedework-options
+   * @throws OptionsException
+   */
+  public void init(String globalPrefix,
+                   String appPrefix,
+                   InputStream optionsFileStream,
+                   String outerTagName) throws OptionsException;
+
   /** Just a restatement of the xml element
    *
    * @author Mike Douglass
@@ -112,12 +125,6 @@ public interface OptionsI extends Serializable {
       getChildren().add(val);
     }
   }
-
-  /**
-   * @param is
-   * @throws OptionsException
-   */
-  public void initFromStream(InputStream is) throws OptionsException;
 
   /** Get names of children nodes -assumes unique path
    *

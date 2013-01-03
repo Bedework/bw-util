@@ -54,7 +54,7 @@ public class Options implements OptionsI {
 
   private String appPrefix;
 
-  private String optionsFile;
+//  private String optionsFile;
 
   private QName outerTag;
 
@@ -74,19 +74,66 @@ public class Options implements OptionsI {
                    final String appPrefix,
                    final String optionsFile,
                    final String outerTagName) throws OptionsException {
-    this.globalPrefix = globalPrefix;
-    this.appPrefix = appPrefix;
-    this.optionsFile = optionsFile;
-
-    outerTag = new QName(null, outerTagName);
-
-    initOptions();
+//    this.optionsFile = optionsFile;
+    init(globalPrefix,
+         appPrefix,
+         getStream(optionsFile),
+         outerTagName);
   }
 
   @Override
-  public void initFromStream(final InputStream is) throws OptionsException {
-    useSystemwideValues = false;
-    localOptionsRoot = parseOptions(is);
+  public void init(final String globalPrefix,
+                   final String appPrefix,
+                   final InputStream optionsFileStream,
+                   final String outerTagName) throws OptionsException {
+    try {
+      this.globalPrefix = globalPrefix;
+      this.appPrefix = appPrefix;
+    //  this.optionsFile = optionsFile;
+
+      outerTag = new QName(null, outerTagName);
+
+      /* We now parse the file into a simple options structure
+       */
+      optionsRoot = parseOptions(optionsFileStream);
+    } finally {
+      if (optionsFileStream != null) {
+        try {
+          optionsFileStream.close();
+        } catch (Throwable t1) {}
+      }
+    }
+  }
+
+  private InputStream getStream(final String path) throws OptionsException {
+    /* get an input stream for the options file */
+
+    InputStream is = null;
+
+    try {
+      try {
+        // The jboss?? way - should work for others as well.
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        is = cl.getResourceAsStream(path);
+      } catch (Throwable clt) {}
+
+      if (is == null) {
+        // Try another way
+        is = Options.class.getResourceAsStream(path);
+      }
+
+      if (is == null) {
+        throw new OptionsException("Unable to load options file" +
+                                  path);
+      }
+
+      return is;
+    } catch (OptionsException cee) {
+      throw cee;
+    } catch (Throwable t) {
+      Logger.getLogger(Options.class).error("getEnv error", t);
+      throw new OptionsException(t.getMessage());
+    }
   }
 
   @Override
@@ -252,51 +299,6 @@ public class Options implements OptionsI {
       throw ce;
     } catch (Throwable t) {
       throw new OptionsException(t);
-    }
-  }
-
-  private void initOptions() throws OptionsException {
-    /* get an input stream for the options file */
-
-    InputStream is = null;
-
-    try {
-      try {
-        // The jboss?? way - should work for others as well.
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        is = cl.getResourceAsStream(optionsFile);
-      } catch (Throwable clt) {}
-
-      if (is == null) {
-        // Try another way
-        is = Options.class.getResourceAsStream(optionsFile);
-      }
-
-      if (is == null) {
-        throw new OptionsException("Unable to load options file" +
-                                  optionsFile);
-      }
-
-      /* We now parse the file into a simple options structure
-       */
-      optionsRoot = parseOptions(is);
-
-      //if (debug) {
-      //  pr.list(System.out);
-      //  Logger.getLogger(CalEnv.class).debug(
-      //      "file.encoding=" + System.getProperty("file.encoding"));
-      //}
-    } catch (OptionsException cee) {
-      throw cee;
-    } catch (Throwable t) {
-      Logger.getLogger(Options.class).error("getEnv error", t);
-      throw new OptionsException(t.getMessage());
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (Throwable t1) {}
-      }
     }
   }
 

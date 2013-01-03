@@ -71,7 +71,7 @@ public class ConfigurationFileStore implements ConfigurationStore {
     try {
       String xmlStr = config.toXml();
 
-      File f = new File(dirPath + config.getName());
+      File f = new File(dirPath + config.getName() + ".xml");
 
       FileWriter fw = new FileWriter(f);
 
@@ -90,7 +90,7 @@ public class ConfigurationFileStore implements ConfigurationStore {
     FileInputStream fis = null;
 
     try {
-      File f = new File(dirPath + name);
+      File f = new File(dirPath + name + ".xml");
 
       if (!f.exists()) {
         return null;
@@ -117,7 +117,11 @@ public class ConfigurationFileStore implements ConfigurationStore {
   private static class FilesOnly implements FileFilter {
     @Override
     public boolean accept(final File pathname) {
-      return pathname.isFile();
+      if (!pathname.isFile()) {
+        return false;
+      }
+
+      return pathname.getName().endsWith(".xml");
     }
   }
 
@@ -131,7 +135,8 @@ public class ConfigurationFileStore implements ConfigurationStore {
       List<String> names = new ArrayList<String>();
 
       for (File f: files) {
-        names.add(f.getName());
+        String nm = f.getName();
+        names.add(nm.substring(0, nm.indexOf(".xml")));
       }
 
       return names;
