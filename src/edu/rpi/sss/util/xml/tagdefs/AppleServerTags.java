@@ -230,6 +230,10 @@ public class AppleServerTags {
                                                        "private-comment");
 
   /**   */
+  public static final QName publishUrl = new QName(appleCaldavNamespace,
+                                                        "publish-url");
+
+  /**   */
   public static final QName read = new QName(appleCaldavNamespace,
                                               "read");
 

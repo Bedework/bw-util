@@ -83,6 +83,10 @@ public class BedeworkServerTags {
                                                      "owner");
 
   /**   */
+  public static final QName published = new QName(bedeworkCaldavNamespace,
+                                                  "published");
+
+  /**   */
   public static final QName endType = new QName(bedeworkCaldavNamespace,
                                                      "end-type");
 
