@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="tests/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/h2-1.2.130.jar"/>
-	<classpathentry kind="lib" path="lib/ical4j-head-20100601.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-misc-2.0.0.jar"/>
@@ -23,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/jackson-core-2.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpclient-4.2.1.jar" sourcepath="/home/douglm/.m2/repository/org/apache/httpcomponents/httpclient/4.2.1/httpclient-4.2.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.2.2.jar" sourcepath="/home/douglm/.m2/repository/org/apache/httpcomponents/httpcore/4.2.2/httpcore-4.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/ical4j-1.0-BW-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/eclipse-build"/>
 </classpath>
