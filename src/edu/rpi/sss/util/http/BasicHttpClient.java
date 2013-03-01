@@ -277,7 +277,7 @@ public class BasicHttpClient extends DefaultHttpClient {
    * /
   public static long getDeleted() {
     return connManager.getDeleted();
-  }
+  }*/
 
   /** Set the credentials. user == null for unauthenticated.
    *
@@ -570,6 +570,34 @@ public class BasicHttpClient extends DefaultHttpClient {
     } catch (Throwable t) {
       throw new HttpException(t.getLocalizedMessage(), t);
     }
+  }
+
+  /**
+   * @param name
+   * @return header or null
+   * @throws HttpException
+   */
+  public Header getFirstHeader(final String name) throws HttpException {
+    if (response == null) {
+      return null;
+    }
+
+    return response.getFirstHeader(name);
+  }
+
+  /**
+   * @param name
+   * @return value of header or null
+   * @throws HttpException
+   */
+  public String getFirstHeaderValue(final String name) throws HttpException {
+    Header h = getFirstHeader(name);
+
+    if (h == null) {
+      return null;
+    }
+
+    return h.getValue();
   }
 
   /**
