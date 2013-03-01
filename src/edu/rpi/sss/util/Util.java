@@ -42,8 +42,8 @@ import java.util.StringTokenizer;
 public class Util {
   private Util() {} // Don't instantiate this
 
-  /** Build a path out of the given elements. If the element is a "/" we check
-   * to see if the path already has a "/" before appending it.
+  /** Build a path out of the given elements. Any parameter may be a path element
+   * or a path separator. Note this only allows "/" as the separator.
    *
    * Examples:
    * <pre>
@@ -67,6 +67,7 @@ public class Util {
     StringBuilder path = new StringBuilder();
 
     for (String s: val) {
+      /*
       if (s.equals("/")) {
         if (path.length() == 0) {
           path.append("/");
@@ -78,13 +79,50 @@ public class Util {
         }
 
         continue;
-      }
+      }*/
 
       path.append(s);
     }
 
-    return path.toString();
+    return path.toString().replaceAll("/+",  "/");
   }
+
+  /** Build a path out of the given elements. Any parameter may be a path element
+   * or a path separator. Note this only allows "/" as the separator.
+   *
+   * <p>The path is constrained to either end or not end with the path separator.
+   * The path will be adjusted according to the constraint
+   *
+   * @param endWithSep
+   * @param val - list of elements and path separators.
+   * @return completed path
+   */
+  public static String buildPath(final boolean endWithSep,
+                                 final String... val) {
+    StringBuilder path = new StringBuilder();
+
+    for (String s: val) {
+      path.append(s);
+    }
+
+    String s = path.toString().replaceAll("/+",  "/");
+
+    if (endWithSep) {
+      if (!s.endsWith("/")) {
+        s += "/";
+      }
+    } else if (s.endsWith("/")) {
+      s = s.substring(0, s.length() - 1);
+    }
+
+    return s;
+  }
+
+  /*
+  public static void main(final String[] args) {
+    System.out.println(buildPath(false, "el1", "/", "///el2///", "abc", ".ics"));
+    System.out.println(buildPath(true, "el1", "/", "///el2///"));
+  }*/
 
   /** Load a named resource as a Properties object
    *
