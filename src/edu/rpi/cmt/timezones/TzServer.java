@@ -50,9 +50,11 @@ public class TzServer {
   public TzServer(final String uri) throws TimezonesException {
     debug = getLogger().isDebugEnabled();
     om = new ObjectMapper();
-    DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
 
-    om.setDateFormat(df);
+    /* Don't use dates in json - still issues with timezones ironically */
+    //DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
+
+    //om.setDateFormat(df);
 
     om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     tzserverUri = discover(uri);

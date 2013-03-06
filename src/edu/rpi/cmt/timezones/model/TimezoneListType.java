@@ -20,7 +20,6 @@ package edu.rpi.cmt.timezones.model;
 
 import edu.rpi.sss.util.ToString;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,7 +39,7 @@ import java.util.List;
  *
  */
 public class TimezoneListType extends BaseResultType {
-  protected Date dtstamp;
+  protected String dtstamp;
   protected List<TimezoneType> timezones;
 
   /**
@@ -48,10 +47,10 @@ public class TimezoneListType extends BaseResultType {
    *
    * @return
    *     possible object is
-   *     {@link Date }
+   *     {@link String } Format is yyyy-MM-ddTHH:mm:ssZ
    *
    */
-  public Date getDtstamp() {
+  public String getDtstamp() {
     return dtstamp;
   }
 
@@ -60,10 +59,10 @@ public class TimezoneListType extends BaseResultType {
    *
    * @param value
    *     allowed object is
-   *     {@link Date }
+   *     {@link String }
    *
    */
-  public void setDtstamp(final Date value) {
+  public void setDtstamp(final String value) {
     dtstamp = value;
   }
 
