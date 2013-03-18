@@ -320,8 +320,30 @@ public class BasicHttpClient extends DefaultHttpClient {
   public int sendRequest(final String methodName,
                          final String url,
                          final Header[] hdrs, final String depth,
-                         String contentType, final int contentLen,
+                         final String contentType, final int contentLen,
                          final byte[] content) throws HttpException {
+    return sendRequest(methodName, url, hdrs, depth,
+                       contentType, contentLen, content, null);
+  }
+
+  /** Send a request to the server
+   *
+   * @param methodName
+   * @param url
+   * @param hdrs
+   * @param depth
+   * @param contentType
+   * @param contentLen
+   * @param content
+   * @return int    status code
+   * @throws HttpException
+   */
+  public int sendRequest(final String methodName,
+                         final String url,
+                         final Header[] hdrs, final String depth,
+                         String contentType, final int contentLen,
+                         final byte[] content,
+                         final HttpParams params) throws HttpException {
     int sz = 0;
     if (content != null) {
       sz = content.length;
@@ -359,6 +381,10 @@ public class BasicHttpClient extends DefaultHttpClient {
       if (content != null) {
         setContent(content, contentType);
       }
+    }
+
+    if (params != null) {
+      method.setParams(params);
     }
 
     try {

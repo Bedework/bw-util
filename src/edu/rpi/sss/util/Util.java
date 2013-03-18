@@ -42,49 +42,60 @@ import java.util.StringTokenizer;
 public class Util {
   private Util() {} // Don't instantiate this
 
-  /** Build a path out of the given elements. Any parameter may be a path element
-   * or a path separator. Note this only allows "/" as the separator.
+  /** Show changes for adjustCollection
    *
-   * Examples:
-   * <pre>
-   * "user/mike/", "/", "calendar", "/"</pre>
-   * produces
-   * <pre>
-   * "user/mike/calendar/"
-   * </pre>
-   * and
-   * <pre>
-   * "user/mike/", "/", "calendar", "/", "myevent", ".ics" </pre>
-   * produces
-   * <pre>
-   * "user/mike/calendar/myevent.ics"
-   * </pre>
-   *
-   * @param val - list of elements and path separators.
-   * @return completed path
+   * @param <T>
    */
-  public static String buildPath(final String... val) {
-    StringBuilder path = new StringBuilder();
+  public static class AdjustCollectionResult<T>  {
+    /** never null */
+    public Collection<T> removed;
+    /** never null */
+    public Collection<T> added;
+    /**  */
+    public int numAdded;
+    /**  */
+    public int numRemoved;
+  }
 
-    for (String s: val) {
-      /*
-      if (s.equals("/")) {
-        if (path.length() == 0) {
-          path.append("/");
+  /** Used to adjust a collection toAdjust so that it looks like the collection
+   * newCol. The collection newCol will be unchanged but the result object will
+   * contain a list of added and removed values.
+   *
+   * @param newCol
+   * @param toAdjust
+   * @return added and removed values
+   */
+  public static <T> AdjustCollectionResult<T> adjustCollection(final Collection<T> newCol,
+                                                            final Collection<T> toAdjust) {
+    AdjustCollectionResult<T> acr = new AdjustCollectionResult<T>();
+
+    acr.removed = new ArrayList<T>();
+    acr.added = new ArrayList<T>();
+    acr.added.addAll(newCol);
+
+    if (toAdjust != null) {
+      for (T ent: toAdjust) {
+        if (newCol.contains(ent)) {
+          acr.added.remove(ent);
           continue;
         }
 
-        if (path.lastIndexOf("/") != (path.length() - 1)) {
-          path.append("/");
-        }
-
-        continue;
-      }*/
-
-      path.append(s);
+        acr.removed.add(ent);
+      }
     }
 
-    return path.toString().replaceAll("/+",  "/");
+    for (T ent: acr.added) {
+      toAdjust.add(ent);
+      acr.numAdded++;
+    }
+
+    for (T ent: acr.removed) {
+      if (toAdjust.remove(ent)) {
+        acr.numRemoved++;
+      }
+    }
+
+    return acr;
   }
 
   /** Build a path out of the given elements. Any parameter may be a path element
