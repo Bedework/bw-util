@@ -229,6 +229,11 @@ public class ConfigurationListValueType
       return;
     }
 
+    if (value == null) {
+      removeProperty(ce);
+      return;
+    }
+
     ConfigurationStringValueType p = (ConfigurationStringValueType)ce;
 
     if (!p.getValue().equals(value)) {
@@ -331,6 +336,43 @@ public class ConfigurationListValueType
     return ((ConfigurationIntegerValueType)ce).getValue();
   }
 
+  /** Set the single valued property
+  *
+  * @param name
+  * @param value
+   * @throws ConfigException if more than one value found
+  */
+  public void setLongProperty(final QName name,
+                              final Long value) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      addLong(name, value);
+      return;
+    }
+
+    ConfigurationLongValueType p = (ConfigurationLongValueType)ce;
+
+    if (!p.getValue().equals(value)) {
+      p.setValue(value);
+    }
+  }
+
+  /**
+   * @param name
+   * @return single value of valued property with given name
+   * @throws ConfigException if more than one value found
+   */
+  public Long getLongPropertyValue(final QName name) throws ConfigException {
+    ConfigurationElementType ce = findSingleValueProperty(name);
+
+    if (ce == null) {
+      return null;
+    }
+
+    return ((ConfigurationLongValueType)ce).getValue();
+  }
+
   /** Add a Boolean value in the default namespace
    * @param localName
    * @param val
@@ -398,6 +440,22 @@ public class ConfigurationListValueType
     QName name = new QName(BedeworkServerTags.bedeworkSystemNamespace,
                            localName);
 
+    ConfigurationLongValueType cv = new ConfigurationLongValueType(name);
+    cv.setValue(val);
+
+    getValue().add(cv);
+
+    return cv;
+  }
+
+  /** Add a Long value in the default namespace
+   * @param name
+   * @param val
+   * @return config element
+   * @throws ConfigException
+   */
+  public ConfigurationLongValueType addLong(final QName name,
+                                            final Long val) throws ConfigException {
     ConfigurationLongValueType cv = new ConfigurationLongValueType(name);
     cv.setValue(val);
 

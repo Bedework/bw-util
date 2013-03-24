@@ -18,8 +18,6 @@
 */
 package edu.rpi.cmt.config;
 
-import edu.rpi.cmt.config.ConfigurationElementType;
-import edu.rpi.cmt.config.ConfigurationType;
 import edu.rpi.sss.util.ToString;
 import edu.rpi.sss.util.xml.tagdefs.BedeworkServerTags;
 
@@ -230,6 +228,32 @@ public abstract class ConfigBase<T extends ConfigBase> implements Comparable<T>,
   public Integer getIntegerPropertyValue(final QName name) {
     try {
       return getConfig().getIntegerPropertyValue(name);
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
+    }
+  }
+
+  /** Set the single valued property
+   *
+   * @param name
+   * @param value
+   */
+  public void setLongProperty(final QName name,
+                              final Long value) {
+    try {
+      getConfig().setLongProperty(name, value);
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
+    }
+  }
+
+  /**
+   * @param name
+   * @return single value of valued property with given name
+   */
+  public Long getLongPropertyValue(final QName name) {
+    try {
+      return getConfig().getLongPropertyValue(name);
     } catch (Throwable t) {
       throw new RuntimeException(t);
     }
