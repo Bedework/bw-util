@@ -226,7 +226,7 @@ public abstract class ConfBase implements ConfBaseMBean {
   /**
    * @return the management context.
    */
-  protected static ManagementContext getManagementContext() {
+  public static ManagementContext getManagementContext() {
     if (managementContext == null) {
       /* Try to find the jboss mbean server */
 
