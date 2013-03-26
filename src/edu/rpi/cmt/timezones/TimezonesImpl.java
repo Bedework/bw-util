@@ -60,6 +60,9 @@ public class TimezonesImpl extends Timezones {
   protected String defaultTimeZoneId;
   protected transient TimeZone defaultTimeZone;
 
+  private static FlushMap<String, TzServer> tzServers =
+      new FlushMap<String, TzServer>();
+
   /* TimezoneInfo cache */
   protected FlushMap<String, TimeZone> timezones =
       new FlushMap<String, TimeZone>(60 * 1000 * 60, // 1 hour
@@ -181,7 +184,7 @@ public class TimezonesImpl extends Timezones {
       return timezoneNames;
     }
 
-    TzServer server = new TzServer(serverUrl);
+    TzServer server = getTzServer(serverUrl);
 
     try {
       TimezoneListType tzlist = server.getList(null);
@@ -205,7 +208,7 @@ public class TimezonesImpl extends Timezones {
    */
   @Override
   public TimezoneListType getList(final String changedSince) throws TimezonesException {
-    TzServer server = new TzServer(serverUrl);
+    TzServer server = getTzServer(serverUrl);
 
     try {
       return server.getList(changedSince);
@@ -456,7 +459,7 @@ public class TimezonesImpl extends Timezones {
 
   protected TaggedTimeZone fetchTimeZone(final String id,
                                          final String etag) throws TimezonesException {
-    TzServer server = new TzServer(serverUrl);
+    TzServer server = getTzServer(serverUrl);
 
     try {
       TaggedTimeZone ttz = server.getTz(id, etag);
@@ -502,6 +505,21 @@ public class TimezonesImpl extends Timezones {
    *                   private methods
    * ==================================================================== */
 
+  private static TzServer getTzServer(final String url) throws TimezonesException {
+    synchronized (tzServers) {
+      TzServer svr = tzServers.get(url);
+
+      if (svr != null) {
+        return svr;
+      }
+
+      svr = new TzServer(url);
+      tzServers.put(url, svr);
+
+      return svr;
+    }
+  }
+
   private static String transformTzid(final String tzid) {
     int len = tzid.length();
 
@@ -526,7 +544,7 @@ public class TimezonesImpl extends Timezones {
   }
 
   private void loadAliases() throws TimezonesException {
-    TzServer server = new TzServer(serverUrl);
+    TzServer server = getTzServer(serverUrl);
     InputStream is = null;
 
     try {

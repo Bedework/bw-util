@@ -50,13 +50,17 @@ public class IcalDefs {
   public static final int entityTypeAvailable = 6;
 
   /** */
+  public static final int entityTypeVpoll = 7;
+
+  /** */
   public static final String[] entityTypeNames = {"event",
                                                   "alarm",
                                                   "todo",
                                                   "journal",
                                                   "freeAndBusy",
                                                   "vavailability",
-                                                  "available"
+                                                  "available",
+                                                  "vpoll"
   };
 
   /** */
@@ -66,7 +70,8 @@ public class IcalDefs {
                                                       "VJOURNAL",
                                                       "VFREEBUSY",
                                                       "VAVAILABILITY",
-                                                      "AVAILABLE"
+                                                      "AVAILABLE",
+                                                      "VPOLL"
   };
 
   /** Used to identify types of components within a calendar object */
