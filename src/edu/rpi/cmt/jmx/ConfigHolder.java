@@ -33,10 +33,10 @@ public interface ConfigHolder<T extends ConfigBase> {
   /**
    * @return the current state of the configuration.
    */
-  T geTzConfig();
+  T getConfig();
 
   /** Save the configuration.
    *
    */
-  void saveTzConfig();
+  void putConfig();
 }

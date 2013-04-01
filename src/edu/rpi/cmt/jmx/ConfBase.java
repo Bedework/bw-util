@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -42,14 +43,24 @@ public abstract class ConfBase implements ConfBaseMBean {
 
   private String configDir;
 
+  private static Set<ObjectName> registeredMBeans = new CopyOnWriteArraySet<ObjectName>();
+
   private static ManagementContext managementContext;
 
   private ConfigurationType config;
 
+  private String serviceName;
+
+  protected ConfBase(final String serviceName) {
+    this.serviceName = serviceName;
+  }
+
   /**
    * @return name IDENTICAL to that defined for service.
    */
-  public abstract String getServiceName();
+  public String getServiceName() {
+    return serviceName;
+  }
 
   /**
    * @param val
@@ -70,7 +81,9 @@ public abstract class ConfBase implements ConfBaseMBean {
    */
   public abstract ConfigurationType getConfigObject();
 
-  protected abstract Set<ObjectName> getRegisteredMBeans();
+  protected Set<ObjectName> getRegisteredMBeans() {
+    return registeredMBeans;
+  }
 
   /* ========================================================================
    * Attributes
