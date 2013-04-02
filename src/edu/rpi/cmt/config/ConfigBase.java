@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-/** This class defines the various properties we need for a carddav server
+/** This class is used as a basis for configuration of bedework system modules.
  *
  * @author Mike Douglass
  * @param <T>
@@ -34,7 +34,10 @@ import javax.xml.namespace.QName;
 public abstract class ConfigBase<T extends ConfigBase> implements Comparable<T>, Serializable {
   protected ConfigurationType config;
 
-  protected final static String ns = BedeworkServerTags.bedeworkSystemNamespace;
+  /** The default namespace for the XML elements.
+   *
+   */
+  public final static String ns = BedeworkServerTags.bedeworkSystemNamespace;
 
   private String appName;
 
@@ -79,6 +82,17 @@ public abstract class ConfigBase<T extends ConfigBase> implements Comparable<T>,
     config = new ConfigurationType(getConfElement());
 
     return config;
+  }
+
+  /**
+   * @return properties
+   */
+  public List<ConfigurationElementType> getProperties() {
+    try {
+      return getConfig().getValue();
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
+    }
   }
 
   /**
@@ -182,10 +196,10 @@ public abstract class ConfigBase<T extends ConfigBase> implements Comparable<T>,
   }
 
   /** Set the single valued property
-  *
-  * @param name
-  * @param value
-  */
+   *
+   * @param name
+   * @param value
+   */
   public void setBooleanProperty(final QName name,
                                  final Boolean value) {
     try {
@@ -259,18 +273,18 @@ public abstract class ConfigBase<T extends ConfigBase> implements Comparable<T>,
     }
   }
 
-  /* *
+  /** Remove the property
+   *
    * @param name
-   * @return single value of valued property with given name
-   * /
-  public Long getLongPropertyValue(final String name) {
-    String s = getPropertyValue(name);
-
-    if (s == null) {
-      return null;
+   * @param value
+   */
+  public void removeProperty(final QName name,
+                             final String value) {
+    try {
+      getConfig().removeProperty(name, value);
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
     }
-
-    return Long.valueOf(s);
   }
 
   /* *

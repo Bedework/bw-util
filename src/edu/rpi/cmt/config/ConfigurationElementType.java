@@ -143,7 +143,7 @@ public abstract class ConfigurationElementType<C extends ConfigurationElementTyp
    */
   public abstract void valueToXml(final XmlEmit xml) throws ConfigException;
 
-  /** Convert trhe object to an XML object via the parameter
+  /** Convert the object to an XML object via the parameter
    *
    * @param xml
    * @throws ConfigException

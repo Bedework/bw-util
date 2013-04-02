@@ -18,7 +18,9 @@
 */
 package edu.rpi.cmt.jmx;
 
+import edu.rpi.cmt.config.ConfigBase;
 import edu.rpi.cmt.config.ConfigurationFileStore;
+import edu.rpi.cmt.config.ConfigurationStore;
 import edu.rpi.cmt.config.ConfigurationType;
 
 import org.apache.log4j.Logger;
@@ -36,7 +38,7 @@ import javax.management.ObjectName;
  * @author douglm
  *
  */
-public abstract class ConfBase implements ConfBaseMBean {
+public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   private transient Logger log;
 
   private String configName;
@@ -180,6 +182,32 @@ public abstract class ConfBase implements ConfBaseMBean {
   /* ====================================================================
    *                   Protected methods
    * ==================================================================== */
+
+  /**
+   * @return current state of config
+   */
+  protected synchronized T getConfigInfo(final ConfigurationStore cfs,
+                                         final String configName,
+                                         final Class<T> cl) {
+    try {
+      /* Try to load it */
+
+      ConfigurationType config = cfs.getConfig(configName);
+
+      if (config == null) {
+        return null;
+      }
+
+      T cfg = (T)makeObject(cl.getCanonicalName());
+
+      cfg.setConfig(config);
+
+      return cfg;
+    } catch (Throwable t) {
+      error(t);
+      return null;
+    }
+  }
 
   /**
    * @return current state of config
