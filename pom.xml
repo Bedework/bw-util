@@ -1,155 +1,225 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.bedework</groupId>
+	<artifactId>bw-util</artifactId>
+	<version>4.0.0-SNAPSHOT</version>
+	<name>bw-util</name>
 
-<!--
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
-        
-    http://www.apache.org/licenses/LICENSE-2.0
-        
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Maven Plugin Versions -->
+		<maven.compiler.plugin.version>2.3.2</maven.compiler.plugin.version>
+		<maven.source.plugin.version>2.1.2</maven.source.plugin.version>
+		<!-- Bedework Versions -->
+		<bw-ws.version>4.0.0-SNAPSHOT</bw-ws.version>
+		<!-- Third Party Library Versions -->
+		<commons-codec.version>1.5</commons-codec.version>
+		<jackson.version>2.1.1</jackson.version>
+		<apache-http.version>4.2.2</apache-http.version>
+		<hibernate.version>3.6.9.Final</hibernate.version>
+		<derby.version>10.8.2.2</derby.version>
+		<h2.version>1.2.130</h2.version>
+		<servlet-api.version>2.5</servlet-api.version>
+		<jtidy.version>4aug2000r7-dev</jtidy.version>
+		<struts.version>1.3.10</struts.version>
+		<lucene.version>2.0.0</lucene.version>
+		<junit.version>4.8.2</junit.version>
+		<ical4j.version>head-20100601</ical4j.version>
+		<log4j.version>1.2.15</log4j.version>
+	</properties>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	<organization>
+		<name>Bedework</name>
+		<url>https://github.com/Bedework</url>
+	</organization>
 
-  <parent>
-    <groupId>org.bedework</groupId>
-    <artifactId>bedework</artifactId>
-    <version>3.9</version>
-    <relativePath>../bedework</relativePath>
-  </parent>
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
 
-  <groupId>org.bedework</groupId>
-  <artifactId>rpiutil</artifactId>
-  <version>${bedeworkRpiutilVersion}</version>
+	<scm>
+		<connection>scm:git:git://github.com/Bedework/bw-util.git</connection>
+		<developerConnection>scm:git:git://github.com/Bedework/bw-util.git</developerConnection>
+		<url>https://github.com/Bedework/bw-util</url>
+	</scm>
 
-  <name>RPI utility package</name>
-  <description>General utility classes</description>
-  <url>http://bedework.org/</url>
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/Bedework/bw-util/issues</url>
+	</issueManagement>
 
-    <dependencies>
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.5</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derbynet</artifactId>
-        <version>10.8.2.2</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>3.6.9.Final</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.2.1</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore</artifactId>
-        <version>4.2.2</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>1.2.130</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>net.fortuna.ical4j</groupId>
-        <artifactId>ical4j</artifactId>
-        <version>1.0-BW-SNAPSHOT</version>
-      </dependency>
+	<dependencies>
+		<!-- Bedework: Web Services -->
+		<dependency>
+			<groupId>org.bedework</groupId>
+			<artifactId>bw-ws-icalendar</artifactId>
+			<version>${bw-ws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bedework</groupId>
+			<artifactId>bw-ws-tzsvr</artifactId>
+			<version>${bw-ws.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bedework</groupId>
+			<artifactId>bw-ws-calws-soap</artifactId>
+			<version>${bw-ws.version}</version>
+		</dependency>
+		<!-- Third Party Libraries -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbynet</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.fortuna.ical4j</groupId>
+			<artifactId>ical4j</artifactId>
+			<version>${ical4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${apache-http.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>${apache-http.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jtidy</groupId>
+			<artifactId>jtidy</artifactId>
+			<version>${jtidy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-misc</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts-core</artifactId>
+			<version>${struts.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jmxtools</artifactId>
+					<groupId>com.sun.jdmk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jmxri</artifactId>
+					<groupId>com.sun.jmx</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jms</artifactId>
+					<groupId>javax.jms</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Test Dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>2.1.1</version>
-      </dependency>
+	<repositories>
+		<repository>
+			<id>bedework.repository</id>
+			<name>Bedework Maven Repository</name>
+			<url>http://dev.bedework.org/downloads/lib/repository/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>2.1.1</version>
-      </dependency>
+	<build>
+		<plugins>
+			<!-- Specify the compiler options and settings -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<showDeprecation>false</showDeprecation>
+					<showWarnings>false</showWarnings>
+				</configuration>
+			</plugin>
+			<!-- Produce source jars during the 'verify' phase -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.1.1</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>jtidy</groupId>
-        <artifactId>jtidy</artifactId>
-        <version>4aug2000r7-dev</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.4</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.lucene</groupId>
-        <artifactId>lucene-core</artifactId>
-        <version>2.0.0</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.lucene</groupId>
-        <artifactId>lucene-misc</artifactId>
-        <version>2.0.0</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.struts</groupId>
-        <artifactId>struts-core</artifactId>
-        <version>1.3.10</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.bedework.bwxml</groupId>
-        <artifactId>bw-icalschema</artifactId>
-        <version>${bedeworkBwxmlVersion}</version>
-        <scope>provided</scope>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.bedework.bwxml</groupId>
-        <artifactId>bw-tzschema</artifactId>
-        <version>${bedeworkBwxmlVersion}</version>
-        <scope>provided</scope>
-      </dependency>
-          
-      <dependency>
-        <groupId>org.bedework.bwxml</groupId>
-        <artifactId>bw-calws-soapschema</artifactId>
-        <version>${bedeworkBwxmlVersion}</version>
-        <scope>provided</scope>
-      </dependency>
-    </dependencies>
 </project>

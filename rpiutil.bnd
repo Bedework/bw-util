@@ -1,4 +1,0 @@
-Export-Package: !edu.rpi.cmt.util.test.*,edu.rpi.*;version=3.9
-Bundle-Version: 3.9
-Bundle-SymbolicName: org.bedework.rpiutil
-
