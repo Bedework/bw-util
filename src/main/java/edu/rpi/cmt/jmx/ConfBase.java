@@ -18,13 +18,9 @@
 */
 package edu.rpi.cmt.jmx;
 
-import edu.rpi.cmt.config.ConfigBase;
-import edu.rpi.cmt.config.ConfigurationFileStore;
-import edu.rpi.cmt.config.ConfigurationStore;
-import edu.rpi.cmt.config.ConfigurationType;
-
-import org.apache.log4j.Logger;
-
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -34,16 +30,40 @@ import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-/**
+import org.apache.log4j.Logger;
+
+import edu.rpi.cmt.config.ConfigBase;
+import edu.rpi.cmt.config.ConfigException;
+import edu.rpi.cmt.config.ConfigurationFileStore;
+import edu.rpi.cmt.config.ConfigurationStore;
+import edu.rpi.cmt.config.ConfigurationType;
+
+/** A configuration has a name and a location. The location can be specified in
+ * a number of ways: <ul>
+ * <li>An absolute path to the directory containing the config</li>
+ * <li>An http url(soon)</li>
+ * <li>A system property name</li>
+ * </ul>
+ *
+ * <p>Each may be augmented by providing a path suffix - used to add additional
+ * path elements to the base path.
+ *
  * @author douglm
+ * @param <T>
  *
  */
 public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   private transient Logger log;
 
+  protected boolean debug;
+
   private String configName;
 
-  private String configDir;
+  private String configuri;
+
+  private String configPname;
+
+  private String pathSuffix;
 
   private static Set<ObjectName> registeredMBeans = new CopyOnWriteArraySet<ObjectName>();
 
@@ -53,8 +73,11 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
   private String serviceName;
 
+  private ConfigurationStore store;
+
   protected ConfBase(final String serviceName) {
     this.serviceName = serviceName;
+    debug = getLogger().isDebugEnabled();
   }
 
   /**
@@ -64,18 +87,110 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     return serviceName;
   }
 
-  /**
+  /** Specify the absolute path to the configuration directory.
+   *
    * @param val
    */
-  public void setConfigDir(final String val) {
-    configDir = val;
+  public void setConfigUri(final String val) {
+    configuri = val;
+    store = null;
   }
 
   /**
    * @return String path to configs
    */
-  public String getConfigDir() {
-    return configDir;
+  public String getConfigUri() {
+    return configuri;
+  }
+
+  /** Specify a system property giving the absolute path to the configuration directory.
+   *
+   * @param val
+   */
+  public void setConfigPname(final String val) {
+    configPname = val;
+    store = null;
+  }
+
+  /**
+   * @return String name of system property
+   */
+  public String getConfigPname() {
+    return configPname;
+  }
+
+  /** Specify a suffix to the path to the configuration directory.
+   *
+   * @param val
+   */
+  public void setPathSuffix(final String val) {
+    pathSuffix = val;
+    store = null;
+  }
+
+  /**
+   * @return String path suffix to configs
+   */
+  public String getPathSuffix() {
+    return pathSuffix;
+  }
+
+  /** Set a ConfigurationStore
+   *
+   * @param val
+   */
+  public void setStore(final ConfigurationStore val) {
+    store = val;
+  }
+
+  /** Get a ConfigurationStore based on the uri or property value.
+   *
+   * @return store
+   * @throws ConfigException
+   */
+  public ConfigurationStore getStore() throws ConfigException {
+    if (store != null) {
+      return store;
+    }
+
+    String uriStr = getConfigUri();
+
+    if (uriStr == null) {
+      if (getConfigPname() == null) {
+        throw new ConfigException("Either a uri or property name must be specified");
+      }
+
+      uriStr = System.getProperty(getConfigPname());
+      if (uriStr == null) {
+        throw new ConfigException("No property with name \"" + getConfigPname() + "\"");
+      }
+    }
+
+    URI uri;
+    try {
+      uri = new URI(uriStr);
+    } catch (URISyntaxException use) {
+      throw new ConfigException(use);
+    }
+
+    String scheme = uri.getScheme();
+
+    if ((scheme == null) || (scheme.equals("file"))) {
+      String path = uri.getPath();
+
+      if (getPathSuffix() != null) {
+        if (!path.endsWith(File.separator)) {
+          path += File.separator;
+        }
+
+        path += getPathSuffix() + File.separator;
+      }
+
+      store = new ConfigurationFileStore(path);
+      return store;
+    }
+
+    throw new ConfigException("Unsupported ConfigurationStore: " + uri);
   }
 
   /**
@@ -113,11 +228,11 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
         return "No configuration to save";
       }
 
-      ConfigurationFileStore cfs = new ConfigurationFileStore(getConfigDir());
+      ConfigurationStore cs = getStore();
 
       config.setName(configName);
 
-      cfs.saveConfiguration(config);
+      cs.saveConfiguration(config);
 
       return "saved";
     } catch (Throwable t) {
@@ -217,9 +332,9 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
       if (config == null) {
         /* Try to load it */
 
-        ConfigurationFileStore cfs = new ConfigurationFileStore(getConfigDir());
+        ConfigurationStore cs = getStore();
 
-        config = cfs.getConfig(getConfigName());
+        config = cs.getConfig(getConfigName());
       }
 
       return config;

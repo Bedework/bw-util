@@ -28,7 +28,7 @@ public interface ConfigHolder<T extends ConfigBase> {
   /**
    * @return path of config directory.
    */
-  String getConfigDir();
+  String getConfigUri();
 
   /**
    * @return the current state of the configuration.

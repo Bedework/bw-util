@@ -56,7 +56,7 @@ public interface ConfigurationStore {
    */
   List<String> getConfigs() throws ConfigException;
 
-  /** Get the named store. Create it if it does not exist
+  /** Get the named child store. Create it if it does not exist
    *
    * @param name
    * @return store

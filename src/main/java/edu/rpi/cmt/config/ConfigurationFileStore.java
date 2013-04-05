@@ -25,8 +25,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-/** A configuration file store holds configurations in files within a given
- * directory.
+/** A configuration file store holds configurations in files within a directory.
  *
  * @author Mike Douglass douglm
  */
