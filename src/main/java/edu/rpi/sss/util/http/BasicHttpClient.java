@@ -18,6 +18,11 @@
 */
 package edu.rpi.sss.util.http;
 
+import java.io.InputStream;
+import java.net.URI;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
@@ -55,11 +60,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
-import java.io.InputStream;
-import java.net.URI;
-
-import javax.servlet.http.HttpServletResponse;
-
 /** A dav client
 *
 * @author Mike Douglass  douglm @ rpi.edu
@@ -94,8 +94,7 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   private HttpResponse response;
 
-  private AuthScope authScope;
-
+  @SuppressWarnings("unused")
   private ConnectionKeepAliveStrategy kas = new ConnectionKeepAliveStrategy() {
 
     @Override
@@ -302,7 +301,7 @@ public class BasicHttpClient extends DefaultHttpClient {
    */
   public int sendRequest(final String method, final String url,
                          final Header[] hdrs) throws HttpException {
-    return sendRequest(method, url, hdrs, null, null, 0, null);
+    return sendRequest(method, url, hdrs, null, 0, null);
   }
 
   /** Send a request to the server
@@ -310,7 +309,6 @@ public class BasicHttpClient extends DefaultHttpClient {
    * @param methodName
    * @param url
    * @param hdrs
-   * @param depth
    * @param contentType
    * @param contentLen
    * @param content
@@ -319,10 +317,10 @@ public class BasicHttpClient extends DefaultHttpClient {
    */
   public int sendRequest(final String methodName,
                          final String url,
-                         final Header[] hdrs, final String depth,
+                         final Header[] hdrs,
                          final String contentType, final int contentLen,
                          final byte[] content) throws HttpException {
-    return sendRequest(methodName, url, hdrs, depth,
+    return sendRequest(methodName, url, hdrs,
                        contentType, contentLen, content, null);
   }
 
@@ -331,16 +329,16 @@ public class BasicHttpClient extends DefaultHttpClient {
    * @param methodName
    * @param url
    * @param hdrs
-   * @param depth
    * @param contentType
    * @param contentLen
    * @param content
+   * @param params
    * @return int    status code
    * @throws HttpException
    */
   public int sendRequest(final String methodName,
                          final String url,
-                         final Header[] hdrs, final String depth,
+                         final Header[] hdrs,
                          String contentType, final int contentLen,
                          final byte[] content,
                          final HttpParams params) throws HttpException {
@@ -507,7 +505,6 @@ public class BasicHttpClient extends DefaultHttpClient {
     int respCode = sendRequest("PUT",
                                path,
                                null,
-                               "0",
                                contentType,
                                content.length(),
                                content.getBytes());    //content
@@ -634,7 +631,6 @@ public class BasicHttpClient extends DefaultHttpClient {
   public InputStream get(final String path) throws HttpException {
     int respCode = sendRequest("GET",
                                path,
-                               null,
                                null,
                                "application/text",
                                0, // contentLen

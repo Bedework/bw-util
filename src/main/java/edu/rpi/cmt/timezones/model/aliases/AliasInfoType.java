@@ -8,9 +8,9 @@
 
 package edu.rpi.cmt.timezones.model.aliases;
 
-import edu.rpi.sss.util.ToString;
-
 import java.util.Date;
+
+import edu.rpi.sss.util.ToString;
 
 
 /**
@@ -48,9 +48,7 @@ public class AliasInfoType {
   /**
    * Gets the value of the alias property.
    *
-   * @return
-   *     possible object is
-   *     {@link AliasType }
+   * @return String alias
    *
    */
   public String getAlias() {
@@ -61,8 +59,6 @@ public class AliasInfoType {
    * Sets the value of the alias property.
    *
    * @param value
-   *     allowed object is
-   *     {@link AliasType }
    *
    */
   public void setAlias(final String value) {
@@ -72,9 +68,7 @@ public class AliasInfoType {
   /**
    * Gets the value of the lastModified property.
    *
-   * @return
-   *     possible object is
-   *     {@link Date }
+   * @return Date object
    *
    */
   public Date getLastModified() {

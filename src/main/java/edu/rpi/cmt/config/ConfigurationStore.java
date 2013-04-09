@@ -27,14 +27,22 @@ import java.util.List;
  * <p>Not surprisingly this looks like a file system with one file per config
  * and directories representing the stores.
  *
+ * <p>A store may be read-only or read-write. If read-write it may require
+ * credentials.
+ *
  * @author Mike Douglass douglm
  */
 public interface ConfigurationStore {
   /**
+   * @return true for a read-only store.
+   */
+  boolean readOnly();
+
+  /**
    * @return path for this store
    * @throws ConfigException
    */
-  String getPath() throws ConfigException;
+  String getLocation() throws ConfigException;
 
   /**
    * @param config

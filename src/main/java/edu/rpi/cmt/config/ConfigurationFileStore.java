@@ -61,7 +61,12 @@ public class ConfigurationFileStore implements ConfigurationStore {
   }
 
   @Override
-  public String getPath() throws ConfigException {
+  public boolean readOnly() {
+    return false;
+  }
+
+  @Override
+  public String getLocation() throws ConfigException {
     return dirPath;
   }
 

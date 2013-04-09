@@ -18,18 +18,6 @@
 */
 package edu.rpi.sss.util;
 
-import edu.rpi.sss.util.http.BasicHttpClient;
-import edu.rpi.sss.util.xml.XmlEmit;
-import edu.rpi.sss.util.xml.XmlUtil;
-import edu.rpi.sss.util.xml.tagdefs.WebdavTags;
-
-import org.apache.http.protocol.HTTP;
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -45,6 +33,20 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
+import edu.rpi.sss.util.http.BasicHttpClient;
+import edu.rpi.sss.util.xml.XmlEmit;
+import edu.rpi.sss.util.xml.XmlUtil;
+import edu.rpi.sss.util.xml.tagdefs.WebdavTags;
+
 /** Helper for DAV interactions
 *
 * @author Mike Douglass  douglm @ rpi.edu
@@ -54,14 +56,16 @@ public class DavUtil implements Serializable {
 
   private transient Logger log;
 
-  private InputStream in;
+  /** */
+  public static final Header depth0 = new BasicHeader("DAV", "0");
+  /** */
+  public static final Header depth1 = new BasicHeader("DAV", "1");
+  /** */
+  public static final Header depthinf = new BasicHeader("DAV", "infinity");
 
   /**
-   * @param in Stream for data
-   * @throws Throwable
    */
-  public DavUtil(final InputStream in) throws Throwable {
-    this.in = in;
+  public DavUtil() {
     debug = getLogger().isDebugEnabled();
   }
 
@@ -161,10 +165,11 @@ public class DavUtil implements Serializable {
   }
 
   /**
+   * @param in
    * @return Collection<DavChild>
    * @throws Throwable
    */
-  public MultiStatusResponse getMultiStatusResponse() throws Throwable {
+  public MultiStatusResponse getMultiStatusResponse(final InputStream in) throws Throwable {
     MultiStatusResponse res = new MultiStatusResponse();
 
     Document doc = parseContent(in);
@@ -258,6 +263,51 @@ public class DavUtil implements Serializable {
     return res;
   }
 
+  /** Return the DavChild element for the targeted node.
+   *
+   * @param cl
+   * @param path
+   * @param props   null for a default set
+   * @return DavChild or null for not found
+   * @throws Throwable
+   */
+  public DavChild getProps(final BasicHttpClient cl,
+                           final String path,
+                           final Collection<QName> props) throws Throwable {
+    Collection<Element> responses = propfind(cl, normalizePath(path), props,
+                                             depth0);
+
+    DavChild dc = null;
+
+    int count = 0; // validity
+    for (Element resp: responses) {
+      count++;
+
+      if (XmlUtil.nodeMatches(resp, WebdavTags.responseDescription)) {
+        // Has to be last
+        if (responses.size() > count) {
+          throw new Exception("Bad multstatus Expected " +
+              "(response+, responsedescription?)");
+        }
+
+        continue;
+      }
+
+      if (!XmlUtil.nodeMatches(resp, WebdavTags.response)) {
+        throw new Exception("Bad multstatus Expected " +
+            "(response+, responsedescription?) found " + resp);
+      }
+
+      if (dc != null){
+        throw new Exception("Bad multstatus Expected only 1 response");
+      }
+
+      dc = makeDavResponse(resp);
+    }
+
+    return dc;
+  }
+
   /**
    * @param cl
    * @param parentPath
@@ -268,15 +318,62 @@ public class DavUtil implements Serializable {
   public Collection<DavChild> getChildrenUrls(final BasicHttpClient cl,
                                               final String parentPath,
                                               final Collection<QName> props) throws Throwable {
+    String path = normalizePath(parentPath);
+
+    URI parentURI = new URI(path);
+
+    Collection<Element> responses = propfind(cl, path, props, depth1);
+
+    Collection<DavChild> result = new ArrayList<DavChild>();
+
+    int count = 0; // validity
+    for (Element resp: responses) {
+      count++;
+
+      if (XmlUtil.nodeMatches(resp, WebdavTags.responseDescription)) {
+        // Has to be last
+        if (responses.size() > count) {
+          throw new Exception("Bad multstatus Expected " +
+              "(response+, responsedescription?)");
+        }
+
+        continue;
+      }
+
+      if (!XmlUtil.nodeMatches(resp, WebdavTags.response)) {
+        throw new Exception("Bad multstatus Expected " +
+            "(response+, responsedescription?) found " + resp);
+      }
+
+      DavChild dc = makeDavResponse(resp);
+
+      /* We get the collection back as well - check for it and skip it. */
+      URI childURI = new URI(dc.uri);
+
+      if (parentURI.getPath().equals(childURI.getPath())) {
+        continue;
+      }
+
+      result.add(dc);
+    }
+
+    return result;
+  }
+
+  /**
+   * @param cl
+   * @param path
+   * @param props   null for a default set
+   * @param depthHeader
+   * @return Collection<Element> from multi-status response
+   * @throws Throwable
+   */
+  public Collection<Element> propfind(final BasicHttpClient cl,
+                                      final String path,
+                                      final Collection<QName> props,
+                                      final Header depthHeader) throws Throwable {
     StringWriter sw = new StringWriter();
     XmlEmit xml = new XmlEmit();
-
-    String path = parentPath;
-
-    if (!path.endsWith("/")) {
-      path += "/";
-    }
-    URI parentURI = new URI(path);
 
     xml.startEmit(sw);
 
@@ -304,9 +401,9 @@ public class DavUtil implements Serializable {
 
     byte[] content = sw.toString().getBytes();
 
+    Header[] hdr = {depthHeader};
     int res = cl.sendRequest("PROPFIND", path,
-                             null, // Header[] hdrs,
-                             "1",
+                             hdr,
                              "text/xml", // contentType,
                              content.length, // contentLen,
                              content);
@@ -322,124 +419,13 @@ public class DavUtil implements Serializable {
 
     Document doc = parseContent(cl.getResponseBodyAsStream());
 
-    Collection<DavChild> result = new ArrayList<DavChild>();
-
     Element root = doc.getDocumentElement();
 
     /*    <!ELEMENT multistatus (response+, responsedescription?) > */
 
     expect(root, WebdavTags.multistatus);
 
-    Collection<Element> responses = getChildren(root);
-
-    int count = 0; // validity
-    for (Element resp: responses) {
-      count++;
-
-      if (XmlUtil.nodeMatches(resp, WebdavTags.responseDescription)) {
-        // Has to be last
-        if (responses.size() > count) {
-          throw new Exception("Bad multstatus Expected " +
-              "(response+, responsedescription?)");
-        }
-      } else if (XmlUtil.nodeMatches(resp, WebdavTags.response)) {
-        /*    <!ELEMENT response (href, ((href*, status)|(propstat+)),
-                          responsedescription?) >
-         */
-        Iterator<Element> elit = getChildren(resp).iterator();
-
-        Node nd = elit.next();
-
-        DavChild dc = new DavChild();
-
-        if (!XmlUtil.nodeMatches(nd, WebdavTags.href)) {
-          throw new Exception("Bad response. Expected href found " + nd);
-        }
-
-        dc.uri = getElementContent((Element)nd);
-
-        URI childURI = new URI(URLDecoder.decode(dc.uri,
-                                                 HTTP.UTF_8)); // href should be escaped
-
-        if (debug) {
-          trace("parent: \"" + parentURI.getPath() +
-                "\" child: \"" + childURI.getPath() + "\"");
-        }
-        if (parentURI.getPath().equals(childURI.getPath())) {
-          continue;
-        }
-
-        while (elit.hasNext()) {
-          nd = elit.next();
-
-          if (!XmlUtil.nodeMatches(nd, WebdavTags.propstat)) {
-            throw new Exception("Bad response. Expected propstat found " + nd);
-          }
-
-          /*    <!ELEMENT propstat (prop, status, responsedescription?) > */
-
-          Iterator<Element> propstatit = getChildren(nd).iterator();
-          Node propnd = propstatit.next();
-
-          if (!XmlUtil.nodeMatches(propnd, WebdavTags.prop)) {
-            throw new Exception("Bad response. Expected prop found " + propnd);
-          }
-
-          if (!propstatit.hasNext()) {
-            throw new Exception("Bad response. Expected propstat/status");
-          }
-
-          int st = httpStatus(propstatit.next());
-
-          if (propstatit.hasNext()) {
-            Node rdesc = propstatit.next();
-
-            if (!XmlUtil.nodeMatches(rdesc, WebdavTags.responseDescription)) {
-              throw new Exception("Bad response, expected null or " +
-                  "responsedescription. Found: " + rdesc);
-            }
-          }
-
-          /* process each property with this status */
-
-          Collection<Element> respProps = getChildren(propnd);
-
-          for (Element pr: respProps) {
-            /* XXX This needs fixing to handle content that is xml
-             */
-            if (XmlUtil.nodeMatches(pr, WebdavTags.resourcetype)) {
-              Collection<Element> rtypeProps = getChildren(pr);
-
-              for (Element rtpr: rtypeProps) {
-                if (XmlUtil.nodeMatches(rtpr, WebdavTags.collection)) {
-                  dc.isCollection = true;
-                  break;
-                }
-              }
-            } else {
-              DavProp dp = new DavProp();
-
-              dc.propVals.add(dp);
-
-              dp.name = new QName(pr.getNamespaceURI(), pr.getLocalName());
-              dp.status = st;
-              dp.content = getElementContent(pr);
-
-              if (XmlUtil.nodeMatches(pr, WebdavTags.displayname)) {
-                dc.displayName = dp.content;
-              }
-            }
-          }
-        }
-
-        result.add(dc);
-      } else {
-        throw new Exception("Bad multstatus Expected " +
-            "(response+, responsedescription?) found " + resp);
-      }
-    }
-
-    return result;
+    return getChildren(root);
   }
 
   /* ====================================================================
@@ -649,6 +635,97 @@ public class DavUtil implements Serializable {
     }
   }
 */
+
+  private DavChild makeDavResponse(final Element resp) throws Throwable {
+    /*    <!ELEMENT response (href, ((href*, status)|(propstat+)),
+          responsedescription?) >
+     */
+    Iterator<Element> elit = getChildren(resp).iterator();
+
+    Node nd = elit.next();
+
+    DavChild dc = new DavChild();
+
+    if (!XmlUtil.nodeMatches(nd, WebdavTags.href)) {
+      throw new Exception("Bad response. Expected href found " + nd);
+    }
+
+    dc.uri = URLDecoder.decode(getElementContent((Element)nd),
+                               HTTP.UTF_8); // href should be escaped
+
+    while (elit.hasNext()) {
+      nd = elit.next();
+
+      if (!XmlUtil.nodeMatches(nd, WebdavTags.propstat)) {
+        throw new Exception("Bad response. Expected propstat found " + nd);
+      }
+
+      /*    <!ELEMENT propstat (prop, status, responsedescription?) > */
+
+      Iterator<Element> propstatit = getChildren(nd).iterator();
+      Node propnd = propstatit.next();
+
+      if (!XmlUtil.nodeMatches(propnd, WebdavTags.prop)) {
+        throw new Exception("Bad response. Expected prop found " + propnd);
+      }
+
+      if (!propstatit.hasNext()) {
+        throw new Exception("Bad response. Expected propstat/status");
+      }
+
+      int st = httpStatus(propstatit.next());
+
+      if (propstatit.hasNext()) {
+        Node rdesc = propstatit.next();
+
+        if (!XmlUtil.nodeMatches(rdesc, WebdavTags.responseDescription)) {
+          throw new Exception("Bad response, expected null or " +
+              "responsedescription. Found: " + rdesc);
+        }
+      }
+
+      /* process each property with this status */
+
+      Collection<Element> respProps = getChildren(propnd);
+
+      for (Element pr: respProps) {
+        /* XXX This needs fixing to handle content that is xml
+         */
+        if (XmlUtil.nodeMatches(pr, WebdavTags.resourcetype)) {
+          Collection<Element> rtypeProps = getChildren(pr);
+
+          for (Element rtpr: rtypeProps) {
+            if (XmlUtil.nodeMatches(rtpr, WebdavTags.collection)) {
+              dc.isCollection = true;
+              break;
+            }
+          }
+        } else {
+          DavProp dp = new DavProp();
+
+          dc.propVals.add(dp);
+
+          dp.name = new QName(pr.getNamespaceURI(), pr.getLocalName());
+          dp.status = st;
+          dp.content = getElementContent(pr);
+
+          if (XmlUtil.nodeMatches(pr, WebdavTags.displayname)) {
+            dc.displayName = dp.content;
+          }
+        }
+      }
+    }
+
+    return dc;
+  }
+
+  private String normalizePath(final String path) {
+    if (!path.endsWith("/")) {
+      return path + "/";
+    }
+
+    return path;
+  }
 
   /** ===================================================================
    *                   Logging methods
