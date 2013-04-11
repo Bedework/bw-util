@@ -5,13 +5,11 @@
 // Generated on: 2012.11.29 at 10:23:46 AM EST
 //
 
-
 package edu.rpi.cmt.timezones.model.aliases;
-
-import java.util.Date;
 
 import edu.rpi.sss.util.ToString;
 
+import java.util.Date;
 
 /**
  *

@@ -18,6 +18,14 @@
 */
 package edu.rpi.cmt.jmx;
 
+import edu.rpi.cmt.config.ConfigBase;
+import edu.rpi.cmt.config.ConfigException;
+import edu.rpi.cmt.config.ConfigurationFileStore;
+import edu.rpi.cmt.config.ConfigurationStore;
+import edu.rpi.cmt.config.ConfigurationType;
+
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,14 +37,6 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-
-import org.apache.log4j.Logger;
-
-import edu.rpi.cmt.config.ConfigBase;
-import edu.rpi.cmt.config.ConfigException;
-import edu.rpi.cmt.config.ConfigurationFileStore;
-import edu.rpi.cmt.config.ConfigurationStore;
-import edu.rpi.cmt.config.ConfigurationType;
 
 /** A configuration has a name and a location. The location can be specified in
  * a number of ways: <ul>

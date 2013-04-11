@@ -18,6 +18,20 @@
 */
 package edu.rpi.sss.util;
 
+import edu.rpi.sss.util.http.BasicHttpClient;
+import edu.rpi.sss.util.xml.XmlEmit;
+import edu.rpi.sss.util.xml.XmlUtil;
+import edu.rpi.sss.util.xml.tagdefs.WebdavTags;
+
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -32,20 +46,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-
-import edu.rpi.sss.util.http.BasicHttpClient;
-import edu.rpi.sss.util.xml.XmlEmit;
-import edu.rpi.sss.util.xml.XmlUtil;
-import edu.rpi.sss.util.xml.tagdefs.WebdavTags;
 
 /** Helper for DAV interactions
 *

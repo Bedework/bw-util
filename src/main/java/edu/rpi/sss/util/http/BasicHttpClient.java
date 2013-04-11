@@ -18,11 +18,6 @@
 */
 package edu.rpi.sss.util.http;
 
-import java.io.InputStream;
-import java.net.URI;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
@@ -59,6 +54,11 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+
+import java.io.InputStream;
+import java.net.URI;
+
+import javax.servlet.http.HttpServletResponse;
 
 /** A dav client
 *
@@ -415,6 +415,66 @@ public class BasicHttpClient extends DefaultHttpClient {
     eem.setEntity(entity);
   }
 
+  /**
+   * @author douglm
+   */
+  public class HttpMkcol extends HttpEntityEnclosingRequestBase {
+    /**
+     */
+    public static final String METHOD_NAME = "MKCOL";
+
+    /**
+     * @param uri
+     */
+    public HttpMkcol(final URI uri) {
+      setURI(uri);
+    }
+
+    /**
+     * @param uri
+     * @throws IllegalArgumentException if the uri is invalid.
+     */
+    public HttpMkcol(final String uri) {
+      super();
+      setURI(URI.create(uri));
+    }
+
+    @Override
+    public String getMethod() {
+      return METHOD_NAME;
+    }
+  }
+
+  /**
+   * @author douglm
+   */
+  public class HttpPropfind extends HttpEntityEnclosingRequestBase {
+    /**
+     */
+    public static final String METHOD_NAME = "PROPFIND";
+
+    /**
+     * @param uri
+     */
+    public HttpPropfind(final URI uri) {
+      setURI(uri);
+    }
+
+    /**
+     * @param uri
+     * @throws IllegalArgumentException if the uri is invalid.
+     */
+    public HttpPropfind(final String uri) {
+      super();
+      setURI(URI.create(uri));
+    }
+
+    @Override
+    public String getMethod() {
+      return METHOD_NAME;
+    }
+  }
+
   /** Specify the next method by name.
    *
    * @param name
@@ -440,6 +500,14 @@ public class BasicHttpClient extends DefaultHttpClient {
 
     if ("POST".equals(nm)) {
       return new HttpPost(uri);
+    }
+
+    if ("PROPFIND".equals(nm)) {
+      return new HttpPropfind(uri);
+    }
+
+    if ("MKCOL".equals(nm)) {
+      return new HttpMkcol(uri);
     }
 
     if ("OPTIONS".equals(nm)) {

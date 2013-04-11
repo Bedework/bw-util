@@ -21,6 +21,10 @@ package edu.rpi.cmt.db.hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.io.StringReader;
+import java.util.List;
+import java.util.Properties;
+
 /** Convenience class to do the actual hibernate interaction. Intended for
  * one use only.
  *
@@ -32,10 +36,11 @@ public class HibSessionFactory {
   private static volatile Object lock = new Object();
 
   /**
+   * @param hibProps possibly null list of hibernate properties
    * @return the SessionFactory
    * @throws HibException
    */
-  public static SessionFactory getSessionFactory() throws HibException {
+  public static SessionFactory getSessionFactory(List<String> hibProps) throws HibException {
     if (sessionFactory != null) {
       return sessionFactory;
     }
@@ -62,6 +67,20 @@ public class HibSessionFactory {
           }
         }
         */
+        
+        if (hibProps != null) {
+          StringBuilder sb = new StringBuilder();
+
+          for (String p: hibProps) {
+            sb.append(p);
+            sb.append("\n");
+          }
+
+          Properties hprops = new Properties();
+          hprops.load(new StringReader(sb.toString()));
+
+          conf.addProperties(hprops);
+        }
 
         conf.configure();
 
