@@ -69,15 +69,27 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
   private static ManagementContext managementContext;
 
-  private ConfigurationType config;
-
   private String serviceName;
 
   private ConfigurationStore store;
 
+  /** At least setServiceName MUST be called
+   *
+   */
+  protected ConfBase() {
+    debug = getLogger().isDebugEnabled();
+  }
+
   protected ConfBase(final String serviceName) {
     this.serviceName = serviceName;
     debug = getLogger().isDebugEnabled();
+  }
+
+  /**
+   * @param val IDENTICAL to that defined for service.
+   */
+  public void setServiceName(final String val) {
+    serviceName = val;
   }
 
   /**
@@ -301,13 +313,18 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   /**
    * @return current state of config
    */
+  protected synchronized T getConfigInfo(final String configName,
+                                         final Class<T> cl)throws ConfigException  {
+    return getConfigInfo(getStore(), configName, cl);
+  }
+
   protected synchronized T getConfigInfo(final ConfigurationStore cfs,
                                          final String configName,
-                                         final Class<T> cl) {
+                                         final Class<T> cl) throws ConfigException  {
     try {
       /* Try to load it */
 
-      ConfigurationType config = cfs.getConfig(configName);
+      ConfigurationType config = getStore().getConfig(configName);
 
       if (config == null) {
         return null;
@@ -318,29 +335,10 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
       cfg.setConfig(config);
 
       return cfg;
+    } catch (ConfigException cfe) {
+      throw cfe;
     } catch (Throwable t) {
-      error(t);
-      return null;
-    }
-  }
-
-  /**
-   * @return current state of config
-   */
-  public synchronized ConfigurationType getConf() {
-    try {
-      if (config == null) {
-        /* Try to load it */
-
-        ConfigurationStore cs = getStore();
-
-        config = cs.getConfig(getConfigName());
-      }
-
-      return config;
-    } catch (Throwable t) {
-      error(t);
-      return null;
+      throw new ConfigException(t);
     }
   }
 

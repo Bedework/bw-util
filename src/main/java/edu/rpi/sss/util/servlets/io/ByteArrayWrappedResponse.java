@@ -119,6 +119,10 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
     return pw.toByteArray();
   }
 
+  /** Release the resources
+  *
+  * @throws IOException
+  */
   public void release() throws IOException {
     if (pw != null) {
       try {

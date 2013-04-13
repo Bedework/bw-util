@@ -41,6 +41,13 @@ public class AnnotatedMBean extends StandardMBean {
     }
   }
 
+  /** Register an mbean with the jmx context
+   *
+   * @param context
+   * @param object
+   * @param objectName
+   * @throws Exception
+   */
   @SuppressWarnings("unchecked")
   public static void registerMBean(final ManagementContext context, final Object object, final ObjectName objectName)
     throws Exception {
@@ -57,7 +64,13 @@ public class AnnotatedMBean extends StandardMBean {
     context.registerMBean(object, objectName);
   }
 
-  /** Instance where the MBean interface is implemented by another object. */
+  /** Instance where the MBean interface is implemented by another object.
+   *
+   * @param impl
+   * @param mbeanInterface
+   *
+   * @throws NotCompliantMBeanException
+   */
   public <T> AnnotatedMBean(final T impl, final Class<T> mbeanInterface) throws NotCompliantMBeanException {
     super(impl, mbeanInterface);
   }
