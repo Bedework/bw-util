@@ -57,11 +57,11 @@ public class DavUtil implements Serializable {
   private transient Logger log;
 
   /** */
-  public static final Header depth0 = new BasicHeader("DAV", "0");
+  public static final Header depth0 = new BasicHeader("depth", "0");
   /** */
-  public static final Header depth1 = new BasicHeader("DAV", "1");
+  public static final Header depth1 = new BasicHeader("depth", "1");
   /** */
-  public static final Header depthinf = new BasicHeader("DAV", "infinity");
+  public static final Header depthinf = new BasicHeader("depth", "infinity");
 
   /**
    */
