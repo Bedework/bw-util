@@ -23,6 +23,7 @@ import edu.rpi.cmt.config.ConfigBase;
 /** This interface defines methods to access and update the config
  *
  * @author Mike Douglass
+ * @param <T>
  */
 public interface ConfigHolder<T extends ConfigBase> {
   /**

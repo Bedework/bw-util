@@ -48,14 +48,24 @@ public interface ConfigurationStore {
    * @param config
    * @throws ConfigException
    */
-  void saveConfiguration(ConfigurationType config) throws ConfigException;
+  void saveConfiguration(ConfigBase config) throws ConfigException;
 
-  /**
+  /** Stored config must indicate class of object as an attribute
+   *
    * @param name
    * @return config or null
    * @throws ConfigException
    */
-  ConfigurationType getConfig(String name) throws ConfigException;
+  ConfigBase getConfig(String name) throws ConfigException;
+
+  /**
+   * @param name
+   * @param cl - class of config object
+   * @return config or null
+   * @throws ConfigException
+   */
+  ConfigBase getConfig(String name,
+                       Class cl) throws ConfigException;
 
   /** List the configurations in the store
    *

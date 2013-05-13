@@ -108,6 +108,7 @@ public interface HttpOutMBean {
    * @param host the host
    * /
   public void deleteHost(String host);
+  */
 
   /** Lifecycle
    *

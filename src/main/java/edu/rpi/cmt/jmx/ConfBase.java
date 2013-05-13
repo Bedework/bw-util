@@ -22,19 +22,17 @@ import edu.rpi.cmt.config.ConfigBase;
 import edu.rpi.cmt.config.ConfigException;
 import edu.rpi.cmt.config.ConfigurationFileStore;
 import edu.rpi.cmt.config.ConfigurationStore;
-import edu.rpi.cmt.config.ConfigurationType;
 
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -56,6 +54,8 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   private transient Logger log;
 
   protected boolean debug;
+
+  protected T cfg;
 
   private String configName;
 
@@ -208,7 +208,9 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   /**
    * @return the object we are managing
    */
-  public abstract ConfigurationType getConfigObject();
+  public T getConfig() {
+    return cfg;
+  }
 
   protected Set<ObjectName> getRegisteredMBeans() {
     return registeredMBeans;
@@ -235,7 +237,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   @Override
   public String saveConfig() {
     try {
-      ConfigurationType config = getConfigObject();
+      T config = getConfig();
       if (config == null) {
         return "No configuration to save";
       }
@@ -313,32 +315,68 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   /**
    * @return current state of config
    */
-  protected synchronized T getConfigInfo(final String configName,
-                                         final Class<T> cl)throws ConfigException  {
+  protected T getConfigInfo(final String configName,
+                            final Class<T> cl)throws ConfigException  {
     return getConfigInfo(getStore(), configName, cl);
   }
 
-  protected synchronized T getConfigInfo(final ConfigurationStore cfs,
-                                         final String configName,
-                                         final Class<T> cl) throws ConfigException  {
+  @SuppressWarnings("unchecked")
+  protected T getConfigInfo(final ConfigurationStore cfs,
+                            final String configName,
+                            final Class<T> cl) throws ConfigException  {
     try {
       /* Try to load it */
 
-      ConfigurationType config = getStore().getConfig(configName);
-
-      if (config == null) {
-        return null;
-      }
-
-      T cfg = (T)makeObject(cl.getCanonicalName());
-
-      cfg.setConfig(config);
-
-      return cfg;
+      return (T)getStore().getConfig(configName, cl);
     } catch (ConfigException cfe) {
       throw cfe;
     } catch (Throwable t) {
       throw new ConfigException(t);
+    }
+  }
+
+  /** Load the configuratio if we only expect one and we don't care or know
+   * what it's called.
+   *
+   * @param cl
+   * @return null for success or an error message (logged already)
+   */
+  protected String loadOnlyConfig(final Class<T> cl) {
+    try {
+      /* Load up the config */
+
+      ConfigurationStore cs = getStore();
+
+      List<String> configNames = cs.getConfigs();
+
+      if (configNames.isEmpty()) {
+        error("No configuration on path " + cs.getLocation());
+        return "No configuration on path " + cs.getLocation();
+      }
+
+      if (configNames.size() != 1) {
+        error("1 and only 1 configuration allowed");
+        return "1 and only 1 configuration allowed";
+      }
+
+      String configName = configNames.iterator().next();
+
+      cfg = getConfigInfo(cs, configName, cl);
+
+      if (cfg == null) {
+        error("Unable to read configuration");
+        return "Unable to read configuration";
+      }
+
+      setConfigName(configName);
+
+      saveConfig(); // Just to ensure we have it for next time
+
+      return null;
+    } catch (Throwable t) {
+      error("Failed to start management context: " + t.getLocalizedMessage());
+      error(t);
+      return "failed";
     }
   }
 
@@ -382,7 +420,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
    */
   public static ManagementContext getManagementContext() {
     if (managementContext == null) {
-      /* Try to find the jboss mbean server */
+      /* Try to find the jboss mbean server * /
 
       MBeanServer mbsvr = null;
 
@@ -397,6 +435,8 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
         Logger.getLogger(ConfBase.class).warn("Unable to locate jboss mbean server");
       }
       managementContext = new ManagementContext(mbsvr);
+      */
+      managementContext = new ManagementContext(ManagementContext.DEFAULT_DOMAIN);
     }
     return managementContext;
   }

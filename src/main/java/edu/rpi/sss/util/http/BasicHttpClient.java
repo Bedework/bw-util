@@ -664,6 +664,18 @@ public class BasicHttpClient extends DefaultHttpClient {
   }
 
   /**
+   * @return headers or null
+   * @throws HttpException
+   */
+  public Header[] getHeaders() throws HttpException {
+    if (response == null) {
+      return null;
+    }
+
+    return response.getAllHeaders();
+  }
+
+  /**
    * @param name
    * @return header or null
    * @throws HttpException

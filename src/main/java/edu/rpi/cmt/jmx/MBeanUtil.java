@@ -50,6 +50,11 @@ public class MBeanUtil {
     return JMX.newMBeanProxy(server, new ObjectName(name), c);
   }
 
+  /**
+   * @param name
+   * @param desc
+   * @return MBeanAttributeInfo for a string
+   */
   public static MBeanAttributeInfo stringAttrInfo(final String name,
                                                   final String desc) {
     return new MBeanAttributeInfo(name,
@@ -60,6 +65,11 @@ public class MBeanUtil {
                                   false); // isIs;
   }
 
+  /**
+   * @param name
+   * @param desc
+   * @return MBeanAttributeInfo for a boolean value
+   */
   public static MBeanAttributeInfo boolAttrInfo(final String name,
                                                 final String desc) {
     return new MBeanAttributeInfo(name,

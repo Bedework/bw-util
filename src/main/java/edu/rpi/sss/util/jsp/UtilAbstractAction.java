@@ -173,7 +173,6 @@ public abstract class UtilAbstractAction extends Action
                                        MessageResources messages)
                throws Throwable;
 
-  @SuppressWarnings("deprecation")
   @Override
   public ActionForward execute(final ActionMapping mapping,
                                final ActionForm frm,

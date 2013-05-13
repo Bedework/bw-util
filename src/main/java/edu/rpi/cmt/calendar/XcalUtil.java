@@ -217,6 +217,9 @@ public class XcalUtil {
     public String tzid;
   }
 
+  /**
+   * Class allowing fetch of timezones
+   */
   public abstract static class TzGetter {
     /**
      * @param id

@@ -71,15 +71,13 @@ public class ConfigurationFileStore implements ConfigurationStore {
   }
 
   @Override
-  public void saveConfiguration(final ConfigurationType config) throws ConfigException {
+  public void saveConfiguration(final ConfigBase config) throws ConfigException {
     try {
-      String xmlStr = config.toXml();
-
       File f = new File(dirPath + config.getName() + ".xml");
 
       FileWriter fw = new FileWriter(f);
 
-      fw.write(xmlStr);
+      config.toXml(fw);
 
       fw.close();
     } catch (ConfigException ce) {
@@ -90,7 +88,13 @@ public class ConfigurationFileStore implements ConfigurationStore {
   }
 
   @Override
-  public ConfigurationType getConfig(final String name) throws ConfigException {
+  public ConfigBase getConfig(final String name) throws ConfigException {
+    return getConfig(name, null);
+  }
+
+  @Override
+  public ConfigBase getConfig(final String name,
+                              final Class cl) throws ConfigException {
     FileInputStream fis = null;
 
     try {
@@ -102,7 +106,7 @@ public class ConfigurationFileStore implements ConfigurationStore {
 
       fis = new FileInputStream(f);
 
-      ConfigurationType config = ConfigurationType.fromXml(fis);
+      ConfigBase config = ConfigBase.fromXml(fis, cl);
 
       return config;
     } catch (ConfigException ce) {

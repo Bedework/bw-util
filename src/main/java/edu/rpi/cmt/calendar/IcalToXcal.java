@@ -160,6 +160,13 @@ public class IcalToXcal {
     return fromIcal(cal, pattern, false);
   }
 
+  /**
+   * @param cal
+   * @param pattern
+   * @param doTimezones
+   * @return Internal XML representation of iCalendar object
+   * @throws Throwable
+   */
   @SuppressWarnings("unchecked")
   public static IcalendarType fromIcal(final Calendar cal,
                                        final BaseComponentType pattern,

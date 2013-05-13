@@ -31,7 +31,7 @@ public class ByteArrayServletStream extends ServletOutputStream {
 
   /** Constructor
    *
-   * @param baos
+   * @param pbos
    */
   public ByteArrayServletStream(final PooledBufferedOutputStream pbos) {
     this.pbos = pbos;

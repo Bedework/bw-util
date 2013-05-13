@@ -20,11 +20,8 @@ package edu.rpi.sss.util.http.service;
 
 import edu.rpi.sss.util.http.BasicHttpClient;
 
-import org.apache.http.HttpHost;
 import org.apache.http.pool.PoolStats;
 import org.apache.log4j.Logger;
-
-import java.net.URI;
 
 /**
  * @author douglm
@@ -127,16 +124,6 @@ public class HttpOut implements HttpOutMBean {
   @Override
   public boolean isStarted() {
     return true;
-  }
-
-  /* ====================================================================
-   *                   Private methods
-   * ==================================================================== */
-
-  private HttpHost fromUrl(final String val) {
-    URI uri = URI.create(val);
-
-    return new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
   }
 
   /* ====================================================================

@@ -55,6 +55,7 @@ import java.util.Map;
 public class XmlIcalCompare {
   protected transient Logger log;
 
+  /** */
   public static final List<Object> defaultSkipList;
 
   static {

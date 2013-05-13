@@ -153,18 +153,31 @@ public class XmlCalendarBuilder {
 
     List<Property> datesMissingTimezones = new ArrayList<Property>();
 
+    /**Constructor
+     *
+     * @param tzRegistry
+     */
     public BuildState(final TimeZoneRegistry tzRegistry) {
       this.tzRegistry = tzRegistry;
     }
 
+    /**
+     * @param val
+     */
     public void setContentHandler(final ContentHandler val) {
       handler = val;
     }
 
+    /**
+     * @return
+     */
     public ContentHandler getContentHandler() {
       return handler;
     }
 
+    /**
+     * @return the result
+     */
     public Calendar getCalendar() {
       return calendar;
     }

@@ -222,6 +222,10 @@ public class WsXMLTranslator {
     bs.getContentHandler().endProperty(name);
   }
 
+  /**
+   * @param rp
+   * @return iCalendar recurrence rule value
+   */
   public String fromRecurProperty(final RecurPropertyType rp) {
     RecurType r = rp.getRecur();
 

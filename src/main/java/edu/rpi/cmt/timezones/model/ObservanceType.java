@@ -103,12 +103,6 @@ public class ObservanceType {
    * Gets the value of the localName property.
    *
    * <p>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the localName property.
-   *
-   * <p>
    * For example, to add a new item, do as follows:
    * <pre>
    *    getLocalName().add(newItem);
@@ -118,6 +112,10 @@ public class ObservanceType {
    * <p>
    * Objects of the following type(s) are allowed in the list
    * {@link LocalNameType }
+   * @return A a reference to the live list,
+   * not a snapshot. Therefore any modification you make to the
+   * returned list will be present inside the JAXB object.
+   * This is why there is not a <CODE>set</CODE> method for the localName property.
    *
    *
    */

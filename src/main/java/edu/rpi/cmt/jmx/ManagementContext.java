@@ -17,30 +17,16 @@
     under the License.
 */
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  *
  * Stripped down version from apache activemq
  */
 package edu.rpi.cmt.jmx;
 
+import edu.rpi.sss.util.Util;
+
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -55,27 +41,24 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
 
-
 /**
- * A Flow provides different dispatch policies within the NMR
+ * Heavily modified version from activemq.
  *
- * @org.apache.xbean.XBean
- * @version $Revision$
  */
 public class ManagementContext {
   private transient Logger log;
 
   /**
-   * Default activemq domain
+   * Default domain
    */
-  public static final String DEFAULT_DOMAIN = "org.bedework";
+  public static final String DEFAULT_DOMAIN = "jboss";
   private MBeanServer beanServer;
   private String jmxDomainName = DEFAULT_DOMAIN;
+  private boolean useDomainSpecifiedForServer = false;
+
   private boolean useMBeanServer = true;
   private boolean createMBeanServer = true;
   private boolean locallyCreateMBeanServer;
-  private boolean findTigerMbeanServer = true;
-  private int rmiServerPort;
   private AtomicBoolean started = new AtomicBoolean(false);
   private List<ObjectName> registeredMBeanNames = new CopyOnWriteArrayList<ObjectName>();
 
@@ -83,7 +66,14 @@ public class ManagementContext {
    *
    */
   public ManagementContext() {
-    this(null);
+  }
+
+  /**
+   * @param domain
+   */
+  public ManagementContext(final String domain) {
+    setJmxDomainName(domain);
+    useDomainSpecifiedForServer = true;
   }
 
   /**
@@ -110,13 +100,12 @@ public class ManagementContext {
     if (started.compareAndSet(true, false)) {
       MBeanServer mbeanServer = getMBeanServer();
       if (mbeanServer != null) {
-        for (Iterator<ObjectName> iter = registeredMBeanNames.iterator(); iter.hasNext();) {
-          ObjectName name = iter.next();
-
+        for (ObjectName name: registeredMBeanNames) {
           mbeanServer.unregisterMBean(name);
 
         }
       }
+
       registeredMBeanNames.clear();
 
       if (locallyCreateMBeanServer && (beanServer != null)) {
@@ -193,19 +182,6 @@ public class ManagementContext {
     createMBeanServer = enableJMX;
   }
 
-  public boolean isFindTigerMbeanServer() {
-    return findTigerMbeanServer;
-  }
-
-  /**
-   * Enables/disables the searching for the Java 5 platform MBeanServer
-   *
-   * @param findTigerMbeanServer
-   */
-  public void setFindTigerMbeanServer(final boolean findTigerMbeanServer) {
-    this.findTigerMbeanServer = findTigerMbeanServer;
-  }
-
   /**
    * Formulate and return the MBean ObjectName of a custom control MBean
    *
@@ -216,7 +192,9 @@ public class ManagementContext {
    */
   public ObjectName createCustomComponentMBeanName(final String type, final String name) {
     ObjectName result = null;
-    String tmp = jmxDomainName + ":" + "type=" + sanitizeString(type) + ",name=" + sanitizeString(name);
+    String tmp = jmxDomainName + ":" +
+                 "type=" + sanitizeString(type) +
+                 ",name=" + sanitizeString(name);
     try {
       result = new ObjectName(tmp);
     } catch (MalformedObjectNameException e) {
@@ -241,6 +219,10 @@ public class ManagementContext {
     return result;
   }
 
+  /**
+   * @param part
+   * @return encoded object name part
+   */
   public static String encodeObjectNamePart(final String part) {
     // return ObjectName.quote(part);
     String answer = part.replaceAll("[\\:\\,\\'\\\"]", "_");
@@ -251,7 +233,7 @@ public class ManagementContext {
   }
 
   /**
-   * Retrive an System ObjectName
+   * Retrieve a System ObjectName
    *
    * @param domainName
    * @param containerName
@@ -259,8 +241,12 @@ public class ManagementContext {
    * @return the ObjectName
    * @throws MalformedObjectNameException
    */
-  public static ObjectName getSystemObjectName(final String domainName, final String containerName, final Class theClass) throws MalformedObjectNameException, NullPointerException {
-    String tmp = domainName + ":" + "type=" + theClass.getName() + ",name=" + getRelativeName(containerName, theClass);
+  public static ObjectName getSystemObjectName(final String domainName,
+                                               final String containerName,
+                                               final Class theClass) throws MalformedObjectNameException {
+    String tmp = domainName + ":" +
+                 "type=" + theClass.getName() +
+                 ",name=" + getRelativeName(containerName, theClass);
     return new ObjectName(tmp);
   }
 
@@ -283,7 +269,10 @@ public class ManagementContext {
   public Object newProxyInstance( final ObjectName objectName,
                                   final Class interfaceClass,
                                   final boolean notificationBroadcaster){
-    return MBeanServerInvocationHandler.newProxyInstance(getMBeanServer(), objectName, interfaceClass, notificationBroadcaster);
+    return MBeanServerInvocationHandler.newProxyInstance(getMBeanServer(),
+                                                         objectName,
+                                                         interfaceClass,
+                                                         notificationBroadcaster);
 
   }
 
@@ -293,16 +282,43 @@ public class ManagementContext {
    * @return attribute
    * @throws Exception
    */
-  public Object getAttribute(final ObjectName name, final String attribute) throws Exception{
+  public Object getAttribute(final ObjectName name,
+                             final String attribute) throws Exception {
     return getMBeanServer().getAttribute(name, attribute);
   }
 
-  public ObjectInstance registerMBean(final Object bean, final ObjectName name) throws Exception{
+  /**
+   * @param bean
+   * @param name
+   * @return An ObjectInstance, containing the ObjectName and the Java class name of the newly
+   *                   registered MBean. If the contained ObjectName is n, the contained Java
+   *                   class name is getMBeanInfo(n).getClassName().
+   * @throws Exception
+   */
+  public ObjectInstance registerMBean(final Object bean,
+                                      final ObjectName name) throws Exception {
     ObjectInstance result = getMBeanServer().registerMBean(bean, name);
     registeredMBeanNames.add(name);
     return result;
   }
 
+  /** Gets the names of MBeans controlled by the MBean server. This method enables any of the
+   * following to be obtained: <ul>
+   * <li>The names of all MBeans, </li>
+   * <li>the names of a set of MBeans specified by pattern matching on the ObjectName and/or a Query expression, </li>
+   * <li>a specific MBean name (equivalent to testing whether an MBean is registered).</li>
+   * </ul>
+   *
+   * <p> When the object name is null or no domain and key properties are specified,
+   * all objects are selected (and filtered if a query is specified). It returns the set of
+   * ObjectNames for the MBeans selected.
+   *
+   * @param name
+   * @param query
+   * @return A set containing the ObjectNames for the MBeans selected. If no MBean
+   *             satisfies the query, an empty list is returned.
+   * @throws Exception
+   */
   public Set queryNames(final ObjectName name, final QueryExp query) throws Exception{
     return getMBeanServer().queryNames(name, query);
   }
@@ -314,7 +330,9 @@ public class ManagementContext {
    * @throws JMException
    */
   public void unregisterMBean(final ObjectName name) throws JMException {
-    if ((beanServer != null) && beanServer.isRegistered(name) && registeredMBeanNames.remove(name)) {
+    if ((beanServer != null) &&
+        beanServer.isRegistered(name) &&
+        registeredMBeanNames.remove(name)) {
       beanServer.unregisterMBean(name);
     }
   }
@@ -324,18 +342,32 @@ public class ManagementContext {
     // create the mbean server
     try {
       if (useMBeanServer) {
-        if (findTigerMbeanServer) {
-          result = findTigerMBeanServer();
-        }
-        if (result == null) {
-          // lets piggy back on another MBeanServer -
-          // we could be in an appserver!
-          List list = MBeanServerFactory.findMBeanServer(null);
-          if ((list != null) && (list.size() > 0)) {
-            result = (MBeanServer)list.get(0);
+        List<MBeanServer> list = MBeanServerFactory.findMBeanServer(null);
+        if (!Util.isEmpty(list)) {
+          // See if our domain is there
+          MBeanServer mbsvr = null;
+
+          for (MBeanServer svr: list) {
+            String svrDomain = svr.getDefaultDomain();
+            if ((svrDomain != null) && svrDomain.equals(jmxDomainName)) {
+              mbsvr = svr;
+              break;
+            }
+          }
+
+          if (mbsvr == null)  {
+            Logger.getLogger(ConfBase.class).warn("Unable to locate mbean server for domain" +
+                jmxDomainName);
+
+            if (!useDomainSpecifiedForServer) {
+              result = list.get(0);
+            }
+          } else {
+            result = mbsvr;
           }
         }
       }
+
       if ((result == null) && createMBeanServer) {
         result = createMBeanServer();
       }
@@ -346,43 +378,6 @@ public class ManagementContext {
       error(e);
     }
     return result;
-  }
-
-  public MBeanServer findTigerMBeanServer() {
-    String name = "java.lang.management.ManagementFactory";
-    Class type = loadClass(name, ManagementContext.class.getClassLoader());
-    if (type != null) {
-      try {
-        Method method = type.getMethod("getPlatformMBeanServer", new Class[0]);
-        if (method != null) {
-          Object answer = method.invoke(null, new Object[0]);
-          if (answer instanceof MBeanServer) {
-            return (MBeanServer)answer;
-          } else {
-            warn("Could not cast: " + answer + " into an MBeanServer. There must be some classloader strangeness in town");
-          }
-        } else {
-          warn("Method getPlatformMBeanServer() does not appear visible on type: " + type.getName());
-        }
-      } catch (Exception e) {
-        error(e);
-      }
-    } else {
-      debug("Class not found: " + name + " so probably running on Java 1.4");
-    }
-    return null;
-  }
-
-  private static Class loadClass(final String name, final ClassLoader loader) {
-    try {
-      return loader.loadClass(name);
-    } catch (ClassNotFoundException e) {
-      try {
-        return Thread.currentThread().getContextClassLoader().loadClass(name);
-      } catch (ClassNotFoundException e1) {
-        return null;
-      }
-    }
   }
 
   /**
@@ -396,14 +391,6 @@ public class ManagementContext {
     locallyCreateMBeanServer = true;
 
     return mbeanServer;
-  }
-
-  public int getRmiServerPort() {
-    return rmiServerPort;
-  }
-
-  public void setRmiServerPort(final int rmiServerPort) {
-    this.rmiServerPort = rmiServerPort;
   }
 
   protected void info(final String msg) {

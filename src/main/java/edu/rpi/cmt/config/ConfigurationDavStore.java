@@ -18,16 +18,17 @@
 */
 package edu.rpi.cmt.config;
 
+import edu.rpi.sss.util.DavUtil;
+import edu.rpi.sss.util.DavUtil.DavChild;
+import edu.rpi.sss.util.http.BasicHttpClient;
+
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import edu.rpi.sss.util.DavUtil;
-import edu.rpi.sss.util.DavUtil.DavChild;
-import edu.rpi.sss.util.http.BasicHttpClient;
 
 /** A configuration DAV store interacts with a DAV server to access
  * configurations. The remote end must support enough DAV to allow GET/PUT of
@@ -37,7 +38,7 @@ import edu.rpi.sss.util.http.BasicHttpClient;
  */
 public class ConfigurationDavStore implements ConfigurationStore {
   private String url;
-  private BasicHttpClient cl;
+  private BasicHttpClient client;
   private DavUtil du = new DavUtil();
 
   private String path;
@@ -56,8 +57,8 @@ public class ConfigurationDavStore implements ConfigurationStore {
 
       URL u = new URL(url);
 
-      cl = new BasicHttpClient(u.getHost(), u.getPort(), u.getProtocol(),
-                               30 * 1000);
+      client = new BasicHttpClient(u.getHost(), u.getPort(), u.getProtocol(),
+                                   30 * 1000);
 
       path = u.getPath();
     } catch (Throwable t) {
@@ -76,11 +77,15 @@ public class ConfigurationDavStore implements ConfigurationStore {
   }
 
   @Override
-  public void saveConfiguration(final ConfigurationType config) throws ConfigException {
+  public void saveConfiguration(final ConfigBase config) throws ConfigException {
     try {
-      cl.putObject(path + config.getName() + ".xml",
-                   config.toXml(),
-                   "application/xml");
+      StringWriter sw = new StringWriter();
+
+      config.toXml(sw);
+
+      client.putObject(path + config.getName() + ".xml",
+                       sw.toString(),
+                       "application/xml");
     } catch (ConfigException ce) {
       throw ce;
     } catch (Throwable t) {
@@ -89,13 +94,19 @@ public class ConfigurationDavStore implements ConfigurationStore {
   }
 
   @Override
-  public ConfigurationType getConfig(final String name) throws ConfigException {
+  public ConfigBase getConfig(final String name) throws ConfigException {
+    return getConfig(name, null);
+  }
+
+  @Override
+  public ConfigBase getConfig(final String name,
+                              final Class cl) throws ConfigException {
     InputStream is = null;
 
     try {
-      is = cl.get(path + "/" + name + ".xml");
+      is = client.get(path + "/" + name + ".xml");
 
-      ConfigurationType config = ConfigurationType.fromXml(is);
+      ConfigBase config = ConfigBase.fromXml(is, cl);
 
       return config;
     } catch (ConfigException ce) {
@@ -114,7 +125,7 @@ public class ConfigurationDavStore implements ConfigurationStore {
   @Override
   public List<String> getConfigs() throws ConfigException {
     try {
-      Collection<DavChild> dcs = du.getChildrenUrls(cl, path, null);
+      Collection<DavChild> dcs = du.getChildrenUrls(client, path, null);
       List<String> names = new ArrayList<String>();
 
       URI parentUri = new URI(url);
@@ -146,7 +157,7 @@ public class ConfigurationDavStore implements ConfigurationStore {
         newPath += "/";
       }
 
-      DavChild dc = du.getProps(cl, newPath, null);
+      DavChild dc = du.getProps(client, newPath, null);
 
       if (dc == null) {
         throw new ConfigException("mkcol not implemented");

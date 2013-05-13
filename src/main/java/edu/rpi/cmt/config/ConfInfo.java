@@ -15,32 +15,39 @@
     KIND, either express or implied. See the License for the
     specific language governing permissions and limitations
     under the License.
- */
-/**
- *
- * Copied from the activemq project to remove dependencies
- */
-package edu.rpi.cmt.jmx;
+*/
+package edu.rpi.cmt.config;
 
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Allow annotation of MBean properties, actions and parameters
+/** This is used to annotate a method in a configuration class.
+ *
+ * @author Mike Douglass
  *
  */
-@Retention(value=RetentionPolicy.RUNTIME)
-@Target({CONSTRUCTOR, METHOD, PARAMETER, TYPE, FIELD})
-public @interface MBeanInfo {
-    /**
-     * @return String
-     */
-    String value();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface ConfInfo {
+  /** Name of element to use in xml dump
+   */
+  String elementName() default "";
+
+  /** For a collection, if this is not defaulted, each element of the
+   * collection will be wrapped in this extra tag
+   */
+  String collectionElementName() default "";
+
+  /** set true for getters when we don't want to save as part of the config.
+   */
+  boolean dontSave() default false;
+
+  /** Set this for an attribute defining the class to be used when read. It may
+   * not be clear from the context which class to use when reading the object.
+   *
+   * <p>If not set the class of the object being written is assumed.
+   */
+  String type() default "";
 }
