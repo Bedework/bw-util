@@ -20,12 +20,12 @@ package edu.rpi.cmt.config;
 
 import edu.rpi.sss.util.ToString;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** Used by configuration classes that want to save a set of hibernate properties.
  *
  * @author Mike Douglass
+ * @param <T>
  */
 public class HibernateConfigBase<T extends ConfigBase> extends ConfigBase<T> {
   private List<String> hibernateProperties;
@@ -69,31 +69,18 @@ public class HibernateConfigBase<T extends ConfigBase> extends ConfigBase<T> {
    */
   public void addHibernateProperty(final String name,
                                    final String val) {
-    List<String> p = getHibernateProperties();
-    if (p == null) {
-      p = new ArrayList<String>();
-      setHibernateProperties(p);
-    }
-    p.add(name + "=" + val);
+    setHibernateProperties(addListProperty(getHibernateProperties(),
+                                           name, val));
   }
 
   /** Get a hibernate property
    *
-   * @param val
+   * @param name
    * @return value or null
    */
   @ConfInfo(dontSave = true)
-  public String getHibernateProperty(final String val) {
-    List<String> ps = getHibernateProperties();
-
-    String key = val + "=";
-    for (String p: ps) {
-      if (p.startsWith(key)) {
-        return p.substring(key.length());
-      }
-    }
-
-    return null;
+  public String getHibernateProperty(final String name) {
+    return getProperty(getHibernateProperties(), name);
   }
 
   /** Remove a hibernate property
@@ -101,17 +88,7 @@ public class HibernateConfigBase<T extends ConfigBase> extends ConfigBase<T> {
    * @param name
    */
   public void removeHibernateProperty(final String name) {
-    try {
-      String v = getHibernateProperty(name);
-
-      if (v == null) {
-        return;
-      }
-
-      getHibernateProperties().remove(name + "=" + v);
-    } catch (Throwable t) {
-      throw new RuntimeException(t);
-    }
+    removeProperty(getHibernateProperties(), name);
   }
 
   /** Set a hibernate property
@@ -121,12 +98,8 @@ public class HibernateConfigBase<T extends ConfigBase> extends ConfigBase<T> {
    */
   public void setHibernateProperty(final String name,
                                    final String val) {
-    try {
-      removeHibernateProperty(name);
-      addHibernateProperty(name, val);
-    } catch (Throwable t) {
-      throw new RuntimeException(t);
-    }
+    setHibernateProperties(setListProperty(getHibernateProperties(),
+                                           name, val));
   }
 
   @Override

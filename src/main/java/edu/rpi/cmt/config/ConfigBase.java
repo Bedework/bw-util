@@ -38,6 +38,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
@@ -128,6 +129,83 @@ public abstract class ConfigBase<T extends ConfigBase>
     toStringSegment(ts);
 
     return ts.toString();
+  }
+
+  /* ====================================================================
+   *                   Property methods
+   * ==================================================================== */
+
+  /**
+   * @param list
+   * @param name
+   * @param val
+   * @return possibly newly created list
+   */
+  @SuppressWarnings("unchecked")
+  public <L extends List> L addListProperty(final L list,
+                                            final String name,
+                                            final String val) {
+    L theList = list;
+    if (list == null) {
+      theList = (L)new ArrayList();
+    }
+
+    theList.add(name + "=" + val);
+    return theList;
+  }
+
+  /** Get a property stored as a String name = val
+   *
+   * @param col
+   * @param name
+   * @return value or null
+   */
+  @ConfInfo(dontSave = true)
+  public String getProperty(final Collection<String> col,
+                            final String name) {
+    String key = name + "=";
+    for (String p: col) {
+      if (p.startsWith(key)) {
+        return p.substring(key.length());
+      }
+    }
+
+    return null;
+  }
+
+  /** Remove a property stored as a String name = val
+   *
+   * @param col
+   * @param name
+   */
+  public void removeProperty(final Collection<String> col,
+                             final String name) {
+    try {
+      String v = getProperty(col, name);
+
+      if (v == null) {
+        return;
+      }
+
+      col.remove(name + "=" + v);
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
+    }
+  }
+
+  /** Set a property
+   *
+   * @param list
+   * @param name
+   * @param val
+   * @return possibly newly created list
+   */
+  @SuppressWarnings("unchecked")
+  public <L extends List> L setListProperty(final L list,
+                                            final String name,
+                                            final String val) {
+    removeProperty(list, name);
+    return addListProperty(list, name, val);
   }
 
   /* ====================================================================
