@@ -313,6 +313,13 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
    * ==================================================================== */
 
   /**
+   * @return config identified by current config name
+   */
+  protected T getConfigInfo(final Class<T> cl)throws ConfigException  {
+    return getConfigInfo(getStore(), getConfigName(), cl);
+  }
+
+  /**
    * @return current state of config
    */
   protected T getConfigInfo(final String configName,
@@ -335,7 +342,31 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     }
   }
 
-  /** Load the configuratio if we only expect one and we don't care or know
+  /**
+   * @param cl
+   * @return config identified by current config name
+   */
+  protected String loadConfig(final Class<T> cl) {
+    try {
+      /* Load up the config */
+
+      cfg = getConfigInfo(cl);
+
+      if (cfg == null) {
+        return "Unable to read configuration";
+      }
+
+      saveConfig(); // Just to ensure we have it for next time
+
+      return "OK";
+    } catch (Throwable t) {
+      error("Failed to start management context");
+      error(t);
+      return "failed";
+    }
+  }
+
+  /** Load the configuration if we only expect one and we don't care or know
    * what it's called.
    *
    * @param cl
