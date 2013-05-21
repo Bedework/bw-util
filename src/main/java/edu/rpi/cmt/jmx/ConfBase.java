@@ -422,7 +422,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
       AnnotatedMBean.registerMBean(getManagementContext(), bean, key);
       getRegisteredMBeans().add(key);
     } catch (Throwable e) {
-      warn("Failed to register MBean: " + key);
+      warn("Failed to register MBean: " + key + ": " + e.getLocalizedMessage());
       if (getLogger().isDebugEnabled()) {
         error(e);
       }
