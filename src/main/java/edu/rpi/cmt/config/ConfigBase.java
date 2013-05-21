@@ -32,7 +32,6 @@ import org.xml.sax.InputSource;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.Writer;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -387,12 +386,10 @@ public abstract class ConfigBase<T extends ConfigBase>
       assign(colVal, col, o, meth);
 
       // Figure out the class of the elements
-      Field field = o.getClass().getDeclaredField(name);
-
-      Type gft = field.getGenericType();
+      Type gft = elClass;
 
       if (!(gft instanceof ParameterizedType)) {
-        error("Unsupported field " + field +
+        error("Unsupported type " + elClass +
               " with name " + name);
         return;
       }
@@ -400,7 +397,7 @@ public abstract class ConfigBase<T extends ConfigBase>
       Type[] fieldArgTypes = ((ParameterizedType)gft).getActualTypeArguments();
 
       if (fieldArgTypes.length != 1) {
-        error("Unsupported field " + field +
+        error("Unsupported type " + elClass +
               " with name " + name);
         return;
       }
