@@ -360,7 +360,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
       return "OK";
     } catch (Throwable t) {
-      error("Failed to start management context");
+      error("Failed to load configuration: " + t.getLocalizedMessage());
       error(t);
       return "failed";
     }
@@ -405,7 +405,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
       return null;
     } catch (Throwable t) {
-      error("Failed to start management context: " + t.getLocalizedMessage());
+      error("Failed to load configuration: " + t.getLocalizedMessage());
       error(t);
       return "failed";
     }
