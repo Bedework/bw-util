@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -68,9 +67,9 @@ public class TzServer {
   public TaggedTimeZone getTz(final String id,
                               final String etag) throws TimezonesException {
     try {
-      doCall("action=get&tzid=" +
-          URLEncoder.encode(id, "UTF-8"), etag);
-//      doCall("action=get&tzid=" + id, etag);
+//    doCall("action=get&tzid=" +
+//        URLEncoder.encode(id, "UTF-8"), etag);
+        doCall("action=get&tzid=" + id, etag);
 
       int status = response.getStatusLine().getStatusCode();
 
