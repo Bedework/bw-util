@@ -35,6 +35,10 @@ public @interface ConfInfo {
    */
   String elementName() default "";
 
+  /** Type of element for collections
+   */
+  String elementType() default "java.lang.String";
+
   /** For a collection, if this is not defaulted, each element of the
    * collection will be wrapped in this extra tag
    */

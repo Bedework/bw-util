@@ -42,7 +42,8 @@ public class HibernateConfigBase<T extends ConfigBase> extends ConfigBase<T> {
    *
    * @return String val
    */
-  @ConfInfo(collectionElementName = "hibernateProperty")
+  @ConfInfo(collectionElementName = "hibernateProperty" ,
+            elementType = "java.lang.String")
   public List<String> getHibernateProperties() {
     return hibernateProperties;
   }
@@ -96,6 +97,7 @@ public class HibernateConfigBase<T extends ConfigBase> extends ConfigBase<T> {
    * @param name
    * @param val
    */
+  @ConfInfo(dontSave = true)
   public void setHibernateProperty(final String name,
                                    final String val) {
     setHibernateProperties(setListProperty(getHibernateProperties(),

@@ -33,8 +33,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -386,6 +384,9 @@ public abstract class ConfigBase<T extends ConfigBase>
       assign(colVal, col, o, meth);
 
       // Figure out the class of the elements
+      /* I thought I might be able toextract it from the generic info -
+       * Doesn't appear to be the case.
+       *
       Type gft = elClass;
 
       if (!(gft instanceof ParameterizedType)) {
@@ -402,8 +403,20 @@ public abstract class ConfigBase<T extends ConfigBase>
         return;
       }
 
+      Class colElType = (Class)fieldArgTypes[0];
+      */
+      ConfInfo ci = meth.getAnnotation(ConfInfo.class);
+
+      String colElTypeName;
+
+      if (ci == null) {
+        colElTypeName = "java.lang.String";
+      } else {
+        colElTypeName = ci.elementType();
+      }
+
       for (Element el: XmlUtil.getElementsArray(subroot)) {
-        populate(el, o, colVal, (Class)fieldArgTypes[0]);
+        populate(el, o, colVal, Class.forName(colElTypeName));
       }
 
       return;
@@ -429,6 +442,11 @@ public abstract class ConfigBase<T extends ConfigBase>
 
     for (int i = 0; i < meths.length; i++) {
       Method m = meths[i];
+
+      ConfInfo ci = m.getAnnotation(ConfInfo.class);
+      if ((ci != null) && ci.dontSave()) {
+        continue;
+      }
 
       if (m.getName().equals(methodName)) {
         if (meth != null) {
