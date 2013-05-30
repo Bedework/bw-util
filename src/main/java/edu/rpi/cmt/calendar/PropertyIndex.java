@@ -22,6 +22,7 @@ import edu.rpi.sss.util.xml.tagdefs.BedeworkServerTags;
 import edu.rpi.sss.util.xml.tagdefs.WebdavTags;
 import edu.rpi.sss.util.xml.tagdefs.XcalTags;
 
+import ietf.params.xml.ns.icalendar_2.AcceptResponsePropType;
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.AttachPropType;
 import ietf.params.xml.ns.icalendar_2.AttendeePropType;
@@ -49,6 +50,9 @@ import ietf.params.xml.ns.icalendar_2.LocationPropType;
 import ietf.params.xml.ns.icalendar_2.MethodPropType;
 import ietf.params.xml.ns.icalendar_2.OrganizerPropType;
 import ietf.params.xml.ns.icalendar_2.PercentCompletePropType;
+import ietf.params.xml.ns.icalendar_2.PollItemIdPropType;
+import ietf.params.xml.ns.icalendar_2.PollModePropType;
+import ietf.params.xml.ns.icalendar_2.PollPropertiesPropType;
 import ietf.params.xml.ns.icalendar_2.PriorityPropType;
 import ietf.params.xml.ns.icalendar_2.ProdidPropType;
 import ietf.params.xml.ns.icalendar_2.RdatePropType;
@@ -104,6 +108,7 @@ public class PropertyIndex implements Serializable {
     private boolean alarmProperty;
     private boolean vavailabilityProperty;
     private boolean availableProperty;
+    private boolean vpollProperty;
 
     ComponentFlags(final boolean eventProperty,
                    final boolean todoProperty,
@@ -112,7 +117,8 @@ public class PropertyIndex implements Serializable {
                    final boolean timezoneProperty,
                    final boolean alarmProperty,
                    final boolean vavailabilityProperty,
-                   final boolean availableProperty) {
+                   final boolean availableProperty,
+                   final boolean vpollProperty) {
       this.eventProperty = eventProperty;
       this.todoProperty = todoProperty;
       this.journalProperty = journalProperty;
@@ -121,6 +127,7 @@ public class PropertyIndex implements Serializable {
       this.alarmProperty = alarmProperty;
       this.vavailabilityProperty = vavailabilityProperty;
       this.availableProperty = availableProperty;
+      this.vpollProperty = vpollProperty;
     }
 
     ComponentFlags(final boolean vcalendarProperty) {
@@ -129,61 +136,64 @@ public class PropertyIndex implements Serializable {
   }
 
   static final ComponentFlags noComponent =
-     new ComponentFlags(false, false, false, false, false, false, false, false);
+     new ComponentFlags(false, false, false, false, false, false, false, false, false);
 
   static final ComponentFlags eventOnly =
-     new ComponentFlags(true, false, false, false, false, false, false, false);
+     new ComponentFlags(true, false, false, false, false, false, false, false, false);
 
   static final ComponentFlags todoOnly =
-     new ComponentFlags(false, true, false, false, false, false, false, false);
+     new ComponentFlags(false, true, false, false, false, false, false, false, false);
 
   static final ComponentFlags freebusyOnly =
-     new ComponentFlags(false, false, false, true, false, false, false, false);
+     new ComponentFlags(false, false, false, true, false, false, false, false, false);
 
   static final ComponentFlags timezoneOnly =
-     new ComponentFlags(false, false, false, false, true, false, false, false);
+     new ComponentFlags(false, false, false, false, true, false, false, false, false);
 
   static final ComponentFlags alarmOnly =
-     new ComponentFlags(false, false, false, false, false, true, false, false);
+     new ComponentFlags(false, false, false, false, false, true, false, false, false);
 
   static final ComponentFlags vavailabilityOnly =
-     new ComponentFlags(false, false, false, false, false, false, true, false);
+     new ComponentFlags(false, false, false, false, false, false, true, false, false);
 
   static final ComponentFlags availableOnly =
-    new ComponentFlags(false, false, false, false, false, false, false, true);
+    new ComponentFlags(false, false, false, false, false, false, false, true, false);
+
+  static final ComponentFlags vpollOnly =
+    new ComponentFlags(false, false, false, false, false, false, false, false, true);
 
   static final ComponentFlags event_Todo =
-     new ComponentFlags(true, true, false, false, false, false, false, false);
+     new ComponentFlags(true, true, false, false, false, false, false, false, false);
 
   static final ComponentFlags event_Todo_Journal =
-     new ComponentFlags(true, true, true, false, false, false, false, false);
+     new ComponentFlags(true, true, true, false, false, false, false, false, false);
 
   static final ComponentFlags event_Todo_Freebusy_Alarm =
-     new ComponentFlags(true, true, false, true, false, true, false, false);
+     new ComponentFlags(true, true, false, true, false, true, false, false, false);
 
   static final ComponentFlags event_Todo_Freebusy =
-     new ComponentFlags(true, true, false, true, false, false, false, false);
+     new ComponentFlags(true, true, false, true, false, false, false, false, false);
 
   static final ComponentFlags event_Freebusy =
-     new ComponentFlags(true, false, false, true, false, false, false, false);
+     new ComponentFlags(true, false, false, true, false, false, false, false, false);
 
   static final ComponentFlags event_Todo_Journal_Freebusy =
-     new ComponentFlags(true, true, true, true, false, false, false, false);
+     new ComponentFlags(true, true, true, true, false, false, false, false, false);
 
   static final ComponentFlags event_Todo_Journal_Timezone =
-     new ComponentFlags(true, true, true, false, true, false, false, false);
+     new ComponentFlags(true, true, true, false, true, false, false, false, false);
 
   static final ComponentFlags event_Todo_Journal_Alarm =
-     new ComponentFlags(true, true, true, false, false, true, false, false);
+     new ComponentFlags(true, true, true, false, false, true, false, false, false);
 
   static final ComponentFlags notTimezone =
-     new ComponentFlags(true, true, true, true, false, true, false, false);
+     new ComponentFlags(true, true, true, true, false, true, false, false, false);
 
   static final ComponentFlags notAlarm =
-     new ComponentFlags(true, true, true, true, true, false, false, false);
+     new ComponentFlags(true, true, true, true, true, false, false, false, true);
 
   static final ComponentFlags allComponents =
-     new ComponentFlags(true, true, true, true, true, true, false, false);
+     new ComponentFlags(true, true, true, true, true, true, false, false, true);
 
   static final ComponentFlags vcalendarOnly =
      new ComponentFlags(true);
@@ -560,7 +570,7 @@ public class PropertyIndex implements Serializable {
   public static enum PropertyInfoIndex {
     /** */
     UNKNOWN_PROPERTY(null, null, null,
-                     IS_SINGLE, noComponent),
+                     IS_SINGLE, allComponents),
 
     /** Alarm only: action */
     ACTION(XcalTags.action, "ACTION", ActionPropType.class,
@@ -769,6 +779,22 @@ public class PropertyIndex implements Serializable {
     /** treat x-properties as a single multi-valued property */
     XPROP(BedeworkServerTags.xprop, "XPROP", null,
           IS_MULTI, allComponents),
+
+    /** accept-response */
+    ACCEPT_RESPONSE(XcalTags.acceptResponse, "ACCEPT-RESPONSE", AcceptResponsePropType.class,
+        IS_SINGLE, vpollOnly),
+
+    /** Poll-item-id */
+    POLL_ITEM_ID(XcalTags.pollItemId, "POLL-ITEM-ID", PollItemIdPropType.class,
+        IS_SINGLE, event_Todo_Journal_Freebusy),
+
+    /** Poll-mode */
+    POLL_MODE(XcalTags.pollMode, "POLL_MODE", PollModePropType.class,
+        IS_SINGLE, vpollOnly),
+
+    /** Poll-properties */
+    POLL_PROPERTIES(XcalTags.pollProperties, "POLL_PROPERTIES", PollPropertiesPropType.class,
+        IS_MULTI, vpollOnly),
 
     /* -------------- Non-ical ---------------- */
 
@@ -1092,6 +1118,14 @@ public class PropertyIndex implements Serializable {
      */
     public boolean getAvailableProperty() {
       return components.availableProperty;
+    }
+
+    /** True if it's a vpoll property
+     *
+     * @return boolean
+     */
+    public boolean getVpollProperty() {
+      return components.vpollProperty;
     }
 
     /** get the index given the XML class

@@ -279,6 +279,9 @@ public class XcalTags {
                               properties
      ===================================================================== */
 
+  /** VPOLL only */
+  public static final QName acceptResponse = new QName(namespace, "accept-response");
+
   /**     *     *     *        *            *   VALARM */
   public static final QName action = new QName(namespace, "action");
 
@@ -366,6 +369,15 @@ public class XcalTags {
   /**     *  VTODO */
   public static final QName percentComplete = new QName(namespace,
                                                         "percent-complete");
+
+  /** VEVENT VTODO VJOURNAL VFREEBUSY */
+  public static final QName pollItemId = new QName(namespace, "poll-item-id");
+
+  /** VPOLL only */
+  public static final QName pollMode = new QName(namespace, "poll-mode");
+
+  /** VPOLL only */
+  public static final QName pollProperties = new QName(namespace, "poll-properties");
 
   /** VEVENT VTODO */
   public static final QName priority = new QName(namespace, "priority");

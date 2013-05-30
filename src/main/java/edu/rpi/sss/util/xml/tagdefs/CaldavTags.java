@@ -342,6 +342,22 @@ public class CaldavTags implements CaldavDefs {
   public static final QName validFilter = new QName(caldavNamespace,
                                                     "valid-filter");
 
+  /**   */
+  public static final QName vpollMaxActive = new QName(caldavNamespace,
+                                            "vpoll-max-active");
+
+  /**   */
+  public static final QName vpollMaxItems = new QName(caldavNamespace,
+                                            "vpoll-max-items");
+
+  /**   */
+  public static final QName vpollMaxVoters = new QName(caldavNamespace,
+                                            "vpoll-max-voters");
+
+  /**   */
+  public static final QName vpollSupportedComponentSet = new QName(caldavNamespace,
+                                            "vpoll-supported-component-set");
+
   /* ---------------- isched - delete thede ------------------------------- */
 
   /** isched  */
