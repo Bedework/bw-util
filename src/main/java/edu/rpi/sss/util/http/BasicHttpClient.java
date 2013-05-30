@@ -418,6 +418,36 @@ public class BasicHttpClient extends DefaultHttpClient {
   /**
    * @author douglm
    */
+  public class HttpMkcalendar extends HttpEntityEnclosingRequestBase {
+    /**
+     */
+    public static final String METHOD_NAME = "MKCALENDAR";
+
+    /**
+     * @param uri
+     */
+    public HttpMkcalendar(final URI uri) {
+      setURI(uri);
+    }
+
+    /**
+     * @param uri
+     * @throws IllegalArgumentException if the uri is invalid.
+     */
+    public HttpMkcalendar(final String uri) {
+      super();
+      setURI(URI.create(uri));
+    }
+
+    @Override
+    public String getMethod() {
+      return METHOD_NAME;
+    }
+  }
+
+  /**
+   * @author douglm
+   */
   public class HttpMkcol extends HttpEntityEnclosingRequestBase {
     /**
      */
@@ -504,6 +534,10 @@ public class BasicHttpClient extends DefaultHttpClient {
 
     if ("PROPFIND".equals(nm)) {
       return new HttpPropfind(uri);
+    }
+
+    if ("MKCALENDAR".equals(nm)) {
+      return new HttpMkcalendar(uri);
     }
 
     if ("MKCOL".equals(nm)) {
