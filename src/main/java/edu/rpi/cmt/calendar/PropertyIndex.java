@@ -80,6 +80,7 @@ import ietf.params.xml.ns.icalendar_2.VersionPropType;
 import ietf.params.xml.ns.icalendar_2.VeventType;
 import ietf.params.xml.ns.icalendar_2.VfreebusyType;
 import ietf.params.xml.ns.icalendar_2.VjournalType;
+import ietf.params.xml.ns.icalendar_2.VoterPropType;
 import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkCostPropType;
@@ -795,6 +796,11 @@ public class PropertyIndex implements Serializable {
     /** Poll-properties */
     POLL_PROPERTIES(XcalTags.pollProperties, "POLL_PROPERTIES", PollPropertiesPropType.class,
         IS_MULTI, vpollOnly),
+
+    /** attendee */
+    VOTER(XcalTags.attendee, "VOTER", VoterPropType.class,
+             DataType.CUA,
+             IS_MULTI, notTimezone),
 
     /* -------------- Non-ical ---------------- */
 
