@@ -798,7 +798,7 @@ public class PropertyIndex implements Serializable {
         IS_MULTI, vpollOnly),
 
     /** attendee */
-    VOTER(XcalTags.attendee, "VOTER", VoterPropType.class,
+    VOTER(XcalTags.voter, "VOTER", VoterPropType.class,
              DataType.CUA,
              IS_MULTI, notTimezone),
 

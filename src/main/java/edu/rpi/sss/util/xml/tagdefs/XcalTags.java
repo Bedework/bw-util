@@ -282,6 +282,9 @@ public class XcalTags {
   /** VPOLL only */
   public static final QName acceptResponse = new QName(namespace, "accept-response");
 
+  /** VPOLL only */
+  public static final QName voter = new QName(namespace, "voter");
+
   /**     *     *     *        *            *   VALARM */
   public static final QName action = new QName(namespace, "action");
 
