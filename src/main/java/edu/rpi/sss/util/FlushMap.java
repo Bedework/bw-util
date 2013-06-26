@@ -45,7 +45,7 @@ public class FlushMap<K,V> extends HashMap<K,V> {
 
   /** Create a FlushMap with given size, default maxize and flush period.
    *
-   * @param size
+   * @param size  initial size
    */
   public FlushMap(final int size) {
     super(size);
@@ -67,7 +67,7 @@ public class FlushMap<K,V> extends HashMap<K,V> {
 
   /** Create a FlushMap with specified size, maxsize and flush period.
    *
-   * @param size
+   * @param size   initial size
    * @param flushTime millis - 0 means no flush time
    * @param maxSize - 0 means no max size
    */
@@ -78,6 +78,8 @@ public class FlushMap<K,V> extends HashMap<K,V> {
 
     this.flushTime = flushTime;
     this.maxSize = maxSize;
+
+    lastFlush = System.currentTimeMillis();
   }
 
   /** Override this to modify the behavior - perhaps to preserve some special
@@ -89,10 +91,10 @@ public class FlushMap<K,V> extends HashMap<K,V> {
     boolean flushed = false;
 
     if (flushTime > 0) {
-      if ((lastFlush != 0) &&
-          ((System.currentTimeMillis() - lastFlush) > flushTime)) {
+      if ((System.currentTimeMillis() - lastFlush) > flushTime) {
         clear();
         flushed = true;
+        lastFlush = System.currentTimeMillis();
       }
     }
 
@@ -103,6 +105,7 @@ public class FlushMap<K,V> extends HashMap<K,V> {
     if (size() >= maxSize) {
       clear();
       flushed = true;
+      lastFlush = System.currentTimeMillis();
     }
 
     return flushed;
