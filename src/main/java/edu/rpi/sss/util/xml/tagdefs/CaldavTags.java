@@ -35,7 +35,7 @@ public class CaldavTags implements CaldavDefs {
 
   /**   */
   public static final QName attendeeAllowed = new QName(caldavNamespace,
-                                                "attendee-allowed");
+                                "allowed-attendee-scheduling-object-change");
 
   /** Specifies the resource type of a calendar collection.  */
   public static final QName calendar = new QName(caldavNamespace,
@@ -168,7 +168,7 @@ public class CaldavTags implements CaldavDefs {
 
   /**   */
   public static final QName organizerAllowed = new QName(caldavNamespace,
-                                                   "organizer-allowed");
+                           "allowed-organizer-scheduling-object-change");
 
   /**   */
   public static final QName originator = new QName(caldavNamespace,
