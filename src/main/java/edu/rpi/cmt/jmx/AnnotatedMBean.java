@@ -49,7 +49,9 @@ public class AnnotatedMBean extends StandardMBean {
    * @throws Exception
    */
   @SuppressWarnings("unchecked")
-  public static void registerMBean(final ManagementContext context, final Object object, final ObjectName objectName)
+  public static void registerMBean(final ManagementContext context,
+                                   final Object object,
+                                   final ObjectName objectName)
     throws Exception {
 
     String mbeanName = object.getClass().getName() + "MBean";

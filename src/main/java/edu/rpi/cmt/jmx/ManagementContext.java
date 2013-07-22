@@ -27,7 +27,9 @@ import edu.rpi.sss.util.Util;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,7 +39,6 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
 
@@ -52,6 +53,8 @@ public class ManagementContext {
    * Default domain
    */
   public static final String DEFAULT_DOMAIN = "jboss";
+  public static final boolean isJboss5 = true;
+
   private MBeanServer beanServer;
   private String jmxDomainName = DEFAULT_DOMAIN;
   private boolean useDomainSpecifiedForServer = false;
@@ -287,19 +290,42 @@ public class ManagementContext {
     return getMBeanServer().getAttribute(name, attribute);
   }
 
+  final static String JMI_DOMAIN = "JMImplementation";
+  final static String MBEAN_REGISTRY = JMI_DOMAIN + ":type=MBeanRegistry";
+  final static String CLASSLOADER = "org.jboss.mx.classloader";
+
   /**
    * @param bean
    * @param name
-   * @return An ObjectInstance, containing the ObjectName and the Java class name of the newly
-   *                   registered MBean. If the contained ObjectName is n, the contained Java
-   *                   class name is getMBeanInfo(n).getClassName().
    * @throws Exception
    */
-  public ObjectInstance registerMBean(final Object bean,
-                                      final ObjectName name) throws Exception {
-    ObjectInstance result = getMBeanServer().registerMBean(bean, name);
+  public void registerMBean(final Object bean,
+                            final ObjectName name) throws Exception {
+    if (!isJboss5) {
+      getMBeanServer().registerMBean(bean, name);
+      registeredMBeanNames.add(name);
+      return;
+    }
+
+    // See https://groups.google.com/forum/#!topic/mobicents-public/yiDzhnbQNvI
+    Map<String, Object> values = new HashMap<>();
+    ClassLoader classLoader = getClass().getClassLoader();
+    info(String.format("Registering to JMX with classLoader [%s]",
+                       classLoader.toString()));
+    values.put(CLASSLOADER, classLoader);
+
+    getMBeanServer().invoke(
+            new ObjectName(MBEAN_REGISTRY),
+            "registerMBean",
+            new Object[] {bean,
+                          name,
+                          values },
+            new String[] {Object.class.getName(),
+                          ObjectName.class.getName(),
+                          Map.class.getName() }
+    );
+
     registeredMBeanNames.add(name);
-    return result;
   }
 
   /** Gets the names of MBeans controlled by the MBean server. This method enables any of the
