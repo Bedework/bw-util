@@ -90,6 +90,8 @@ public class Request extends ReqUtil {
 
   protected int conversationType;
 
+  protected String moduleName;
+
   /**
    * @param request
    * @param response
@@ -135,6 +137,13 @@ public class Request extends ReqUtil {
   }
 
   /**
+   * @return MessageEmit
+   */
+  public MessageEmit getMsg() {
+    return form.getMsg();
+  }
+
+  /**
    * @return boolean
    */
   public boolean getErrorsEmitted() {
@@ -167,6 +176,20 @@ public class Request extends ReqUtil {
    */
   public int getConversationType() {
     return conversationType;
+  }
+
+  /**
+   * @param val
+   */
+  public void setModuleName(final String val) {
+    moduleName = val;
+  }
+
+  /**
+   * @return String
+   */
+  public String getModuleName() {
+    return moduleName;
   }
 
   /** Get an Integer request parameter or null. Emit error for non-null and
