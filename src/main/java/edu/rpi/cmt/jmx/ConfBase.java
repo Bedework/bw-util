@@ -26,10 +26,14 @@ import edu.rpi.cmt.config.ConfigurationStore;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -39,9 +43,58 @@ import javax.management.ObjectName;
 /** A configuration has a name and a location. The location can be specified in
  * a number of ways: <ul>
  * <li>An absolute path to the directory containing the config</li>
- * <li>An http url(soon)</li>
- * <li>A system property name</li>
+ * <li>Through definitions in a property file</li>
  * </ul>
+ *
+ * <p>The property file approach uses the system property <br/>
+ * <em>org.bedework.config.pfile</em><br/>
+ * which provides
+ * the absolute path to a property file which may be fetched via http or
+ * read as a local file.
+ * </p>
+ *
+ * <p>
+ *   This file has properties defined for each configuration and
+ *   some global to all<ul>
+ * <li><em>org.bedework.config.base</em> if provided defines a base for
+ * all configs which will be prepended</li>
+ * <li><em>One or more config paths</em>The name of each is specified
+ * by the configPname field for the mbean. If a config base is provided
+ * this will be appended to that to give a absolute path</li>
+ * </ul>
+ * </p>
+ *
+ * <p>An example file may look like:
+ * <pre>
+ org.bedework.config.base=file://$JBOSS_SERVER_DIR/conf/bedework/
+
+ #         Calendar clients config dir
+ org.bedework.clients.confuri=client-configs
+
+ #         Calendar core config dir
+ org.bedework.bwcore.confuri=bwcore
+
+ #         Calendar engine config dir
+ org.bedework.bwengine.confuri=bwengine
+
+ #         carddav conf dir
+ org.bedework.carddav.confuri=carddavConfig
+
+ #         hosts conf dir
+ org.bedework.hosts.confuri=hosts
+
+ #         selfreg conf dir
+ org.bedework.selfreg.confuri=selfreg
+
+ #         synch conf dir
+ org.bedework.synch.confuri=synch
+
+ #         tzsvr conf dir
+ org.bedework.tzs.confuri=tzsvr
+
+ * </pre>
+ *
+ * </p>
  *
  * <p>Each may be augmented by providing a path suffix - used to add additional
  * path elements to the base path.
@@ -59,8 +112,34 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
   private String configName;
 
+  /* The absolute path to the directory */
   private String configuri;
 
+  private static volatile Object pfileLock = new Object();
+
+  private static Properties pfile;
+
+  private final static String pfilePname = "org.bedework.config.pfile";
+
+  private final static String configBasePname = "org.bedework.config.base";
+
+  /* From the pfile */
+  private static String configBase;
+  private static boolean configBaseIsFile;
+  private static boolean configBaseIsHttp;
+
+  private static final List<String> httpSchemes;
+
+  static {
+    List<String> hs = new ArrayList<>();
+
+    hs.add("http");
+    hs.add("https");
+
+    httpSchemes = Collections.unmodifiableList(hs);
+  }
+
+  /* The property which defines the path - possibly relative */
   private String configPname;
 
   private String pathSuffix;
@@ -168,41 +247,58 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     String uriStr = getConfigUri();
 
     if (uriStr == null) {
-      if (getConfigPname() == null) {
+      getPfile();
+
+      String configPname = getConfigPname();
+
+      if (configPname == null) {
         throw new ConfigException("Either a uri or property name must be specified");
       }
 
-      uriStr = System.getProperty(getConfigPname());
+      uriStr = pfile.getProperty(configPname);
       if (uriStr == null) {
-        throw new ConfigException("No property with name \"" + getConfigPname() + "\"");
+        throw new ConfigException("No property with name \"" +
+                                          configPname + "\"");
       }
     }
 
-    URI uri;
     try {
-      uri = new URI(uriStr);
+      URI uri= new URI(uriStr);
+
+      String scheme = uri.getScheme();
+
+      if (scheme == null) {
+        // Possible non-absolute path
+        String path = uri.getPath();
+
+        File f = new File(path);
+        if (!f.isAbsolute() && configBase != null) {
+          path = configBase + path;
+        }
+
+        uri= new URI(path);
+        scheme = uri.getScheme();
+      }
+
+      if ((scheme == null) || (scheme.equals("file"))) {
+        String path = uri.getPath();
+
+        if (getPathSuffix() != null) {
+          if (!path.endsWith(File.separator)) {
+            path += File.separator;
+          }
+
+          path += getPathSuffix() + File.separator;
+        }
+
+        store = new ConfigurationFileStore(path);
+        return store;
+      }
+
+      throw new ConfigException("Unsupported ConfigurationStore: " + uri);
     } catch (URISyntaxException use) {
       throw new ConfigException(use);
     }
-
-    String scheme = uri.getScheme();
-
-    if ((scheme == null) || (scheme.equals("file"))) {
-      String path = uri.getPath();
-
-      if (getPathSuffix() != null) {
-        if (!path.endsWith(File.separator)) {
-          path += File.separator;
-        }
-
-        path += getPathSuffix() + File.separator;
-      }
-
-      store = new ConfigurationFileStore(path);
-      return store;
-    }
-
-    throw new ConfigException("Unsupported ConfigurationStore: " + uri);
   }
 
   /**
@@ -258,6 +354,70 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   /* ====================================================================
    *                   Private methods
    * ==================================================================== */
+
+  private void getPfile() throws ConfigException {
+    if (pfile != null) {
+      return;
+    }
+
+    String pfileUri = System.getProperty(pfilePname);
+
+    if (pfileUri == null) {
+      throw new ConfigException("No property with name \"" +
+                                        pfilePname + "\"");
+    }
+
+    try {
+      URI uri;
+      uri = new URI(pfileUri);
+
+      String scheme = uri.getScheme();
+
+      if ((scheme == null) || (scheme.equals("file"))) {
+        String path = uri.getPath();
+        File f = new File(path);
+        if (!f.exists()) {
+          throw new ConfigException("No configuration pfile at " + path);
+        }
+
+        if (!f.isFile()) {
+          throw new ConfigException(path + " is not a file");
+        }
+
+        synchronized (pfileLock) {
+          if (pfile != null) {
+            // Someone beat us to it
+            return;
+          }
+
+          pfile = new Properties();
+          pfile.load(new FileReader(f));
+
+          configBase = pfile.getProperty(configBasePname);
+
+          uri = new URI(configBase);
+          scheme = uri.getScheme();
+
+          if ((scheme == null) || (scheme.equals("file"))) {
+            configBase = uri.getPath();
+            configBaseIsFile = true;
+          } else if (httpSchemes.contains(scheme)) {
+            configBaseIsHttp = true;
+          } else {
+            throw new ConfigException("Unsupported scheme in " + uri);
+          }
+        }
+
+        return;
+      }
+
+      throw new ConfigException("Unsupported configuration pfile: " + uri);
+    } catch (ConfigException ce) {
+      throw ce;
+    } catch (Throwable t) {
+      throw new ConfigException(t);
+    }
+  }
 
   /* ====================================================================
    *                   JMX methods

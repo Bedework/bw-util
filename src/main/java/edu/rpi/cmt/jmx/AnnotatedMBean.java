@@ -33,9 +33,16 @@ import javax.management.StandardMBean;
  */
 public class AnnotatedMBean extends StandardMBean {
 
-  private static final Map<String, Class<?>> primitives = new HashMap<String, Class<?>>();
+  private static final Map<String, Class<?>> primitives = new HashMap<>();
   static {
-    Class<?>[] p = { byte.class, short.class, int.class, long.class, float.class, double.class, char.class, boolean.class, };
+    Class<?>[] p = { byte.class,
+                     short.class,
+                     int.class,
+                     long.class,
+                     float.class,
+                     double.class,
+                     char.class,
+                     boolean.class, };
     for (Class<?> c : p) {
       primitives.put(c.getName(), c);
     }
@@ -73,7 +80,8 @@ public class AnnotatedMBean extends StandardMBean {
    *
    * @throws NotCompliantMBeanException
    */
-  public <T> AnnotatedMBean(final T impl, final Class<T> mbeanInterface) throws NotCompliantMBeanException {
+  public <T> AnnotatedMBean(final T impl,
+                            final Class<T> mbeanInterface) throws NotCompliantMBeanException {
     super(impl, mbeanInterface);
   }
 
@@ -87,12 +95,18 @@ public class AnnotatedMBean extends StandardMBean {
   protected String getDescription(final MBeanAttributeInfo info) {
 
     String descr = info.getDescription();
-    Method m = getMethod(getMBeanInterface(), "get"+info.getName().substring(0, 1).toUpperCase()+info.getName().substring(1));
+    Method m = getMethod(getMBeanInterface(), "get" +
+            info.getName().substring(0, 1).toUpperCase() +
+            info.getName().substring(1));
     if (m == null) {
-      m = getMethod(getMBeanInterface(), "is"+info.getName().substring(0, 1).toUpperCase()+info.getName().substring(1));
+      m = getMethod(getMBeanInterface(), "is" +
+              info.getName().substring(0, 1).toUpperCase() +
+              info.getName().substring(1));
     }
     if (m == null) {
-      m = getMethod(getMBeanInterface(), "does"+info.getName().substring(0, 1).toUpperCase()+info.getName().substring(1));
+      m = getMethod(getMBeanInterface(), "does" +
+              info.getName().substring(0, 1).toUpperCase() +
+              info.getName().substring(1));
     }
 
     if (m != null) {
@@ -157,7 +171,9 @@ public class AnnotatedMBean extends StandardMBean {
    * @param params
    * @return
    */
-  private static Method getMethod(final Class<?> mbean, final String method, final String... params) {
+  private static Method getMethod(final Class<?> mbean,
+                                  final String method,
+                                  final String... params) {
     try {
       final ClassLoader loader = mbean.getClassLoader();
       final Class<?>[] paramClasses = new Class<?>[params.length];

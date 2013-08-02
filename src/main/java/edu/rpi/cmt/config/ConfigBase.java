@@ -48,8 +48,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
  *
  * <p>The class itself requires an element name annotation<br/>
  * <code>
- *   &#64;ConfInfo(elementName="example-conf")
+ *   &#64;ConfInfo(elementName="example-conf",
+ *                 type="defining-class")
  * </code>
+ *
+ * <p>The type parameter is optional. If not specified the annotated
+ * class is the defining class otherwise it is the named class or
+ * interface</p>
+ *
+ * <p>The defining class specifies the getters and setters for the
+ * configuration fields. The actual class may have other getters and
+ * setters but these will not be dumped or restored.</p>
  *
  * <p>Collection fields MUST be either Set or List and the element class MUST
  * be specified. For example:<br/>
@@ -59,7 +68,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  *
  * <p>Also collection getters require a name for the collection element<br/>
  * <code>
- *    &#64;ConfInfo(collectionElementName = "prop")
+ *    &#64;ConfInfo(collectionElementName = "prop")<br/>
  *    public List<String> getProps() {
  * </code>
  *
@@ -69,6 +78,29 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * </code>
  * allows for getters and setters of values used internally only.
  *
+ * <p>The dumped XML will have start elements with a <em>type</em>
+ * attribute. The value of that attribute is the <em>actual</em> class
+ * being dumped/restored.</p>
+ *
+ * <p>An example:</p>
+ * <pre>
+ *   public interface MyConf extends Serializable {
+ *     ...
+ *     void setMaxLength(final Integer val);
+ *     ...
+ *    &#64;MBeanInfo("Max length")
+ *     Integer getLength();
+ *     ...
+ *   }
+ *
+ *   &#64;ConfInfo(elementName = "my-conf",
+ *           type = "my.package.MyConf")
+ *  public class MyConfImpl extends ConfigBase<MyConfImpl>
+ *        implements MyConf {
+ *    ...
+ *  }
+ * </pre>
+ * 
  * @author Mike Douglass
  * @param <T>
  */
@@ -99,7 +131,6 @@ public abstract class ConfigBase<T extends ConfigBase>
   /** Add our stuff to the StringBuilder
    *
    * @param ts    ToString for result
-   * @param indent
    */
   public void toStringSegment(final ToString ts) {
     ts.append("name", getName());
@@ -538,11 +569,28 @@ public abstract class ConfigBase<T extends ConfigBase>
 
   private void dump(final XmlEmit xml,
                     final boolean fromCollection) throws Throwable {
-    ConfInfo ciCl = getClass().getAnnotation(ConfInfo.class);
+    final Class thisClass = getClass();
+    ConfInfo ciCl = (ConfInfo)thisClass.getAnnotation(ConfInfo.class);
 
-    QName qn = startElement(xml, getClass(), ciCl);
+    /* defClass defines the fields we need to dump */
+    Class defClass = thisClass;
+    String defClassName = null;
 
-    Collection<ComparableMethod> ms = findGetters();
+    if ((ciCl != null) && (ciCl.type().length() != 0)) {
+      defClassName = ciCl.type();
+    }
+
+    if ((defClassName != null) &&
+        !defClassName.equals(thisClass.getCanonicalName())) {
+      Class c = findClass(thisClass, defClassName);
+      if (c != null) {
+        defClass = c;
+      }
+    }
+
+    QName qn = startElement(xml, thisClass, ciCl);
+
+    Collection<ComparableMethod> ms = findGetters(defClass);
 
     for (ComparableMethod cm: ms) {
       Method m = cm.m;
@@ -557,24 +605,47 @@ public abstract class ConfigBase<T extends ConfigBase>
     }
   }
 
+  private Class findClass(Class cl,
+                          String cname) throws Throwable {
+    /* Do interfaces first - it's usually one of those. */
+    for (Class c: cl.getInterfaces()) {
+      if (c.getCanonicalName().equals(cname)) {
+        return c;
+      }
+
+      Class ic = findClass(c, cname);
+      if (ic != null) {
+        return ic;
+      }
+    }
+
+    Class c = cl.getSuperclass();
+    if (c == null) {
+      return null;
+    }
+
+    if (c.getCanonicalName().equals(cname)) {
+      return c;
+    }
+
+    return findClass(c, cname);
+  }
+
+  /* Emit a start element with a name and type. The type is the name
+     of the actual class.
+   */
   private QName startElement(final XmlEmit xml,
                              final Class c,
                              final ConfInfo ci) throws Throwable {
     QName qn;
-    String type =null;
 
     if (ci == null) {
       qn = new QName(ns, c.getName());
     } else {
       qn = new QName(ns, ci.elementName());
-      type = ci.type();
     }
 
-    if ((type == null) || (type.length() == 0)) {
-      type =c.getCanonicalName();
-    }
-
-    xml.openTag(qn, "type", type);
+    xml.openTag(qn, "type", c.getCanonicalName());
 
     return qn;
   }
@@ -721,8 +792,8 @@ public abstract class ConfigBase<T extends ConfigBase>
     }
   }
 
-  private Collection<ComparableMethod> findGetters() throws ConfigException {
-    Method[] meths = getClass().getMethods();
+  private Collection<ComparableMethod> findGetters(Class cl) throws ConfigException {
+    Method[] meths = cl.getMethods();
     Collection<ComparableMethod> getters = new TreeSet<ComparableMethod>();
 
     for (int i = 0; i < meths.length; i++) {
