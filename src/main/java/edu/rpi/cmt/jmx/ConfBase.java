@@ -368,13 +368,15 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     }
 
     try {
+/*
       URI uri;
       uri = new URI(pfileUri);
 
       String scheme = uri.getScheme();
 
       if ((scheme == null) || (scheme.equals("file"))) {
-        String path = uri.getPath();
+        */
+      String path = pfileUri;
         File f = new File(path);
         if (!f.exists()) {
           throw new ConfigException("No configuration pfile at " + path);
@@ -395,8 +397,8 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
           configBase = pfile.getProperty(configBasePname);
 
-          uri = new URI(configBase);
-          scheme = uri.getScheme();
+          URI uri = new URI(configBase);
+          String scheme = uri.getScheme();
 
           if ((scheme == null) || (scheme.equals("file"))) {
             configBase = uri.getPath();
@@ -408,10 +410,11 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
           }
         }
 
-        return;
+/*        return;
       }
 
       throw new ConfigException("Unsupported configuration pfile: " + uri);
+      */
     } catch (ConfigException ce) {
       throw ce;
     } catch (Throwable t) {
