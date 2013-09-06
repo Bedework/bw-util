@@ -100,7 +100,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  *    ...
  *  }
  * </pre>
- * 
+ *
  * @author Mike Douglass
  * @param <T>
  */

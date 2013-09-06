@@ -18,41 +18,24 @@
 */
 package edu.rpi.sss.util.http.service;
 
+import edu.rpi.cmt.jmx.ConfBaseMBean;
+import edu.rpi.cmt.jmx.MBeanInfo;
+
 import org.apache.http.pool.PoolStats;
 
 /** Display usage and set limits for outbound http
  *
  * @author douglm
  */
-public interface HttpOutMBean {
+public interface HttpOutMBean extends ConfBaseMBean, HttpConfig {
   /* ========================================================================
    * Status
    * ======================================================================== */
 
   /**
-   * @param val maximum allowable overall
-   */
-  void setMaxConnections(int val);
-
-  /**
-   * @return maximim allowable overall
-   */
-  int getMaxConnections();
-
-  /**
    * @return current stats
    */
   PoolStats getConnStats();
-
-  /**
-   * @param val maximum allowable overall
-   */
-  void setDefaultMaxPerRoute(final int val);
-
-  /**
-   * @return current default
-   */
-  int getDefaultMaxPerRoute();
 
   /* *
    * @param val maximum allowable overall
@@ -110,19 +93,10 @@ public interface HttpOutMBean {
   public void deleteHost(String host);
   */
 
-  /** Lifecycle
+  /** (Re)load the configuration
    *
+   * @return status
    */
-  public void start();
-
-  /** Lifecycle
-   *
-   */
-  public void stop();
-
-  /** Lifecycle
-   *
-   * @return true if started
-   */
-  public boolean isStarted();
+  @MBeanInfo("(Re)load the configuration")
+  String loadConfig();
 }

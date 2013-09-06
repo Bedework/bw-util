@@ -18,20 +18,36 @@
 */
 package edu.rpi.sss.util.http.service;
 
+import edu.rpi.cmt.jmx.ConfBase;
 import edu.rpi.sss.util.http.BasicHttpClient;
 
 import org.apache.http.pool.PoolStats;
-import org.apache.log4j.Logger;
 
 /**
  * @author douglm
  *
  */
-public class HttpOut implements HttpOutMBean {
-  private transient Logger log;
+public class HttpOut extends ConfBase<HttpConfigImpl>
+        implements HttpOutMBean {
+  /**
+   * @param confuriPname
+   * @param domain e.g. org.bedework.bwengine
+   * @param serviceName
+   */
+  public HttpOut(final String confuriPname,
+                 final String domain,
+                 final String serviceName) {
+    super();
+
+    setConfigName(serviceName);
+
+    setConfigPname(confuriPname);
+    setServiceName(domain + ":service=" + serviceName);
+  }
 
   @Override
   public void setMaxConnections(final int val) {
+    getConfig().setMaxConnections(val);
     BasicHttpClient.setMaxConnections(val);
   }
 
@@ -41,12 +57,8 @@ public class HttpOut implements HttpOutMBean {
   }
 
   @Override
-  public PoolStats getConnStats() {
-    return BasicHttpClient.getConnStats();
-  }
-
-  @Override
   public void setDefaultMaxPerRoute(final int val) {
+    getConfig().setDefaultMaxPerRoute(val);
     BasicHttpClient.setDefaultMaxPerRoute(val);
   }
 
@@ -89,6 +101,11 @@ public class HttpOut implements HttpOutMBean {
    * Operations
    * ======================================================================== */
 
+  @Override
+  public PoolStats getConnStats() {
+    return BasicHttpClient.getConnStats();
+  }
+
   /*
   @Override
   public void setHostLimit(final String host, final int max) {
@@ -109,50 +126,21 @@ public class HttpOut implements HttpOutMBean {
   }
   */
 
-  /* ========================================================================
-   * Lifecycle
-   * ======================================================================== */
-
   @Override
-  public synchronized void start() {
-  }
+  public String loadConfig() {
+    String res = loadConfig(HttpConfigImpl.class);
 
-  @Override
-  public synchronized void stop() {
-  }
+    refresh();
 
-  @Override
-  public boolean isStarted() {
-    return true;
+    return res;
   }
 
   /* ====================================================================
-   *                   Protected methods
+   *                   Private methods
    * ==================================================================== */
 
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  /* Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
+  private void refresh() {
+    BasicHttpClient.setMaxConnections(getConfig().getMaxConnections());
+    BasicHttpClient.setDefaultMaxPerRoute(getConfig().getDefaultMaxPerRoute());
   }
 }
