@@ -24,13 +24,13 @@ package org.bedework.util.timezones;
  */
 public class TimezonesException extends Throwable {
   /** */
-  public static String unknownTimezone = "edu.rpi.cmt.timezones.exc.unknownTimezone";
+  public static String unknownTimezone = "edu.bedework.cmt.timezones.exc.unknownTimezone";
 
   /** Implementation error */
-  public static String cacheError = "edu.rpi.cmt.timezones.exc.cacheerror";
+  public static String cacheError = "edu.bedework.cmt.timezones.exc.cacheerror";
 
   /** */
-  public static String badDate = "edu.rpi.cmt.timezones.exc.baddate";
+  public static String badDate = "edu.bedework.cmt.timezones.exc.baddate";
 
   private String extra;
 

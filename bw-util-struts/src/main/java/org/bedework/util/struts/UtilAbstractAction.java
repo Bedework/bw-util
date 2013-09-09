@@ -194,7 +194,7 @@ public abstract class UtilAbstractAction extends Action
       isPortlet = isPortletRequest(request);
 
       noActionErrors = StrutsUtil.getProperty(messages,
-                                              "edu.rpi.sss.util.action.noactionerrors",
+                                              "edu.bedework.sss.util.action.noactionerrors",
                                               "no").equals("yes");
 
       err = getErrorObj(request, messages);
@@ -224,7 +224,7 @@ public abstract class UtilAbstractAction extends Action
         // Do one time settings
         form.setNocache(
             StrutsUtil.getProperty(messages,
-                                   "edu.rpi.sss.util.action.nocache",
+                                   "edu.bedework.sss.util.action.nocache",
                                    "no").equals("yes"));
 
         form.setInitialised(true);
@@ -250,7 +250,7 @@ public abstract class UtilAbstractAction extends Action
 
       String defaultContentType =
           StrutsUtil.getProperty(messages,
-                                 "edu.rpi.sss.util.action.contenttype",
+                                 "edu.bedework.sss.util.action.contenttype",
                                  "text/html");
 
       Request req = new Request(request, response, form, this);
@@ -303,7 +303,7 @@ public abstract class UtilAbstractAction extends Action
 
       if (appRoot != null) {
         // Embed in request for pages that cannot access the form (loggedOut)
-        request.setAttribute("edu.rpi.sss.util.action.approot", appRoot);
+        request.setAttribute("edu.bedework.sss.util.action.approot", appRoot);
       }
 
       /* ----------------------------------------------------------------
@@ -336,7 +336,7 @@ public abstract class UtilAbstractAction extends Action
 
       if (forward == null) {
         getLogger().warn("Forward = null");
-        err.emit("edu.rpi.sss.util.nullforward");
+        err.emit("edu.bedework.sss.util.nullforward");
         forward = "error";
       } else if (forward.equals("FORWARD-NULL")) {
         forward = null;
@@ -477,7 +477,7 @@ public abstract class UtilAbstractAction extends Action
    * @return String   request attribute name. Null to suppress.
    */
   public String getErrorObjAttrName() {
-    return "edu.rpi.sss.util.errorobj";
+    return "edu.bedework.sss.util.errorobj";
   }
 
   /** Override to return the name of the messages object session attribute.
@@ -485,7 +485,7 @@ public abstract class UtilAbstractAction extends Action
    * @return String   request attribute name. Null to suppress.
    */
   public String getMessageObjAttrName() {
-    return "edu.rpi.sss.util.messageobj";
+    return "edu.bedework.sss.util.messageobj";
   }
 
   /** Override to return a different name for the error exception property.
@@ -494,7 +494,7 @@ public abstract class UtilAbstractAction extends Action
    * @return error exception property name
    */
   public String getErrorObjErrProp() {
-    return "edu.rpi.sss.util.error.exc";
+    return "edu.bedework.sss.util.error.exc";
   }
 
   /** Overide this to set the value or turn off presentation support
@@ -600,7 +600,7 @@ public abstract class UtilAbstractAction extends Action
   }
 
   /* (non-Javadoc)
-   * @see edu.rpi.sss.util.log.HttpAppLogger#logRequest(javax.servlet.http.HttpServletRequest)
+   * @see edu.bedework.sss.util.log.HttpAppLogger#logRequest(javax.servlet.http.HttpServletRequest)
    */
   @Override
   public void logRequest(final HttpServletRequest request) throws Throwable {
@@ -671,7 +671,7 @@ public abstract class UtilAbstractAction extends Action
     try {
       if (logPrefix == null) {
         logPrefix = StrutsUtil.getProperty(getMessages(),
-                                           "edu.rpi.sss.util.action.logprefix",
+                                           "edu.bedework.sss.util.action.logprefix",
                                            "unknown");
       }
 
@@ -898,7 +898,7 @@ public abstract class UtilAbstractAction extends Action
 
       return Integer.valueOf(par.substring(pos, epos));
     } catch (Throwable t) {
-      form.getErr().emit("edu.rpi.bad.actionparameter", par);
+      form.getErr().emit("edu.bedework.bad.actionparameter", par);
       return null;
     }
   }
@@ -923,7 +923,7 @@ public abstract class UtilAbstractAction extends Action
 
       return par.substring(pos, epos);
     } catch (Throwable t) {
-      form.getErr().emit("edu.rpi.bad.actionparameter", par);
+      form.getErr().emit("edu.bedework.bad.actionparameter", par);
       return null;
     }
   }
@@ -938,10 +938,10 @@ public abstract class UtilAbstractAction extends Action
    */
   @SuppressWarnings("unchecked")
   public HashMap<String, String> getAppVars(final Request request) {
-    Object o = request.getSessionAttr("edu.rpi.sss.util.UtilAbstractAction.appVars");
+    Object o = request.getSessionAttr("edu.bedework.sss.util.UtilAbstractAction.appVars");
     if ((o == null) || (!(o instanceof HashMap))) {
       o = new HashMap<String, String>();
-      request.setSessionAttr("edu.rpi.sss.util.UtilAbstractAction.appVars", o);
+      request.setSessionAttr("edu.bedework.sss.util.UtilAbstractAction.appVars", o);
     }
 
     return (HashMap<String, String>)o;
@@ -1165,7 +1165,7 @@ public abstract class UtilAbstractAction extends Action
 
       try {
         ps.setNoXSLTSticky(StrutsUtil.getProperty(messages,
-                                                  "edu.rpi.sss.util.action.noxslt",
+                                                  "edu.bedework.sss.util.action.noxslt",
                                                   "no").equals("yes"));
       } catch (Throwable t) {
         t.printStackTrace();

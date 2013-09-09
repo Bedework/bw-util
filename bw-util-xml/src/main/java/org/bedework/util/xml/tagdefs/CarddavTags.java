@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 
 /** Define Carddav tags for XMlEmit
  *
- * @author Mike Douglass douglm@rpi.edu
+ * @author Mike Douglass douglm@bedework.edu
  */
 public class CarddavTags {
   /** Namespace for these tags

@@ -28,7 +28,7 @@ import java.util.Properties;
 /** Convenience class to do the actual hibernate interaction. Intended for
  * one use only.
  *
- * @author Mike Douglass douglm@rpi.edu
+ * @author Mike Douglass douglm@bedework.edu
  */
 public class HibSessionFactory {
   private static SessionFactory sessionFactory;

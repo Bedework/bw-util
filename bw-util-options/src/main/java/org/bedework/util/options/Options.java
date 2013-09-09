@@ -44,7 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 /** Access properties in an xml format.
  *
- * @author Mike Douglass    douglm @ rpi.edu
+ * @author Mike Douglass    douglm @ bedework.edu
  *
  */
 public class Options implements OptionsI {

@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 
 /** Class to emit XML
  *
- * @author Mike Douglass  douglm@rpi.edu
+ * @author Mike Douglass  douglm@bedework.edu
  */
 public class XmlEmit {
   private Writer wtr;
