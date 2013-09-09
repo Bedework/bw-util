@@ -64,7 +64,7 @@ import javax.servlet.http.HttpServletRequest;
  * with the required information. This will be the more normal way of
  * supplying that information.
  *
- * @author Mike Douglass douglm@rpi.edu
+ * @author Mike Douglass douglm@bedework.edu
  * @version June 18th 2003
  */
 public class SelfConfiguredXSLTFilter extends ConfiguredXSLTFilter {

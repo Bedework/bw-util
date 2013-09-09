@@ -43,7 +43,7 @@ import javax.servlet.ServletResponse;
  * <p>We may still end up getting access to the real session via session
  * listeners so we need to take care. This may not be a complete solution.
  *
- *   @author Mike Douglass   douglm @ rpi.edu
+ *   @author Mike Douglass   douglm @ bedework.edu
  */
 @SuppressWarnings("deprecation")
 public class SessionFilter implements Filter {

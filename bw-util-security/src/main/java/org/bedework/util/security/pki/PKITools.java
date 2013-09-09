@@ -54,8 +54,8 @@ import javax.crypto.Cipher;
  *  User a encrypts with user b's public key.
  *  User b decrypts with their private key.
  *
- *  @author Alan Powell (powela rpi.edu)
- *  @author Mike Douglass (douglm rpi.edu)
+ *  @author Alan Powell (powela bedework.edu)
+ *  @author Mike Douglass (douglm bedework.edu)
  *  @version 1.02
  */
 public class PKITools {

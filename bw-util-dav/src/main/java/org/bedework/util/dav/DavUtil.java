@@ -49,7 +49,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 /** Helper for DAV interactions
 *
-* @author Mike Douglass  douglm @ rpi.edu
+* @author Mike Douglass  douglm @ bedework.edu
 */
 public class DavUtil implements Serializable {
   protected boolean debug;

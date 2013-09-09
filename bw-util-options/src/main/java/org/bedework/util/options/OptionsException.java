@@ -21,7 +21,7 @@ package org.bedework.util.options;
 
 /** Exception in options classes
  *
- * @author Mike Douglass douglm@rpi.edu
+ * @author Mike Douglass douglm@bedework.edu
  */
 public class OptionsException extends Exception {
   /**

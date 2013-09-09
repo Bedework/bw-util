@@ -23,7 +23,7 @@ import java.util.Locale;
 
 /** This is what affects the state of ConfiguredXSLTFilter.
  *
- * @author Mike Douglass douglm@rpi.edu
+ * @author Mike Douglass douglm@bedework.edu
  * @version June 18th 2003
  */
 public class XSLTFilterConfigInfo implements Serializable {

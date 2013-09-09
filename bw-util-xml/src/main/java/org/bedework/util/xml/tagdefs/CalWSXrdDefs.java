@@ -23,7 +23,7 @@ package org.bedework.util.xml.tagdefs;
  *
  * @see "http://docs.oasis-open.org/xri/xrd/v1.0/xrd-1.0.html"
  *
- * @author Mike Douglass   douglm - rpi.edu
+ * @author Mike Douglass   douglm - bedework.edu
  */
 public class CalWSXrdDefs {
   /** */

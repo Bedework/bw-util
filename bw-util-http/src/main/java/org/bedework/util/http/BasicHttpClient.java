@@ -62,7 +62,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** A dav client
 *
-* @author Mike Douglass  douglm @ rpi.edu
+* @author Mike Douglass  douglm @ bedework.edu
 */
 public class BasicHttpClient extends DefaultHttpClient {
   protected boolean debug;

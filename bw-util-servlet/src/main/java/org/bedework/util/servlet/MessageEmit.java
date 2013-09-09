@@ -31,7 +31,7 @@ import java.io.Serializable;
  * any way it wants. The assumption though, is that rather than providing
  * the actual message text the pname acts as a reference.
  *
- * @author Mike Douglass douglm@rpi.edu
+ * @author Mike Douglass douglm@bedework.edu
  * @version 1.0
  */
 public interface MessageEmit extends Serializable {

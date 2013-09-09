@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 
 /** Forbidden exception thrown by hibernate classes
  *
- *   @author Mike Douglass   douglm  rpi.edu
+ *   @author Mike Douglass   douglm  bedework.edu
  */
 public class DbStaleStateException extends HibException {
   /** Constructor

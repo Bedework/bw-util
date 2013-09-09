@@ -27,7 +27,7 @@ import javax.servlet.ServletOutputStream;
 
 /** PrintWriter which uses an underlying ByteArrayOutputStream
  *
- * @author Mike Douglass  douglm @ rpi.edu
+ * @author Mike Douglass  douglm @ bedework.edu
  */
 public class ByteArrayPrintWriter {
   private PooledBufferedOutputStream pbos = new PooledBufferedOutputStream();

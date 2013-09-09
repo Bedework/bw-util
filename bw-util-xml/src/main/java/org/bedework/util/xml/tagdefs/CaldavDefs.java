@@ -20,7 +20,7 @@ package org.bedework.util.xml.tagdefs;
 
 /** Some caldav definitions
  *
- *   @author Mike Douglass   douglm@rpi.edu
+ *   @author Mike Douglass   douglm@bedework.edu
  */
 public interface CaldavDefs {
   /** */

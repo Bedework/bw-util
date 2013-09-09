@@ -93,7 +93,7 @@ import javax.xml.namespace.QName;
 
 /** Define an (arbitrary) index associated with calendar properties
  *
- * @author Mike Douglass   douglm@rpi.edu
+ * @author Mike Douglass   douglm@bedework.edu
  */
 public class PropertyIndex implements Serializable {
   private PropertyIndex() {};

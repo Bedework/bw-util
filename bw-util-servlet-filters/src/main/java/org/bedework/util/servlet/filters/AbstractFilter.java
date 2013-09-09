@@ -42,7 +42,7 @@ import javax.servlet.http.HttpSession;
  *  called by the doFilter method at entry.
  *  </p>
  *
- * @author  Mike Douglass douglm@rpi.edu
+ * @author  Mike Douglass douglm@bedework.edu
  */
 public abstract class AbstractFilter implements Filter {
   protected ServletContext ctx;

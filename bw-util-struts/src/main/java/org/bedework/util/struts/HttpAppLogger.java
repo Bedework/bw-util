@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * <p>getLogEntry, logInfo, logRequest, logSessionCounts provide information
  * for usage statistics of web applications.
  *
- * @author Mike Douglass  douglm@rpi.edu
+ * @author Mike Douglass  douglm@bedework.edu
  */
 public interface HttpAppLogger extends AppLogger {
   /**

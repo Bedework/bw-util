@@ -25,7 +25,7 @@ import org.apache.struts.util.MessageResources;
    to reinstate the action by saving them in the form and using them on
    the way out.
 
-   @author Mike Douglass    douglm@rpi.edu
+   @author Mike Douglass    douglm@bedework.edu
  */
 public class UtilRenderAction extends UtilAbstractAction {
   /* (non-Javadoc)

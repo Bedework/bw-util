@@ -61,7 +61,7 @@ import java.util.Collection;
  * <p>Currently we're not supporting nested class definitions though it's not
  * such a stretch.
  *
- * @author Mike Douglass    douglm @ rpi.edu
+ * @author Mike Douglass    douglm @ bedework.edu
  *
  */
 public interface OptionsI extends Serializable {

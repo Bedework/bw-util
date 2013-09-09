@@ -21,7 +21,7 @@ package org.bedework.util.indexing;
 /** Provide some limits on the search result. This may be replaced with a
  * more complex scheme later.
  *
- * @author Mike Douglass douglm - rpi.edu
+ * @author Mike Douglass douglm - bedework.edu
  */
 public class SearchLimits {
   /** ISO formatted date yyyymmdd or null - sets teh lower bound */

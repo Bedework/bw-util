@@ -40,7 +40,7 @@ import javax.xml.namespace.QName;
 /**
  * Utility routines associated with handling xml
  *
- * @author Mike Douglass   douglm@rpi.edu
+ * @author Mike Douglass   douglm@bedework.edu
  */
 public final class XmlUtil implements Serializable {
   /** These values define the state of xml  after tidying

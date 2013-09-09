@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 /** Define tags for icalendar in XML.
  *
- * @author Mike Douglass   douglm - rpi.edu
+ * @author Mike Douglass   douglm - bedework.edu
  */
 public class XcalTags {
   /** */

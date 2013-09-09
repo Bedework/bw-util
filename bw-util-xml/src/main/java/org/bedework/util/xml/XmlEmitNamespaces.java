@@ -25,7 +25,7 @@ import java.util.Stack;
 
 /** Class to handle namespaces when emitting xml
  *
- * @author Mike Douglass  douglm@rpi.edu
+ * @author Mike Douglass  douglm@bedework.edu
  */
 class XmlEmitNamespaces {
   private boolean mustEmitNS; // Emit this scopes namespaces.
