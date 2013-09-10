@@ -141,8 +141,6 @@ public abstract class UtilAbstractAction extends Action
   public static final String actionTypeKey = "actionType=";
   /** */
   public static final String conversationKey = "conversation=";
-  /** */
-  public static final String moduleKey = "module=";
 
   /** true for debugging on */
   public boolean debug;
@@ -273,11 +271,6 @@ public abstract class UtilAbstractAction extends Action
             break;
           }
         }
-      }
-
-      String mname = getStringActionPar(moduleKey, form);
-      if (mname != null) {
-        req.setModuleName(mname);
       }
 
       /** Set up presentation values from request

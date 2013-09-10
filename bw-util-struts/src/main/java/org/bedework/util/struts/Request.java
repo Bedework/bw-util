@@ -90,7 +90,8 @@ public class Request extends ReqUtil {
 
   protected int conversationType;
 
-  protected String moduleName;
+  /** Specify which client */
+  public final static String clientNamePar = "cl";
 
   /**
    * @param request
@@ -179,17 +180,10 @@ public class Request extends ReqUtil {
   }
 
   /**
-   * @param val
-   */
-  public void setModuleName(final String val) {
-    moduleName = val;
-  }
-
-  /**
    * @return String
    */
-  public String getModuleName() {
-    return moduleName;
+  public String getClientName() {
+    return getReqPar(clientNamePar);
   }
 
   /** Get an Integer request parameter or null. Emit error for non-null and
