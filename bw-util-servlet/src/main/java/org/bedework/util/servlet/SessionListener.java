@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.
 */
-package org.bedework.util.struts;
+package org.bedework.util.servlet;
 
 import org.apache.log4j.Logger;
 
