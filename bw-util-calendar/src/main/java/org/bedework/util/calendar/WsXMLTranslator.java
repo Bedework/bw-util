@@ -21,50 +21,12 @@ package org.bedework.util.calendar;
 import org.bedework.util.calendar.PropertyIndex.ComponentInfoIndex;
 import org.bedework.util.calendar.PropertyIndex.PropertyInfoIndex;
 
+import ietf.params.xml.ns.icalendar_2.*;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.parameter.Value;
-
 import org.apache.log4j.Logger;
-
-import ietf.params.xml.ns.icalendar_2.ActionPropType;
-import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
-import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
-import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
-import ietf.params.xml.ns.icalendar_2.AttachPropType;
-import ietf.params.xml.ns.icalendar_2.BaseComponentType;
-import ietf.params.xml.ns.icalendar_2.BaseParameterType;
-import ietf.params.xml.ns.icalendar_2.BasePropertyType;
-import ietf.params.xml.ns.icalendar_2.CalAddressListParamType;
-import ietf.params.xml.ns.icalendar_2.CalAddressParamType;
-import ietf.params.xml.ns.icalendar_2.CalAddressPropertyType;
-import ietf.params.xml.ns.icalendar_2.CalscalePropType;
-import ietf.params.xml.ns.icalendar_2.ClassPropType;
-import ietf.params.xml.ns.icalendar_2.DateDatetimePropertyType;
-import ietf.params.xml.ns.icalendar_2.DatetimePropertyType;
-import ietf.params.xml.ns.icalendar_2.DurationParameterType;
-import ietf.params.xml.ns.icalendar_2.DurationPropType;
-import ietf.params.xml.ns.icalendar_2.FreebusyPropType;
-import ietf.params.xml.ns.icalendar_2.GeoPropType;
-import ietf.params.xml.ns.icalendar_2.IcalendarType;
-import ietf.params.xml.ns.icalendar_2.IntegerPropertyType;
-import ietf.params.xml.ns.icalendar_2.RangeParamType;
-import ietf.params.xml.ns.icalendar_2.RecurPropertyType;
-import ietf.params.xml.ns.icalendar_2.RecurType;
-import ietf.params.xml.ns.icalendar_2.RequestStatusPropType;
-import ietf.params.xml.ns.icalendar_2.StatusPropType;
-import ietf.params.xml.ns.icalendar_2.TextListPropertyType;
-import ietf.params.xml.ns.icalendar_2.TextParameterType;
-import ietf.params.xml.ns.icalendar_2.TextPropertyType;
-import ietf.params.xml.ns.icalendar_2.TranspPropType;
-import ietf.params.xml.ns.icalendar_2.TriggerPropType;
-import ietf.params.xml.ns.icalendar_2.UntilRecurType;
-import ietf.params.xml.ns.icalendar_2.UriParameterType;
-import ietf.params.xml.ns.icalendar_2.UriPropertyType;
-import ietf.params.xml.ns.icalendar_2.UtcDatetimePropertyType;
-import ietf.params.xml.ns.icalendar_2.UtcOffsetPropertyType;
-import ietf.params.xml.ns.icalendar_2.VcalendarType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,9 +59,9 @@ public class WsXMLTranslator {
    * @throws Throwable
    */
   public Calendar fromXcal(final IcalendarType ical) throws Throwable {
-    XmlCalendarBuilder.BuildState bs = new XmlCalendarBuilder.BuildState(tzRegistry);
+    BuildState bs = new BuildState(tzRegistry);
 
-    bs.setContentHandler(new XmlCalendarBuilder.ContentHandlerImpl(bs));
+    bs.setContentHandler(new ContentHandlerImpl(bs));
 
     List<VcalendarType> vcts = ical.getVcalendar();
     if (vcts.size() == 0) {
@@ -137,7 +99,7 @@ public class WsXMLTranslator {
   }
 
   private void processVcalendar(final VcalendarType vcal,
-                                final XmlCalendarBuilder.BuildState bs) throws Throwable {
+                                final BuildState bs) throws Throwable {
     bs.getContentHandler().startCalendar();
 
     processProperties(vcal.getProperties(), bs);
@@ -146,7 +108,7 @@ public class WsXMLTranslator {
   }
 
   private void processProperties(final ArrayOfProperties aop,
-                                 final XmlCalendarBuilder.BuildState bs) throws Throwable {
+                                 final BuildState bs) throws Throwable {
     if ((aop == null) || (aop.getBasePropertyOrTzid().size() == 0)) {
       return;
     }
@@ -159,7 +121,7 @@ public class WsXMLTranslator {
 
   /* Process all the sub-components of the supplied component */
   private void processCalcomps(final BaseComponentType c,
-                               final XmlCalendarBuilder.BuildState bs) throws Throwable {
+                               final BuildState bs) throws Throwable {
     List<JAXBElement<? extends BaseComponentType>> comps =
       XcalUtil.getComponents(c);
 
@@ -173,7 +135,7 @@ public class WsXMLTranslator {
   }
 
   private void processComponent(final BaseComponentType comp,
-                                final XmlCalendarBuilder.BuildState bs) throws Throwable {
+                                final BuildState bs) throws Throwable {
     ComponentInfoIndex cii = ComponentInfoIndex.fromXmlClass(comp.getClass());
 
     if (cii == null) {
@@ -192,7 +154,7 @@ public class WsXMLTranslator {
 
   private void processProperty(final BasePropertyType prop,
                                final QName elname,
-                               final XmlCalendarBuilder.BuildState bs) throws Throwable {
+                               final BuildState bs) throws Throwable {
     PropertyInfoIndex pii = PropertyInfoIndex.fromXmlClass(prop.getClass());
     String name;
     if (pii == null) {
@@ -275,7 +237,7 @@ public class WsXMLTranslator {
   }
 
   private boolean processValue(final BasePropertyType prop,
-                               final XmlCalendarBuilder.BuildState bs) throws Throwable {
+                               final BuildState bs) throws Throwable {
     if (prop instanceof RecurPropertyType) {
       propVal(bs, fromRecurProperty((RecurPropertyType)prop));
 
@@ -490,7 +452,7 @@ public class WsXMLTranslator {
     l.add(name + "=" + val);
   }
 
-  private void propVal(final XmlCalendarBuilder.BuildState bs,
+  private void propVal(final BuildState bs,
                        final String val) throws Throwable {
     bs.getContentHandler().propertyValue(val);
   }

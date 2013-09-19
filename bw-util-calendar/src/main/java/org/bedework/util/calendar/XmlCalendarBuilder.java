@@ -52,34 +52,15 @@ package org.bedework.util.calendar;
 import org.bedework.util.xml.XmlUtil;
 import org.bedework.util.xml.tagdefs.XcalTags;
 
-import net.fortuna.ical4j.data.ContentHandler;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.CalendarException;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentFactory;
-import net.fortuna.ical4j.model.Escapable;
 import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.ParameterFactory;
-import net.fortuna.ical4j.model.ParameterFactoryImpl;
-import net.fortuna.ical4j.model.ParameterFactoryRegistry;
-import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.PropertyFactory;
-import net.fortuna.ical4j.model.PropertyFactoryRegistry;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.component.VAvailability;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.component.VToDo;
-import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.property.DateListProperty;
 import net.fortuna.ical4j.model.property.DateProperty;
-import net.fortuna.ical4j.util.CompatibilityHints;
-import net.fortuna.ical4j.util.Constants;
-import net.fortuna.ical4j.util.Strings;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -93,10 +74,8 @@ import java.io.Reader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -117,71 +96,6 @@ public class XmlCalendarBuilder {
   //private Logger log = Logger.getLogger(XmlCalendarBuilder.class);
 
   private final TimeZoneRegistry tzRegistry;
-
-  /**
-   * @author douglm
-   */
-  public static class BuildState {
-    ContentHandler handler;
-
-    TimeZoneRegistry tzRegistry;
-
-    /**
-     * The calendar instance(s) created by the builder.
-     */
-    List<Calendar> calendars = new ArrayList<Calendar>();
-
-    /**
-     * The current calendar instance being created by the builder.
-     */
-    Calendar calendar;
-
-    /**
-     * The current component instance created by the builder.
-     */
-    Component component;
-
-    /**
-     * The current sub-component instance created by the builder.
-     */
-    Component subComponent;
-
-    /**
-     * The current property instance created by the builder.
-     */
-    Property property;
-
-    List<Property> datesMissingTimezones = new ArrayList<Property>();
-
-    /**Constructor
-     *
-     * @param tzRegistry
-     */
-    public BuildState(final TimeZoneRegistry tzRegistry) {
-      this.tzRegistry = tzRegistry;
-    }
-
-    /**
-     * @param val
-     */
-    public void setContentHandler(final ContentHandler val) {
-      handler = val;
-    }
-
-    /**
-     * @return
-     */
-    public ContentHandler getContentHandler() {
-      return handler;
-    }
-
-    /**
-     * @return the result
-     */
-    public Calendar getCalendar() {
-      return calendar;
-    }
-  }
 
   /**
    * @param tzRegistry a custom timezone registry
@@ -231,11 +145,12 @@ public class XmlCalendarBuilder {
       throw new ParserException(t.getMessage(), 0, t);
     }
 
-    if ((bs.datesMissingTimezones.size() > 0) && (tzRegistry != null)) {
+    if ((bs.getDatesMissingTimezones().size() > 0) &&
+            (tzRegistry != null)) {
       resolveTimezones(bs);
     }
 
-    return bs.calendars.iterator().next();
+    return bs.getCalendars().iterator().next();
   }
 
   private void process(final Document doc,
@@ -259,18 +174,18 @@ public class XmlCalendarBuilder {
                                   " found " + el, 0);
       }
 
-      bs.calendar = null;
+      bs.setCalendar(null);
       processVcalendar(el, bs);
 
-      if (bs.calendar != null) {
-        bs.calendars.add(bs.calendar);
+      if (bs.getCalendar() != null) {
+        bs.getCalendars().add(bs.getCalendar());
       }
     }
   }
 
   private void processVcalendar(final Element el,
                                 final BuildState bs) throws ParserException {
-    bs.handler.startCalendar();
+    bs.getContentHandler().startCalendar();
 
     try {
       Collection<Element> els = XmlUtil.getElements(el);
@@ -360,7 +275,7 @@ public class XmlCalendarBuilder {
   private void processComponent(final Element el,
                                 final BuildState bs) throws ParserException {
     try {
-      bs.handler.startComponent(el.getLocalName().toUpperCase());
+      bs.getContentHandler().startComponent(el.getLocalName().toUpperCase());
 
       for (Element e: XmlUtil.getElements(el)) {
         if (XmlUtil.nodeMatches(e, XcalTags.properties)) {
@@ -374,7 +289,7 @@ public class XmlCalendarBuilder {
         }
       }
 
-      bs.handler.endComponent(el.getLocalName().toUpperCase());
+      bs.getContentHandler().endComponent(el.getLocalName().toUpperCase());
     } catch (SAXException e) {
       throw new ParserException(e.getMessage(), 0, e);
     }
@@ -383,12 +298,12 @@ public class XmlCalendarBuilder {
   private void processProperty(final Element el,
                                final BuildState bs) throws ParserException {
     try {
-      bs.handler.startProperty(el.getLocalName());
+      bs.getContentHandler().startProperty(el.getLocalName());
 
       for (Element e: XmlUtil.getElements(el)) {
         if (XmlUtil.nodeMatches(e, XcalTags.parameters)) {
           for (Element par: XmlUtil.getElements(e)) {
-            bs.handler.parameter(par.getLocalName(),
+            bs.getContentHandler().parameter(par.getLocalName(),
                                  XmlUtil.getElementContent(par));
           }
         }
@@ -398,7 +313,7 @@ public class XmlCalendarBuilder {
         }
       }
 
-      bs.handler.endProperty(el.getLocalName());
+      bs.getContentHandler().endProperty(el.getLocalName());
     } catch (SAXException e) {
       throw new ParserException(e.getMessage(), 0, e);
     } catch (URISyntaxException e) {
@@ -440,7 +355,7 @@ public class XmlCalendarBuilder {
           sb.append(XmlUtil.getElementContent(re));
         }
 
-        bs.handler.propertyValue(sb.toString());
+        bs.getContentHandler().propertyValue(sb.toString());
 
         return true;
       }
@@ -458,7 +373,7 @@ public class XmlCalendarBuilder {
           XmlUtil.nodeMatches(el, XcalTags.timeVal) ||
           XmlUtil.nodeMatches(el, XcalTags.uriVal) ||
           XmlUtil.nodeMatches(el, XcalTags.utcOffsetVal)) {
-        bs.handler.propertyValue(XmlUtil.getElementContent(el));
+        bs.getContentHandler().propertyValue(XmlUtil.getElementContent(el));
         return true;
       }
 
@@ -475,195 +390,6 @@ public class XmlCalendarBuilder {
   }
 
   /**
-   * @author douglm
-   */
-  public static class ContentHandlerImpl implements ContentHandler {
-    private BuildState bs;
-
-    private final ComponentFactory componentFactory;
-
-    private final PropertyFactory propertyFactory;
-
-    private final ParameterFactory parameterFactory;
-
-    /**
-     * @param bs
-     */
-    public ContentHandlerImpl(final BuildState bs) {
-      this.bs = bs;
-      componentFactory = ComponentFactory.getInstance();
-      propertyFactory = new PropertyFactoryRegistry();
-      parameterFactory = new ParameterFactoryRegistry();
-    }
-
-    @Override
-    public void endCalendar() {
-      // do nothing..
-    }
-
-    @Override
-    public void endComponent(final String name) {
-      assertComponent(bs.component);
-
-      if (bs.subComponent != null) {
-        if (bs.component instanceof VTimeZone) {
-          ((VTimeZone) bs.component).getObservances().add(bs.subComponent);
-        }
-        else if (bs.component instanceof VEvent) {
-          ((VEvent) bs.component).getAlarms().add(bs.subComponent);
-        }
-        else if (bs.component instanceof VToDo) {
-          ((VToDo) bs.component).getAlarms().add(bs.subComponent);
-        }
-        else if (bs.component instanceof VAvailability) {
-          ((VAvailability) bs.component).getAvailable().add(bs.subComponent);
-        }
-        bs.subComponent = null;
-      }
-      else {
-        bs.calendar.getComponents().add(bs.component);
-        if ((bs.component instanceof VTimeZone) && (bs.tzRegistry != null)) {
-          // register the timezone for use with iCalendar objects..
-          bs.tzRegistry.register(new TimeZone((VTimeZone) bs.component));
-        }
-        bs.component = null;
-      }
-    }
-
-    @Override
-    public void endProperty(final String name) {
-      assertProperty(bs.property);
-
-      // replace with a constant instance if applicable..
-      bs.property = Constants.forProperty(bs.property);
-      if (bs.component != null) {
-        if (bs.subComponent != null) {
-          bs.subComponent.getProperties().add(bs.property);
-        }
-        else {
-          bs.component.getProperties().add(bs.property);
-        }
-      }
-      else if (bs.calendar != null) {
-        bs.calendar.getProperties().add(bs.property);
-      }
-
-      bs.property = null;
-    }
-
-    @Override
-    public void parameter(final String name, final String value) throws URISyntaxException {
-      assertProperty(bs.property);
-
-      // parameter names are case-insensitive, but convert to upper case to simplify further processing
-      final Parameter param = parameterFactory.createParameter(name.toUpperCase(), value);
-      bs.property.getParameters().add(param);
-      if ((param instanceof TzId) && (bs.tzRegistry != null)) {
-        final TimeZone timezone = bs.tzRegistry.getTimeZone(param.getValue());
-        if (timezone != null) {
-          updateTimeZone(bs.property, timezone);
-
-          /* Bedework - for the moment switch ids if they differ */
-
-          if (!timezone.getID().equals(param.getValue())) {
-            /* Fetched timezone has a different id */
-
-            ParameterList pl = bs.property.getParameters();
-
-            pl.replace(ParameterFactoryImpl.getInstance().
-                       createParameter(Parameter.TZID, timezone.getID()));
-          }
-        } else {
-          // VTIMEZONE may be defined later, so so keep
-          // track of dates until all components have been
-          // parsed, and then try again later
-          bs.datesMissingTimezones.add(bs.property);
-        }
-      }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void propertyValue(final String value) throws URISyntaxException,
-           ParseException, IOException {
-
-      assertProperty(bs.property);
-
-      if (bs.property instanceof Escapable) {
-        bs.property.setValue(Strings.unescape(value));
-      }
-      else {
-        bs.property.setValue(value);
-      }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void startCalendar() {
-      bs.calendar = new Calendar();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void startComponent(final String name) {
-      if (bs.component != null) {
-        bs.subComponent = componentFactory.createComponent(name);
-      }
-      else {
-        bs.component = componentFactory.createComponent(name);
-      }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void startProperty(final String name) {
-      // property names are case-insensitive, but convert to upper case to simplify further processing
-      bs.property = propertyFactory.createProperty(name.toUpperCase());
-    }
-
-    private void assertComponent(final Component component) {
-      if (component == null) {
-        throw new CalendarException("Expected component not initialised");
-      }
-    }
-
-    private void assertProperty(final Property property) {
-      if (property == null) {
-        throw new CalendarException("Expected property not initialised");
-      }
-    }
-
-    private void updateTimeZone(final Property property, final TimeZone timezone) {
-      try {
-        ((DateProperty) property).setTimeZone(timezone);
-      }
-      catch (ClassCastException e) {
-        try {
-          ((DateListProperty) property).setTimeZone(timezone);
-        }
-        catch (ClassCastException e2) {
-          if (CompatibilityHints.isHintEnabled(CompatibilityHints.KEY_RELAXED_PARSING)) {
-//            log.warn("Error setting timezone [" + timezone.getID()
-//                     + "] on property [" + property.getName()
-//                     + "]", e);
-//          }
-          } else {
-            throw e2;
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * Returns the timezone registry used in the construction of calendars.
    * @return a timezone registry
    */
@@ -674,7 +400,7 @@ public class XmlCalendarBuilder {
   private void resolveTimezones(final BuildState bs) throws IOException {
 
     // Go through each property and try to resolve the TZID.
-    for (final Property property: bs.datesMissingTimezones) {
+    for (final Property property: bs.getDatesMissingTimezones()) {
       final Parameter tzParam = property.getParameter(Parameter.TZID);
 
       // tzParam might be null:

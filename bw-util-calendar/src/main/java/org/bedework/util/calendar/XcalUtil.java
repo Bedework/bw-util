@@ -362,6 +362,29 @@ public class XcalUtil {
   }
 
   /**
+   * @param tm
+   * @return rfc5545 time
+   */
+  public static String getIcalFormatTime(final String tm) {
+    if (tm == null) {
+      return null;
+    }
+
+    if (tm.charAt(2) != ':') {
+      // Already Ical format
+      return tm;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(tm.substring(0, 2));
+    sb.append(tm.substring(3, 5));
+    sb.append(tm.substring(6));
+
+    return sb.toString();
+  }
+
+  /**
    * @param comp
    * @return cloned empty component
    * @throws Throwable for illegal access exception
