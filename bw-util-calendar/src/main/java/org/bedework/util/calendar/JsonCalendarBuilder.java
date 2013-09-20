@@ -211,6 +211,7 @@ public class JsonCalendarBuilder {
     currentArrayStart(parser);
 
     String cname = textField(parser).toUpperCase();
+    bs.getContentHandler().startComponent(cname);
 
     /* Properties first */
     processProperties(parser, bs);
