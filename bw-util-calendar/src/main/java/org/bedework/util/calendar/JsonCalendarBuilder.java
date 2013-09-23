@@ -344,10 +344,12 @@ public class JsonCalendarBuilder {
 
         String delim = "";
 
+        objectStart(parser);
+
         while (!testObjectEnd(parser)) {
           sb.append(delim);
           delim = ";";
-          String recurEl = textField(parser);
+          String recurEl = currentFieldName(parser);
           sb.append(recurEl.toUpperCase());
           sb.append("=");
           sb.append(recurElVal(parser, recurEl));
@@ -365,12 +367,18 @@ public class JsonCalendarBuilder {
         return true;
       }
 
+      if (type.equals("utc-offset")) {
+        bs.getContentHandler().propertyValue(
+                XcalUtil.getIcalUtcOffset(textField(parser)));
+
+        return true;
+      }
+
       if (type.equals("binary") ||
           type.equals("cal-address") ||
           type.equals("duration") ||
           type.equals("text") ||
-          type.equals("uri") ||
-          type.equals("utc-offset")) {
+          type.equals("uri")) {
         bs.getContentHandler().propertyValue(textField(parser));
 
         return true;
@@ -562,6 +570,8 @@ public class JsonCalendarBuilder {
     try {
       int lnr = parser.getCurrentLocation().getLineNr();
       throw new ParserException(t.getLocalizedMessage(), lnr);
+    } catch (ParserException pe) {
+      throw pe;
     } catch (Throwable t1) {
       throw new ParserException(t.getLocalizedMessage(), -1);
     }
@@ -717,9 +727,11 @@ public class JsonCalendarBuilder {
       return currentTextField(parser);
     }
 
-    StringBuilder sb = new StringBuilder(currentTextField(parser));
+    StringBuilder sb = new StringBuilder();
+    String delim = "";
     while (!testArrayEnd(parser)) {
-      sb.append(",");
+      sb.append(delim);
+      delim = ",";
       sb.append(currentTextField(parser));
     }
 
@@ -732,9 +744,11 @@ public class JsonCalendarBuilder {
       return String.valueOf(currentIntField(parser));
     }
 
-    StringBuilder sb = new StringBuilder(currentIntField(parser));
+    StringBuilder sb = new StringBuilder();
+    String delim = "";
     while (!testArrayEnd(parser)) {
-      sb.append(",");
+      sb.append(delim);
+      delim = ",";
       sb.append(currentIntField(parser));
     }
 

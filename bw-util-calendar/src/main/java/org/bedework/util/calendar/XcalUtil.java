@@ -385,6 +385,47 @@ public class XcalUtil {
   }
 
   /**
+   * @param tm
+   * @return rfc5545 time
+   */
+  public static String getIcalUtcOffset(final String tm) {
+    if (tm == null) {
+      return null;
+    }
+
+    if (tm.charAt(3) != ':') {
+      // Already Ical format
+      return tm;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(tm.substring(0, 3));
+    sb.append(tm.substring(4));
+
+    return sb.toString();
+  }
+
+  /**
+   * @param val ical format or xml format date or datetime
+   * @return XML formatted
+   */
+  public static String getXmlFormatUtcOffset(final String val) {
+    if (val.charAt(3) == ':') {
+      // XML format
+      return val;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(val.substring(0, 3));
+    sb.append(":");
+    sb.append(val.substring(3));
+
+    return sb.toString();
+  }
+
+  /**
    * @param comp
    * @return cloned empty component
    * @throws Throwable for illegal access exception
