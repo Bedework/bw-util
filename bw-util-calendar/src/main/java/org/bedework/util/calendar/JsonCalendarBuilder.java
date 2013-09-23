@@ -391,7 +391,7 @@ public class JsonCalendarBuilder {
       }
 
       if (type.equals("date") ||
-          type.equals("dateTime") ||
+          type.equals("date-time") ||
           type.equals("time")) {
         bs.getContentHandler().propertyValue(
                 XcalUtil.getIcalFormatDateTime(textField(parser)));
