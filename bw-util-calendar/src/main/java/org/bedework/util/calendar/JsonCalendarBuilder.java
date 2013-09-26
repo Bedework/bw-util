@@ -114,7 +114,7 @@ public class JsonCalendarBuilder {
    * @throws net.fortuna.ical4j.data.ParserException where an error occurs parsing data from the stream
    */
   public Calendar build(final InputStream in) throws IOException,
-  ParserException {
+          ParserException {
     return build(new InputStreamReader(in, DEFAULT_CHARSET));
   }
 
@@ -618,6 +618,8 @@ public class JsonCalendarBuilder {
       if (t != expected) {
         throwException(message, parser);
       }
+    } catch (ParserException pe) {
+      throw pe;
     } catch (Throwable t) {
       handleException(t, parser);
     }
@@ -632,6 +634,8 @@ public class JsonCalendarBuilder {
       if (t != expected) {
         throwException(message, parser);
       }
+    } catch (ParserException pe) {
+      throw pe;
     } catch (Throwable t) {
       handleException(t, parser);
     }

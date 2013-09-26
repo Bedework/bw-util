@@ -35,6 +35,7 @@ import net.fortuna.ical4j.model.PropertyFactoryRegistry;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VAvailability;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VPoll;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
 import net.fortuna.ical4j.model.parameter.TzId;
@@ -83,16 +84,15 @@ public class ContentHandlerImpl implements ContentHandler {
 
     if (bs.getSubComponent() != null) {
       if (bs.getComponent() instanceof VTimeZone) {
-        ((VTimeZone) bs.getComponent()).getObservances().add(bs.getSubComponent());
-      }
-      else if (bs.getComponent() instanceof VEvent) {
-        ((VEvent) bs.getComponent()).getAlarms().add(bs.getSubComponent());
-      }
-      else if (bs.getComponent() instanceof VToDo) {
-        ((VToDo) bs.getComponent()).getAlarms().add(bs.getSubComponent());
-      }
-      else if (bs.getComponent() instanceof VAvailability) {
-        ((VAvailability) bs.getComponent()).getAvailable().add(bs.getSubComponent());
+        ((VTimeZone)bs.getComponent()).getObservances().add(bs.getSubComponent());
+      } else if (bs.getComponent() instanceof VEvent) {
+        ((VEvent)bs.getComponent()).getAlarms().add(bs.getSubComponent());
+      } else if (bs.getComponent() instanceof VToDo) {
+        ((VToDo)bs.getComponent()).getAlarms().add(bs.getSubComponent());
+      } else if (bs.getComponent() instanceof VAvailability) {
+        ((VAvailability)bs.getComponent()).getAvailable().add(bs.getSubComponent());
+      } else if (bs.getComponent() instanceof VPoll) {
+        ((VPoll)bs.getComponent()).getCandidates().add(bs.getSubComponent());
       }
       bs.setSubComponent(null);
     }
