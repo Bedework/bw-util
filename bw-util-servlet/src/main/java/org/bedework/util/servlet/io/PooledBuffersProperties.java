@@ -15,26 +15,21 @@
     KIND, either express or implied. See the License for the
     specific language governing permissions and limitations
     under the License.
-*/
+ */
 package org.bedework.util.servlet.io;
 
-/** Allow monitoring and manipulation of the pooled buffer settings..
+import org.bedework.util.config.ConfInfo;
+import org.bedework.util.jmx.MBeanInfo;
+
+/** These are the properties that the pooled buffer module needs to know about.
  *
- * @author Mike Douglass
+ * <p>Annotated to allow use by mbeans
+ *
+ * @author douglm
+ *
  */
-public interface PooledBufferedOutputStreamMBean {
-  /** Name apparently must be the same as the name attribute in the
-   * jboss service definition
-   *
-   * @return Name
-   */
-  public String getName();
-
-  /**
-   * @return the size of each byte buffer
-   */
-  int getSmallBufferSize();
-
+@ConfInfo(elementName = "pooled-buffers-properties")
+public interface PooledBuffersProperties {
   /**
    * @param val the size of each byte buffer
    */
@@ -43,7 +38,8 @@ public interface PooledBufferedOutputStreamMBean {
   /**
    * @return the size of each byte buffer
    */
-  int getMediumBufferSize();
+  @MBeanInfo("Small buffer size")
+  int getSmallBufferSize();
 
   /**
    * @param val the size of each byte buffer
@@ -53,7 +49,8 @@ public interface PooledBufferedOutputStreamMBean {
   /**
    * @return the size of each byte buffer
    */
-  int getLargeBufferSize();
+  @MBeanInfo("Medium buffer size")
+  int getMediumBufferSize();
 
   /**
    * @param val the size of each byte buffer
@@ -61,9 +58,10 @@ public interface PooledBufferedOutputStreamMBean {
   void setLargeBufferSize(int val);
 
   /**
-   * @return the max number of buffers
+   * @return the size of each byte buffer
    */
-  int getSmallBufferPoolSize();
+  @MBeanInfo("Large buffer size")
+  int getLargeBufferSize();
 
   /**
    * @param val the max number of buffers
@@ -73,7 +71,8 @@ public interface PooledBufferedOutputStreamMBean {
   /**
    * @return the max number of buffers
    */
-  int getMediumBufferPoolSize();
+  @MBeanInfo("Small buffer pool size")
+  int getSmallBufferPoolSize();
 
   /**
    * @param val the max number of buffers
@@ -83,7 +82,8 @@ public interface PooledBufferedOutputStreamMBean {
   /**
    * @return the max number of buffers
    */
-  int getLargeBufferPoolSize();
+  @MBeanInfo("Medium buffer pool size")
+  int getMediumBufferPoolSize();
 
   /**
    * @param val the max number of buffers
@@ -91,33 +91,8 @@ public interface PooledBufferedOutputStreamMBean {
   void setLargeBufferPoolSize(int val);
 
   /**
-   * @return buffer usage stats
+   * @return the max number of buffers
    */
-  String getSmallBufferPoolStats();
-
-  /**
-   * @return buffer usage stats
-   */
-  String getMediumBufferPoolStats();
-
-  /**
-   * @return buffer usage stats
-   */
-  String getLargeBufferPoolStats();
-
-  /** Lifecycle
-   *
-   */
-  public void start();
-
-  /** Lifecycle
-   *
-   */
-  public void stop();
-
-  /** Lifecycle
-   *
-   * @return true if started
-   */
-  public boolean isStarted();
+  @MBeanInfo("Large buffer pool size")
+  int getLargeBufferPoolSize();
 }

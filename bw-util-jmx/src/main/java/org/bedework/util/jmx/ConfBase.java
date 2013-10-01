@@ -312,6 +312,13 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     return registeredMBeans;
   }
 
+  /** (Re)load the configuration
+   *
+   * @return status
+   */
+  @MBeanInfo("(Re)load the configuration")
+  public abstract String loadConfig();
+
   /* ========================================================================
    * Attributes
    * ======================================================================== */
