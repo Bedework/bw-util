@@ -130,6 +130,30 @@ public class Util {
     return s;
   }
 
+  /** get the nth element from the path - first is 0.
+   *
+   * @param index of element we want
+   * @param path
+   * @return element or null
+   */
+  public static String pathElement(final int index,
+                                   final String path) {
+    String[] paths = path.split("/");
+
+    int idx = index;
+
+    if ((paths[0] == null) || (paths[0].length() == 0)) {
+      // skip empty first part - leading "/"
+      idx++;
+    }
+
+    if (idx >= paths.length) {
+      return null;
+    }
+
+    return paths[idx];
+  }
+
   /*
   public static void main(final String[] args) {
     System.out.println(buildPath(false, "el1", "/", "///el2///", "abc", ".ics"));
