@@ -18,6 +18,10 @@
 */
 package org.bedework.util.calendar;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
+
 /** Possibly temporary home for definitions that need to be global.
  *
  * @author douglm
@@ -63,6 +67,19 @@ public class IcalDefs {
                                                   "vpoll"
   };
 
+  public static final Set<String> entityTypes;
+
+  static {
+    TreeSet<String> ts = new TreeSet<>();
+
+    for (String s: entityTypeNames) {
+      ts.add(s);
+    }
+
+    entityTypes = Collections.unmodifiableSet(ts);
+  }
+
+
   /** */
   public static final String[] entityTypeIcalNames = {"VEVENT",
                                                       "VALARM",
@@ -99,6 +116,15 @@ public class IcalDefs {
 
     /** */
     mixed}
+
+  /**
+   *
+   * @param type
+   * @return type name
+   */
+  public static String fromEntityType(int type) {
+    return entityTypeNames[type];
+  }
 
   /* ====================================================================
    *        status we can set for scheduling requests
