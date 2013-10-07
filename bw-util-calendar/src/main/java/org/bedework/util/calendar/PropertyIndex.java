@@ -897,6 +897,16 @@ public class PropertyIndex implements Serializable {
     VERSION(XcalTags.transp, "VERSION", VersionPropType.class,
            IS_SINGLE, vcalendarOnly),
 
+    /** ------------------------ Bedework only properties ----------- */
+
+    /** String names */
+    CATUID(XcalTags.categories, "CATUID", CategoriesPropType.class,
+           IS_MULTI, event_Todo_Journal_Alarm),
+
+    /** String names */
+    CATEGORY_PATH(XcalTags.categories, "CATEGORY_PATH", CategoriesPropType.class,
+               IS_MULTI, event_Todo_Journal_Alarm),
+
      ;
 
     private QName qname;
