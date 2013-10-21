@@ -90,8 +90,13 @@ public class Request extends ReqUtil {
 
   protected int conversationType;
 
-  /** Specify which client */
+  /** Request parameter to specify which client */
   public final static String clientNamePar = "cl";
+
+  /** May be specified as an action parameter or overriddem by the
+   * request parameter.
+   */
+  protected String clientName;
 
   /**
    * @param request
@@ -180,10 +185,23 @@ public class Request extends ReqUtil {
   }
 
   /**
+   * @param val
+   */
+  public void setClientName(final String val) {
+    clientName = val;
+  }
+
+  /**
    * @return String
    */
   public String getClientName() {
-    return getReqPar(clientNamePar);
+    String nm = getReqPar(clientNamePar);
+
+    if (nm == null) {
+      nm = clientName;
+    }
+
+    return nm;
   }
 
   /** Get an Integer request parameter or null. Emit error for non-null and

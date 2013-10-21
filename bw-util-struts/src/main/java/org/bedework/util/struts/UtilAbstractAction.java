@@ -141,6 +141,8 @@ public abstract class UtilAbstractAction extends Action
   public static final String actionTypeKey = "actionType=";
   /** */
   public static final String conversationKey = "conversation=";
+  /** */
+  public static final String clientKey = "cl=";
 
   /** true for debugging on */
   public boolean debug;
@@ -272,6 +274,8 @@ public abstract class UtilAbstractAction extends Action
           }
         }
       }
+
+      req.setClientName(getStringActionPar(clientKey, form));
 
       /** Set up presentation values from request
        */
