@@ -28,14 +28,14 @@ import javax.servlet.http.HttpServletRequest;
  * We assume that we will want the same information for most of the
  * applications we build.
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm   rpi.edu
  * @version 1.2 April 15th 2005
  */
 public class PresentationState implements Serializable {
-  /** Applications will save this in the session with this name
+  /** Applications will save this in the session and request with this name
    */
   public static final String presentationAttrName =
-           "edu.bedework.sss.util.action.presentationstate";
+           "bw_presentationstate";
 
   /** The request name we expect. */
   private String appRootRequestName = "appRoot";

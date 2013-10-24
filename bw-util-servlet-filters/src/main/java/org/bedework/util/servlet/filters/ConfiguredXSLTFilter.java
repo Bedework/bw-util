@@ -65,7 +65,7 @@ import javax.servlet.ServletException;
  * with the required information. This will be the more normal way of
  * supplying that information.
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm   rpi.edu
  * @version June 18th 2003
  */
 public class ConfiguredXSLTFilter extends XSLTFilter {
@@ -283,23 +283,31 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
       return null;
     }
 
-    HttpSession sess = request.getSession(false);
+    /* First try the request */
 
-    if (sess == null) {
-      return null;
+    Object o = request.getAttribute(attrName);
+
+    if (o == null) {
+      HttpSession sess = request.getSession(false);
+
+      if (sess == null) {
+        return null;
+      }
+
+      o = sess.getAttribute(attrName);
     }
 
-    Object o = sess.getAttribute(attrName);
     if (o == null) {
       return null;
     }
 
+    PresentationState ps = (PresentationState)o;
+
     if (debug) {
-      ((PresentationState)o).debugDump("ConfiguredXSLTFilter",
-                                       getLogger());
+      ps.debugDump("ConfiguredXSLTFilter", getLogger());
     }
 
-    return (PresentationState)o;
+    return ps;
   }
 
   /* (non-Javadoc)

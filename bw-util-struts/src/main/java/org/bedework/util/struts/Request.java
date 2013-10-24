@@ -90,13 +90,13 @@ public class Request extends ReqUtil {
 
   protected int conversationType;
 
-  /** Request parameter to specify which client */
-  public final static String clientNamePar = "cl";
+  /** Request parameter to specify which module */
+  public final static String moduleNamePar = "mdl";
 
   /** May be specified as an action parameter or overriddem by the
    * request parameter.
    */
-  protected String clientName;
+  protected String moduleName;
 
   /**
    * @param request
@@ -187,18 +187,18 @@ public class Request extends ReqUtil {
   /**
    * @param val
    */
-  public void setClientName(final String val) {
-    clientName = val;
+  public void setModuleName(final String val) {
+    moduleName = val;
   }
 
   /**
    * @return String
    */
-  public String getClientName() {
-    String nm = getReqPar(clientNamePar);
+  public String getModuleName() {
+    String nm = getReqPar(moduleNamePar);
 
     if (nm == null) {
-      nm = clientName;
+      nm = moduleName;
     }
 
     return nm;

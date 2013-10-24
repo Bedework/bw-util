@@ -61,10 +61,6 @@ public class UtilActionForm extends ActionForm {
    */
   protected boolean nocache;
 
-  /** Current presentation state
-   */
-  protected PresentationState ps;
-
   protected transient Logger log;
 
   /** An error object reinitialised at each entry to the abstract action
@@ -273,44 +269,6 @@ public class UtilActionForm extends ActionForm {
    */
   public boolean getNocache() {
     return nocache;
-  }
-
-  /**
-   * @param val
-   */
-  public void setPresentationState(PresentationState val) {
-    ps = val;
-  }
-
-  /**
-   * @return PresentationState
-   */
-  public PresentationState getPresentationState() {
-    return ps;
-  }
-
-  /** Returns a base for use in urls within generated pages.
-   * If no presentation state is present, or the app root is null we return
-   * a zero length string - this will make the resulting url relative to the
-   * application.
-   *
-   * <p>Otherwise we return the app root, appending a path separator if not
-   * present.
-   *
-   * @return  String     base for urls.
-   */
-  public String getAppBase() {
-    if ((ps == null) || (ps.getAppRoot() == null)) {
-      return "";
-    }
-
-    String ar = ps.getAppRoot();
-
-    if (!ar.endsWith("/")) {
-      return ar + "/";
-    }
-
-    return ar;
   }
 
   /**

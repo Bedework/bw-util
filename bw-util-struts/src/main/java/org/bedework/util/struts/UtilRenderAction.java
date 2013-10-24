@@ -18,6 +18,8 @@
 */
 package org.bedework.util.struts;
 
+import org.bedework.util.servlet.filters.PresentationState;
+
 import org.apache.struts.util.MessageResources;
 
 /** This class is almost a null class to carry out render actions for
@@ -25,7 +27,7 @@ import org.apache.struts.util.MessageResources;
    to reinstate the action by saving them in the form and using them on
    the way out.
 
-   @author Mike Douglass    douglm@bedework.edu
+   @author Mike Douglass    douglm rpi.edu
  */
 public class UtilRenderAction extends UtilAbstractAction {
   /* (non-Javadoc)
@@ -44,11 +46,11 @@ public class UtilRenderAction extends UtilAbstractAction {
     return "success";
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.struts.UtilAbstractAction#getContentName(org.bedework.util.struts.UtilActionForm)
-   */
-  public String getContentName(UtilActionForm form) {
-    String contentName = form.getPresentationState().getContentName();
+  @Override
+  public String getContentName(final Request req) throws Throwable {
+    UtilActionForm form = req.getForm();
+    PresentationState ps = getPresentationState(req);
+    String contentName = ps.getContentName();
 
     if (contentName != null) {
       form.setContentName(contentName);
