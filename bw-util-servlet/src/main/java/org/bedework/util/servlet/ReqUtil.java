@@ -304,6 +304,25 @@ public class ReqUtil implements Serializable {
     return sess.getAttribute(attrName);
   }
 
+  /** Set the value of a named request attribute.
+   *
+   * @param attrName    Name of the attribute
+   * @param val         Object
+   */
+  public void setRequestAttr(final String attrName,
+                             final Object val) {
+    request.setAttribute(attrName, val);
+  }
+
+  /** Return the value of a named request attribute.
+   *
+   * @param attrName    Name of the attribute
+   * @return Object     Attribute value or null
+   */
+  public Object getRequestAttr(final String attrName) {
+    return request.getAttribute(attrName);
+  }
+
   /**
    * @return String remote address
    */

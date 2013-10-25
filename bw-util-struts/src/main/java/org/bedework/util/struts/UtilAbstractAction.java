@@ -1169,8 +1169,8 @@ public abstract class UtilAbstractAction extends Action
     ps.setBrowserType(form.getBrowserType());
 
     try {
-    ps.setNoXSLTSticky(JspUtil.getProperty(messages,
-                                           "edu.rpi.sss.util.action.noxslt",
+      ps.setNoXSLTSticky(StrutsUtil.getProperty(messages,
+                                                "edu.rpi.sss.util.action.noxslt",
                                                 "no").equals("yes"));
     } catch (Throwable t) {
       t.printStackTrace();
