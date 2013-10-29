@@ -133,15 +133,6 @@ import javax.servlet.http.HttpSession;
  */
 public abstract class UtilAbstractAction extends Action
          implements HttpAppLogger {
-  /** */
-  public static final String refreshIntervalKey = "refinterval=";
-  /** */
-  public static final String refreshActionKey = "refaction=";
-  /** */
-  public static final String actionTypeKey = "actionType=";
-  /** */
-  public static final String conversationKey = "conversation=";
-
   /** true for debugging on */
   public boolean debug;
 
@@ -237,9 +228,6 @@ public abstract class UtilAbstractAction extends Action
       form.setSchemeHostPort(StrutsUtil.getURLshp(request));
       form.setContext(StrutsUtil.getContext(request));
       form.setUrlPrefix(StrutsUtil.getURLPrefix(request));
-      form.setActionPath(mapping.getPath());
-      form.setMapping(mapping);
-      form.setActionParameter(mapping.getParameter());
       form.setErr(err);
       form.setMsg(msg);
       form.assignSessionId(getSessionId(request));
@@ -251,29 +239,8 @@ public abstract class UtilAbstractAction extends Action
                                  "org.bedework.action.contenttype",
                                  "text/html");
 
-      Request req = new Request(request, response, form, this);
-
-      String actionType = getStringActionPar(actionTypeKey, form);
-      if (actionType != null) {
-        for (int ati = 0; ati < Request.actionTypes.length; ati++) {
-          if (Request.actionTypes[ati].equals(actionType)) {
-            req.setActionType(ati);
-            break;
-          }
-        }
-      }
-
-      String convType = getStringActionPar(conversationKey, form);
-      if (convType != null) {
-        for (int ati = 0; ati < Request.conversationTypes.length; ati++) {
-          if (Request.conversationTypes[ati].equals(convType)) {
-            req.setConversationType(ati);
-            break;
-          }
-        }
-      }
-
-      req.setModuleName(getStringActionPar(Request.moduleNamePar, form));
+      Request req = new Request(request, response, form,
+                                this, mapping);
 
       /** Set up presentation values from request
        */
@@ -399,14 +366,13 @@ public abstract class UtilAbstractAction extends Action
 
       String param = aconfig.getParameter();
 
-      boolean noActionType = traceConfigParam(sb,
-                                              actionTypeKey,
-                                              param,
-                                              req.getForm()) == null;
-      traceConfigParam(sb, conversationKey, param, req.getForm());
+      boolean noActionType = traceConfigParam(req, sb,
+                                              Request.actionTypeKey,
+                                              param) == null;
+      traceConfigParam(req, sb, Request.conversationKey, param);
 
-      traceConfigParam(sb, refreshIntervalKey, param, req.getForm());
-      traceConfigParam(sb, refreshActionKey, param, req.getForm());
+      traceConfigParam(req, sb, Request.refreshIntervalKey, param);
+      traceConfigParam(req, sb, Request.refreshActionKey, param);
 
       confLog.debug(sb.toString());
 
@@ -416,10 +382,11 @@ public abstract class UtilAbstractAction extends Action
     }
   }
 
-  private String traceConfigParam(final StringBuilder sb,
-                                  final String name, final String param,
-                                  final UtilActionForm form) {
-    String res = getStringActionPar(name, param, form);
+  private String traceConfigParam(final Request req,
+                                  final StringBuilder sb,
+                                  final String name,
+                                  final String param) {
+    String res = req.getStringActionPar(name, param);
     if (res == null) {
       return null;
     }
@@ -850,72 +817,6 @@ public abstract class UtilAbstractAction extends Action
       }
       sb.append(refreshAction);
       response.setHeader("Refresh", sb.toString());
-    }
-  }
-
-  protected Integer getRefreshInt(final UtilActionForm form) {
-    return getIntActionPar(refreshIntervalKey, form);
-  }
-
-  protected String getRefreshAction(final UtilActionForm form) {
-    return getStringActionPar(refreshActionKey, form);
-  }
-
-  protected Integer getIntActionPar(final String name, final UtilActionForm form) {
-    return getIntActionPar(name, form.getActionParameter(), form);
-  }
-
-  protected String getStringActionPar(final String name, final UtilActionForm form) {
-    return getStringActionPar(name, form.getActionParameter(), form);
-  }
-
-  protected Integer getIntActionPar(final String name, final String par,
-                                    final UtilActionForm form) {
-    if (par == null) {
-      return null;
-    }
-
-    try {
-      int pos = par.indexOf(name);
-      if (pos < 0) {
-        return null;
-      }
-
-      pos += name.length();
-      int epos = par.indexOf(";", pos);
-      if (epos < 0) {
-        epos = par.length();
-      }
-
-      return Integer.valueOf(par.substring(pos, epos));
-    } catch (Throwable t) {
-      form.getErr().emit("edu.rpi.bad.actionparameter", par);
-      return null;
-    }
-  }
-
-  protected String getStringActionPar(final String name, final String par,
-                                      final UtilActionForm form) {
-    if (par == null) {
-      return null;
-    }
-
-    try {
-      int pos = par.indexOf(name);
-      if (pos < 0) {
-        return null;
-      }
-
-      pos += name.length();
-      int epos = par.indexOf(";", pos);
-      if (epos < 0) {
-        epos = par.length();
-      }
-
-      return par.substring(pos, epos);
-    } catch (Throwable t) {
-      form.getErr().emit("edu.rpi.bad.actionparameter", par);
-      return null;
     }
   }
 

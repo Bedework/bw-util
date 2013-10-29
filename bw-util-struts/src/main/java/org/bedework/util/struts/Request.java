@@ -35,6 +35,8 @@ public class Request extends ReqUtil {
   protected UtilActionForm form;
   protected Action action;
 
+  protected ActionMapping mapping;
+
   /** */
   public final static int actionTypeUnknown = 0;
   /** */
@@ -51,6 +53,14 @@ public class Request extends ReqUtil {
                                               "resource"};
 
   protected int actionType;
+  /** */
+  public static final String actionTypeKey = "actionType=";
+  /** */
+  public static final String conversationKey = "conversation=";
+  /** */
+  public static final String refreshIntervalKey = "refinterval=";
+  /** */
+  public static final String refreshActionKey = "refaction=";
 
   /** In the absence of a conversation parameter we assume that a conversation
    * starts with actionType=action and ends with actionType=render.
@@ -107,10 +117,34 @@ public class Request extends ReqUtil {
   public Request(final HttpServletRequest request,
                  final HttpServletResponse response,
                  final UtilActionForm form,
-                 final Action action) {
+                 final Action action,
+                 final ActionMapping mapping) {
     super(request, response);
     this.form = form;
     this.action = action;
+    this.mapping = mapping;
+
+    String at = getStringActionPar(actionTypeKey);
+    if (at != null) {
+      for (int ati = 0; ati < actionTypes.length; ati++) {
+        if (Request.actionTypes[ati].equals(at)) {
+          actionType = ati;
+          break;
+        }
+      }
+    }
+
+    String convType = getStringActionPar(conversationKey);
+    if (convType != null) {
+      for (int ati = 0; ati < Request.conversationTypes.length; ati++) {
+        if (Request.conversationTypes[ati].equals(convType)) {
+          conversationType = ati;
+          break;
+        }
+      }
+    }
+
+    moduleName = getStringActionPar(Request.moduleNamePar);
   }
 
   /**
@@ -131,7 +165,7 @@ public class Request extends ReqUtil {
    * @return ActionMapping
    */
   public ActionMapping getMapping() {
-    return form.getMapping();
+    return mapping;
   }
 
   /**
@@ -157,13 +191,6 @@ public class Request extends ReqUtil {
   }
 
   /**
-   * @param val
-   */
-  public void setActionType(final int val) {
-    actionType = val;
-  }
-
-  /**
    * @return int
    */
   public int getActionType() {
@@ -171,10 +198,17 @@ public class Request extends ReqUtil {
   }
 
   /**
-   * @param val
+   * @return the part of the URL that identifies the action.
    */
-  public void setConversationType(final int val) {
-    conversationType = val;
+  public String getActionPath() {
+    return mapping.getPath();
+  }
+
+  /**
+   * @return the action parameter if any.
+   */
+  public String getActionParameter() {
+    return mapping.getParameter();
   }
 
   /**
@@ -182,13 +216,6 @@ public class Request extends ReqUtil {
    */
   public int getConversationType() {
     return conversationType;
-  }
-
-  /**
-   * @param val
-   */
-  public void setModuleName(final String val) {
-    moduleName = val;
   }
 
   /**
@@ -202,6 +229,14 @@ public class Request extends ReqUtil {
     }
 
     return nm;
+  }
+
+  public Integer getRefreshInt() {
+    return getIntActionPar(refreshIntervalKey);
+  }
+
+  public String getRefreshAction() {
+    return getStringActionPar(refreshActionKey);
   }
 
   /** Get an Integer request parameter or null. Emit error for non-null and
@@ -218,6 +253,64 @@ public class Request extends ReqUtil {
       return super.getIntReqPar(name);
     } catch (Throwable t) {
       getErr().emit(errProp, getReqPar(name));
+      return null;
+    }
+  }
+
+  protected Integer getIntActionPar(final String name) {
+    return getIntActionPar(name, getActionParameter());
+  }
+
+  protected String getStringActionPar(final String name) {
+    return getStringActionPar(name, getActionParameter());
+  }
+
+  protected Integer getIntActionPar(final String name,
+                                    final String par) {
+    if (par == null) {
+      return null;
+    }
+
+    try {
+      int pos = par.indexOf(name);
+      if (pos < 0) {
+        return null;
+      }
+
+      pos += name.length();
+      int epos = par.indexOf(";", pos);
+      if (epos < 0) {
+        epos = par.length();
+      }
+
+      return Integer.valueOf(par.substring(pos, epos));
+    } catch (Throwable t) {
+      form.getErr().emit("edu.rpi.bad.actionparameter", par);
+      return null;
+    }
+  }
+
+  public String getStringActionPar(final String name,
+                                   final String par) {
+    if (par == null) {
+      return null;
+    }
+
+    try {
+      int pos = par.indexOf(name);
+      if (pos < 0) {
+        return null;
+      }
+
+      pos += name.length();
+      int epos = par.indexOf(";", pos);
+      if (epos < 0) {
+        epos = par.length();
+      }
+
+      return par.substring(pos, epos);
+    } catch (Throwable t) {
+      form.getErr().emit("edu.rpi.bad.actionparameter", par);
       return null;
     }
   }

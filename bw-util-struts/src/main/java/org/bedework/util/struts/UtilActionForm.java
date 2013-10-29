@@ -24,7 +24,6 @@ import org.bedework.util.servlet.filters.PresentationState;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
 import java.util.ArrayList;
@@ -75,8 +74,6 @@ public class UtilActionForm extends ActionForm {
    */
   protected MessageResources mres;
 
-  protected ActionMapping mapping;
-
   /** Application variables. These can be set with request parameters and
    * dumped into the page for use by jsp and xslt.
    */
@@ -96,10 +93,6 @@ public class UtilActionForm extends ActionForm {
   /** First part of URL. Allows us to target services on same host.
    */
   protected String schemeHostPort;
-
-  protected String actionPath;
-
-  private String actionParameter;
 
   /** The part of the URL that identifies the application -
    * Of the form "/" + name-of-app, e.g. /kiosk
@@ -283,20 +276,6 @@ public class UtilActionForm extends ActionForm {
    */
   public void setMres(MessageResources val) {
     mres = val;
-  }
-
-  /**
-   * @param val ActionMapping
-   */
-  public void setMapping(ActionMapping val) {
-    mapping = val;
-  }
-
-  /**
-   * @return ActionMapping
-   */
-  public ActionMapping getMapping() {
-    return mapping;
   }
 
   /**
@@ -531,36 +510,6 @@ public class UtilActionForm extends ActionForm {
    */
   public String getUrlPrefix() {
     return urlPrefix;
-  }
-
-  /** Set the part of the URL that identifies the action.
-   *
-   * @param val       path in form "/" + action, e.g. /update.do
-   */
-  public void setActionPath(String val) {
-    actionPath = val;
-  }
-
-  /**
-   * @return String
-   */
-  public String getActionPath() {
-    return actionPath;
-  }
-
-  /** Set the action parameter if any.
-   *
-   * @param val       String action parameter
-   */
-  public void setActionParameter(String val) {
-    actionParameter = val;
-  }
-
-  /**
-   * @return String
-   */
-  public String getActionParameter() {
-    return actionParameter;
   }
 
   /** This should not be setCurrentUser as that exposes it to the incoming
