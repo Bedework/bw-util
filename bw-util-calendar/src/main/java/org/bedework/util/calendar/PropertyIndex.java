@@ -93,7 +93,7 @@ import javax.xml.namespace.QName;
 
 /** Define an (arbitrary) index associated with calendar properties
  *
- * @author Mike Douglass   douglm@bedework.edu
+ * @author Mike Douglass   douglm  rpi.edu
  */
 public class PropertyIndex implements Serializable {
   private PropertyIndex() {};
@@ -239,6 +239,8 @@ public class PropertyIndex implements Serializable {
 
     private String pname;
 
+    private String pnameLC;
+
     private Class xmlClass;
 
     private static Map<String, ComponentInfoIndex> pnameLookup =
@@ -252,11 +254,8 @@ public class PropertyIndex implements Serializable {
 
     static {
       for (ComponentInfoIndex cii: values()) {
-        String pname = cii.getPname();
+        String pname = cii.getPnameLC();
 
-        if (pname != null) {
-          pname = pname.toLowerCase();
-        }
         pnameLookup.put(pname, cii);
 
         qnameLookup.put(cii.getQname(), cii);
@@ -271,6 +270,10 @@ public class PropertyIndex implements Serializable {
       this.qname = qname;
       this.pname = pname;
       this.xmlClass = xmlClass;
+
+      if (pname != null) {
+        pnameLC = pname.toLowerCase();
+      }
     }
 
     /** get the qname
@@ -287,6 +290,14 @@ public class PropertyIndex implements Serializable {
      */
     public String getPname() {
       return pname;
+    }
+
+    /** get the property name lower cased
+     *
+     * @return property name
+     */
+    public String getPnameLC() {
+      return pnameLC;
     }
 
     /** get the XML class
@@ -515,6 +526,8 @@ public class PropertyIndex implements Serializable {
 
     private String pname;
 
+    private String pnameLC;
+
     private DataType ptype;
 
     private static HashMap<String, ParameterInfoIndex> pnameLookup =
@@ -522,11 +535,7 @@ public class PropertyIndex implements Serializable {
 
     static {
       for (ParameterInfoIndex pii: values()) {
-        String pname = pii.getPname();
-
-        if (pname != null) {
-          pname = pname.toLowerCase();
-        }
+        String pname = pii.getPnameLC();
         pnameLookup.put(pname, pii);
       }
     }
@@ -539,6 +548,10 @@ public class PropertyIndex implements Serializable {
                       final DataType ptype) {
       this.pname = pname;
       this.ptype = ptype;
+
+      if (pname != null) {
+        pnameLC = pname.toLowerCase();
+      }
     }
 
     /** get the parameter name
@@ -547,6 +560,14 @@ public class PropertyIndex implements Serializable {
      */
     public String getPname() {
       return pname;
+    }
+
+    /** get the property name lower cased
+     *
+     * @return property name
+     */
+    public String getPnameLC() {
+      return pnameLC;
     }
 
     /** get the parameter type
@@ -571,7 +592,7 @@ public class PropertyIndex implements Serializable {
   public static enum PropertyInfoIndex {
     /** */
     UNKNOWN_PROPERTY(null, null, null,
-                     IS_SINGLE, allComponents),
+                     IS_SINGLE, noComponent),
 
     /** Alarm only: action */
     ACTION(XcalTags.action, "ACTION", ActionPropType.class,
@@ -899,19 +920,89 @@ public class PropertyIndex implements Serializable {
 
     /** ------------------------ Bedework only properties ----------- */
 
-    /** String names */
-    CATUID(XcalTags.categories, "CATUID", CategoriesPropType.class,
-           IS_MULTI, event_Todo_Journal_Alarm),
+    /** ACL */
+    ACL(BedeworkServerTags.xprop, "ACL", null,
+        IS_MULTI, allComponents),
 
-    /** String names */
+    /** path to containing collection */
+    COLPATH(BedeworkServerTags.xprop, "COLPATH", null,
+            IS_MULTI, allComponents),
+
+    /** UID for category */
+    CATUID(XcalTags.categories, "CATEGORY_UID", CategoriesPropType.class,
+           IS_MULTI, allComponents),
+
+    /** Href for category */
     CATEGORY_PATH(XcalTags.categories, "CATEGORY_PATH", CategoriesPropType.class,
-               IS_MULTI, event_Todo_Journal_Alarm),
+                  IS_MULTI, allComponents),
+
+    /** start date/time utc */
+    DTSTART_UTC(XcalTags.dtstart, "DTSTART_UTC", DtstartPropType.class,
+                DataType.DATE_TIME,
+                IS_SINGLE, notAlarm),
+
+    /** Event only: end date utc */
+    DTEND_UTC(XcalTags.dtend, "DTEND_UTC", DtendPropType.class,
+              DataType.DATE_TIME,
+              IS_SINGLE, event_Freebusy),
+
+    /** start date/time - local */
+    DTSTART_LOCAL(XcalTags.dtstart, "DTSTART_LOCAL", DtstartPropType.class,
+            DataType.DATE_TIME,
+            IS_SINGLE, notAlarm),
+
+    /** Event only: end date- local */
+    DTEND_LOCAL(XcalTags.dtend, "DTEND_LOCAL", DtendPropType.class,
+          DataType.DATE_TIME,
+          IS_SINGLE, event_Freebusy),
+
+    /** start date/time tzid */
+    DTSTART_TZID(XcalTags.dtstart, "DTSTART_TZID", DtstartPropType.class,
+                  DataType.DATE_TIME,
+                  IS_SINGLE, notAlarm),
+
+    /** Event only: end date tzid */
+    DTEND_TZID(XcalTags.dtend, "DTEND_TZID", DtendPropType.class,
+                DataType.DATE_TIME,
+                IS_SINGLE, event_Freebusy),
+
+    /** start date/time - floating true/false */
+    DTSTART_FLOATING(XcalTags.dtstart, "DTSTART_FLOATING", DtstartPropType.class,
+                  DataType.DATE_TIME,
+                  IS_SINGLE, notAlarm),
+
+    /** Event only: end date- local */
+    DTEND_FLOATING(XcalTags.dtend, "DTEND_FLOATING", DtendPropType.class,
+                DataType.DATE_TIME,
+                IS_SINGLE, event_Freebusy),
+
+    /** location uid */
+    LOCATION_UID(XcalTags.location, "LOCATION_UID", LocationPropType.class,
+             IS_SINGLE, event_Todo),
+
+    /** location string value */
+    LOCATION_STR(XcalTags.location, "LOCATION_STR", LocationPropType.class,
+             IS_SINGLE, event_Todo),
+
+    /** name of entity */
+    NAME(BedeworkServerTags.xprop, "NAME", null,
+                 IS_SINGLE, allComponents),
+
+    /** Is start present? */
+    START_PRESENT(BedeworkServerTags.xprop, "START_PRESENT", null,
+         IS_SINGLE, allComponents),
+
+    /** Special term for sorts */
+    RELEVANCE(BedeworkServerTags.xprop, "RELEVANCE", null,
+          IS_SINGLE, allComponents),
 
      ;
 
     private QName qname;
 
     private String pname;
+
+    private String pnameLC;
 
     private Class xmlClass;
 
@@ -940,11 +1031,7 @@ public class PropertyIndex implements Serializable {
 
     static {
       for (PropertyInfoIndex pii: values()) {
-        String pname = pii.getPname();
-
-        if (pname != null) {
-          pname = pname.toLowerCase();
-        }
+        String pname = pii.getPnameLC();
         pnameLookup.put(pname, pii);
 
         qnameLookup.put(pii.getQname(), pii);
@@ -964,6 +1051,10 @@ public class PropertyIndex implements Serializable {
       this.components = components;
       this.multiValued = multiValued;
       dbMultiValued = multiValued;
+
+      if (pname != null) {
+        pnameLC = pname.toLowerCase();
+      }
     }
 
     PropertyInfoIndex(final QName qname,
@@ -1014,6 +1105,14 @@ public class PropertyIndex implements Serializable {
      */
     public String getPname() {
       return pname;
+    }
+
+    /** get the property name lower cased
+     *
+     * @return property name
+     */
+    public String getPnameLC() {
+      return pnameLC;
     }
 
     /** get the XML class
