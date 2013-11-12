@@ -244,13 +244,13 @@ public class PropertyIndex implements Serializable {
     private Class xmlClass;
 
     private static Map<String, ComponentInfoIndex> pnameLookup =
-      new HashMap<String, ComponentInfoIndex>();
+      new HashMap<>();
 
     private static Map<QName, ComponentInfoIndex> qnameLookup =
-      new HashMap<QName, ComponentInfoIndex>();
+      new HashMap<>();
 
     private static Map<Class, ComponentInfoIndex> xmlClassLookup =
-        new HashMap<Class, ComponentInfoIndex>();
+        new HashMap<>();
 
     static {
       for (ComponentInfoIndex cii: values()) {
@@ -987,6 +987,14 @@ public class PropertyIndex implements Serializable {
     /** name of entity */
     NAME(BedeworkServerTags.xprop, "NAME", null,
                  IS_SINGLE, allComponents),
+
+    /** Virtual path - only appears in unparsed/unresolved fexpr */
+    VPATH(BedeworkServerTags.xprop, "VPATH", null,
+         IS_SINGLE, allComponents),
+
+    /** View - only appears in unparsed/unresolved fexpr */
+    VIEW(BedeworkServerTags.xprop, "VIEW", null,
+          IS_SINGLE, allComponents),
 
     /** Is start present? */
     START_PRESENT(BedeworkServerTags.xprop, "START_PRESENT", null,
