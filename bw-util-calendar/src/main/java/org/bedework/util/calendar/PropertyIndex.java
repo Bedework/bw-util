@@ -929,7 +929,7 @@ public class PropertyIndex implements Serializable {
             IS_MULTI, allComponents),
 
     /** UID for category */
-    CATUID(XcalTags.categories, "CATEGORY_UID", CategoriesPropType.class,
+    CATUID(XcalTags.categories, "CATUID", CategoriesPropType.class,
            IS_MULTI, allComponents),
 
     /** Href for category */
