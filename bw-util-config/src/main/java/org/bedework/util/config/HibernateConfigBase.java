@@ -27,76 +27,52 @@ import java.util.List;
  * @author Mike Douglass
  * @param <T>
  */
-public class HibernateConfigBase<T extends ConfigBase> extends ConfigBase<T> {
+public class HibernateConfigBase<T extends ConfigBase>
+        extends ConfigBase<T> implements HibernateConfigI {
   private List<String> hibernateProperties;
 
-  /**
-   *
-   * @param val
-   */
+  @Override
   public void setHibernateProperties(final List<String> val) {
     hibernateProperties = val;
   }
 
-  /**
-   *
-   * @return String val
-   */
+  @Override
   @ConfInfo(collectionElementName = "hibernateProperty" ,
             elementType = "java.lang.String")
   public List<String> getHibernateProperties() {
     return hibernateProperties;
   }
 
-  /**
-   * @param val
-   */
+  @Override
   public void setHibernateDialect(final String val) {
     setHibernateProperty("hibernate.dialect", val);
   }
 
-  /**
-   * @return current setting for hibernate dialect
-   */
+  @Override
   @ConfInfo(dontSave = true)
   public String getHibernateDialect() {
     return getHibernateProperty("hibernate.dialect");
   }
 
-  /** Add a hibernate property
-   *
-   * @param name
-   * @param val
-   */
+  @Override
   public void addHibernateProperty(final String name,
                                    final String val) {
     setHibernateProperties(addListProperty(getHibernateProperties(),
                                            name, val));
   }
 
-  /** Get a hibernate property
-   *
-   * @param name
-   * @return value or null
-   */
+  @Override
   @ConfInfo(dontSave = true)
   public String getHibernateProperty(final String name) {
     return getProperty(getHibernateProperties(), name);
   }
 
-  /** Remove a hibernate property
-   *
-   * @param name
-   */
+  @Override
   public void removeHibernateProperty(final String name) {
     removeProperty(getHibernateProperties(), name);
   }
 
-  /** Set a hibernate property
-   *
-   * @param name
-   * @param val
-   */
+  @Override
   @ConfInfo(dontSave = true)
   public void setHibernateProperty(final String name,
                                    final String val) {
