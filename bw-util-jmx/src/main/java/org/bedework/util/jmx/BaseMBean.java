@@ -15,39 +15,44 @@
     KIND, either express or implied. See the License for the
     specific language governing permissions and limitations
     under the License.
-*/
-package org.bedework.util.http.service;
-
-import org.bedework.util.config.ConfInfo;
-import org.bedework.util.jmx.MBeanInfo;
-
-import java.io.Serializable;
-
-/** Information to access the synch engine
- *
- * @author Mike Douglass
  */
-@ConfInfo(elementName = "http-properties")
-public interface HttpConfig extends Serializable {
-  /**
-   * @param val maximum allowable overall
-   */
-  void setMaxConnections(int val);
+package org.bedework.util.jmx;
+
+/** Base class for JMX configuration beans
+ *
+ * @author douglm
+ */
+public interface BaseMBean {
+  /* ========================================================================
+   * Attributes
+   * ======================================================================== */
 
   /**
-   * @return maximim allowable overall
+   * @return name defined for service.
    */
-  @MBeanInfo("Max connections.")
-  int getMaxConnections();
+  @MBeanInfo("Service name: used to register this service")
+  String getServiceName();
 
-  /**
-   * @param val maximum allowable per route
-   */
-  void setDefaultMaxPerRoute(final int val);
+  /* ========================================================================
+   * Operations
+   * ======================================================================== */
 
-  /**
-   * @return current default
+   /** Lifecycle
+   *
    */
-  @MBeanInfo("Maximum allowable per route.")
-  int getDefaultMaxPerRoute();
+  @MBeanInfo("Start the service")
+  void start();
+
+  /** Lifecycle
+   *
+   */
+  @MBeanInfo("Stop the service")
+  void stop();
+
+  /** Lifecycle
+   *
+   * @return true if service running
+   */
+  @MBeanInfo("Show if service is running")
+  boolean isRunning();
 }

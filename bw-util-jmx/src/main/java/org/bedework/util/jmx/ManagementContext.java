@@ -105,7 +105,6 @@ public class ManagementContext {
       if (mbeanServer != null) {
         for (ObjectName name: registeredMBeanNames) {
           mbeanServer.unregisterMBean(name);
-
         }
       }
 

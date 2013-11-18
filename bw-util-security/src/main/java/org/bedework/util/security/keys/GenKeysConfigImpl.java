@@ -16,38 +16,40 @@
     specific language governing permissions and limitations
     under the License.
 */
-package org.bedework.util.http.service;
+package org.bedework.util.security.keys;
 
 import org.bedework.util.config.ConfInfo;
-import org.bedework.util.jmx.MBeanInfo;
+import org.bedework.util.config.ConfigBase;
 
-import java.io.Serializable;
-
-/** Information to access the synch engine
+/** Information for outbound http connections
  *
  * @author Mike Douglass
  */
-@ConfInfo(elementName = "http-properties")
-public interface HttpConfig extends Serializable {
-  /**
-   * @param val maximum allowable overall
-   */
-  void setMaxConnections(int val);
+@ConfInfo(elementName = "genkeys",
+          type = "edu.rpi.cmt.security.keys.GenKeysConfig")
+public class GenKeysConfigImpl
+        extends ConfigBase<GenKeysConfigImpl>
+        implements GenKeysConfig {
+  private String privKeyFileName;
+  private String publicKeyFileName;
 
-  /**
-   * @return maximim allowable overall
-   */
-  @MBeanInfo("Max connections.")
-  int getMaxConnections();
+  @Override
+  public void setPrivKeyFileName(final String val) {
+    privKeyFileName = val;
+  }
 
-  /**
-   * @param val maximum allowable per route
-   */
-  void setDefaultMaxPerRoute(final int val);
+  @Override
+  public String getPrivKeyFileName() {
+    return privKeyFileName;
+  }
 
-  /**
-   * @return current default
-   */
-  @MBeanInfo("Maximum allowable per route.")
-  int getDefaultMaxPerRoute();
+  @Override
+  public void setPublicKeyFileName(final String val) {
+    publicKeyFileName = val;
+  }
+
+  @Override
+  public String getPublicKeyFileName() {
+    return publicKeyFileName;
+  }
 }

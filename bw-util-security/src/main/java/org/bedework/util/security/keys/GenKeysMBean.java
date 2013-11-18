@@ -16,38 +16,43 @@
     specific language governing permissions and limitations
     under the License.
 */
-package org.bedework.util.http.service;
+package org.bedework.util.security.keys;
 
-import org.bedework.util.config.ConfInfo;
-import org.bedework.util.jmx.MBeanInfo;
+import org.bedework.util.jmx.ConfBaseMBean;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 
-/** Information to access the synch engine
+/**
+ * @author douglm
  *
- * @author Mike Douglass
  */
-@ConfInfo(elementName = "http-properties")
-public interface HttpConfig extends Serializable {
-  /**
-   * @param val maximum allowable overall
+public interface GenKeysMBean extends ConfBaseMBean, GenKeysConfig {
+  public String serviceName = "org.bedework.util:service=BwGenKeys";
+
+  /* ========================================================================
+   * Operations
+   * ======================================================================== */
+
+  /** Output multi-line messages
+   *
    */
-  void setMaxConnections(int val);
+  public class Msg extends ArrayList<String> {
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+
+      for (String s: this) {
+        sb.append(s);
+        sb.append("\n");
+      }
+
+      return sb.toString();
+    }
+  }
 
   /**
-   * @return maximim allowable overall
+   *
+   * @return message giving outcome
    */
-  @MBeanInfo("Max connections.")
-  int getMaxConnections();
-
-  /**
-   * @param val maximum allowable per route
-   */
-  void setDefaultMaxPerRoute(final int val);
-
-  /**
-   * @return current default
-   */
-  @MBeanInfo("Maximum allowable per route.")
-  int getDefaultMaxPerRoute();
+  public Msg genKeys();
 }

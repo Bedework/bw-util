@@ -22,7 +22,7 @@ package org.bedework.util.jmx;
  *
  * @author douglm
  */
-public interface ConfBaseMBean {
+public interface ConfBaseMBean extends BaseMBean {
   /* ========================================================================
    * Attributes
    * ======================================================================== */

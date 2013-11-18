@@ -171,11 +171,22 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     serviceName = val;
   }
 
-  /**
-   * @return name IDENTICAL to that defined for service.
-   */
+  @Override
   public String getServiceName() {
     return serviceName;
+  }
+
+  @Override
+  public void start() {
+  }
+
+  @Override
+  public void stop() {
+  }
+
+  @Override
+  public boolean isRunning() {
+    return true;
   }
 
   /** Specify the absolute path to the configuration directory.
@@ -308,16 +319,16 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     return cfg;
   }
 
-  protected Set<ObjectName> getRegisteredMBeans() {
-    return registeredMBeans;
-  }
-
   /** (Re)load the configuration
    *
    * @return status
    */
   @MBeanInfo("(Re)load the configuration")
   public abstract String loadConfig();
+
+  protected Set<ObjectName> getRegisteredMBeans() {
+    return registeredMBeans;
+  }
 
   /* ========================================================================
    * Attributes
