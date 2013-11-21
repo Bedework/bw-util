@@ -197,7 +197,7 @@ public class PropertyIndex implements Serializable {
      new ComponentFlags(true, true, true, true, true, true, false, false, true);
 
   static final ComponentFlags vcalendarOnly =
-     new ComponentFlags(true);
+          new ComponentFlags(true);
 
   private static boolean IS_MULTI = true;
 
@@ -233,7 +233,7 @@ public class PropertyIndex implements Serializable {
 
     /** */
     VTODO(XcalTags.vtodo, "VTODO", VtodoType.class),
-           ;
+    ;
 
     private QName qname;
 
@@ -241,16 +241,18 @@ public class PropertyIndex implements Serializable {
 
     private String pnameLC;
 
+    private String jname;
+
     private Class xmlClass;
 
     private static Map<String, ComponentInfoIndex> pnameLookup =
-      new HashMap<>();
+            new HashMap<>();
 
     private static Map<QName, ComponentInfoIndex> qnameLookup =
-      new HashMap<>();
+            new HashMap<>();
 
     private static Map<Class, ComponentInfoIndex> xmlClassLookup =
-        new HashMap<>();
+            new HashMap<>();
 
     static {
       for (ComponentInfoIndex cii: values()) {
@@ -265,14 +267,18 @@ public class PropertyIndex implements Serializable {
     }
 
     ComponentInfoIndex(final QName qname,
-                      final String pname,
-                      final Class xmlClass) {
+                       final String pname,
+                       final Class xmlClass) {
       this.qname = qname;
       this.pname = pname;
       this.xmlClass = xmlClass;
 
       if (pname != null) {
         pnameLC = pname.toLowerCase();
+      }
+
+      if (jname == null) {
+        this.jname = pnameLC;
       }
     }
 
@@ -290,6 +296,14 @@ public class PropertyIndex implements Serializable {
      */
     public String getPname() {
       return pname;
+    }
+
+    /** get the java style name
+     *
+     * @return parameter name
+     */
+    public String getJname() {
+      return jname;
     }
 
     /** get the property name lower cased
@@ -427,12 +441,12 @@ public class PropertyIndex implements Serializable {
     /**
      * Delegator.
      */
-    DELEGATED_FROM("DELEGATED-FROM"),
+    DELEGATED_FROM("DELEGATED-FROM", "delegatedFrom"),
 
     /**
      * Delegatee.
      */
-    DELEGATED_TO("DELEGATED-TO"),
+    DELEGATED_TO("DELEGATED-TO", "delegatedTo"),
 
     /**
      * Directory entry.
@@ -497,17 +511,17 @@ public class PropertyIndex implements Serializable {
     /**
      * Schedule agent.
      */
-    SCHEDULE_AGENT("SCHEDULE-AGENT"),
+    SCHEDULE_AGENT("SCHEDULE-AGENT", "scheduleAgent"),
 
     /**
      * Schedule status.
      */
-    SCHEDULE_STATUS("SCHEDULE-STATUS"),
+    SCHEDULE_STATUS("SCHEDULE-STATUS", "scheduleStatus"),
 
     /**
      * Sent by.
      */
-    SENT_BY("SENT-BY"),
+    SENT_BY("SENT-BY", "sentBy"),
 
     /**
      * Type.
@@ -522,16 +536,23 @@ public class PropertyIndex implements Serializable {
     /**
      * Property value data type.
      */
-    VALUE("VALUE");
+    VALUE("VALUE"),
+
+    /**
+     * Bedework only.
+     */
+    UID("UID");
 
     private String pname;
 
     private String pnameLC;
 
+    private String jname;
+
     private DataType ptype;
 
     private static HashMap<String, ParameterInfoIndex> pnameLookup =
-      new HashMap<String, ParameterInfoIndex>();
+            new HashMap<>();
 
     static {
       for (ParameterInfoIndex pii: values()) {
@@ -541,16 +562,27 @@ public class PropertyIndex implements Serializable {
     }
 
     ParameterInfoIndex(final String pname) {
-      this(pname, DataType.TEXT);
+      this(pname, null, DataType.TEXT);
     }
 
     ParameterInfoIndex(final String pname,
-                      final DataType ptype) {
+                       final String jname) {
+      this(pname, jname, DataType.TEXT);
+    }
+
+    ParameterInfoIndex(final String pname,
+                       final String jname,
+                       final DataType ptype) {
       this.pname = pname;
+      this.jname = jname;
       this.ptype = ptype;
 
       if (pname != null) {
         pnameLC = pname.toLowerCase();
+      }
+
+      if (jname == null) {
+        this.jname = pnameLC;
       }
     }
 
@@ -560,6 +592,14 @@ public class PropertyIndex implements Serializable {
      */
     public String getPname() {
       return pname;
+    }
+
+    /** get the java style name
+     *
+     * @return parameter name
+     */
+    public String getJname() {
+      return jname;
     }
 
     /** get the property name lower cased
@@ -639,7 +679,8 @@ public class PropertyIndex implements Serializable {
             IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** long description */
-    DESCRIPTION(XcalTags.description, "DESCRIPTION", DescriptionPropType.class,
+    DESCRIPTION(XcalTags.description, "DESCRIPTION", null,
+                DescriptionPropType.class,
                 IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** Event only: end date */
@@ -648,13 +689,15 @@ public class PropertyIndex implements Serializable {
           IS_SINGLE, event_Freebusy),
 
     /** date stamp */
-    DTSTAMP(XcalTags.dtstamp, "DTSTAMP", DtstampPropType.class,
+    DTSTAMP(XcalTags.dtstamp, "DTSTAMP", null,
+            DtstampPropType.class,
             DataType.DATE_TIME,
             IS_SINGLE, event_Todo_Journal_Freebusy,
             NOT_PARAM, NOT_IMMUTABLE),
 
     /** start date/time */
-    DTSTART(XcalTags.dtstart, "DTSTART", DtstartPropType.class,
+    DTSTART(XcalTags.dtstart, "DTSTART", null,
+            DtstartPropType.class,
             DataType.DATE_TIME,
             IS_SINGLE, notAlarm),
 
@@ -664,7 +707,8 @@ public class PropertyIndex implements Serializable {
         IS_SINGLE, todoOnly),
 
     /** Duration of event/task etc */
-    DURATION(XcalTags.duration, "DURATION", DurationPropType.class,
+    DURATION(XcalTags.duration, "DURATION",
+             DurationPropType.class,
              DataType.DURATION,
              IS_SINGLE, event_Todo_Freebusy_Alarm),
 
@@ -688,7 +732,8 @@ public class PropertyIndex implements Serializable {
         IS_SINGLE, event_Todo),
 
     /** UTC */
-    LAST_MODIFIED(XcalTags.lastModified, "LAST-MODIFIED", LastModifiedPropType.class,
+    LAST_MODIFIED(XcalTags.lastModified, "LAST-MODIFIED", "lastModified",
+                  LastModifiedPropType.class,
                   DataType.DATE_TIME,
                   IS_SINGLE, event_Todo_Journal_Timezone,
                   NOT_PARAM, NOT_IMMUTABLE),
@@ -703,7 +748,9 @@ public class PropertyIndex implements Serializable {
               IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** % complete */
-    PERCENT_COMPLETE(XcalTags.percentComplete, "PERCENT-COMPLETE", PercentCompletePropType.class,
+    PERCENT_COMPLETE(XcalTags.percentComplete,
+                     "PERCENT-COMPLETE", "percentComplete",
+                     PercentCompletePropType.class,
                      IS_SINGLE, todoOnly),
 
     /** Priority */
@@ -717,12 +764,15 @@ public class PropertyIndex implements Serializable {
           IS_MULTI, event_Todo_Journal_Timezone),
 
     /** recurrenceId */
-    RECURRENCE_ID(XcalTags.recurrenceId, "RECURRENCE-ID", RecurrenceIdPropType.class,
+    RECURRENCE_ID(XcalTags.recurrenceId,
+                  "RECURRENCE-ID", "recurrenceId",
+                  RecurrenceIdPropType.class,
                   DataType.DATE_TIME,
                   IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** Establish relationship */
-    RELATED_TO(XcalTags.relatedTo, "RELATED-TO", RelatedToPropType.class,
+    RELATED_TO(XcalTags.relatedTo, "RELATED-TO", "relatedTo",
+               RelatedToPropType.class,
                IS_MULTI, event_Todo_Journal),
 
     /** Alarm: repeat time */
@@ -731,7 +781,9 @@ public class PropertyIndex implements Serializable {
            IS_SINGLE, alarmOnly),
 
     /** Itip */
-    REQUEST_STATUS(XcalTags.requestStatus, "REQUEST-STATUS", RequestStatusPropType.class,
+    REQUEST_STATUS(XcalTags.requestStatus,
+                   "REQUEST-STATUS", "requestStatus",
+                   RequestStatusPropType.class,
                    IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** names of resources */
@@ -744,7 +796,8 @@ public class PropertyIndex implements Serializable {
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** itip sequence # */
-    SEQUENCE(XcalTags.sequence, "SEQUENCE", SequencePropType.class,
+    SEQUENCE(XcalTags.sequence, "SEQUENCE", null,
+             SequencePropType.class,
              DataType.INTEGER,
              IS_SINGLE, event_Todo_Journal,
              NOT_PARAM, NOT_IMMUTABLE),
@@ -754,7 +807,8 @@ public class PropertyIndex implements Serializable {
            IS_SINGLE, event_Todo_Journal),
 
     /** short summary */
-    SUMMARY(XcalTags.summary, "SUMMARY", SummaryPropType.class,
+    SUMMARY(XcalTags.summary, "SUMMARY", null,
+            SummaryPropType.class,
             IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** Alarm trigger */
@@ -775,12 +829,14 @@ public class PropertyIndex implements Serializable {
            IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETFROM(XcalTags.tzoffsetfrom, "TZOFFSETFROM", TzoffsetfromPropType.class,
+    TZOFFSETFROM(XcalTags.tzoffsetfrom, "TZOFFSETFROM",
+                 TzoffsetfromPropType.class,
                  DataType.UTC_OFFSET,
                  IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETTO(XcalTags.tzoffsetto, "TZOFFSETTO", TzoffsettoPropType.class,
+    TZOFFSETTO(XcalTags.tzoffsetto, "TZOFFSETTO",
+               TzoffsettoPropType.class,
                DataType.UTC_OFFSET,
                IS_SINGLE, timezoneOnly),
 
@@ -834,16 +890,10 @@ public class PropertyIndex implements Serializable {
          IS_SINGLE, event_Todo),
 
     /** non ical */
-    CREATOR(BedeworkServerTags.creator, "CREATOR", null,
+    CREATOR(BedeworkServerTags.creator, "CREATOR", null, null,
             DataType.HREF,
             IS_SINGLE, event_Todo_Journal,
             NOT_PARAM, IS_IMMUTABLE),
-
-    /** non ical */
-    CTAG(BedeworkServerTags.ctag, "CTAG", null,
-         DataType.TEXT,
-         IS_SINGLE, noComponent,
-         NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
     DELETED(BedeworkServerTags.deleted, "DELETED", null,
@@ -854,25 +904,26 @@ public class PropertyIndex implements Serializable {
              IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
-    ETAG(BedeworkServerTags.etag, "ETAG", null,
+    ETAG(BedeworkServerTags.etag, "ETAG", null, null,
          DataType.TEXT,
          IS_SINGLE, noComponent,
          NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    ENTITY_TYPE(BedeworkServerTags.entityType, "ENTITY_TYPE", null,
+    ENTITY_TYPE(BedeworkServerTags.entityType,
+                "ENTITY_TYPE", "entityType", null,
                 DataType.INTEGER,
                 IS_SINGLE, event_Todo_Journal,
                 NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    HREF(WebdavTags.href, "HREF", null,
-          DataType.HREF,
-          IS_SINGLE, allComponents,
-          NOT_PARAM, IS_IMMUTABLE),
+    HREF(WebdavTags.href, "HREF", "href", null,
+         DataType.HREF,
+         IS_SINGLE, allComponents,
+         NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    OWNER(BedeworkServerTags.owner, "OWNER", null,
+    OWNER(BedeworkServerTags.owner, "OWNER", null, null,
           DataType.HREF,
           IS_SINGLE, event_Todo_Journal,
           NOT_PARAM, IS_IMMUTABLE),
@@ -884,27 +935,30 @@ public class PropertyIndex implements Serializable {
     /** ----------------------------- Following are parameters ----------- */
 
     /** */
-    LANG(BedeworkServerTags.language, "LANGUAGE", LanguageParamType.class,
+    LANG(BedeworkServerTags.language, "LANGUAGE", null,
+         LanguageParamType.class,
          DataType.TEXT,
          IS_SINGLE, noComponent,
          IS_PARAM, NOT_IMMUTABLE),
 
     /** */
-    TZIDPAR(XcalTags.tzid, "TZID", TzidParamType.class,
+    TZIDPAR(XcalTags.tzid, "TZID", null, TzidParamType.class,
             DataType.TEXT, IS_SINGLE, noComponent,
             IS_PARAM, NOT_IMMUTABLE),
 
     /** ----------------------------- X-properties in schema ----------- */
 
     /** Cost */
-    XBEDEWORK_COST(XcalTags.xBedeworkCost, "X-BEDEWORK-COST", XBedeworkCostPropType.class,
-            IS_SINGLE, event_Todo),
+    XBEDEWORK_COST(XcalTags.xBedeworkCost,
+                   "X-BEDEWORK-COST", "xBedeworkCost",
+                   XBedeworkCostPropType.class,
+                   IS_SINGLE, event_Todo),
 
     /** ----------------------------- Vcalendar properties ----------- */
 
     /** Transparency */
     CALSCALE(XcalTags.calscale, "CALSCALE", CalscalePropType.class,
-           IS_SINGLE, vcalendarOnly),
+             IS_SINGLE, vcalendarOnly),
 
     /** Transparency */
     METHOD(XcalTags.method, "METHOD", MethodPropType.class,
@@ -916,13 +970,19 @@ public class PropertyIndex implements Serializable {
 
     /** Transparency */
     VERSION(XcalTags.transp, "VERSION", VersionPropType.class,
-           IS_SINGLE, vcalendarOnly),
+            IS_SINGLE, vcalendarOnly),
 
     /** ------------------------ Bedework only properties ----------- */
 
     /** ACL */
     ACL(BedeworkServerTags.xprop, "ACL", null,
         IS_MULTI, allComponents),
+
+    ATTENDEE_SCHEDULING_OBJECT(BedeworkServerTags.xprop,
+                               "ATTENDEE-SCHEDULING-OBJECT",
+                               "attendeeSchedulingObject",
+                               null,
+                               IS_SINGLE, allComponents),
 
     /** path to containing collection */
     COLPATH(BedeworkServerTags.xprop, "COLPATH", null,
@@ -936,79 +996,107 @@ public class PropertyIndex implements Serializable {
     CATEGORY_PATH(XcalTags.categories, "CATEGORY_PATH", CategoriesPropType.class,
                   IS_MULTI, allComponents),
 
-    /** start date/time utc */
-    DTSTART_UTC(XcalTags.dtstart, "DTSTART_UTC", DtstartPropType.class,
-                DataType.DATE_TIME,
-                IS_SINGLE, notAlarm),
+    /** non ical */
+    CTAG(BedeworkServerTags.ctag, "CTAG", null, null,
+         DataType.TEXT,
+         IS_SINGLE, noComponent,
+         NOT_PARAM, IS_IMMUTABLE),
 
-    /** Event only: end date utc */
-    DTEND_UTC(XcalTags.dtend, "DTEND_UTC", DtendPropType.class,
-              DataType.DATE_TIME,
-              IS_SINGLE, event_Freebusy),
+    /** non ical */
+    CTOKEN(BedeworkServerTags.xprop, "CTOKEN", null, null,
+           DataType.TEXT,
+           IS_SINGLE, noComponent,
+           NOT_PARAM, IS_IMMUTABLE),
 
-    /** start date/time - local */
-    DTSTART_LOCAL(XcalTags.dtstart, "DTSTART_LOCAL", DtstartPropType.class,
-            DataType.DATE_TIME,
-            IS_SINGLE, notAlarm),
+    /**  date/time utc value */
+    UTC(XcalTags.dtstart, "UTC", null,
+        DtstartPropType.class,
+        DataType.DATE_TIME,
+        IS_SINGLE, notAlarm),
 
-    /** Event only: end date- local */
-    DTEND_LOCAL(XcalTags.dtend, "DTEND_LOCAL", DtendPropType.class,
+    /** date/time - local */
+    LOCAL(XcalTags.dtstart, "LOCAL", null,
+          DtstartPropType.class,
           DataType.DATE_TIME,
-          IS_SINGLE, event_Freebusy),
+          IS_SINGLE, notAlarm),
 
-    /** start date/time tzid */
-    DTSTART_TZID(XcalTags.dtstart, "DTSTART_TZID", DtstartPropType.class,
-                  DataType.DATE_TIME,
-                  IS_SINGLE, notAlarm),
-
-    /** Event only: end date tzid */
-    DTEND_TZID(XcalTags.dtend, "DTEND_TZID", DtendPropType.class,
-                DataType.DATE_TIME,
-                IS_SINGLE, event_Freebusy),
-
-    /** start date/time - floating true/false */
-    DTSTART_FLOATING(XcalTags.dtstart, "DTSTART_FLOATING", DtstartPropType.class,
-                  DataType.DATE_TIME,
-                  IS_SINGLE, notAlarm),
-
-    /** Event only: end date- local */
-    DTEND_FLOATING(XcalTags.dtend, "DTEND_FLOATING", DtendPropType.class,
-                DataType.DATE_TIME,
-                IS_SINGLE, event_Freebusy),
+    /** date/time - floating true/false */
+    FLOATING(XcalTags.dtstart, "FLOATING", null,
+             DtstartPropType.class,
+             DataType.DATE_TIME,
+             IS_SINGLE, notAlarm),
 
     /** location uid */
-    LOCATION_UID(XcalTags.location, "LOCATION_UID", LocationPropType.class,
-             IS_SINGLE, event_Todo),
+    LOCATION_UID(XcalTags.location, "LOCATION_UID", "locationUid",
+                 LocationPropType.class,
+                 IS_SINGLE, event_Todo),
 
     /** location string value */
-    LOCATION_STR(XcalTags.location, "LOCATION_STR", LocationPropType.class,
-             IS_SINGLE, event_Todo),
+    LOCATION_STR(XcalTags.location, "LOCATION_STR", "locationStr",
+                 LocationPropType.class,
+                 IS_SINGLE, event_Todo),
 
     /** name of entity */
     NAME(BedeworkServerTags.xprop, "NAME", null,
+         IS_SINGLE, allComponents),
+
+    ORGANIZER_SCHEDULING_OBJECT(BedeworkServerTags.xprop,
+                                "ORGANIZER-SCHEDULING-OBJECT",
+                                "organizerSchedulingObject",
+                                null,
+                                IS_SINGLE, allComponents),
+
+    ORIGINATOR(BedeworkServerTags.xprop, "ORIGINATOR", null,
+               IS_SINGLE, allComponents),
+
+    RECIPIENT(BedeworkServerTags.xprop, "RECIPIENT", null,
+              IS_SINGLE, allComponents),
+
+    RECURRING(BedeworkServerTags.xprop, "RECURRING", null,
+              IS_SINGLE, allComponents),
+
+    /** schedule method */
+    SCHEDULE_METHOD(BedeworkServerTags.xprop,
+                    "SCHEDULE-METHOD", "scheduleMethod", null,
+                    IS_SINGLE, allComponents),
+
+    SCHEDULE_STATE(BedeworkServerTags.xprop,
+                   "SCHEDULE-STATE", "scheduleState", null,
+                   IS_SINGLE, allComponents),
+
+    /** schedule tag */
+    SCHEDULE_TAG(BedeworkServerTags.xprop,
+                 "SCHEDULE-TAG", "scheduleTag", null,
                  IS_SINGLE, allComponents),
+
+    TRIGGER_DATE_TIME(BedeworkServerTags.xprop,
+                      "TRIGGER-DATE-TIME", "triggerDateTime", null,
+                      IS_SINGLE, allComponents),
 
     /** Virtual path - only appears in unparsed/unresolved fexpr */
     VPATH(BedeworkServerTags.xprop, "VPATH", null,
-         IS_SINGLE, allComponents),
+          IS_SINGLE, allComponents),
 
     /** View - only appears in unparsed/unresolved fexpr */
     VIEW(BedeworkServerTags.xprop, "VIEW", null,
-          IS_SINGLE, allComponents),
+         IS_SINGLE, allComponents),
 
     /** Is start present? */
-    START_PRESENT(BedeworkServerTags.xprop, "START_PRESENT", null,
-         IS_SINGLE, allComponents),
+    START_PRESENT(BedeworkServerTags.xprop,
+                  "START_PRESENT", "startPresent", null,
+                  IS_SINGLE, allComponents),
 
     /** Special term for sorts */
     RELEVANCE(BedeworkServerTags.xprop, "RELEVANCE", null,
-          IS_SINGLE, allComponents),
+              IS_SINGLE, allComponents),
 
-     ;
+    ;
 
     private QName qname;
 
     private String pname;
+
+    private String jname;
 
     private String pnameLC;
 
@@ -1029,13 +1117,13 @@ public class PropertyIndex implements Serializable {
     private ComponentFlags components;
 
     private static Map<String, PropertyInfoIndex> pnameLookup =
-      new HashMap<String, PropertyInfoIndex>();
+            new HashMap<>();
 
     private static Map<QName, PropertyInfoIndex> qnameLookup =
-      new HashMap<QName, PropertyInfoIndex>();
+            new HashMap<>();
 
     private static Map<Class, PropertyInfoIndex> xmlClassLookup =
-        new HashMap<Class, PropertyInfoIndex>();
+            new HashMap<>();
 
     static {
       for (PropertyInfoIndex pii: values()) {
@@ -1050,11 +1138,13 @@ public class PropertyIndex implements Serializable {
 
     PropertyInfoIndex(final QName qname,
                       final String pname,
+                      final String jname,
                       final Class xmlClass,
                       final boolean multiValued,
                       final ComponentFlags components) {
       this.qname = qname;
       this.pname = pname;
+      this.jname = jname;
       this.xmlClass = xmlClass;
       this.components = components;
       this.multiValued = multiValued;
@@ -1063,26 +1153,29 @@ public class PropertyIndex implements Serializable {
       if (pname != null) {
         pnameLC = pname.toLowerCase();
       }
-    }
 
-    PropertyInfoIndex(final QName qname,
-                      final String pname,
-                      final Class xmlClass,
-                      final DataType ptype, final boolean multiValued,
-                      final ComponentFlags components) {
-      this(qname, pname, xmlClass, multiValued, components);
-      this.ptype = ptype;
+      if (jname == null) {
+        this.jname = pnameLC;
+      }
     }
 
     PropertyInfoIndex(final QName qname,
                       final String pname,
                       final Class xmlClass,
                       final boolean multiValued,
-                      final boolean dbMultiValued,
                       final ComponentFlags components) {
-      this(qname, pname, xmlClass, DataType.TEXT, multiValued, components,
-           NOT_PARAM, NOT_IMMUTABLE);
-      this.dbMultiValued = dbMultiValued;
+      this(qname, pname, null, xmlClass, multiValued, components);
+    }
+
+    PropertyInfoIndex(final QName qname,
+                      final String pname,
+                      final String jname,
+                      final Class xmlClass,
+                      final DataType ptype,
+                      final boolean multiValued,
+                      final ComponentFlags components) {
+      this(qname, pname, jname, xmlClass, multiValued, components);
+      this.ptype = ptype;
     }
 
     PropertyInfoIndex(final QName qname,
@@ -1090,10 +1183,34 @@ public class PropertyIndex implements Serializable {
                       final Class xmlClass,
                       final DataType ptype,
                       final boolean multiValued,
+                      final ComponentFlags components) {
+      this(qname, pname, null, xmlClass, multiValued, components);
+      this.ptype = ptype;
+    }
+
+    PropertyInfoIndex(final QName qname,
+                      final String pname,
+                      final String jname,
+                      final Class xmlClass,
+                      final boolean multiValued,
+                      final boolean dbMultiValued,
+                      final ComponentFlags components) {
+      this(qname, pname, jname, xmlClass, DataType.TEXT,
+           multiValued, components,
+           NOT_PARAM, NOT_IMMUTABLE);
+      this.dbMultiValued = dbMultiValued;
+    }
+
+    PropertyInfoIndex(final QName qname,
+                      final String pname,
+                      final String jname,
+                      final Class xmlClass,
+                      final DataType ptype,
+                      final boolean multiValued,
                       final ComponentFlags components,
                       final boolean param,
                       final boolean immutable) {
-      this(qname, pname, xmlClass, multiValued, components);
+      this(qname, pname, jname, xmlClass, multiValued, components);
       this.ptype = ptype;
       this.param = param;
       this.immutable = immutable;
@@ -1113,6 +1230,14 @@ public class PropertyIndex implements Serializable {
      */
     public String getPname() {
       return pname;
+    }
+
+    /** get the java style name
+     *
+     * @return parameter name
+     */
+    public String getJname() {
+      return jname;
     }
 
     /** get the property name lower cased
