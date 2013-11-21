@@ -993,7 +993,9 @@ public class PropertyIndex implements Serializable {
            IS_MULTI, allComponents),
 
     /** Href for category */
-    CATEGORY_PATH(XcalTags.categories, "CATEGORY_PATH", CategoriesPropType.class,
+    CATEGORY_PATH(XcalTags.categories,
+                  "CATEGORY_PATH", "categoryPath",
+                  CategoriesPropType.class,
                   IS_MULTI, allComponents),
 
     /** non ical */
