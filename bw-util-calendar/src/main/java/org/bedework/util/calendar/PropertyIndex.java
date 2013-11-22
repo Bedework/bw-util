@@ -631,50 +631,58 @@ public class PropertyIndex implements Serializable {
   /** */
   public static enum PropertyInfoIndex {
     /** */
-    UNKNOWN_PROPERTY(null, null, null,
+    UNKNOWN_PROPERTY(null, null, null, null,
                      IS_SINGLE, noComponent),
 
     /** Alarm only: action */
-    ACTION(XcalTags.action, "ACTION", ActionPropType.class,
+    ACTION(XcalTags.action, "ACTION", null,
+           ActionPropType.class,
            IS_SINGLE, alarmOnly),
 
     /** Multi-valued attachment */
-    ATTACH(XcalTags.attach, "ATTACH", AttachPropType.class,
+    ATTACH(XcalTags.attach, "ATTACH", null, AttachPropType.class,
            DataType.SPECIAL,
            IS_MULTI, event_Todo_Journal_Alarm),
 
     /** attendee */
-    ATTENDEE(XcalTags.attendee, "ATTENDEE", AttendeePropType.class,
+    ATTENDEE(XcalTags.attendee, "ATTENDEE", null,
+             AttendeePropType.class,
              DataType.CUA,
              IS_MULTI, notTimezone),
 
     /** */
-    BUSYTYPE(XcalTags.busytype, "BUSYTYPE", BusytypePropType.class,
+    BUSYTYPE(XcalTags.busytype,
+             "BUSYTYPE", null,
+             BusytypePropType.class,
              IS_SINGLE, vavailabilityOnly),
 
     /** String names */
-    CATEGORIES(XcalTags.categories, "CATEGORIES", CategoriesPropType.class,
+    CATEGORIES(XcalTags.categories, "CATEGORIES", null,
+              CategoriesPropType.class,
                IS_MULTI, event_Todo_Journal_Alarm),
 
     /** classification */
-    CLASS(XcalTags._class, "CLASS", ClassPropType.class,
+    CLASS(XcalTags._class, "CLASS", null, ClassPropType.class, null,
           IS_SINGLE, event_Todo_Journal),
 
     /** String comment */
-    COMMENT(XcalTags.comment, "COMMENT", CommentPropType.class,
+    COMMENT(XcalTags.comment, "COMMENT", null,
+            CommentPropType.class,
             IS_MULTI, notAlarm),
 
     /** date/date-time completed */
-    COMPLETED(XcalTags.completed, "COMPLETED", CompletedPropType.class,
+    COMPLETED(XcalTags.completed, "COMPLETED", null,
+              CompletedPropType.class,
               DataType.DATE_TIME,
               IS_SINGLE, todoOnly),
 
     /** String contact */
-    CONTACT(XcalTags.contact, "CONTACT", ContactPropType.class,
+    CONTACT(XcalTags.contact, "CONTACT", null,
+            ContactPropType.class,
             IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** UTC datetime */
-    CREATED(XcalTags.created, "CREATED", CreatedPropType.class,
+    CREATED(XcalTags.created, "CREATED", null, CreatedPropType.class,
             DataType.DATE_TIME,
             IS_SINGLE, event_Todo_Journal_Freebusy),
 
@@ -684,7 +692,7 @@ public class PropertyIndex implements Serializable {
                 IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** Event only: end date */
-    DTEND(XcalTags.dtend, "DTEND", DtendPropType.class,
+    DTEND(XcalTags.dtend, "DTEND", null, DtendPropType.class,
           DataType.DATE_TIME,
           IS_SINGLE, event_Freebusy),
 
@@ -702,33 +710,34 @@ public class PropertyIndex implements Serializable {
             IS_SINGLE, notAlarm),
 
     /** tod-: due time */
-    DUE(XcalTags.due, "DUE", DuePropType.class,
+    DUE(XcalTags.due, "DUE", null, DuePropType.class,
         DataType.DATE_TIME,
         IS_SINGLE, todoOnly),
 
     /** Duration of event/task etc */
-    DURATION(XcalTags.duration, "DURATION",
+    DURATION(XcalTags.duration, "DURATION", null,
              DurationPropType.class,
              DataType.DURATION,
              IS_SINGLE, event_Todo_Freebusy_Alarm),
 
     /** Exception date */
-    EXDATE(XcalTags.exdate, "EXDATE", ExdatePropType.class,
+    EXDATE(XcalTags.exdate, "EXDATE", null, ExdatePropType.class,
            DataType.DATE_TIME,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** Exception rule */
-    EXRULE(XcalTags.exrule, "EXRULE", ExrulePropType.class,
+    EXRULE(XcalTags.exrule, "EXRULE", null, ExrulePropType.class,
            DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
     /** */
-    FREEBUSY(XcalTags.freebusy, "FREEBUSY", FreebusyPropType.class,
+    FREEBUSY(XcalTags.freebusy, "FREEBUSY", null, FreebusyPropType.class,
              DataType.PERIOD,
              IS_SINGLE, freebusyOnly),
 
     /** Geographic location */
-    GEO(XcalTags.geo, "GEO", GeoPropType.class,
+    GEO(XcalTags.geo, "GEO", null,
+        GeoPropType.class,
         IS_SINGLE, event_Todo),
 
     /** UTC */
@@ -739,11 +748,13 @@ public class PropertyIndex implements Serializable {
                   NOT_PARAM, NOT_IMMUTABLE),
 
     /** simple location value */
-    LOCATION(XcalTags.location, "LOCATION", LocationPropType.class,
+    LOCATION(XcalTags.location, "LOCATION", null,
+             LocationPropType.class,
              IS_SINGLE, event_Todo),
 
     /** meeting organizer */
-    ORGANIZER(XcalTags.organizer, "ORGANIZER", OrganizerPropType.class,
+    ORGANIZER(XcalTags.organizer, "ORGANIZER", null,
+              OrganizerPropType.class,
               DataType.CUA,
               IS_SINGLE, event_Todo_Journal_Freebusy),
 
@@ -754,12 +765,12 @@ public class PropertyIndex implements Serializable {
                      IS_SINGLE, todoOnly),
 
     /** Priority */
-    PRIORITY(XcalTags.priority, "PRIORITY", PriorityPropType.class,
+    PRIORITY(XcalTags.priority, "PRIORITY", null, PriorityPropType.class,
              DataType.INTEGER,
              IS_SINGLE, event_Todo),
 
     /** recurrence date/time */
-    RDATE(XcalTags.rdate, "RDATE", RdatePropType.class,
+    RDATE(XcalTags.rdate, "RDATE", null, RdatePropType.class,
           DataType.DATE_TIME,
           IS_MULTI, event_Todo_Journal_Timezone),
 
@@ -776,7 +787,7 @@ public class PropertyIndex implements Serializable {
                IS_MULTI, event_Todo_Journal),
 
     /** Alarm: repeat time */
-    REPEAT(XcalTags.repeat, "REPEAT", RepeatPropType.class,
+    REPEAT(XcalTags.repeat, "REPEAT", null, RepeatPropType.class,
            DataType.INTEGER,
            IS_SINGLE, alarmOnly),
 
@@ -787,11 +798,12 @@ public class PropertyIndex implements Serializable {
                    IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** names of resources */
-    RESOURCES(XcalTags.resources, "RESOURCES", ResourcesPropType.class,
+    RESOURCES(XcalTags.resources, "RESOURCES", null,
+              ResourcesPropType.class,
               IS_MULTI, event_Todo),
 
     /** recurrence rule */
-    RRULE (XcalTags.rrule, "RRULE", RrulePropType.class,
+    RRULE (XcalTags.rrule, "RRULE", null, RrulePropType.class,
            DataType.RECUR,
            IS_MULTI, event_Todo_Journal_Timezone),
 
@@ -803,7 +815,8 @@ public class PropertyIndex implements Serializable {
              NOT_PARAM, NOT_IMMUTABLE),
 
     /** Event/task status */
-    STATUS(XcalTags.status, "STATUS", StatusPropType.class,
+    STATUS(XcalTags.status, "STATUS", null,
+           StatusPropType.class,
            IS_SINGLE, event_Todo_Journal),
 
     /** short summary */
@@ -812,95 +825,107 @@ public class PropertyIndex implements Serializable {
             IS_SINGLE, IS_MULTI, event_Todo_Journal_Alarm),
 
     /** Alarm trigger */
-    TRIGGER(XcalTags.trigger, "TRIGGER", TriggerPropType.class,
+    TRIGGER(XcalTags.trigger, "TRIGGER", null, TriggerPropType.class,
             DataType.DURATION,
             IS_SINGLE, alarmOnly),
 
     /** Transparency */
-    TRANSP(XcalTags.transp, "TRANSP", TranspPropType.class,
+    TRANSP(XcalTags.transp, "TRANSP", null,
+           TranspPropType.class,
            IS_SINGLE, eventOnly),
 
     /** */
-    TZID(XcalTags.tzid, "TZID", TzidPropType.class,
+    TZID(XcalTags.tzid, "TZID", null,
+         TzidPropType.class,
          IS_SINGLE, timezoneOnly),
 
     /** */
-    TZNAME(XcalTags.tzname, "TZNAME", TznamePropType.class,
+    TZNAME(XcalTags.tzname, "TZNAME", null,
+           TznamePropType.class,
            IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETFROM(XcalTags.tzoffsetfrom, "TZOFFSETFROM",
+    TZOFFSETFROM(XcalTags.tzoffsetfrom, "TZOFFSETFROM", null,
                  TzoffsetfromPropType.class,
                  DataType.UTC_OFFSET,
                  IS_SINGLE, timezoneOnly),
 
     /** */
-    TZOFFSETTO(XcalTags.tzoffsetto, "TZOFFSETTO",
+    TZOFFSETTO(XcalTags.tzoffsetto, "TZOFFSETTO", null,
                TzoffsettoPropType.class,
                DataType.UTC_OFFSET,
                IS_SINGLE, timezoneOnly),
 
     /** */
-    TZURL(XcalTags.tzurl, "TZURL", TzurlPropType.class,
+    TZURL(XcalTags.tzurl, "TZURL", null, TzurlPropType.class,
           DataType.URI,
           IS_SINGLE, timezoneOnly),
 
     /** Unique id */
-    UID(XcalTags.uid, "UID", UidPropType.class,
+    UID(XcalTags.uid, "UID", null,
+        UidPropType.class,
         IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** link to some related resource */
-    URL(XcalTags.url, "URL", UrlPropType.class,
+    URL(XcalTags.url, "URL", null, UrlPropType.class,
         DataType.URI,
         IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** treat x-properties as a single multi-valued property */
-    XPROP(BedeworkServerTags.xprop, "XPROP", null,
+    XPROP(BedeworkServerTags.xprop, "XPROP", null, null,
           IS_MULTI, allComponents),
 
     /** accept-response */
-    ACCEPT_RESPONSE(XcalTags.acceptResponse, "ACCEPT-RESPONSE", AcceptResponsePropType.class,
-        IS_SINGLE, vpollOnly),
+    ACCEPT_RESPONSE(XcalTags.acceptResponse,
+                    "ACCEPT-RESPONSE", "acceptResponse",
+                    AcceptResponsePropType.class,
+                    IS_SINGLE, vpollOnly),
 
     /** Poll-item-id */
-    POLL_ITEM_ID(XcalTags.pollItemId, "POLL-ITEM-ID", PollItemIdPropType.class,
+    POLL_ITEM_ID(XcalTags.pollItemId, "POLL-ITEM-ID", "pollItemId",
+                 PollItemIdPropType.class,
         IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** Poll-mode */
-    POLL_MODE(XcalTags.pollMode, "POLL_MODE", PollModePropType.class,
+    POLL_MODE(XcalTags.pollMode, "POLL_MODE", "pollMode",
+              PollModePropType.class,
         IS_SINGLE, vpollOnly),
 
     /** Poll-properties */
-    POLL_PROPERTIES(XcalTags.pollProperties, "POLL_PROPERTIES", PollPropertiesPropType.class,
-        IS_MULTI, vpollOnly),
+    POLL_PROPERTIES(XcalTags.pollProperties,
+                    "POLL_PROPERTIES", "pollProperties",
+                    PollPropertiesPropType.class,
+                    IS_MULTI, vpollOnly),
 
     /** attendee */
-    VOTER(XcalTags.voter, "VOTER", VoterPropType.class,
-             DataType.CUA,
-             IS_MULTI, notTimezone),
+    VOTER(XcalTags.voter, "VOTER", null, VoterPropType.class,
+          DataType.CUA,
+          IS_MULTI, notTimezone),
 
     /* -------------- Non-ical ---------------- */
 
     /** non ical */
-    COLLECTION(BedeworkServerTags.collection, "COLLECTION", null,
+    COLLECTION(BedeworkServerTags.collection,
+               "COLLECTION", null, null,
                IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
-    COST(BedeworkServerTags.cost, "COST", null,
+    COST(BedeworkServerTags.cost, "COST", null, null,
          IS_SINGLE, event_Todo),
 
     /** non ical */
-    CREATOR(BedeworkServerTags.creator, "CREATOR", null, null,
+    CREATOR(BedeworkServerTags.creator, "CREATOR", null,
+            null,
             DataType.HREF,
             IS_SINGLE, event_Todo_Journal,
             NOT_PARAM, IS_IMMUTABLE),
 
     /** non ical */
-    DELETED(BedeworkServerTags.deleted, "DELETED", null,
+    DELETED(BedeworkServerTags.deleted, "DELETED", null, null,
             IS_SINGLE, event_Todo),
 
     /** non ical */
-    END_TYPE(BedeworkServerTags.endType, "END-TYPE", null,
+    END_TYPE(BedeworkServerTags.endType, "END-TYPE", "endType", null,
              IS_SINGLE, event_Todo_Journal),
 
     /** non ical */
@@ -929,7 +954,8 @@ public class PropertyIndex implements Serializable {
           NOT_PARAM, IS_IMMUTABLE),
 
     /** treat VALARM sub-component as a property */
-    VALARM(XcalTags.valarm, "VALARM", ValarmType.class,
+    VALARM(XcalTags.valarm, "VALARM", null,
+           ValarmType.class,
            IS_MULTI, notAlarm),
 
     /** ----------------------------- Following are parameters ----------- */
@@ -957,25 +983,29 @@ public class PropertyIndex implements Serializable {
     /** ----------------------------- Vcalendar properties ----------- */
 
     /** Transparency */
-    CALSCALE(XcalTags.calscale, "CALSCALE", CalscalePropType.class,
+    CALSCALE(XcalTags.calscale, "CALSCALE", null,
+             CalscalePropType.class,
              IS_SINGLE, vcalendarOnly),
 
     /** Transparency */
-    METHOD(XcalTags.method, "METHOD", MethodPropType.class,
+    METHOD(XcalTags.method, "METHOD", null,
+           MethodPropType.class,
            IS_SINGLE, vcalendarOnly),
 
     /** Transparency */
-    PRODID(XcalTags.transp, "PRODID", ProdidPropType.class,
+    PRODID(XcalTags.transp, "PRODID", null,
+           ProdidPropType.class,
            IS_SINGLE, vcalendarOnly),
 
     /** Transparency */
-    VERSION(XcalTags.transp, "VERSION", VersionPropType.class,
+    VERSION(XcalTags.transp, "VERSION", null,
+            VersionPropType.class,
             IS_SINGLE, vcalendarOnly),
 
     /** ------------------------ Bedework only properties ----------- */
 
     /** ACL */
-    ACL(BedeworkServerTags.xprop, "ACL", null,
+    ACL(BedeworkServerTags.xprop, "ACL", null, null,
         IS_MULTI, allComponents),
 
     ATTENDEE_SCHEDULING_OBJECT(BedeworkServerTags.xprop,
@@ -985,7 +1015,7 @@ public class PropertyIndex implements Serializable {
                                IS_SINGLE, allComponents),
 
     /** path to containing collection */
-    COLPATH(BedeworkServerTags.xprop, "COLPATH", null,
+    COLPATH(BedeworkServerTags.xprop, "COLPATH", null, null,
             IS_MULTI, allComponents),
 
     /** UID for category */
@@ -1041,7 +1071,7 @@ public class PropertyIndex implements Serializable {
                  IS_SINGLE, event_Todo),
 
     /** name of entity */
-    NAME(BedeworkServerTags.xprop, "NAME", null,
+    NAME(BedeworkServerTags.xprop, "NAME", null, null,
          IS_SINGLE, allComponents),
 
     ORGANIZER_SCHEDULING_OBJECT(BedeworkServerTags.xprop,
@@ -1050,13 +1080,16 @@ public class PropertyIndex implements Serializable {
                                 null,
                                 IS_SINGLE, allComponents),
 
-    ORIGINATOR(BedeworkServerTags.xprop, "ORIGINATOR", null,
+    ORIGINATOR(BedeworkServerTags.xprop, "ORIGINATOR", null, null,
                IS_SINGLE, allComponents),
 
-    RECIPIENT(BedeworkServerTags.xprop, "RECIPIENT", null,
+    PUBLIC(BedeworkServerTags.xprop, "PUBLIC", null, null,
+               IS_SINGLE, allComponents),
+
+    RECIPIENT(BedeworkServerTags.xprop, "RECIPIENT", null, null,
               IS_SINGLE, allComponents),
 
-    RECURRING(BedeworkServerTags.xprop, "RECURRING", null,
+    RECURRING(BedeworkServerTags.xprop, "RECURRING", null, null,
               IS_SINGLE, allComponents),
 
     /** schedule method */
@@ -1078,12 +1111,16 @@ public class PropertyIndex implements Serializable {
                       IS_SINGLE, allComponents),
 
     /** Virtual path - only appears in unparsed/unresolved fexpr */
-    VPATH(BedeworkServerTags.xprop, "VPATH", null,
+    VPATH(BedeworkServerTags.xprop, "VPATH", null, null,
           IS_SINGLE, allComponents),
 
     /** View - only appears in unparsed/unresolved fexpr */
-    VIEW(BedeworkServerTags.xprop, "VIEW", null,
+    VIEW(BedeworkServerTags.xprop, "VIEW", null, null,
          IS_SINGLE, allComponents),
+
+    PARAMETERS(BedeworkServerTags.xprop,
+               "PARAMETERS", "pars", null,
+               IS_SINGLE, allComponents),
 
     /** Is start present? */
     START_PRESENT(BedeworkServerTags.xprop,
@@ -1091,9 +1128,17 @@ public class PropertyIndex implements Serializable {
                   IS_SINGLE, allComponents),
 
     /** Special term for sorts */
-    RELEVANCE(BedeworkServerTags.xprop, "RELEVANCE", null,
+    RELEVANCE(BedeworkServerTags.xprop, "RELEVANCE", null, null,
               IS_SINGLE, allComponents),
 
+    /** link to some related resource */
+    URI(BedeworkServerTags.xprop, "URI", null, UrlPropType.class,
+        DataType.URI,
+        IS_SINGLE, allComponents),
+
+    VALUE(BedeworkServerTags.xprop,
+          "VALUE", "value", null,
+          IS_SINGLE, allComponents),
     ;
 
     private QName qname;
@@ -1165,30 +1210,12 @@ public class PropertyIndex implements Serializable {
 
     PropertyInfoIndex(final QName qname,
                       final String pname,
-                      final Class xmlClass,
-                      final boolean multiValued,
-                      final ComponentFlags components) {
-      this(qname, pname, null, xmlClass, multiValued, components);
-    }
-
-    PropertyInfoIndex(final QName qname,
-                      final String pname,
                       final String jname,
                       final Class xmlClass,
                       final DataType ptype,
                       final boolean multiValued,
                       final ComponentFlags components) {
       this(qname, pname, jname, xmlClass, multiValued, components);
-      this.ptype = ptype;
-    }
-
-    PropertyInfoIndex(final QName qname,
-                      final String pname,
-                      final Class xmlClass,
-                      final DataType ptype,
-                      final boolean multiValued,
-                      final ComponentFlags components) {
-      this(qname, pname, null, xmlClass, multiValued, components);
       this.ptype = ptype;
     }
 
