@@ -62,7 +62,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** A dav client
 *
-* @author Mike Douglass  douglm @ bedework.edu
+* @author Mike Douglass  douglm @ rpi.edu
 */
 public class BasicHttpClient extends DefaultHttpClient {
   protected boolean debug;
@@ -505,6 +505,36 @@ public class BasicHttpClient extends DefaultHttpClient {
     }
   }
 
+  /**
+   * @author douglm
+   */
+  public class HttpReport extends HttpEntityEnclosingRequestBase {
+    /**
+     */
+    public static final String METHOD_NAME = "REPORT";
+
+    /**
+     * @param uri
+     */
+    public HttpReport(final URI uri) {
+      setURI(uri);
+    }
+
+    /**
+     * @param uri
+     * @throws IllegalArgumentException if the uri is invalid.
+     */
+    public HttpReport(final String uri) {
+      super();
+      setURI(URI.create(uri));
+    }
+
+    @Override
+    public String getMethod() {
+      return METHOD_NAME;
+    }
+  }
+
   /** Specify the next method by name.
    *
    * @param name
@@ -546,6 +576,10 @@ public class BasicHttpClient extends DefaultHttpClient {
 
     if ("OPTIONS".equals(nm)) {
       return new HttpOptions(uri);
+    }
+
+    if ("REPORT".equals(nm)) {
+      return new HttpReport(uri);
     }
 
     if ("HEAD".equals(nm)) {
