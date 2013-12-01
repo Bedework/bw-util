@@ -1139,6 +1139,30 @@ public class PropertyIndex implements Serializable {
     VALUE(BedeworkServerTags.xprop,
           "VALUE", "value", null,
           IS_SINGLE, allComponents),
+
+    /** ------------------------ contacts ----------- */
+
+    CN(BedeworkServerTags.xprop,
+       "CN", null, null,
+       IS_SINGLE, allComponents),
+
+    EMAIL(BedeworkServerTags.xprop,
+          "EMAIL", null, null,
+          IS_SINGLE, allComponents),
+
+    PHONE(BedeworkServerTags.xprop,
+          "PHONE", null, null,
+          IS_SINGLE, allComponents),
+
+    /** ------------------------ locations ----------- */
+
+    ADDRESS(BedeworkServerTags.xprop,
+          "ADDRESS", null, null,
+          IS_SINGLE, allComponents),
+
+    SUBADDRESS(BedeworkServerTags.xprop,
+          "SUBADDRESS", null, null,
+          IS_SINGLE, allComponents),
     ;
 
     private QName qname;

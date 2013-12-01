@@ -114,7 +114,9 @@ public class Util {
     StringBuilder path = new StringBuilder();
 
     for (String s: val) {
-      path.append(s);
+      if (s != null) {
+        path.append(s);
+      }
     }
 
     String s = path.toString().replaceAll("/+",  "/");

@@ -61,6 +61,8 @@ public class Request extends ReqUtil {
   public static final String refreshIntervalKey = "refinterval=";
   /** */
   public static final String refreshActionKey = "refaction=";
+    /** */
+    public static final String moduleNameKey = "mdl=";
 
   /** In the absence of a conversation parameter we assume that a conversation
    * starts with actionType=action and ends with actionType=render.
@@ -144,7 +146,7 @@ public class Request extends ReqUtil {
       }
     }
 
-    moduleName = getStringActionPar(Request.moduleNamePar);
+    moduleName = getStringActionPar(Request.moduleNameKey); // <-- Note it's key for the "="
   }
 
   /**
