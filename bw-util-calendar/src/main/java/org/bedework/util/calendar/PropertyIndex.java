@@ -1018,17 +1018,18 @@ public class PropertyIndex implements Serializable {
     COLPATH(BedeworkServerTags.xprop, "COLPATH", null, null,
             IS_MULTI, allComponents),
 
-    /** UID for category */
+    /* * UID for category * /
     CATUID(XcalTags.categories,
            "CATUID", "categoryUid",
            CategoriesPropType.class,
            IS_MULTI, allComponents),
 
-    /** Href for category */
+    /* * Href for category * /
     CATEGORY_PATH(XcalTags.categories,
                   "CATEGORY_PATH", "categoryPath",
                   CategoriesPropType.class,
                   IS_MULTI, allComponents),
+                  */
 
     /** non ical */
     CTAG(BedeworkServerTags.ctag, "CTAG", null, null,
@@ -1041,6 +1042,22 @@ public class PropertyIndex implements Serializable {
            DataType.TEXT,
            IS_SINGLE, noComponent,
            NOT_PARAM, IS_IMMUTABLE),
+
+    EVENTREG_END(BedeworkServerTags.xprop,
+                 "eventregEnd", null, null,
+                 IS_SINGLE, allComponents),
+
+    EVENTREG_MAX_TICKETS(BedeworkServerTags.xprop,
+                         "eventregMaxTickets", null, null,
+                 IS_SINGLE, allComponents),
+
+    EVENTREG_MAX_TICKETS_PER_USER(BedeworkServerTags.xprop,
+                                  "eventregMaxTicketsPerUser", null, null,
+                                  IS_SINGLE, allComponents),
+
+    EVENTREG_START(BedeworkServerTags.xprop,
+                   "eventregStart", null, null,
+                   IS_SINGLE, allComponents),
 
     /**  date/time utc value */
     UTC(XcalTags.dtstart, "UTC", null,
@@ -1059,6 +1076,9 @@ public class PropertyIndex implements Serializable {
              DtstartPropType.class,
              DataType.DATE_TIME,
              IS_SINGLE, notAlarm),
+
+    IMAGE(BedeworkServerTags.xprop, "IMAGE", null, null,
+               IS_SINGLE, allComponents),
 
     /** location uid */
     LOCATION_UID(XcalTags.location, "LOCATION_UID", "locationUid",
@@ -1104,6 +1124,13 @@ public class PropertyIndex implements Serializable {
     /** schedule tag */
     SCHEDULE_TAG(BedeworkServerTags.xprop,
                  "SCHEDULE-TAG", "scheduleTag", null,
+                 IS_SINGLE, allComponents),
+
+    /** Temp - we should do this as a type of image */
+    THUMBIMAGE(BedeworkServerTags.xprop, "THUMBIMAGE", null, null,
+          IS_SINGLE, allComponents),
+
+    TOPICAL_AREA(BedeworkServerTags.xprop, "topicalArea", null, null,
                  IS_SINGLE, allComponents),
 
     TRIGGER_DATE_TIME(BedeworkServerTags.xprop,
