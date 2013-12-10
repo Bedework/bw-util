@@ -1043,6 +1043,10 @@ public class PropertyIndex implements Serializable {
            IS_SINGLE, noComponent,
            NOT_PARAM, IS_IMMUTABLE),
 
+    DOCTYPE(BedeworkServerTags.xprop,
+            "_type", null, null,
+            IS_SINGLE, allComponents),
+
     EVENTREG_END(BedeworkServerTags.xprop,
                  "eventregEnd", null, null,
                  IS_SINGLE, allComponents),
@@ -1059,12 +1063,6 @@ public class PropertyIndex implements Serializable {
                    "eventregStart", null, null,
                    IS_SINGLE, allComponents),
 
-    /**  date/time utc value */
-    UTC(XcalTags.dtstart, "UTC", null,
-        DtstartPropType.class,
-        DataType.DATE_TIME,
-        IS_SINGLE, notAlarm),
-
     /** date/time - local */
     LOCAL(XcalTags.dtstart, "LOCAL", null,
           DtstartPropType.class,
@@ -1079,6 +1077,18 @@ public class PropertyIndex implements Serializable {
 
     IMAGE(BedeworkServerTags.xprop, "IMAGE", null, null,
                IS_SINGLE, allComponents),
+
+    /**  date/time utc value */
+    INDEX_END(XcalTags.dtstart, "INDEX_END", "indexEnd",
+              DtstartPropType.class,
+              DataType.DATE_TIME,
+              IS_SINGLE, allComponents),
+
+    /**  date/time utc value */
+    INDEX_START(XcalTags.dtstart, "INDEX_START", "indexStart",
+                DtstartPropType.class,
+                DataType.DATE_TIME,
+                IS_SINGLE, allComponents),
 
     /** location uid */
     LOCATION_UID(XcalTags.location, "LOCATION_UID", "locationUid",
@@ -1136,6 +1146,12 @@ public class PropertyIndex implements Serializable {
     TRIGGER_DATE_TIME(BedeworkServerTags.xprop,
                       "TRIGGER-DATE-TIME", "triggerDateTime", null,
                       IS_SINGLE, allComponents),
+
+    /**  date/time utc value */
+    UTC(XcalTags.dtstart, "UTC", null,
+        DtstartPropType.class,
+        DataType.DATE_TIME,
+        IS_SINGLE, notAlarm),
 
     /** Virtual path - only appears in unparsed/unresolved fexpr */
     VPATH(BedeworkServerTags.xprop, "VPATH", null, null,
