@@ -1043,6 +1043,10 @@ public class PropertyIndex implements Serializable {
            IS_SINGLE, noComponent,
            NOT_PARAM, IS_IMMUTABLE),
 
+    DBID(BedeworkServerTags.xprop,
+            "DBID", null, null,
+            IS_SINGLE, allComponents),
+
     DOCTYPE(BedeworkServerTags.xprop,
             "_type", null, null,
             IS_SINGLE, allComponents),
@@ -1100,6 +1104,10 @@ public class PropertyIndex implements Serializable {
                  LocationPropType.class,
                  IS_SINGLE, event_Todo),
 
+    /* For bedework annotations/overrides */
+    MASTER(BedeworkServerTags.xprop, "MASTER", null, null,
+           IS_SINGLE, allComponents),
+
     /** name of entity */
     NAME(BedeworkServerTags.xprop, "NAME", null, null,
          IS_SINGLE, allComponents),
@@ -1112,6 +1120,10 @@ public class PropertyIndex implements Serializable {
 
     ORIGINATOR(BedeworkServerTags.xprop, "ORIGINATOR", null, null,
                IS_SINGLE, allComponents),
+
+    /* For bedework annotations/overrides */
+    OVERRIDE(BedeworkServerTags.xprop, "OVERRIDE", null, null,
+           IS_SINGLE, allComponents),
 
     PUBLIC(BedeworkServerTags.xprop, "PUBLIC", null, null,
                IS_SINGLE, allComponents),
@@ -1135,6 +1147,10 @@ public class PropertyIndex implements Serializable {
     SCHEDULE_TAG(BedeworkServerTags.xprop,
                  "SCHEDULE-TAG", "scheduleTag", null,
                  IS_SINGLE, allComponents),
+
+    /* For bedework annotations/overrides */
+    TARGET(BedeworkServerTags.xprop, "TARGET", null, null,
+           IS_SINGLE, allComponents),
 
     /** Temp - we should do this as a type of image */
     THUMBIMAGE(BedeworkServerTags.xprop, "THUMBIMAGE", null, null,
@@ -1166,9 +1182,9 @@ public class PropertyIndex implements Serializable {
                IS_SINGLE, allComponents),
 
     /** Is start present? */
-    START_PRESENT(BedeworkServerTags.xprop,
-                  "START_PRESENT", "startPresent", null,
-                  IS_SINGLE, allComponents),
+    NO_START(BedeworkServerTags.xprop,
+             "NO_START", "noStart", null,
+             IS_SINGLE, allComponents),
 
     /** Special term for sorts */
     RELEVANCE(BedeworkServerTags.xprop, "RELEVANCE", null, null,
