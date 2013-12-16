@@ -18,44 +18,9 @@
 */
 package org.bedework.util.calendar;
 
+import org.bedework.util.calendar.PropertyIndex.ParameterInfoIndex;
+import org.bedework.util.calendar.PropertyIndex.PropertyInfoIndex;
 import org.bedework.util.misc.Util;
-
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.CategoryList;
-import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.NumberList;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.ParameterList;
-import net.fortuna.ical4j.model.Period;
-import net.fortuna.ical4j.model.PeriodList;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.PropertyList;
-import net.fortuna.ical4j.model.Recur;
-import net.fortuna.ical4j.model.ResourceList;
-import net.fortuna.ical4j.model.WeekDay;
-import net.fortuna.ical4j.model.component.CalendarComponent;
-import net.fortuna.ical4j.model.component.Daylight;
-import net.fortuna.ical4j.model.component.Standard;
-import net.fortuna.ical4j.model.component.VAlarm;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VFreeBusy;
-import net.fortuna.ical4j.model.component.VJournal;
-import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.component.VToDo;
-import net.fortuna.ical4j.model.parameter.TzId;
-import net.fortuna.ical4j.model.parameter.Value;
-import net.fortuna.ical4j.model.property.Categories;
-import net.fortuna.ical4j.model.property.FreeBusy;
-import net.fortuna.ical4j.model.property.Geo;
-import net.fortuna.ical4j.model.property.PercentComplete;
-import net.fortuna.ical4j.model.property.Priority;
-import net.fortuna.ical4j.model.property.RRule;
-import net.fortuna.ical4j.model.property.Repeat;
-import net.fortuna.ical4j.model.property.Resources;
-import net.fortuna.ical4j.model.property.Sequence;
-import net.fortuna.ical4j.model.property.XProperty;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.AltrepParamType;
@@ -133,6 +98,42 @@ import ietf.params.xml.ns.icalendar_2.VjournalType;
 import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkCostPropType;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.CategoryList;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.NumberList;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.ParameterList;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.PeriodList;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.Recur;
+import net.fortuna.ical4j.model.ResourceList;
+import net.fortuna.ical4j.model.WeekDay;
+import net.fortuna.ical4j.model.component.CalendarComponent;
+import net.fortuna.ical4j.model.component.Daylight;
+import net.fortuna.ical4j.model.component.Standard;
+import net.fortuna.ical4j.model.component.VAlarm;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VFreeBusy;
+import net.fortuna.ical4j.model.component.VJournal;
+import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.component.VToDo;
+import net.fortuna.ical4j.model.parameter.TzId;
+import net.fortuna.ical4j.model.parameter.Value;
+import net.fortuna.ical4j.model.property.Categories;
+import net.fortuna.ical4j.model.property.FreeBusy;
+import net.fortuna.ical4j.model.property.Geo;
+import net.fortuna.ical4j.model.property.PercentComplete;
+import net.fortuna.ical4j.model.property.Priority;
+import net.fortuna.ical4j.model.property.RRule;
+import net.fortuna.ical4j.model.property.Repeat;
+import net.fortuna.ical4j.model.property.Resources;
+import net.fortuna.ical4j.model.property.Sequence;
+import net.fortuna.ical4j.model.property.XProperty;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -290,10 +291,11 @@ public class IcalToXcal {
     while (it.hasNext()) {
       Property prop = (Property)it.next();
 
-      PropertyIndex.PropertyInfoIndex pii = PropertyIndex
-              .PropertyInfoIndex.lookupPname(prop.getName());
+      PropertyInfoIndex pii;
 
-      if (pii == null) {
+      try {
+        pii = PropertyInfoIndex.valueOf(prop.getName().toUpperCase());
+      } catch (Throwable t) {
         continue;
       }
 
@@ -312,7 +314,7 @@ public class IcalToXcal {
   }
 
   static JAXBElement<? extends BasePropertyType> doProperty(final Property prop,
-                                                     final PropertyIndex.PropertyInfoIndex pii) throws Throwable {
+                                                     final PropertyInfoIndex pii) throws Throwable {
     switch (pii) {
       case ACTION:
         /* ------------------- Action: Alarm -------------------- */
@@ -727,12 +729,9 @@ public class IcalToXcal {
         if (prop instanceof XProperty) {
           /* ------------------------- x-property --------------------------- */
 
-          String name = prop.getName();
+          PropertyInfoIndex xpii = PropertyInfoIndex.valueOf(prop.getName().toUpperCase());
 
-          PropertyIndex.PropertyInfoIndex xpii = PropertyIndex
-                  .PropertyInfoIndex.lookupPname(prop.getName());
-
-          if (pii == null) {
+          if (xpii == null) {
             return null;
           }
 
@@ -755,8 +754,8 @@ public class IcalToXcal {
     while (it.hasNext()) {
       Parameter param = (Parameter)it.next();
 
-      PropertyIndex.ParameterInfoIndex pii = PropertyIndex
-              .ParameterInfoIndex.lookupPname(param.getName());
+      ParameterInfoIndex pii = ParameterInfoIndex.lookupPname(
+              param.getName());
 
       if (pii == null) {
         continue;
@@ -776,7 +775,7 @@ public class IcalToXcal {
   }
 
   static JAXBElement<? extends BaseParameterType> doParameter(final Parameter param,
-                                                     final PropertyIndex.ParameterInfoIndex pii) throws Throwable {
+                                                     final ParameterInfoIndex pii) throws Throwable {
     switch (pii) {
       case ALTREP:
         AltrepParamType ar = new AltrepParamType();

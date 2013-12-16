@@ -198,7 +198,7 @@ public class WsXMLTranslator {
     if (pii == null) {
       name = elname.getLocalPart().toUpperCase();
     } else {
-      name = pii.getPname();
+      name = pii.name();
     }
 
     bs.getContentHandler().startProperty(name);
