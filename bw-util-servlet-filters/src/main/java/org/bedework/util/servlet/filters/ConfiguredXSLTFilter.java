@@ -22,10 +22,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
+
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletException;
 
 /** This filter configures the superclass according to certain dynamic or
  * application parameters. These include some or all of the following:
@@ -157,15 +158,16 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
   /** This method can be overridden to allow a subclass to set up ready for a
    *  transformation.
    *
-   * <p>The default action provided here is to locate the PresentatonState
+   * <p>The default action provided here is to locate the PresentatoinState
    * object in the session and use that to configure the filter.
    *
    * @param   request    Incoming HttpServletRequest object
    * @param   xcfg       XSLTConfig Our globals.
    * @throws ServletException
    */
-  public void updateConfigInfo(HttpServletRequest request, XSLTConfig xcfg)
-                                     throws ServletException {
+  public void updateConfigInfo(final HttpServletRequest request,
+                               final XSLTConfig xcfg)
+          throws ServletException {
     PresentationState ps = getPresentationState(request);
 
     if (ps == null) {

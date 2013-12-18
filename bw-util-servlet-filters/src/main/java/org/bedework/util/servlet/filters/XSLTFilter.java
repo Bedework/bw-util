@@ -244,23 +244,23 @@ public class XSLTFilter extends AbstractFilter {
     final HttpServletResponse resp = (HttpServletResponse)response;
     long startTime = System.currentTimeMillis();
 
+    PooledBufferedOutputStream pbos = new PooledBufferedOutputStream();
+
+    WrappedResponse wrappedResp = new WrappedResponse(resp, hreq, getLogger());
+
+    filterChain.doFilter(req, wrappedResp);
+
     XsltGlobals glob = getXsltGlobals(hreq);
 
     glob.reason = null;
 
     if (debug) {
       getLogger().debug("XSLTFilter: Accessing filter for " +
-                        HttpServletUtils.getReqLine(hreq) + " " +
-                        hreq.getMethod() +
-                        " response class: " + resp.getClass().getName());
+                                HttpServletUtils.getReqLine(hreq) + " " +
+                                hreq.getMethod() +
+                                " response class: " + resp.getClass().getName());
       getLogger().debug("XSLTFilter: response: " + resp);
     }
-
-    PooledBufferedOutputStream pbos = new PooledBufferedOutputStream();
-
-    WrappedResponse wrappedResp = new WrappedResponse(resp, hreq, getLogger());
-
-    filterChain.doFilter(req, wrappedResp);
 
     /* We don't get a session till we've been through to the servlet.
      */
