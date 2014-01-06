@@ -43,13 +43,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 /** Helper for DAV interactions
 *
-* @author Mike Douglass  douglm @ bedework.edu
+* @author Mike Douglass  douglm - rpi.edu
 */
 public class DavUtil implements Serializable {
   protected boolean debug;
@@ -277,6 +278,11 @@ public class DavUtil implements Serializable {
     Collection<Element> responses = propfind(cl, normalizePath(path), props,
                                              depth0);
 
+    if (responses == null) {
+      // status 400
+      return null;
+    }
+
     DavChild dc = null;
 
     int count = 0; // validity
@@ -412,6 +418,10 @@ public class DavUtil implements Serializable {
     if (res != SC_MULTI_STATUS) {
       if (debug) {
         debugMsg("Got response " + res + " for path " + path);
+      }
+
+      if (res == HttpServletResponse.SC_NOT_FOUND) {
+        return null;
       }
 
       throw new Exception("Got response " + res + " for path " + path);
