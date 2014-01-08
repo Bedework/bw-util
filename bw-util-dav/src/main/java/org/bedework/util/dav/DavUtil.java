@@ -414,14 +414,14 @@ public class DavUtil implements Serializable {
                              content.length, // contentLen,
                              content);
 
+    if (res == HttpServletResponse.SC_NOT_FOUND) {
+      return null;
+    }
+
     int SC_MULTI_STATUS = 207; // not defined for some reason
     if (res != SC_MULTI_STATUS) {
       if (debug) {
         debugMsg("Got response " + res + " for path " + path);
-      }
-
-      if (res == HttpServletResponse.SC_NOT_FOUND) {
-        return null;
       }
 
       throw new Exception("Got response " + res + " for path " + path);
