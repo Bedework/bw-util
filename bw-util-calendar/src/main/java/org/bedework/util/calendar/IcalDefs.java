@@ -111,6 +111,9 @@ public class IcalDefs {
     /** */
     vavailability,
 
+    /** Not a top level - but we build a BwEvent out of it. */
+    available,
+
     /** */
     vpoll,
 
