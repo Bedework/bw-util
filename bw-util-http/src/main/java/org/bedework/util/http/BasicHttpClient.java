@@ -57,6 +57,7 @@ import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -70,6 +71,44 @@ public class BasicHttpClient extends DefaultHttpClient {
   private transient Logger log;
 
   private static PoolingClientConnectionManager connManager;
+
+  public static class IdleConnectionMonitorThread extends Thread {
+
+    private final PoolingClientConnectionManager connMgr;
+    private volatile boolean shutdown;
+
+    public IdleConnectionMonitorThread(PoolingClientConnectionManager connMgr) {
+      super();
+      this.connMgr = connMgr;
+    }
+
+    @Override
+    public void run() {
+      try {
+        while (!shutdown) {
+          synchronized (this) {
+            wait(5000);
+            // Close expired connections
+            connMgr.closeExpiredConnections();
+            // Optionally, close connections
+            // that have been idle longer than 30 sec
+            connMgr.closeIdleConnections(30, TimeUnit.SECONDS);
+          }
+        }
+      } catch (InterruptedException ex) {
+        // terminate
+      }
+    }
+
+    public void shutdown() {
+      shutdown = true;
+      synchronized (this) {
+        notifyAll();
+      }
+    }
+  }
+
+  private static IdleConnectionMonitorThread idleConnectionMonitor;
 
   static {
     SchemeRegistry sr = new SchemeRegistry();
@@ -88,6 +127,9 @@ public class BasicHttpClient extends DefaultHttpClient {
     // Increase max connections for localhost:80 to 50
     HttpHost localhost = new HttpHost("localhost", 80);
     connManager.setMaxPerRoute(new HttpRoute(localhost), 50);
+
+    idleConnectionMonitor = new IdleConnectionMonitorThread(connManager);
+    idleConnectionMonitor.start();
   }
 
   private HttpRequestBase method;
