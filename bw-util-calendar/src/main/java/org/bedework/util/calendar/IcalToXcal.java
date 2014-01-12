@@ -291,11 +291,9 @@ public class IcalToXcal {
     while (it.hasNext()) {
       Property prop = (Property)it.next();
 
-      PropertyInfoIndex pii;
+      PropertyInfoIndex pii = PropertyInfoIndex.fromName(prop.getName());
 
-      try {
-        pii = PropertyInfoIndex.valueOf(prop.getName().toUpperCase());
-      } catch (Throwable t) {
+      if (pii == null) {
         continue;
       }
 

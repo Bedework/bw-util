@@ -1114,6 +1114,11 @@ public class PropertyIndex implements Serializable {
                 DataType.DATE_TIME,
                 IS_SINGLE, allComponents),
 
+    /* For bedework annotations/overrides */
+    INSTANCE(BedeworkServerTags.xprop,
+           null,
+           IS_SINGLE, allComponents),
+
     /** location uid */
     LOCATION_UID(XcalTags.location,
                  LocationPropType.class,
@@ -1333,6 +1338,28 @@ public class PropertyIndex implements Serializable {
       this.ptype = ptype;
       this.param = param;
       this.immutable = immutable;
+    }
+
+    /** Property names can have "-" in them. This method takes the
+     * name, replaces any "-" with underscore and then tries valueOf.
+     *
+     * @param pname
+     * @return
+     */
+    public static PropertyInfoIndex fromName(final String pname) {
+      String name;
+
+      if (pname.indexOf("-") < 0) {
+        name = pname.toUpperCase();
+      } else {
+        name = pname.replace("-", "_").toUpperCase();
+      }
+
+      try {
+        return PropertyInfoIndex.valueOf(name);
+      } catch (Throwable t) {
+        return null;
+      }
     }
 
     /** get the qname
