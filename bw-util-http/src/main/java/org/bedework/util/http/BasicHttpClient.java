@@ -124,9 +124,14 @@ public class BasicHttpClient extends DefaultHttpClient {
     connManager.setMaxTotal(200);
     // Increase default max connection per route to 20
     connManager.setDefaultMaxPerRoute(20);
+
     // Increase max connections for localhost:80 to 50
     HttpHost localhost = new HttpHost("localhost", 80);
     connManager.setMaxPerRoute(new HttpRoute(localhost), 50);
+
+    // Increase max connections for localhost:8080 to 50
+    HttpHost localhost8080 = new HttpHost("localhost", 8080);
+    connManager.setMaxPerRoute(new HttpRoute(localhost8080), 50);
 
     idleConnectionMonitor = new IdleConnectionMonitorThread(connManager);
     idleConnectionMonitor.start();
