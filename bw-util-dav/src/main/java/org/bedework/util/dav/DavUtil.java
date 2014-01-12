@@ -20,6 +20,7 @@ package org.bedework.util.dav;
 
 import org.bedework.util.http.BasicHttpClient;
 import org.bedework.util.xml.XmlEmit;
+import org.bedework.util.xml.XmlEmit.NameSpace;
 import org.bedework.util.xml.XmlUtil;
 import org.bedework.util.xml.tagdefs.WebdavTags;
 
@@ -381,6 +382,8 @@ public class DavUtil implements Serializable {
     StringWriter sw = new StringWriter();
     XmlEmit xml = new XmlEmit();
 
+    addNs(xml, WebdavTags.namespace);
+
     xml.startEmit(sw);
 
     xml.openTag(WebdavTags.propfind);
@@ -398,6 +401,7 @@ public class DavUtil implements Serializable {
           continue;
         }
 
+        addNs(xml, pr.getNamespaceURI());
         xml.emptyTag(pr);
       }
     }
@@ -441,6 +445,18 @@ public class DavUtil implements Serializable {
   /* ====================================================================
    *                   XmlUtil wrappers
    * ==================================================================== */
+
+  /** Add a namespace
+   *
+   * @param val
+   * @throws Throwable
+   */
+  private void addNs(final XmlEmit xml,
+                     final String val) throws Throwable {
+    if (xml.getNameSpace(val) == null) {
+      xml.addNs(new NameSpace(val, null), false);
+    }
+  }
 
   /** Parse the content, and return the DOM representation.
    *
