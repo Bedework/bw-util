@@ -16,7 +16,6 @@
     specific language governing permissions and limitations
     under the License.
 */
-
 package org.bedework.util.misc;
 
 import java.util.List;
@@ -32,6 +31,8 @@ public class ToString {
   private String indent = "";
   private String delim = "";
 
+  private int lastNewLinePos = 0;
+
   private boolean valuesOnly;
 
   private final static int maxLen = 80;
@@ -39,7 +40,7 @@ public class ToString {
 
   /** Create an instance for the given object
    *
-   * @param o
+   * @param o the object
    */
   public ToString(final Object o) {
     sb = new StringBuilder(o.getClass().getSimpleName()).append("{");
@@ -52,7 +53,7 @@ public class ToString {
    * @return ToString configured to output mostly just the values.
    */
   public static ToString valuesOnly() {
-    ToString ts = new ToString();
+    final ToString ts = new ToString();
 
     ts.valuesOnly = true;
     ts.sb = new StringBuilder();
@@ -62,8 +63,8 @@ public class ToString {
 
   /** Create an instance for the given object and indentation
    *
-   * @param o
-   * @param indent
+   * @param o the object
+   * @param indent the indent
    */
   public ToString(final Object o, final String indent) {
     sb = new StringBuilder(indent);
@@ -85,13 +86,19 @@ public class ToString {
   public ToString delimit() {
     sb.append(delim);
     delim = ", ";
-    if (sb.length() > maxLen) {
-      sb.append("\n");
-      sb.append(indent);
-      sb.append(indentVal);
+    if (lineLength() > maxLen) {
+      outputNewLine();
     }
 
     return this;
+  }
+
+  /**
+   *
+   * @return length of current output line.
+   */
+  public int lineLength() {
+    return sb.length() - lastNewLinePos;
   }
 
   /** add new line and list delimiter
@@ -101,9 +108,7 @@ public class ToString {
   public ToString newLine() {
     sb.append(delim);
     delim = "";
-    sb.append("\n");
-    sb.append(indent);
-    sb.append(indentVal);
+    outputNewLine();
 
     return this;
   }
@@ -131,24 +136,23 @@ public class ToString {
   }
 
   /**
-   * @param name
-   * @param val value to append
-   * @param withNewLines
+   * @param name of field
+   * @param val iterable value to append
+   * @param withNewLines true to add new line after each element
    * @return this object
    */
   public ToString append(final String name,
-                         final Iterable<? extends Object> val,
+                         final Iterable<?> val,
                          final boolean withNewLines) {
-    delimit();
-    sb.append(name);
-    sb.append("=[");
+    nameEquals(name);
+    sb.append("[");
 
     if (val == null) {
       sb.append("]");
       return this;
     }
 
-    for (Object o: val){
+    for (final Object o: val){
       if (withNewLines) {
         newLine();
       }
@@ -162,47 +166,42 @@ public class ToString {
   }
 
   /**
-   * @param name
-   * @param value
+   * @param name of field
+   * @param value an object
    * @return this object
    */
   public ToString append(final String name, final Object value) {
-    delimit();
-    sb.append(name);
-    sb.append("=");
+    nameEquals(name);
     sb.append(value);
 
     return this;
   }
 
   /**
-   * @param name
-   * @param value
+   * @param name of field
+   * @param value Long
    * @return this object
    */
   public ToString append(final String name, final Long value) {
-    delimit();
-    sb.append(name);
-    sb.append("=");
+    nameEquals(name);
     sb.append(value);
 
     return this;
   }
 
   /**
-   * @param name
+   * @param name of field
    * @param value - list of values
    * @return this object
    */
   public ToString append(final String name, final List value) {
-    delimit();
-    sb.append(name);
-    sb.append("=[");
+    nameEquals(name);
+    sb.append("[");
 
-    String saveDelim = delim;
+    final String saveDelim = delim;
     delim= "";
 
-    for (Object o: value) {
+    for (final Object o: value) {
       delimit();
       sb.append(o);
     }
@@ -214,7 +213,7 @@ public class ToString {
   }
 
   /**
-   * @param name
+   * @param name of field
    * @param value boolean
    * @return this object
    */
@@ -223,7 +222,7 @@ public class ToString {
   }
 
   /**
-   * @param name
+   * @param name of field
    * @param value int
    * @return this object
    */
@@ -236,8 +235,7 @@ public class ToString {
    * @return this object
    */
   public ToString append(final Throwable t) {
-    append("Exception building toString");
-    return append(t.getMessage());
+    return append("Exception", t.getMessage());
   }
 
   @Override
@@ -247,5 +245,18 @@ public class ToString {
     }
 
     return sb.toString();
+  }
+
+  private void outputNewLine() {
+    sb.append("\n");
+    lastNewLinePos = sb.length();
+    sb.append(indent);
+    sb.append(indentVal);
+  }
+
+  private void nameEquals(final String name) {
+    delimit();
+    sb.append(name);
+    sb.append("=");
   }
 }
