@@ -49,11 +49,20 @@ import javax.management.QueryExp;
 public class ManagementContext {
   private transient Logger log;
 
-  /**
-   * Default domain
+  /** Default jmx domain
    */
-  public static final String DEFAULT_DOMAIN = "jboss";
-  public static final boolean isJboss5 = true;
+  public static final String DEFAULT_DOMAIN =
+          System.getProperty("org.bedework.jmx.defaultdomain");
+
+  /** I think we need this for the class loading
+   */
+  public static final boolean isJboss5 =
+          Boolean.getBoolean("org.bedework.jmx.isJboss5");
+
+  final static String JMI_DOMAIN = "JMImplementation";
+  final static String MBEAN_REGISTRY = JMI_DOMAIN + ":type=MBeanRegistry";
+  final static String CLASSLOADER =
+          System.getProperty("org.bedework.jmx.classloader");
 
   private MBeanServer beanServer;
   private String jmxDomainName = DEFAULT_DOMAIN;
@@ -63,7 +72,8 @@ public class ManagementContext {
   private boolean createMBeanServer = true;
   private boolean locallyCreateMBeanServer;
   private AtomicBoolean started = new AtomicBoolean(false);
-  private List<ObjectName> registeredMBeanNames = new CopyOnWriteArrayList<ObjectName>();
+  private List<ObjectName> registeredMBeanNames =
+          new CopyOnWriteArrayList<>();
 
   /**
    *
@@ -72,15 +82,15 @@ public class ManagementContext {
   }
 
   /**
-   * @param domain
+   * @param domain name or null
    */
   public ManagementContext(final String domain) {
     setJmxDomainName(domain);
-    useDomainSpecifiedForServer = true;
+    useDomainSpecifiedForServer = domain != null;
   }
 
   /**
-   * @param server
+   * @param server an mbean server
    */
   public ManagementContext(final MBeanServer server) {
     beanServer = server;
@@ -122,17 +132,26 @@ public class ManagementContext {
   }
 
   /**
-   * @return Returns the jmxDomainName.
+   * @param val The jmxDomainName to set.
+   */
+  public void setJmxDomainName(final String val) {
+    jmxDomainName = val;
+  }
+
+  /**
+   * @return the jmxDomainName.
    */
   public String getJmxDomainName() {
     return jmxDomainName;
   }
 
   /**
-   * @param jmxDomainName The jmxDomainName to set.
+   * Set the MBeanServer
+   *
+   * @param val the server
    */
-  public void setJmxDomainName(final String jmxDomainName) {
-    this.jmxDomainName = jmxDomainName;
+  public void setMBeanServer(final MBeanServer val) {
+    beanServer = val;
   }
 
   /**
@@ -145,15 +164,6 @@ public class ManagementContext {
       beanServer = findMBeanServer();
     }
     return beanServer;
-  }
-
-  /**
-   * Set the MBeanServer
-   *
-   * @param beanServer
-   */
-  public void setMBeanServer(final MBeanServer beanServer) {
-    this.beanServer = beanServer;
   }
 
   /**
@@ -289,13 +299,9 @@ public class ManagementContext {
     return getMBeanServer().getAttribute(name, attribute);
   }
 
-  final static String JMI_DOMAIN = "JMImplementation";
-  final static String MBEAN_REGISTRY = JMI_DOMAIN + ":type=MBeanRegistry";
-  final static String CLASSLOADER = "org.jboss.mx.classloader";
-
   /**
-   * @param bean
-   * @param name
+   * @param bean to register
+   * @param name its name
    * @throws Exception
    */
   public void registerMBean(final Object bean,
@@ -344,14 +350,15 @@ public class ManagementContext {
    *             satisfies the query, an empty list is returned.
    * @throws Exception
    */
-  public Set queryNames(final ObjectName name, final QueryExp query) throws Exception{
+  public Set queryNames(final ObjectName name,
+                        final QueryExp query) throws Exception{
     return getMBeanServer().queryNames(name, query);
   }
 
   /**
    * Unregister an MBean
    *
-   * @param name
+   * @param name of mbean
    * @throws JMException
    */
   public void unregisterMBean(final ObjectName name) throws JMException {
@@ -373,45 +380,53 @@ public class ManagementContext {
           MBeanServer mbsvr = null;
 
           for (MBeanServer svr: list) {
+            if (jmxDomainName == null) {
+              // Take first?
+              return svr;
+            }
+
             String svrDomain = svr.getDefaultDomain();
             if ((svrDomain != null) && svrDomain.equals(jmxDomainName)) {
-              mbsvr = svr;
-              break;
+              return svr;
             }
           }
 
-          if (mbsvr == null)  {
-            Logger.getLogger(ConfBase.class).warn("Unable to locate mbean server for domain" +
-                jmxDomainName);
+          // Didn't find a match - can we use the default
 
-            if (!useDomainSpecifiedForServer) {
-              result = list.get(0);
-            }
-          } else {
-            result = mbsvr;
+          warn("Unable to locate mbean server for domain " +
+              jmxDomainName);
+
+          if (!useDomainSpecifiedForServer) {
+            return list.get(0);
           }
         }
       }
 
-      if ((result == null) && createMBeanServer) {
-        result = createMBeanServer();
+      // Didn't find a match - can we create?
+
+      if (createMBeanServer) {
+        return createMBeanServer();
       }
+
+      // Out of luck
     } catch (NoClassDefFoundError e) {
       error(e);
     } catch (Throwable e) {
       // probably don't have access to system properties
       error(e);
     }
-    return result;
+
+    return null;
   }
 
   /**
-   * @return
+   * @return a server
    * @throws NullPointerException
    * @throws MalformedObjectNameException
    * @throws IOException
    */
-  protected MBeanServer createMBeanServer() throws MalformedObjectNameException, IOException {
+  protected MBeanServer createMBeanServer()
+          throws MalformedObjectNameException, IOException {
     MBeanServer mbeanServer = MBeanServerFactory.createMBeanServer(jmxDomainName);
     locallyCreateMBeanServer = true;
 
