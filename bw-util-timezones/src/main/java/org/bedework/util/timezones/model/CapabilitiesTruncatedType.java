@@ -26,10 +26,10 @@ import java.util.List;
 /**
  *
  *         The element used as the container for information about the
- *         servers source of data and contacts.
+ *         servers handling of truncation.
  *
  * <pre>
-   info "info" : {
+   truncation "info" : {
      primary_source / secondary_source,
      contacts
    }
@@ -48,92 +48,43 @@ import java.util.List;
  *
  *
  */
-public class CapabilitiesInfoType {
-  protected String source;
-  protected String primarySource;
-  protected CapabilitiesTruncatedType truncated;
-  protected List<String> contacts;
+public class CapabilitiesTruncatedType {
+  protected boolean any;
+  protected List<Integer> years;
+  protected boolean untruncated;
 
   /**
-   * Gets the value of the source property.
+   * Gets the value of the any property.
    *
    * @return
    *     possible object is
-   *     {@link String }
+   *     {@link boolean }
    *
    */
-  public String getSource() {
-    return source;
+  public boolean getAny() {
+    return any;
   }
 
   /**
-   * Sets the value of the source property.
+   * Sets the value of the any property.
    *
    * @param value
    *     allowed object is
    *     {@link String }
    *
    */
-  public void setSource(final String value) {
-    source = value;
+  public void setAny(final boolean value) {
+    any = value;
   }
 
   /**
-   * Gets the value of the primarySource property.
-   *
-   * @return
-   *     possible object is
-   *     {@link String }
-   *
-   */
-  public String getPrimarySource() {
-    return primarySource;
-  }
-
-  /**
-   * Sets the value of the primarySource property.
-   *
-   * @param value
-   *     allowed object is
-   *     {@link String }
-   *
-   */
-  public void setPrimarySource(final String value) {
-    primarySource = value;
-  }
-
-  /**
-   * Gets the value of the truncated property.
-   *
-   * @return
-   *     possible object is
-   *     {@link CapabilitiesTruncatedType }
-   *
-   */
-  public CapabilitiesTruncatedType getTruncated() {
-    return truncated;
-  }
-
-  /**
-   * Sets the value of the truncated property.
-   *
-   * @param value
-   *     allowed object is
-   *     {@link CapabilitiesTruncatedType }
-   *
-   */
-  public void setTruncated(final CapabilitiesTruncatedType value) {
-    truncated = value;
-  }
-
-  /**
-   * Gets the value of the contact property.
+   * Gets the value of the years property.
    *
    * <p>
    * This accessor method returns a reference to the live list,
    * not a snapshot. Therefore any modification you make to the
    * returned list will be present inside the Json object.
-   * This is why there is not a <CODE>set</CODE> method for the contacts property.
+   * This is why there is not a <CODE>set</CODE> method for the years property.
    *
    * <p>
    * For example, to add a new item, do as follows:
@@ -145,23 +96,46 @@ public class CapabilitiesInfoType {
    * <p>
    * Objects of the following type(s) are allowed in the list
    * {@link String }
-   * @return list of contacts
+   * @return list of years
    */
-  public List<String> getContacts() {
-    if (contacts == null) {
-      contacts = new ArrayList<String>();
+  public List<Integer> getYears() {
+    if (years == null) {
+      years = new ArrayList<>();
     }
-    return contacts;
+    return years;
+  }
+
+  /** Indicates whether the server can can supply untruncated When
+   * set to "true" indicates that, in addition to truncated data being
+   * available, the server can return untruncated data if an action "get"
+   * request is executed without a "truncated" query parameter
+   *
+   * @return true for untruncated available
+   *
+   */
+  public boolean getUntruncated() {
+    return untruncated;
+  }
+
+  /**
+   * Sets the value of the untruncated property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setUntruncated(final boolean value) {
+    untruncated = value;
   }
 
   @Override
   public String toString() {
     ToString ts = new ToString(this);
 
-    ts.append("source", getSource());
-    ts.append("primarySource", getPrimarySource());
-    ts.append("truncated", getTruncated());
-    ts.append("contacts", getContacts(), true);
+    ts.append("any", getAny());
+    ts.append("years", getYears(), false);
+    ts.append("untruncated", getUntruncated());
 
     return ts.toString();
   }
