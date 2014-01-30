@@ -20,6 +20,9 @@ package org.bedework.util.timezones.model;
 
 import org.bedework.util.misc.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  *         This defines the name, type and characteristics of an operation
@@ -57,7 +60,7 @@ public class CapabilitiesAcceptParameterType {
   protected String name;
   protected boolean required;
   protected boolean multi;
-  protected String value;
+  protected List<String> values;
 
   /**
    * Gets the value of the name property.
@@ -127,8 +130,8 @@ public class CapabilitiesAcceptParameterType {
    *     {@link String }
    *
    */
-  public String getValue() {
-    return value;
+  public List<String> getValues() {
+    return values;
   }
 
   /**
@@ -139,8 +142,11 @@ public class CapabilitiesAcceptParameterType {
    *     {@link String }
    *
    */
-  public void setValue(final String value) {
-    this.value = value;
+  public void addValue(final String value) {
+    if (values == null) {
+      values = new ArrayList<>();
+    }
+    values.add(value);
   }
 
   @Override
@@ -150,7 +156,7 @@ public class CapabilitiesAcceptParameterType {
     ts.append("name", getName());
     ts.append("required", isRequired());
     ts.append("multi", isMulti());
-    ts.append("value", getValue());
+    ts.append("values", getValues());
 
     return ts.toString();
   }
