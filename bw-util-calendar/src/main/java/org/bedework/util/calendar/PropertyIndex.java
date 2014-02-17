@@ -1114,10 +1114,10 @@ public class PropertyIndex implements Serializable {
                 DataType.DATE_TIME,
                 IS_SINGLE, allComponents),
 
-    /* For bedework annotations/overrides */
-    INSTANCE(BedeworkServerTags.xprop,
-           null,
-           IS_SINGLE, allComponents),
+    /* For bedework list of override recurrence ids */
+    RECURRENCE_IDS(BedeworkServerTags.xprop,
+             null,
+             IS_SINGLE, allComponents),
 
     /** location uid */
     LOCATION_UID(XcalTags.location,
