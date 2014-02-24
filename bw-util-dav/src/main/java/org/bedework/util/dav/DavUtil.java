@@ -331,7 +331,7 @@ public class DavUtil implements Serializable {
 
     Collection<Element> responses = propfind(cl, path, props, depth1);
 
-    Collection<DavChild> result = new ArrayList<DavChild>();
+    Collection<DavChild> result = new ArrayList<>();
 
     int count = 0; // validity
     for (Element resp: responses) {
