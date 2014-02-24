@@ -197,9 +197,9 @@ public class BasicHttpClient extends DefaultHttpClient {
    * @throws HttpException
    */
   public BasicHttpClient(final String host,
-                   final int port,
-                   final String scheme,
-                   final int timeOut) throws HttpException {
+                         final int port,
+                         final String scheme,
+                         final int timeOut) throws HttpException {
     this(host, port, scheme, timeOut, true);
   }
 
@@ -212,10 +212,10 @@ public class BasicHttpClient extends DefaultHttpClient {
    * @throws HttpException
    */
   public BasicHttpClient(final String host,
-                   final int port,
-                   final String scheme,
-                   final int timeOut,
-                   final boolean followRedirects) throws HttpException {
+                         final int port,
+                         final String scheme,
+                         final int timeOut,
+                         final boolean followRedirects) throws HttpException {
     super(connManager, null);
 
     debug = getLogger().isDebugEnabled();
@@ -236,7 +236,7 @@ public class BasicHttpClient extends DefaultHttpClient {
                            timeOut * 2);
 
     params.setBooleanParameter(ClientPNames.HANDLE_REDIRECTS,
-                               Boolean.valueOf(followRedirects));
+                               followRedirects);
   }
 
   /**
@@ -261,7 +261,7 @@ public class BasicHttpClient extends DefaultHttpClient {
   }
 
   /**
-   * @param val
+   * @param val max per route
    */
   public static void setDefaultMaxPerRoute(final int val) {
     connManager.setDefaultMaxPerRoute(val);
@@ -444,8 +444,8 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   /** Send content
    *
-   * @param content
-   * @param contentType
+   * @param content the content as bytes
+   * @param contentType its type
    * @throws HttpException
    */
   public void setContent(final byte[] content,
