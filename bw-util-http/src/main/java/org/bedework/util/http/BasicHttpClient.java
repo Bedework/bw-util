@@ -18,6 +18,8 @@
 */
 package org.bedework.util.http;
 
+import org.bedework.util.misc.Util;
+
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
@@ -57,6 +59,7 @@ import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
@@ -340,22 +343,22 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   /** Send a (simple) request to the server
    *
-   * @param method
-   * @param url
-   * @param hdrs
+   * @param method the method, GET, PUT etc
+   * @param url the url
+   * @param hdrs may be null
    * @return int    status code
    * @throws HttpException
    */
   public int sendRequest(final String method, final String url,
-                         final Header[] hdrs) throws HttpException {
+                         final List<Header> hdrs) throws HttpException {
     return sendRequest(method, url, hdrs, null, 0, null);
   }
 
   /** Send a request to the server
    *
-   * @param methodName
-   * @param url
-   * @param hdrs
+   * @param methodName the method, GET, PUT etc
+   * @param url the url
+   * @param hdrs may be null
    * @param contentType
    * @param contentLen
    * @param content
@@ -364,7 +367,7 @@ public class BasicHttpClient extends DefaultHttpClient {
    */
   public int sendRequest(final String methodName,
                          final String url,
-                         final Header[] hdrs,
+                         final List<Header> hdrs,
                          final String contentType, final int contentLen,
                          final byte[] content) throws HttpException {
     return sendRequest(methodName, url, hdrs,
@@ -385,7 +388,7 @@ public class BasicHttpClient extends DefaultHttpClient {
    */
   public int sendRequest(final String methodName,
                          final String url,
-                         final Header[] hdrs,
+                         final List<Header> hdrs,
                          String contentType, final int contentLen,
                          final byte[] content,
                          final HttpParams params) throws HttpException {
@@ -412,9 +415,9 @@ public class BasicHttpClient extends DefaultHttpClient {
                                               credentials);
     }
 
-    if (hdrs != null) {
-      for (int i = 0; i < hdrs.length; i++) {
-        method.addHeader(hdrs[i]);
+    if (!Util.isEmpty(hdrs)) {
+      for (Header hdr: hdrs) {
+        method.addHeader(hdr);
       }
     }
 

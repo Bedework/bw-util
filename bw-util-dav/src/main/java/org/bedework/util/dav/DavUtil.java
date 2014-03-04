@@ -19,6 +19,7 @@
 package org.bedework.util.dav;
 
 import org.bedework.util.http.BasicHttpClient;
+import org.bedework.util.misc.Util;
 import org.bedework.util.xml.XmlEmit;
 import org.bedework.util.xml.XmlEmit.NameSpace;
 import org.bedework.util.xml.XmlUtil;
@@ -65,10 +66,23 @@ public class DavUtil implements Serializable {
   /** */
   public static final Header depthinf = new BasicHeader("depth", "infinity");
 
+  /** Added to each request */
+  private List<Header> extraHeaders;
+
   /**
    */
   public DavUtil() {
     debug = getLogger().isDebugEnabled();
+  }
+
+  /**
+   */
+  public DavUtil(final List<Header> extraHeaders) {
+    this();
+
+    if (!Util.isEmpty(extraHeaders)) {
+      this.extraHeaders = new ArrayList<>(extraHeaders);
+    }
   }
 
   /** Represents the child of a collection
@@ -276,7 +290,9 @@ public class DavUtil implements Serializable {
   public DavChild getProps(final BasicHttpClient cl,
                            final String path,
                            final Collection<QName> props) throws Throwable {
-    Collection<Element> responses = propfind(cl, normalizePath(path), props,
+    Collection<Element> responses = propfind(cl,
+                                             normalizePath(path),
+                                             props,
                                              depth0);
 
     if (responses == null) {
@@ -316,10 +332,10 @@ public class DavUtil implements Serializable {
   }
 
   /**
-   * @param cl
-   * @param parentPath
+   * @param cl the client
+   * @param parentPath the path
    * @param props   null for a default set
-   * @return Collection<DavChild>
+   * @return Collection<DavChild> - empty for no children - null for path not found.
    * @throws Throwable
    */
   public Collection<DavChild> getChildrenUrls(final BasicHttpClient cl,
@@ -330,6 +346,10 @@ public class DavUtil implements Serializable {
     URI parentURI = new URI(path);
 
     Collection<Element> responses = propfind(cl, path, props, depth1);
+
+    if (responses == null) {
+      return null;
+    }
 
     Collection<DavChild> result = new ArrayList<>();
 
@@ -411,12 +431,11 @@ public class DavUtil implements Serializable {
 
     byte[] content = sw.toString().getBytes();
 
-    Header[] hdr = {depthHeader};
-    int res = cl.sendRequest("PROPFIND", path,
-                             hdr,
-                             "text/xml", // contentType,
-                             content.length, // contentLen,
-                             content);
+    int res = sendRequest(cl, "PROPFIND", path,
+                          depthHeader,
+                          "text/xml", // contentType,
+                          content.length, // contentLen,
+                          content);
 
     if (res == HttpServletResponse.SC_NOT_FOUND) {
       return null;
@@ -751,6 +770,40 @@ public class DavUtil implements Serializable {
     }
 
     return path;
+  }
+
+  private int sendRequest(final BasicHttpClient cl,
+                          final String methodName,
+                          final String url,
+                          final Header header,
+                          final String contentType,
+                          final int contentLen,
+                          final byte[] content) throws Throwable {
+    int hdrSize = 0;
+
+    if (header != null) {
+      hdrSize = 1;
+    }
+
+    if (!Util.isEmpty(extraHeaders)) {
+      hdrSize += extraHeaders.size();
+    }
+
+    List<Header> hdrs = null;
+
+    if (hdrSize > 0) {
+      hdrs = new ArrayList<>(hdrSize);
+      if (header != null) {
+        hdrs.add(header);
+      }
+
+      if (!Util.isEmpty(extraHeaders)) {
+        hdrs.addAll(extraHeaders);
+      }
+    }
+
+    return cl.sendRequest(methodName, url, hdrs,
+                          contentType, contentLen, content);
   }
 
   /** ===================================================================
