@@ -100,7 +100,10 @@ public class DavUtil implements Serializable {
     public boolean isCollection;
 
     /** Same order as supplied properties */
-    public Collection<DavProp> propVals = new ArrayList<DavProp>();
+    public Collection<DavProp> propVals = new ArrayList<>();
+
+    /* Extracted from returned resource types */
+    public Collection<QName> resourceTypes = new ArrayList<>();
 
     @Override
     public int compareTo(final DavChild that) {
@@ -742,8 +745,9 @@ public class DavUtil implements Serializable {
           for (Element rtpr: rtypeProps) {
             if (XmlUtil.nodeMatches(rtpr, WebdavTags.collection)) {
               dc.isCollection = true;
-              break;
             }
+
+            dc.resourceTypes.add(XmlUtil.fromNode(rtpr));
           }
         } else {
           DavProp dp = new DavProp();
