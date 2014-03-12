@@ -56,6 +56,10 @@ public class BedeworkServerTags {
   public static final QName defaultPageSize = new QName(bedeworkCaldavNamespace,
                                                         "defaultPageSize");
 
+  /** boolean value */
+  public static final QName externalUser = new QName(bedeworkCaldavNamespace,
+                                                        "externalUser");
+
   /**   */
   public static final QName isTopicalArea = new QName(bedeworkCaldavNamespace,
                                                 "isTopicalArea");
