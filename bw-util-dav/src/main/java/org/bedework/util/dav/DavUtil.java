@@ -105,6 +105,23 @@ public class DavUtil implements Serializable {
     /* Extracted from returned resource types */
     public Collection<QName> resourceTypes = new ArrayList<>();
 
+    /**
+     * @param nm a QName
+     * @return DavProp or null
+     */
+    public DavProp findProp(final QName nm) {
+      if (Util.isEmpty(propVals)) {
+        return null;
+      }
+
+      for (DavProp dp: propVals) {
+        if (nm.equals(dp.name)) {
+          return dp;
+        }
+      }
+
+      return null;
+    }
     @Override
     public int compareTo(final DavChild that) {
       if (isCollection != that.isCollection) {
@@ -135,7 +152,7 @@ public class DavUtil implements Serializable {
     /** */
     public QName name;
     /** */
-    public String content;
+    public Element element;
     /** */
     public int status;
   }
@@ -344,20 +361,20 @@ public class DavUtil implements Serializable {
   public Collection<DavChild> getChildrenUrls(final BasicHttpClient cl,
                                               final String parentPath,
                                               final Collection<QName> props) throws Throwable {
-    String path = normalizePath(parentPath);
+    final String path = normalizePath(parentPath);
 
-    URI parentURI = new URI(path);
+    final URI parentURI = new URI(path);
 
-    Collection<Element> responses = propfind(cl, path, props, depth1);
+    final Collection<Element> responses = propfind(cl, path, props, depth1);
 
     if (responses == null) {
       return null;
     }
 
-    Collection<DavChild> result = new ArrayList<>();
+    final Collection<DavChild> result = new ArrayList<>();
 
     int count = 0; // validity
-    for (Element resp: responses) {
+    for (final Element resp: responses) {
       count++;
 
       if (XmlUtil.nodeMatches(resp, WebdavTags.responseDescription)) {
@@ -391,10 +408,10 @@ public class DavUtil implements Serializable {
   }
 
   /**
-   * @param cl
-   * @param path
+   * @param cl the client
+   * @param path to resource
    * @param props   null for a default set
-   * @param depthHeader
+   * @param depthHeader to set depth of operation
    * @return Collection<Element> from multi-status response
    * @throws Throwable
    */
@@ -402,8 +419,8 @@ public class DavUtil implements Serializable {
                                       final String path,
                                       final Collection<QName> props,
                                       final Header depthHeader) throws Throwable {
-    StringWriter sw = new StringWriter();
-    XmlEmit xml = new XmlEmit();
+    final StringWriter sw = new StringWriter();
+    final XmlEmit xml = new XmlEmit();
 
     addNs(xml, WebdavTags.namespace);
 
@@ -415,7 +432,7 @@ public class DavUtil implements Serializable {
     xml.emptyTag(WebdavTags.resourcetype);
 
     if (props != null) {
-      for (QName pr: props) {
+      for (final QName pr: props) {
         if (pr.equals(WebdavTags.displayname)) {
           continue;
         }
@@ -432,19 +449,19 @@ public class DavUtil implements Serializable {
     xml.closeTag(WebdavTags.prop);
     xml.closeTag(WebdavTags.propfind);
 
-    byte[] content = sw.toString().getBytes();
+    final byte[] content = sw.toString().getBytes();
 
-    int res = sendRequest(cl, "PROPFIND", path,
-                          depthHeader,
-                          "text/xml", // contentType,
-                          content.length, // contentLen,
-                          content);
+    final int res = sendRequest(cl, "PROPFIND", path,
+                                depthHeader,
+                                "text/xml", // contentType,
+                                content.length, // contentLen,
+                                content);
 
     if (res == HttpServletResponse.SC_NOT_FOUND) {
       return null;
     }
 
-    int SC_MULTI_STATUS = 207; // not defined for some reason
+    final int SC_MULTI_STATUS = 207; // not defined for some reason
     if (res != SC_MULTI_STATUS) {
       if (debug) {
         debugMsg("Got response " + res + " for path " + path);
@@ -453,9 +470,9 @@ public class DavUtil implements Serializable {
       throw new Exception("Got response " + res + " for path " + path);
     }
 
-    Document doc = parseContent(cl.getResponseBodyAsStream());
+    final Document doc = parseContent(cl.getResponseBodyAsStream());
 
-    Element root = doc.getDocumentElement();
+    final Element root = doc.getDocumentElement();
 
     /*    <!ELEMENT multistatus (response+, responsedescription?) > */
 
@@ -756,10 +773,10 @@ public class DavUtil implements Serializable {
 
           dp.name = new QName(pr.getNamespaceURI(), pr.getLocalName());
           dp.status = st;
-          dp.content = getElementContent(pr);
+          dp.element = pr;
 
           if (XmlUtil.nodeMatches(pr, WebdavTags.displayname)) {
-            dc.displayName = dp.content;
+            dc.displayName = getElementContent(pr);
           }
         }
       }

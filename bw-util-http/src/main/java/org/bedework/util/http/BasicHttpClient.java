@@ -174,6 +174,10 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   private Credentials credentials;
 
+  private String baseURIValue;
+
+  private URI baseURI;
+
   /**
    * @param timeOut - millisecs, 0 for no timeout
    * @throws HttpException
@@ -240,6 +244,22 @@ public class BasicHttpClient extends DefaultHttpClient {
 
     params.setBooleanParameter(ClientPNames.HANDLE_REDIRECTS,
                                followRedirects);
+  }
+
+  /**
+   * @param val the base URI to be used to resolve non-absolute URIs
+   */
+  public void setBaseURIValue(final String val) {
+    baseURIValue = val;
+    baseURI = null;
+  }
+
+  /**
+   * @param val the base URI to be used to resolve non-absolute URIs
+   */
+  public void setBaseURI(final URI val) {
+    baseURIValue = null;
+    baseURI = val;
   }
 
   /**
@@ -405,39 +425,57 @@ public class BasicHttpClient extends DefaultHttpClient {
                " contentType=" + contentType);
     }
 
-    method = findMethod(methodName, url);
-
-    URI u = method.getURI();
-
-    if (credentials != null) {
-      getCredentialsProvider().setCredentials(new AuthScope(u.getHost(),
-                                                            u.getPort()),
-                                              credentials);
-    }
-
-    if (!Util.isEmpty(hdrs)) {
-      for (Header hdr: hdrs) {
-        method.addHeader(hdr);
-      }
-    }
-
-    if (method instanceof HttpEntityEnclosingRequestBase) {
-      if (contentType == null) {
-        contentType = "text/xml";
-      }
-
-      if (content != null) {
-        setContent(content, contentType);
-      }
-    }
-
-    if (params != null) {
-      method.setParams(params);
-    }
-
     try {
+      URI u = new URI(url);
+
+      if (u.getHost() == null) {
+        if ((baseURI == null) && (baseURIValue != null)) {
+          baseURI = new URI(baseURIValue);
+        }
+
+        if (baseURI == null) {
+          throw new HttpException("No base URI specified for non-absolute URI " + url);
+        }
+
+        if (baseURI.getHost() == null) {
+          throw new HttpException("Base URI must be absolute: " + baseURI);
+        }
+
+        u = u.resolve(baseURI);
+      }
+
+      method = findMethod(methodName, u);
+
+      if (credentials != null) {
+        getCredentialsProvider().setCredentials(new AuthScope(u.getHost(),
+                                                              u.getPort()),
+                                                credentials);
+      }
+
+      if (!Util.isEmpty(hdrs)) {
+        for (final Header hdr: hdrs) {
+          method.addHeader(hdr);
+        }
+      }
+
+      if (method instanceof HttpEntityEnclosingRequestBase) {
+        if (contentType == null) {
+          contentType = "text/xml";
+        }
+
+        if (content != null) {
+          setContent(content, contentType);
+        }
+      }
+
+      if (params != null) {
+        method.setParams(params);
+      }
+
       response = execute(method);
-    } catch (Throwable t) {
+    } catch (final HttpException he) {
+      throw he;
+    } catch (final Throwable t) {
       throw new HttpException(t.getLocalizedMessage(), t);
     }
     status = response.getStatusLine().getStatusCode();
@@ -587,13 +625,13 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   /** Specify the next method by name.
    *
-   * @param name
-   * @param uri
+   * @param name of the method
+   * @param uri target
    * @return method object
    * @throws HttpException
    */
-  public HttpRequestBase findMethod(final String name,
-                                    final String uri) throws HttpException {
+  protected HttpRequestBase findMethod(final String name,
+                                       final URI uri) throws HttpException {
     String nm = name.toUpperCase();
 
     if ("PUT".equals(nm)) {
