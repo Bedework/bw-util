@@ -441,7 +441,7 @@ public class BasicHttpClient extends DefaultHttpClient {
           throw new HttpException("Base URI must be absolute: " + baseURI);
         }
 
-        u = u.resolve(baseURI);
+        u = baseURI.resolve(u);
       }
 
       method = findMethod(methodName, u);
@@ -860,17 +860,28 @@ public class BasicHttpClient extends DefaultHttpClient {
   }
 
   /**
-   * @param path
+   * @param path  to resource
    * @return InputStream
    * @throws HttpException
    */
   public InputStream get(final String path) throws HttpException {
-    int respCode = sendRequest("GET",
-                               path,
-                               null,
-                               "application/text",
-                               0, // contentLen
-                               null);    //content
+    return get(path, null);
+  }
+
+  /**
+   * @param path  to resource
+   * @param hdrs - may be null
+   * @return InputStream
+   * @throws HttpException
+   */
+  public InputStream get(final String path,
+                         final List<Header> hdrs) throws HttpException {
+    final int respCode = sendRequest("GET",
+                                     path,
+                                     hdrs,
+                                     "application/text",
+                                     0, // contentLen
+                                     null);    //content
 
     if (debug) {
       debugMsg("getFile: response code " + respCode);
