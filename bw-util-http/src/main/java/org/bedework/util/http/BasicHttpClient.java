@@ -174,6 +174,8 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   private Credentials credentials;
 
+  private boolean hostSpecified;
+
   private String baseURIValue;
 
   private URI baseURI;
@@ -230,6 +232,7 @@ public class BasicHttpClient extends DefaultHttpClient {
     HttpParams params = getParams();
 
     if (host != null) {
+      hostSpecified = true;
       HttpHost httpHost = new HttpHost(host, port, scheme);
       params.setParameter(ClientPNames.DEFAULT_HOST,
                           httpHost);
@@ -428,7 +431,7 @@ public class BasicHttpClient extends DefaultHttpClient {
     try {
       URI u = new URI(url);
 
-      if (u.getHost() == null) {
+      if (!hostSpecified && (u.getHost() == null)) {
         if ((baseURI == null) && (baseURIValue != null)) {
           baseURI = new URI(baseURIValue);
         }
