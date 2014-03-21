@@ -51,6 +51,9 @@ public class WebdavTags {
   public static final QName aclRestrictions = makeQName("acl-restrictions");
 
   /** */
+  public static final QName addMember = makeQName("add-member");
+
+  /** */
   public static final QName all = makeQName("all");
 
   /** */
