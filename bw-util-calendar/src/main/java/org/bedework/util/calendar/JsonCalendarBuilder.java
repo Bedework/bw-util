@@ -99,6 +99,9 @@ public class JsonCalendarBuilder {
 
   private final TimeZoneRegistry tzRegistry;
 
+  private String lastComponent;
+  private String lastProperty;
+
   /**
    * @param tzRegistry a custom timezone registry
    */
@@ -133,7 +136,7 @@ public class JsonCalendarBuilder {
     bs.setContentHandler(new ContentHandlerImpl(bs));
 
     try {
-      JsonParser parser = jsonFactory.createParser(in);
+      final JsonParser parser = jsonFactory.createParser(in);
 
       process(parser, bs);
     } catch (Throwable t) {
@@ -157,12 +160,14 @@ public class JsonCalendarBuilder {
 
     try {
       arrayStart(parser);
-      String ctype = textField(parser);
+      final String ctype = textField(parser);
 
       if (!ctype.equals("vcalendar")) {
         // error
         throwException("Expected vcalendar: found " + ctype, parser);
       }
+
+      lastComponent = "vcalendar";
 
       bs.setCalendar(null);
       processVcalendar(parser, bs);
@@ -172,7 +177,7 @@ public class JsonCalendarBuilder {
       }
 
       arrayEnd(parser);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       handleException(t, parser);
     }
   }
@@ -210,7 +215,8 @@ public class JsonCalendarBuilder {
                                 final BuildState bs) throws ParserException {
     currentArrayStart(parser);
 
-    String cname = textField(parser).toUpperCase();
+    final String cname = textField(parser).toUpperCase();
+    lastComponent = cname;
     bs.getContentHandler().startComponent(cname);
 
     /* Properties first */
@@ -246,18 +252,19 @@ public class JsonCalendarBuilder {
 
     currentArrayStart(parser);
 
-    String name = textField(parser);
+    final String name = textField(parser);
+    lastProperty = name;
     bs.getContentHandler().startProperty(name);
 
     processParameters(parser, bs);
 
-    if (!processValue(parser, bs, textField(parser))) {
-      throwException("Bad property", parser);
-    }
+    final boolean parseArrayEnd = processValue(parser, bs, textField(parser));
 
     bs.getContentHandler().endProperty(name);
 
-    arrayEnd(parser);
+    if (parseArrayEnd) {
+      arrayEnd(parser);
+    }
   }
 
   private void processParameters(final JsonParser parser,
@@ -279,6 +286,13 @@ public class JsonCalendarBuilder {
     }
   }
 
+  /**
+   * @param parser the parser
+   * @param bs current state
+   * @param type type of value
+   * @return true if array end has to be parsed
+   * @throws ParserException
+   */
   private boolean processValue(final JsonParser parser,
                                final BuildState bs,
                                final String type) throws ParserException {
@@ -287,7 +301,7 @@ public class JsonCalendarBuilder {
         // 2 floats in an array
         arrayStart(parser);
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(String.valueOf(floatField(parser)));
         sb.append(",");
@@ -340,7 +354,7 @@ public class JsonCalendarBuilder {
           }
 
          */
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         String delim = "";
 
@@ -349,7 +363,7 @@ public class JsonCalendarBuilder {
         while (!testObjectEnd(parser)) {
           sb.append(delim);
           delim = ";";
-          String recurEl = currentFieldName(parser);
+          final String recurEl = currentFieldName(parser);
           sb.append(recurEl.toUpperCase());
           sb.append("=");
           sb.append(recurElVal(parser, recurEl));
@@ -379,9 +393,18 @@ public class JsonCalendarBuilder {
           type.equals("duration") ||
           type.equals("text") ||
           type.equals("uri")) {
-        bs.getContentHandler().propertyValue(textField(parser));
+        final StringBuilder res = new StringBuilder();
+        String delim = "";
 
-        return true;
+        while (!testArrayEnd(parser)) {
+          res.append(delim);
+          delim = ",";
+          res.append(currentTextField(parser));
+        }
+
+        bs.getContentHandler().propertyValue(res.toString());
+
+        return false;
       }
 
       if (type.equals("integer")) {
@@ -429,8 +452,6 @@ public class JsonCalendarBuilder {
 
         return true;
       }
-
-      return false;
     } catch (URISyntaxException e) {
       throw new ParserException(e.getMessage(), 0, e);
     } catch (ParseException e) {
@@ -438,6 +459,9 @@ public class JsonCalendarBuilder {
     } catch (IOException e) {
       throw new ParserException(e.getMessage(), 0, e);
     }
+
+    throwException("Bad property", parser);
+    return false;
   }
 
   private String recurElVal(final JsonParser parser,
@@ -541,10 +565,10 @@ public class JsonCalendarBuilder {
         // Reset value
         try {
           property.setValue(strDate);
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
           // shouldn't happen as its already been parsed
           throw new CalendarException(e);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
           // shouldn't happen as its already been parsed
           throw new CalendarException(e);
         }
@@ -558,7 +582,19 @@ public class JsonCalendarBuilder {
 
   private void throwException(final String msg,
                               final JsonParser parser) throws ParserException {
-    handleException(new Throwable(msg), parser);
+    final StringBuilder augmented = new StringBuilder(msg);
+
+    if (lastComponent != null) {
+      augmented.append("; last component=");
+      augmented.append(lastComponent);
+    }
+
+    if (lastProperty != null) {
+      augmented.append("; last property=");
+      augmented.append(lastProperty);
+    }
+
+    handleException(new Throwable(augmented.toString()), parser);
   }
 
   private Object handleException(final Throwable t,
@@ -568,11 +604,11 @@ public class JsonCalendarBuilder {
     }
 
     try {
-      int lnr = parser.getCurrentLocation().getLineNr();
+      final int lnr = parser.getCurrentLocation().getLineNr();
       throw new ParserException(t.getLocalizedMessage(), lnr);
-    } catch (ParserException pe) {
+    } catch (final ParserException pe) {
       throw pe;
-    } catch (Throwable t1) {
+    } catch (final Throwable t1) {
       throw new ParserException(t.getLocalizedMessage(), -1);
     }
   }
@@ -589,7 +625,7 @@ public class JsonCalendarBuilder {
 
   private void currentArrayStart(final JsonParser parser) throws ParserException {
     expectCurrentToken(parser, JsonToken.START_ARRAY,
-                "Expected array start");
+                       "Expected array start");
   }
 
   private boolean testNextArrayStart(final JsonParser parser) throws ParserException {
@@ -613,14 +649,14 @@ public class JsonCalendarBuilder {
                            final JsonToken expected,
                            final String message) throws ParserException {
     try {
-      JsonToken t = parser.nextToken();
+      final JsonToken t = parser.nextToken();
 
       if (t != expected) {
         throwException(message, parser);
       }
-    } catch (ParserException pe) {
+    } catch (final ParserException pe) {
       throw pe;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       handleException(t, parser);
     }
   }
@@ -629,35 +665,48 @@ public class JsonCalendarBuilder {
                                   final JsonToken expected,
                                   final String message) throws ParserException {
     try {
-      JsonToken t = parser.getCurrentToken();
+      final JsonToken t = parser.getCurrentToken();
 
       if (t != expected) {
         throwException(message, parser);
       }
-    } catch (ParserException pe) {
+    } catch (final ParserException pe) {
       throw pe;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       handleException(t, parser);
+    }
+  }
+
+  private boolean testCurrentToken(final JsonParser parser,
+                                   final JsonToken expected) throws ParserException {
+    try {
+      final JsonToken t = parser.getCurrentToken();
+
+      return t == expected;
+    } catch (final Throwable t) {
+      handleException(t, parser);
+      return false;
     }
   }
 
   private boolean testToken(final JsonParser parser,
                             final JsonToken expected) throws ParserException {
     try {
-      JsonToken t = parser.nextToken();
+      final JsonToken t = parser.nextToken();
 
       return t == expected;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       return (Boolean)handleException(t, parser);
     }
   }
 
   private String textField(final JsonParser parser) throws ParserException {
+
     expectToken(parser, JsonToken.VALUE_STRING,
                 "Expected string field");
     try {
       return parser.getText();
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       return (String)handleException(t, parser);
     }
   }
@@ -665,7 +714,7 @@ public class JsonCalendarBuilder {
   private String currentTextField(final JsonParser parser) throws ParserException {
     try {
       return parser.getText();
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       return (String)handleException(t, parser);
     }
   }
@@ -673,7 +722,7 @@ public class JsonCalendarBuilder {
   private int currentIntField(final JsonParser parser) throws ParserException {
     try {
       return parser.getIntValue();
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       return (Integer)handleException(t, parser);
     }
   }
