@@ -62,20 +62,20 @@ public class Util {
    * newCol. The collection newCol will be unchanged but the result object will
    * contain a list of added and removed values.
    *
-   * @param newCol
-   * @param toAdjust
+   * @param newCol make it look like this
+   * @param toAdjust if non-null will be adjusted
    * @return added and removed values
    */
   public static <T> AdjustCollectionResult<T> adjustCollection(final Collection<T> newCol,
                                                             final Collection<T> toAdjust) {
-    AdjustCollectionResult<T> acr = new AdjustCollectionResult<T>();
+    final AdjustCollectionResult<T> acr = new AdjustCollectionResult<>();
 
-    acr.removed = new ArrayList<T>();
-    acr.added = new ArrayList<T>();
+    acr.removed = new ArrayList<>();
+    acr.added = new ArrayList<>();
     acr.added.addAll(newCol);
 
     if (toAdjust != null) {
-      for (T ent: toAdjust) {
+      for (final T ent: toAdjust) {
         if (newCol.contains(ent)) {
           acr.added.remove(ent);
           continue;
@@ -83,16 +83,16 @@ public class Util {
 
         acr.removed.add(ent);
       }
-    }
 
-    for (T ent: acr.added) {
-      toAdjust.add(ent);
-      acr.numAdded++;
-    }
+      for (final T ent: acr.added) {
+        toAdjust.add(ent);
+        acr.numAdded++;
+      }
 
-    for (T ent: acr.removed) {
-      if (toAdjust.remove(ent)) {
-        acr.numRemoved++;
+      for (final T ent: acr.removed) {
+        if (toAdjust.remove(ent)) {
+          acr.numRemoved++;
+        }
       }
     }
 
