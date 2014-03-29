@@ -467,7 +467,8 @@ public class DavUtil implements Serializable {
         debugMsg("Got response " + res + " for path " + path);
       }
 
-      throw new Exception("Got response " + res + " for path " + path);
+      //throw new Exception("Got response " + res + " for path " + path);
+      return null;
     }
 
     final Document doc = parseContent(cl.getResponseBodyAsStream());
