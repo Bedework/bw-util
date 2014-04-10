@@ -199,17 +199,17 @@ public class PropertyIndex implements Serializable {
   static final ComponentFlags vcalendarOnly =
           new ComponentFlags(true);
 
-  private static boolean IS_MULTI = true;
+  private static final boolean IS_MULTI = true;
 
-  private static boolean IS_SINGLE = false;
+  private static final boolean IS_SINGLE = false;
 
-  private static boolean IS_PARAM = true;
+  private static final boolean IS_PARAM = true;
 
-  private static boolean NOT_PARAM = false;
+  private static final boolean NOT_PARAM = false;
 
-  private static boolean IS_IMMUTABLE = true;
+  private static final boolean IS_IMMUTABLE = true;
 
-  private static boolean NOT_IMMUTABLE = false;
+  private static final boolean NOT_IMMUTABLE = false;
 
   /** */
   public static enum ComponentInfoIndex {
@@ -897,6 +897,11 @@ public class PropertyIndex implements Serializable {
                  PollItemIdPropType.class,
         IS_SINGLE, event_Todo_Journal_Freebusy),
 
+    /** Poll-item */
+    POLL_ITEM(BedeworkServerTags.xprop,
+              null,
+              IS_MULTI, vpollOnly),
+
     /** Poll-mode */
     POLL_MODE(XcalTags.pollMode,
               PollModePropType.class,
@@ -1499,7 +1504,7 @@ public class PropertyIndex implements Serializable {
     }
 
     /** get the index given the XML class
-     * @param cl
+     * @param cl - class
      * @return PropertyInfoIndex
      */
     public static PropertyInfoIndex fromXmlClass(final Class cl) {
@@ -1508,7 +1513,7 @@ public class PropertyIndex implements Serializable {
 
     /** get the index given the qname
      *
-     * @param val
+     * @param val the qname
      * @return PropertyInfoIndex
      */
     public static PropertyInfoIndex lookupQname(final QName val) {
