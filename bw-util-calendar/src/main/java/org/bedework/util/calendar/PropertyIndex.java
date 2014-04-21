@@ -526,6 +526,11 @@ public class PropertyIndex implements Serializable {
     /**
      * Type.
      */
+    STAY_INFORMED("STAY-INFORMED", "stayInformed"),
+
+    /**
+     * Type.
+     */
     TYPE("TYPE"),
 
     /**
