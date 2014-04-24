@@ -898,6 +898,11 @@ public class PropertyIndex implements Serializable {
                     IS_SINGLE, vpollOnly),
 
     /** Poll-item-id */
+    POLL_WINNER(BedeworkServerTags.xprop,
+                 null,
+                 IS_SINGLE, vpollOnly),
+
+    /** Poll-item-id */
     POLL_ITEM_ID(XcalTags.pollItemId,
                  PollItemIdPropType.class,
         IS_SINGLE, event_Todo_Journal_Freebusy),
