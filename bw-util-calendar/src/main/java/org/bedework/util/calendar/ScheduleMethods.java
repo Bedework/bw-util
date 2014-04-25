@@ -53,6 +53,9 @@ public interface ScheduleMethods extends Serializable {
   public static final int methodTypeDeclineCounter = 8;
 
   /** */
+  public static final int methodTypePollStatus = 9;
+
+  /** */
   public static final int methodTypeUnknown = 99;
 
   /** RFC methods
@@ -67,5 +70,6 @@ public interface ScheduleMethods extends Serializable {
     "REFRESH",
     "COUNTER",
     "DECLINECOUNTER",
+    "POLLSTATUS",
   };
 }
