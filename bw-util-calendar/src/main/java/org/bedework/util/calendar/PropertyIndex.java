@@ -1103,13 +1103,13 @@ public class PropertyIndex implements Serializable {
 
     /** date/time - local */
     LOCAL(XcalTags.dtstart,
-          DtstartPropType.class,
+          null,
           DataType.DATE_TIME,
           IS_SINGLE, notAlarm),
 
     /** date/time - floating true/false */
     FLOATING(XcalTags.dtstart,
-             DtstartPropType.class,
+             null,
              DataType.DATE_TIME,
              IS_SINGLE, notAlarm),
 
@@ -1119,13 +1119,13 @@ public class PropertyIndex implements Serializable {
 
     /**  date/time utc value */
     INDEX_END(XcalTags.dtstart,
-              DtstartPropType.class,
+              null,
               DataType.DATE_TIME,
               IS_SINGLE, allComponents),
 
     /**  date/time utc value */
     INDEX_START(XcalTags.dtstart,
-                DtstartPropType.class,
+                null,
                 DataType.DATE_TIME,
                 IS_SINGLE, allComponents),
 
@@ -1212,7 +1212,7 @@ public class PropertyIndex implements Serializable {
 
     /**  date/time utc value */
     UTC(XcalTags.dtstart,
-        DtstartPropType.class,
+        null,
         DataType.DATE_TIME,
         IS_SINGLE, notAlarm),
 
