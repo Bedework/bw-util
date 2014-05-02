@@ -267,7 +267,7 @@ public class ReqUtil implements Serializable {
     boolean val = defVal;
     Boolean valB = getBooleanReqPar(name);
     if (valB != null) {
-      val = valB.booleanValue();
+      val = valB;
     }
 
     return val;
