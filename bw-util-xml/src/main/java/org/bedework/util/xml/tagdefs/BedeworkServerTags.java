@@ -126,6 +126,18 @@ public class BedeworkServerTags {
   public static final QName name = new QName(bedeworkCaldavNamespace,
                                                      "name");
 
+  /** Apple notification extension  */
+  public static final QName processor = new QName(bedeworkSystemNamespace,
+                                             "processor");
+
+  /** Apple notification extension  */
+  public static final QName processors = new QName(bedeworkSystemNamespace,
+                                                  "processors");
+
+  /** Apple notification extension  */
+  public static final QName type = new QName(bedeworkSystemNamespace,
+                                                  "type");
+
   /**   */
   public static final QName xprop = new QName(bedeworkCaldavNamespace,
                                                      "xprop");

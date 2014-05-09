@@ -27,6 +27,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -802,6 +803,18 @@ public class BasicHttpClient extends DefaultHttpClient {
   }
 
   /**
+   * @return response status line
+   * @throws HttpException
+   */
+  public StatusLine getResponseStatusLine() throws HttpException {
+    if (response == null) {
+      return null;
+    }
+
+    return response.getStatusLine();
+  }
+
+  /**
    * Returns the response body of the HTTP method, if any, as an {@link InputStream}.
    * If response body is not available, returns <tt>null</tt>
    *
@@ -868,21 +881,23 @@ public class BasicHttpClient extends DefaultHttpClient {
    * @throws HttpException
    */
   public InputStream get(final String path) throws HttpException {
-    return get(path, null);
+    return get(path, "application/text", null);
   }
 
   /**
    * @param path  to resource
+   * @param contentType  - valid type
    * @param hdrs - may be null
    * @return InputStream
    * @throws HttpException
    */
   public InputStream get(final String path,
+                         final String contentType,
                          final List<Header> hdrs) throws HttpException {
     final int respCode = sendRequest("GET",
                                      path,
                                      hdrs,
-                                     "application/text",
+                                     contentType,
                                      0, // contentLen
                                      null);    //content
 
