@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -154,6 +155,50 @@ public class Util {
     }
 
     return paths[idx];
+  }
+
+  /** make a locale from the standard underscore separated parts - no idea why
+   * this isn't in Locale
+   *
+   * @param val teh locale String e.g. en_US
+   * @return a Locale
+   * @throws Throwable
+   */
+  public static Locale makeLocale(final String val) throws Throwable {
+    String lang = null;
+    String country = ""; // NOT null for Locale
+    String variant = "";
+
+    if (val == null) {
+      throw new Exception("Bad Locale: NULL");
+    }
+
+    if (val.length() == 2) {
+      lang = val;
+    } else {
+      int pos = val.indexOf('_');
+      if (pos != 2) {
+        throw new Exception("Bad Locale: " + val);
+      }
+
+      lang = val.substring(0, 2);
+      pos = val.indexOf("_", 3);
+      if (pos < 0) {
+        if (val.length() != 5) {
+          throw new Exception("Bad Locale: " + val);
+        }
+
+        country = val.substring(3);
+      } else {
+        country = val.substring(3, 5);
+
+        if (val.length() > 6) {
+          variant = val.substring(6);
+        }
+      }
+    }
+
+    return new Locale(lang, country, variant);
   }
 
   /*
