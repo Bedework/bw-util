@@ -362,7 +362,28 @@ public class XcalUtil {
   }
 
   /**
-   * @param tm
+   * @param val ical format or xml format time
+   * @return XML formatted
+   */
+  public static String getXmlFormatTime(final String val) {
+    if (val.charAt(2) == ':') {
+      // XML format
+      return val;
+    }
+
+    final StringBuilder sb = new StringBuilder();
+
+    sb.append(val.substring(0, 2));
+    sb.append(":");
+    sb.append(val.substring(2, 4));
+    sb.append(":");
+    sb.append(val.substring(4));
+
+    return sb.toString();
+  }
+
+  /**
+   * @param tm to convert
    * @return rfc5545 time
    */
   public static String getIcalFormatTime(final String tm) {

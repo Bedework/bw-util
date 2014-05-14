@@ -352,57 +352,60 @@ public class PropertyIndex implements Serializable {
   /** */
   public static enum DataType {
     /** */
-    BINARY(XcalTags.binaryVal),
+    BINARY(XcalTags.binaryVal, "binary"),
 
     /** */
-    BOOLEAN(XcalTags.booleanVal),
+    BOOLEAN(XcalTags.booleanVal, "boolean"),
 
     /** */
-    CUA(XcalTags.calAddressVal),
+    CUA(XcalTags.calAddressVal, "cal-address"),
 
     /** */
-    DATE(XcalTags.dateVal),
+    DATE(XcalTags.dateVal, "date"),
 
     /** */
-    DATE_TIME(XcalTags.dateTimeVal),
+    DATE_TIME(XcalTags.dateTimeVal, "date-time"),
 
     /** */
-    DURATION(XcalTags.duration),
+    DURATION(XcalTags.duration, "duration"),
 
     /** */
-    FLOAT(XcalTags.floatVal),
+    FLOAT(XcalTags.floatVal, "float"),
 
     /** */
-    INTEGER(XcalTags.integerVal),
+    INTEGER(XcalTags.integerVal, "integer"),
 
     /** */
-    PERIOD(XcalTags.periodVal),
+    PERIOD(XcalTags.periodVal, "period"),
 
     /** */
-    RECUR(XcalTags.recurVal),
+    RECUR(XcalTags.recurVal, "recur"),
 
     /** */
-    TEXT(XcalTags.textVal),
+    TEXT(XcalTags.textVal, "text"),
 
     /** */
-    TIME(XcalTags.timeVal),
+    TIME(XcalTags.timeVal, "time"),
 
     /** */
-    URI(XcalTags.uriVal),
+    URI(XcalTags.uriVal, "uri"),
 
     /** */
-    UTC_OFFSET(XcalTags.utcOffsetVal),
+    UTC_OFFSET(XcalTags.utcOffsetVal, "utc-offset"),
 
     /** More work */
-    SPECIAL(null),
+    SPECIAL(null, null),
 
     /** Non-ical */
-    HREF(null);
+    HREF(null, null);
 
-    private QName xcalType;
+    private final QName xcalType;
 
-    DataType(final QName xcalType) {
+    private final String jsonType;
+
+    DataType(final QName xcalType, final String jsonType) {
       this.xcalType = xcalType;
+      this.jsonType = jsonType;
     }
 
     /**
@@ -411,7 +414,14 @@ public class PropertyIndex implements Serializable {
     public QName getXcalType() {
       return xcalType;
     }
-  };
+
+    /**
+     * @return type or null
+     */
+    public String getJsonType() {
+      return jsonType;
+    }
+  }
 
   /** */
   public static enum ParameterInfoIndex {
@@ -897,14 +907,16 @@ public class PropertyIndex implements Serializable {
                     AcceptResponsePropType.class,
                     IS_SINGLE, vpollOnly),
 
-    /** Poll-item-id */
+    /** Poll-winner */
     POLL_WINNER(BedeworkServerTags.xprop,
                  null,
+                 DataType.INTEGER,
                  IS_SINGLE, vpollOnly),
 
     /** Poll-item-id */
     POLL_ITEM_ID(XcalTags.pollItemId,
                  PollItemIdPropType.class,
+                 DataType.INTEGER,
         IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** Poll-item */
@@ -1358,13 +1370,13 @@ public class PropertyIndex implements Serializable {
     /** Property names can have "-" in them. This method takes the
      * name, replaces any "-" with underscore and then tries valueOf.
      *
-     * @param pname
-     * @return
+     * @param pname - any case
+     * @return index or null if not found
      */
     public static PropertyInfoIndex fromName(final String pname) {
-      String name;
+      final String name;
 
-      if (pname.indexOf("-") < 0) {
+      if (!pname.contains("-")) {
         name = pname.toUpperCase();
       } else {
         name = pname.replace("-", "_").toUpperCase();
@@ -1372,7 +1384,7 @@ public class PropertyIndex implements Serializable {
 
       try {
         return PropertyInfoIndex.valueOf(name);
-      } catch (Throwable t) {
+      } catch (final Throwable ignored) {
         return null;
       }
     }
