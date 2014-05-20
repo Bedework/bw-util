@@ -917,7 +917,7 @@ public class PropertyIndex implements Serializable {
     POLL_ITEM_ID(XcalTags.pollItemId,
                  PollItemIdPropType.class,
                  DataType.INTEGER,
-        IS_SINGLE, event_Todo_Journal_Freebusy),
+                 IS_MULTI, notTimezone),
 
     /** Poll-item */
     POLL_ITEM(BedeworkServerTags.xprop,
