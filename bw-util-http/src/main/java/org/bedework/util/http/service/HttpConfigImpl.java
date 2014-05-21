@@ -53,8 +53,4 @@ public class HttpConfigImpl
   public int getDefaultMaxPerRoute() {
     return defaultMaxPerRoute;
   }
-
-  @Override
-  public void disableSSL() {
-  }
 }

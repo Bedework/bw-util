@@ -50,9 +50,4 @@ public interface HttpConfig extends Serializable {
    */
   @MBeanInfo("Maximum allowable per route.")
   int getDefaultMaxPerRoute();
-
-  /**
-   */
-  @MBeanInfo("Disable ssl for testing.")
-  void disableSSL();
 }

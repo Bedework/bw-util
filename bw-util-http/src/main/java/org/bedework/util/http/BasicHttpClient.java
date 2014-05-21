@@ -78,8 +78,6 @@ import javax.servlet.http.HttpServletResponse;
 public class BasicHttpClient extends DefaultHttpClient {
   protected boolean debug;
 
-  protected static boolean sslDisabled;
-
   private transient Logger log;
 
   private static PoolingClientConnectionManager connManager;
@@ -120,16 +118,18 @@ public class BasicHttpClient extends DefaultHttpClient {
     }
   }
 
-  private static IdleConnectionMonitorThread idleConnectionMonitor;
+  private static final IdleConnectionMonitorThread idleConnectionMonitor;
 
   private final static SchemeRegistry sr = new SchemeRegistry();
 
+  protected static boolean sslDisabled = Boolean.getBoolean("org.bedework.disable.ssl");
+
   static {
     sr.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-    sr.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
+    sr.register(new Scheme("https", 443, getSslSocketFactory()));
 
     sr.register(new Scheme("webcal", 80, PlainSocketFactory.getSocketFactory()));
-    sr.register(new Scheme("webcals", 443, SSLSocketFactory.getSocketFactory()));
+    sr.register(new Scheme("webcals", 443, getSslSocketFactory()));
 
     connManager = new PoolingClientConnectionManager(sr);
 
@@ -267,58 +267,37 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   /** Allow testing of features when we don't have any valid certs.
    *
-   * @throws HttpException
+   * @return socket factory.
    */
-  public void disableSSL() throws HttpException {
+  public static SSLSocketFactory getSslSocketFactory() {
+    if (!sslDisabled) {
+      return SSLSocketFactory.getSocketFactory();
+    }
+
     try {
       final X509Certificate[] _AcceptedIssuers = new X509Certificate[] {};
 
-      SSLContext ctx = SSLContext.getInstance("TLS");
-      X509TrustManager tm = new X509TrustManager() {
+      final SSLContext ctx = SSLContext.getInstance("TLS");
+      final X509TrustManager tm = new X509TrustManager() {
         @Override
         public X509Certificate[] getAcceptedIssuers() {
           return _AcceptedIssuers;
         }
         @Override
-        public void checkServerTrusted(X509Certificate[] chain,
-                                       String authType) throws CertificateException {
+        public void checkServerTrusted(final X509Certificate[] chain,
+                                       final String authType) throws CertificateException {
         }
         @Override
-        public void checkClientTrusted(X509Certificate[] chain,
-                                       String authType) throws CertificateException {
+        public void checkClientTrusted(final X509Certificate[] chain,
+                                       final String authType) throws CertificateException {
         }
       };
       ctx.init(null, new TrustManager[] { tm }, new SecureRandom());
 
-      SSLSocketFactory ssf =
-              new SSLSocketFactory(ctx,
-                                   SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
-      /*
-        final SSLSocketFactory socketFactory =
-              new SSLSocketFactory(new TrustStrategy() {
-
-        public boolean isTrusted(final X509Certificate[] chain,
-                                 final String authType) throws CertificateException {
-          if ((chain == null) || (chain.length == 0)) {
-            Logger.getLogger(BasicHttpClient.class).info("Trusting null/empty certs");
-          }
-          Logger.getLogger(BasicHttpClient.class).info("Trusting " + chain[0]);
-          return true;
-        }
-
-      }, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-      */
-
-      sr.register(new Scheme("https", 443, ssf));
-      sslDisabled = true;
-
-      warn("*******************************************************");
-      warn(" SSL disabled");
-      warn("*******************************************************");
-    } catch (Throwable t) {
-      error(t);
-      throw new HttpException(t.getMessage());
+      return new SSLSocketFactory(ctx,
+                                  SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+    } catch (final Throwable t) {
+      throw new RuntimeException(t);
     }
   }
 
