@@ -46,7 +46,6 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
@@ -61,11 +60,15 @@ import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletResponse;
 
 /** A dav client
@@ -268,7 +271,31 @@ public class BasicHttpClient extends DefaultHttpClient {
    */
   public void disableSSL() throws HttpException {
     try {
-      final SSLSocketFactory socketFactory =
+      final X509Certificate[] _AcceptedIssuers = new X509Certificate[] {};
+
+      SSLContext ctx = SSLContext.getInstance("TLS");
+      X509TrustManager tm = new X509TrustManager() {
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+          return _AcceptedIssuers;
+        }
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain,
+                                       String authType) throws CertificateException {
+        }
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain,
+                                       String authType) throws CertificateException {
+        }
+      };
+      ctx.init(null, new TrustManager[] { tm }, new SecureRandom());
+
+      SSLSocketFactory ssf =
+              new SSLSocketFactory(ctx,
+                                   SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+      /*
+        final SSLSocketFactory socketFactory =
               new SSLSocketFactory(new TrustStrategy() {
 
         public boolean isTrusted(final X509Certificate[] chain,
@@ -281,8 +308,9 @@ public class BasicHttpClient extends DefaultHttpClient {
         }
 
       }, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+      */
 
-      sr.register(new Scheme("https", 443, socketFactory));
+      sr.register(new Scheme("https", 443, ssf));
       sslDisabled = true;
 
       warn("*******************************************************");
