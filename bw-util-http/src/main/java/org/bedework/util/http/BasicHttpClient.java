@@ -46,6 +46,7 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
@@ -60,6 +61,8 @@ import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +74,8 @@ import javax.servlet.http.HttpServletResponse;
 */
 public class BasicHttpClient extends DefaultHttpClient {
   protected boolean debug;
+
+  protected boolean sslDisabled;
 
   private transient Logger log;
 
@@ -114,8 +119,9 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   private static IdleConnectionMonitorThread idleConnectionMonitor;
 
+  private final static SchemeRegistry sr = new SchemeRegistry();
+
   static {
-    SchemeRegistry sr = new SchemeRegistry();
     sr.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
     sr.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
 
@@ -230,11 +236,17 @@ public class BasicHttpClient extends DefaultHttpClient {
 
     debug = getLogger().isDebugEnabled();
 
-    HttpParams params = getParams();
+    if (sslDisabled) {
+      warn("*******************************************************");
+      warn(" SSL disabled");
+      warn("*******************************************************");
+    }
+
+    final HttpParams params = getParams();
 
     if (host != null) {
       hostSpecified = true;
-      HttpHost httpHost = new HttpHost(host, port, scheme);
+      final HttpHost httpHost = new HttpHost(host, port, scheme);
       params.setParameter(ClientPNames.DEFAULT_HOST,
                           httpHost);
     }
@@ -248,6 +260,34 @@ public class BasicHttpClient extends DefaultHttpClient {
 
     params.setBooleanParameter(ClientPNames.HANDLE_REDIRECTS,
                                followRedirects);
+  }
+
+  /** Allow testing of features when we don't have any valid certs.
+   *
+   * @throws HttpException
+   */
+  public void disableSSL() throws HttpException {
+    try {
+      final SSLSocketFactory socketFactory =
+              new SSLSocketFactory(new TrustStrategy() {
+
+        public boolean isTrusted(final X509Certificate[] chain,
+                                 final String authType) throws CertificateException {
+          return true;
+        }
+
+      }, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+      sr.register(new Scheme("https", 443, socketFactory));
+      sslDisabled = true;
+
+      warn("*******************************************************");
+      warn(" SSL disabled");
+      warn("*******************************************************");
+    } catch (Throwable t) {
+      error(t);
+      throw new HttpException(t.getMessage());
+    }
   }
 
   /**

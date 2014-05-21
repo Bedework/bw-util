@@ -67,6 +67,15 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
     return BasicHttpClient.getDefaultMaxPerRoute();
   }
 
+  @Override
+  public void disableSSL() {
+    try {
+      new BasicHttpClient(0).disableSSL();
+    } catch (Throwable t) {
+      error(t);
+    }
+  }
+
   /*
   @Override
   public void setDefaultMaxPerHost(final int val) {
