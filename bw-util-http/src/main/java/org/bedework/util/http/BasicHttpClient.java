@@ -75,7 +75,7 @@ import javax.servlet.http.HttpServletResponse;
 public class BasicHttpClient extends DefaultHttpClient {
   protected boolean debug;
 
-  protected boolean sslDisabled;
+  protected static boolean sslDisabled;
 
   private transient Logger log;
 
@@ -273,6 +273,10 @@ public class BasicHttpClient extends DefaultHttpClient {
 
         public boolean isTrusted(final X509Certificate[] chain,
                                  final String authType) throws CertificateException {
+          if ((chain == null) || (chain.length == 0)) {
+            Logger.getLogger(BasicHttpClient.class).info("Trusting null/empty certs");
+          }
+          Logger.getLogger(BasicHttpClient.class).info("Trusting " + chain[0]);
           return true;
         }
 
