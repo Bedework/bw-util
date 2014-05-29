@@ -58,8 +58,8 @@ public class TzServer {
   }
 
   /**
-   * @param id
-   * @param etag
+   * @param id the tz id
+   * @param etag from last time
    * @return fetch timezone if etag is old
    * @throws TimezonesException
    */
@@ -70,7 +70,7 @@ public class TzServer {
 //        URLEncoder.encode(id, "UTF-8"), etag);
         doCall("action=get&tzid=" + id, etag);
 
-      int status = response.getStatusLine().getStatusCode();
+      final int status = response.getStatusLine().getStatusCode();
 
       if (status == HttpServletResponse.SC_NO_CONTENT) {
         return new TaggedTimeZone(etag);
@@ -80,11 +80,17 @@ public class TzServer {
         return null;
       }
 
+      final Header etagHdr = response.getFirstHeader("Etag");
+      if (etagHdr == null) {
+        // Not valid but keep calm and carry on
+        return new TaggedTimeZone("--No etag--",
+                                  EntityUtils.toString(response.getEntity()));
+      }
       return new TaggedTimeZone(response.getFirstHeader("Etag").getValue(),
                                 EntityUtils.toString(response.getEntity()));
-    } catch (TimezonesException cfe) {
+    } catch (final TimezonesException cfe) {
       throw cfe;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new TimezonesException(t);
     }
   }
