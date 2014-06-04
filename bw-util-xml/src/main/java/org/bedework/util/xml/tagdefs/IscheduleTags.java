@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 /** Define Caldav tags for XMlEmit.
  *
- * @author Mike Douglass   douglm@bedework.edu
+ * @author Mike Douglass   douglm rpi.edu
  */
 public class IscheduleTags implements CaldavDefs {
   /** */
@@ -151,6 +151,10 @@ public class IscheduleTags implements CaldavDefs {
   /**   */
   public static final QName schedulingMessages = new QName(namespace,
                                               "scheduling-messages");
+
+  /**   */
+  public static final QName serialNumber = new QName(namespace,
+                                                     "serial-number");
 
   /**   */
   public static final QName verificationFailed = new QName(namespace,
