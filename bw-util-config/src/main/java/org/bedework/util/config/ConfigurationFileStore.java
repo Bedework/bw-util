@@ -18,12 +18,17 @@
 */
 package org.bedework.util.config;
 
+import org.bedework.util.misc.Util;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
 /** A configuration file store holds configurations in files within a directory.
  *
@@ -32,15 +37,17 @@ import java.util.List;
 public class ConfigurationFileStore implements ConfigurationStore {
   private String dirPath;
 
+  private Control resourceControl;
+
   /**
-   * @param dirPath
+   * @param dirPath location of config
    * @throws ConfigException
    */
   public ConfigurationFileStore(final String dirPath) throws ConfigException {
     try {
       this.dirPath = dirPath;
 
-      File f = new File(dirPath);
+      final File f = new File(dirPath);
 
       if (!f.exists()) {
         if (!f.mkdir()) {
@@ -53,9 +60,9 @@ public class ConfigurationFileStore implements ConfigurationStore {
       }
 
       this.dirPath = f.getCanonicalPath() + File.separator;
-    } catch (ConfigException ce) {
+    } catch (final ConfigException ce) {
       throw ce;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new ConfigException(t);
     }
   }
@@ -162,31 +169,55 @@ public class ConfigurationFileStore implements ConfigurationStore {
 
   /** Get the named store. Create it if it does not exist
    *
-   * @param name
+   * @param name of config
    * @return store
    * @throws ConfigException
    */
   @Override
   public ConfigurationStore getStore(final String name) throws ConfigException {
     try {
-      File dir = new File(dirPath);
-      String newPath = dirPath + name;
+      final File dir = new File(dirPath);
+      final String newPath = dirPath + name;
 
-      File[] files = dir.listFiles(new DirsOnly());
+      final File[] files = dir.listFiles(new DirsOnly());
 
-      for (File f: files) {
+      for (final File f: files) {
         if (f.getName().equals(name)) {
           return new ConfigurationFileStore(newPath);
         }
       }
 
-      File newDir = new File(newPath);
+      final File newDir = new File(newPath);
       if (!newDir.mkdir()) {
         throw new ConfigException("Unable to create directory " + newPath);
       }
 
       return new ConfigurationFileStore(newPath);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
+      throw new ConfigException(t);
+    }
+  }
+
+  @Override
+  public ResourceBundle getResource(final String name,
+                                    final String locale) throws ConfigException {
+    try {
+      if (resourceControl == null) {
+        resourceControl = new FileResourceControl(dirPath);
+      }
+
+      final Locale loc;
+
+      if (locale == null) {
+        loc = Locale.getDefault();
+      } else {
+        loc = Util.makeLocale(locale);
+      }
+
+      return ResourceBundle.getBundle(name, loc, resourceControl);
+    } catch (final ConfigException ce) {
+      throw ce;
+    } catch (final Throwable t) {
       throw new ConfigException(t);
     }
   }

@@ -19,6 +19,8 @@
 package org.bedework.util.jmx;
 
 import org.bedework.util.config.ConfigBase;
+import org.bedework.util.config.ConfigException;
+import org.bedework.util.config.ConfigurationStore;
 
 /** This interface defines methods to access and update the config
  *
@@ -40,4 +42,11 @@ public interface ConfigHolder<T extends ConfigBase> {
    *
    */
   void putConfig();
+
+  /** Get the underlying ConfigurationStore
+   *
+   * @return store
+   * @throws ConfigException
+   */
+  ConfigurationStore getStore() throws ConfigException;
 }

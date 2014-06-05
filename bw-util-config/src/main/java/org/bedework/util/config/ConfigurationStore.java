@@ -19,6 +19,7 @@
 package org.bedework.util.config;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 /** A configuration store holds configurations, each identified by a unique name,
  *
@@ -45,21 +46,21 @@ public interface ConfigurationStore {
   String getLocation() throws ConfigException;
 
   /**
-   * @param config
+   * @param config to save
    * @throws ConfigException
    */
   void saveConfiguration(ConfigBase config) throws ConfigException;
 
   /** Stored config must indicate class of object as an attribute
    *
-   * @param name
+   * @param name of the object
    * @return config or null
    * @throws ConfigException
    */
   ConfigBase getConfig(String name) throws ConfigException;
 
   /**
-   * @param name
+   * @param name of the object
    * @param cl - class of config object
    * @return config or null
    * @throws ConfigException
@@ -76,9 +77,18 @@ public interface ConfigurationStore {
 
   /** Get the named child store. Create it if it does not exist
    *
-   * @param name
+   * @param name of the store
    * @return store
    * @throws ConfigException
    */
   ConfigurationStore getStore(String name) throws ConfigException;
+
+  /**
+   * @param name of bundle
+   * @param locale null for default or a locale String e.g. en_US
+   * @return a ResourceBundle object or null.
+   * @throws ConfigException
+   */
+  ResourceBundle getResource(String name,
+                             String locale) throws ConfigException;
 }
