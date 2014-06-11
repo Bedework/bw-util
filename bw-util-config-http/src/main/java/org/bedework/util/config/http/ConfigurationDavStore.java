@@ -32,6 +32,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /** A configuration DAV store interacts with a DAV server to access
  * configurations. The remote end must support enough DAV to allow GET/PUT of
@@ -171,5 +172,12 @@ public class ConfigurationDavStore implements ConfigurationStore {
     } catch (Throwable t) {
       throw new ConfigException(t);
     }
+  }
+
+  @Override
+  public ResourceBundle getResource(final String name,
+                                    final String locale)
+          throws ConfigException {
+    return null;
   }
 }
