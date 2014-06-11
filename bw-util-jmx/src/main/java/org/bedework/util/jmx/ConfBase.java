@@ -537,8 +537,6 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
         return "Unable to read configuration";
       }
 
-      saveConfig(); // Just to ensure we have it for next time
-
       return "OK";
     } catch (Throwable t) {
       error("Failed to load configuration: " + t.getLocalizedMessage());
@@ -581,8 +579,6 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
       }
 
       setConfigName(configName);
-
-      saveConfig(); // Just to ensure we have it for next time
 
       return null;
     } catch (Throwable t) {
