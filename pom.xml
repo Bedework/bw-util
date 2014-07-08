@@ -62,6 +62,7 @@
     <module>bw-util-config</module>
     <module>bw-util-config-http</module>
     <module>bw-util-dav</module>
+    <module>bw-util-deployment</module>
     <module>bw-util-hibernate</module>
     <module>bw-util-http</module>
     <module>bw-util-indexing</module>
