@@ -19,6 +19,7 @@
 package org.bedework.util.xml;
 
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -40,7 +41,7 @@ import javax.xml.namespace.QName;
 /**
  * Utility routines associated with handling xml
  *
- * @author Mike Douglass   douglm@bedework.edu
+ * @author Mike Douglass   douglm rpi.edu
  */
 public final class XmlUtil implements Serializable {
   /** These values define the state of xml  after tidying
@@ -488,6 +489,33 @@ public final class XmlUtil implements Serializable {
     return i;
   }*/
 
+  /** Get the single named element.
+   *
+   * @param el          Node
+   * @param name        String tag name of required node
+   * @return Node     node value or null
+   * @throws SAXException
+   */
+  public static Node getOneTaggedNode(final Node el,
+                                      final String name)
+          throws SAXException {
+    if (!el.hasChildNodes()) {
+      return null;
+    }
+
+    final NodeList children = el.getChildNodes();
+
+    for (int i = 0; i < children.getLength(); i++) {
+      final Node n = children.item(i);
+
+      if (name.equals(n.getNodeName())) {
+        return n;
+      }
+    }
+
+    return null;
+  }
+
   /** Get the value of an element. We expect 0 or 1 child nodes.
    * For no child node we return null, for more than one we raise an
    * exception.
@@ -651,7 +679,7 @@ public final class XmlUtil implements Serializable {
    * @throws SAXException
    */
   public static Collection<Element> getElements(final Node nd) throws SAXException {
-    ArrayList<Element> al = new ArrayList<Element>();
+    ArrayList<Element> al = new ArrayList<>();
 
     NodeList children = nd.getChildNodes();
 
@@ -719,6 +747,29 @@ public final class XmlUtil implements Serializable {
     }
 
     return sb.toString().trim();
+  }
+
+  /** Replace the content for the current element.
+   *
+   * @param n element
+   * @param s string content
+   * @throws SAXException
+   */
+  public static void setElementContent(final Node n,
+                                       final String s) throws SAXException {
+    NodeList children = n.getChildNodes();
+
+    for (int i = 0; i < children.getLength(); i++) {
+      Node curnode = children.item(i);
+
+      n.removeChild(curnode);
+    }
+
+    Document d = n.getOwnerDocument();
+
+    final Node textNode = d.createTextNode(s);
+
+    n.appendChild(textNode);
   }
 
   /** Return the content for the current element. All leading and trailing

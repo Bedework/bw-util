@@ -5,6 +5,7 @@ import org.bedework.util.xml.XmlUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,13 +21,21 @@ public class XmlFile {
   protected final File theXml;
   protected final Element root;
 
+  protected boolean updated;
+
   public XmlFile(final File dir,
-                 final String name) throws Throwable {
+                 final String name,
+                 final boolean nameSpaced) throws Throwable {
     theXml = Utils.file(dir, name);
 
-    doc = Utils.parseXml(new FileReader(theXml));
+    doc = Utils.parseXml(new FileReader(theXml),
+                         nameSpaced);
 
     root = doc.getDocumentElement();
+  }
+
+  public boolean getUpdated() {
+    return updated;
   }
 
   public void output() throws Throwable {
@@ -44,5 +53,35 @@ public class XmlFile {
     }
 
     return null;
+  }
+
+  /** Update the value if it has a property replacement pattern.
+   * Set updated true if changed.
+   *
+   * @param root    search below this for named element
+   * @param tagname element to set content for
+   * @param props to lookup new value
+   * @throws Throwable
+   */
+  protected void propsReplaceContent(final Element root,
+                                     final String tagname,
+                                     final PropertiesChain props) throws Throwable {
+    final Node n = XmlUtil.getOneTaggedNode(root, tagname);
+
+    if (n == null) {
+      Utils.info("no element with name " + tagname);
+      return;
+    }
+
+    final String s = XmlUtil.getElementContent((Element)n);
+
+    final String newS = props.replace(s);
+
+    if (s.equals(newS)) {
+      return;
+    }
+
+    XmlUtil.setElementContent(n, newS);
+    updated = true;
   }
 }

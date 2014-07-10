@@ -30,9 +30,9 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Formatter;
 import java.util.List;
@@ -134,17 +134,19 @@ class Utils {
   /** Parse a reader and return the DOM representation.
    *
    * @param rdr        Reader
+   * @param nameSpaced true if this document has namespaces
    * @return Document  Parsed body or null for no body
    * @exception Throwable Some error occurred.
    */
-  public static Document parseXml(final Reader rdr) throws Throwable {
+  public static Document parseXml(final Reader rdr,
+                                  final boolean nameSpaced) throws Throwable {
     if (rdr == null) {
       // No content?
       return null;
     }
 
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    factory.setNamespaceAware(false);
+    factory.setNamespaceAware(nameSpaced);
 
     final DocumentBuilder builder = factory.newDocumentBuilder();
 
@@ -279,6 +281,40 @@ class Utils {
     }
   }
 
+  public static class DeletingFileVisitor extends SimpleFileVisitor<Path> {
+    @Override
+    public FileVisitResult visitFile(final Path file,
+                                     final BasicFileAttributes attributes)
+            throws IOException {
+      if(attributes.isRegularFile()){
+        Files.delete(file);
+      }
+      return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult postVisitDirectory(final Path directory,
+                                              final IOException ioe)
+            throws IOException {
+      Files.delete(directory);
+      return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFileFailed(final Path file,
+                                           final IOException ioe)
+            throws IOException {
+      error("Unable to delete: " + file +
+                    ": " + ioe);
+      return FileVisitResult.CONTINUE;
+    }
+  }
+
+  public static void deleteAll(final Path dir) throws Throwable {
+    final DeletingFileVisitor delFileVisitor = new DeletingFileVisitor();
+    Files.walkFileTree(dir, delFileVisitor);
+  }
+
   /** Return a Proeprties object containing all those properties that
    * match the given prefix. The property name will have the prefix
    * replaced by the new prefix.
@@ -302,21 +338,30 @@ class Utils {
     return res;
   }
 
-  public static List<String> listProperty(final Properties props,
-                                          final String pname) {
-    final String pval = props.getProperty(pname);
+  public static String propReplace(final Properties props, final String s) {
+    if (s == null) {
+      return null;
+    }
+
+    final int start = s.indexOf("${");
+
+    if (start < 0) {
+      return s;
+    }
+
+    final int end = s.indexOf("}", start);
+
+    if (end < 0) {
+      return s;
+    }
+
+    final String pval = props.getProperty(s.substring(start + 2, end));
 
     if (pval == null) {
-      return null;
+      return s;
     }
 
-    final String[] pvals = pval.split(",");
-
-    if (pvals.length == 0) {
-      return null;
-    }
-
-    return Arrays.asList(pvals);
+    return s.substring(0, start) + pval + s.substring(end + 1);
   }
 
   /** Result of splitting a name into its component parts, e.g.

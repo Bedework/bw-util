@@ -38,13 +38,15 @@ public class ProcessEars {
                         "    -h            Print this help and exit\n" +
                         "    --in          Directory for ears\n" +
                         "    --out         Directory for modified ears\n" +
+                        "    --delete      If specified delete target ear if it exists\n" +
                         "    --prop        Path to property file defining configuration\n" +
+                        "    --ear         If specified restrict processing to named ear\n" +
                         "\n" +
                         "Description:\n" +
                         "    This utility updates an exploded ear making it ready\n" +
                         "    for deployment.\n\n" +
-                        "    The ear is updated in place so should be a copy if the \n" +
-                        "    original needs to be preserved.\n");
+                        "    The ears is first copied from the specified in directory \n" +
+                        "    and then modified.\n");
 
     if (error_msg != null) {
       throw new RuntimeException(error_msg);
@@ -54,6 +56,10 @@ public class ProcessEars {
   private static String inDirPath;
 
   private static String outDirPath;
+
+  private static boolean delete;
+
+  private static String earName;
 
   private static String propsPath;
 
@@ -89,6 +95,10 @@ public class ProcessEars {
         outDirPath = args.next();
       } else if (args.ifMatch("--props")) {
         propsPath = args.next();
+      } else if (args.ifMatch("--delete")) {
+        delete = true;
+      } else if (args.ifMatch("--ear")) {
+        earName = args.next();
       } else if (args.ifMatch("--h")) {
         usage(null);
         return false;
@@ -111,18 +121,36 @@ public class ProcessEars {
         return;
       }
 
-      if ((inDirPath == null) ||
-              (outDirPath == null) ||
-              (propsPath == null)) {
-        usage("Must specify --in, --out and --props");
+      if (propsPath == null) {
+        usage("Must specify --props");
         return;
       }
 
       loadProperties();
 
+      if (inDirPath == null) {
+        inDirPath = props.getProperty("org.bedework.postdeploy.in");
+      }
+
+      if (outDirPath == null) {
+        outDirPath = props.getProperty("org.bedework.postdeploy.out");
+      }
+
+      if ((inDirPath == null) ||
+              (outDirPath == null)) {
+        usage("Must specify --in and --out or provide the values in the properties");
+        return;
+      }
+
+      Utils.info("input: " + inDirPath);
+      Utils.info("output: " + outDirPath);
+
+      final PropertiesChain pc = new PropertiesChain();
+
+      pc.push(props);
+
       final List<String> earNames =
-              Utils.listProperty(props,
-                                 "org.bedework.ear.names");
+              pc.listProperty("org.bedework.ear.names");
 
       final File inDir = Utils.directory(inDirPath);
 
@@ -143,6 +171,10 @@ public class ProcessEars {
       Utils.info("Found " + earSplitNames.size() + " ears");
 
       for (final SplitName sn: earSplitNames) {
+        if ((earName != null) && !earName.equals(sn.prefix)) {
+          continue;
+        }
+
         Utils.info("Processing " + sn.name);
 
         if (!earNames.contains(sn.prefix)) {
@@ -152,9 +184,18 @@ public class ProcessEars {
 
         final Path inPath = Paths.get(inDirPath, sn.name);
         final Path outPath = Paths.get(outDirPath, sn.name);
+
+        if (delete) {
+          final File outFile = outPath.toFile();
+
+          if (outFile.exists()) {
+            Utils.deleteAll(outPath);
+          }
+        }
+
         Utils.copy(inPath, outPath);
 
-        final Ear theEar = new Ear(outDirPath, sn, props);
+        final Ear theEar = new Ear(outDirPath, sn, pc);
 
         ears.put(sn.name, theEar);
       }

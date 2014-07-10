@@ -1,11 +1,8 @@
 package org.bedework.util.deployment;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import static org.bedework.util.deployment.Utils.SplitName;
 
@@ -13,24 +10,19 @@ import static org.bedework.util.deployment.Utils.SplitName;
  *
  * @author douglm
  */
-public class Ear {
-  private final Properties earAppProps;
+public class Ear extends VersionedFile {
+  private final ApplicationXml appXml;
 
   final Map<String, War> wars = new HashMap<>();
 
   public Ear(final String path,
              final SplitName sn,
-             final Properties props) throws Throwable {
-    earAppProps = Utils.filter(props,
-                               "org.bedework.app." + sn.prefix + ".",
-                               "app.");
+             final PropertiesChain props) throws Throwable {
+    super(path, sn, props, "org.bedework.app." + sn.prefix + ".");
 
-    final Path earPath = Paths.get(path, sn.name);
-    final File ear = Utils.subDirectory(path, sn.name);
+    final File earMeta = Utils.subDirectory(theFile, "META-INF");
 
-    final File earMeta = Utils.subDirectory(ear, "META-INF");
-
-    final ApplicationXml appXml = new ApplicationXml(earMeta);
+    appXml = new ApplicationXml(earMeta);
 
     Utils.info("Web modules");
 
@@ -39,8 +31,8 @@ public class Ear {
 
       Utils.info("   " + wm);
 
-      final War war = new War(earPath.toFile().getAbsolutePath(),
-                              wsn, earAppProps);
+      final War war = new War(theFile.getAbsolutePath(),
+                              wsn, appXml, this.props);
 
       wars.put(wsn.name, war);
     }
@@ -49,6 +41,10 @@ public class Ear {
   public void update() throws Throwable {
     for (final War war: wars.values()) {
       war.update();
+    }
+
+    if (appXml.getUpdated()) {
+      appXml.output();
     }
   }
 }
