@@ -201,11 +201,14 @@ class Utils {
   private static class DirCopier implements FileVisitor<Path> {
     private final Path in;
     private final Path out;
+    private final boolean outExists;
 
     DirCopier(final Path in,
-              final Path out) {
+              final Path out,
+              final boolean outExists) {
       this.in = in;
       this.out = out;
+      this.outExists = outExists;
     }
 
     @Override
@@ -215,6 +218,10 @@ class Utils {
       final Path newdir = out.resolve(in.relativize(dir));
 
       try {
+        if ((newdir.compareTo(out) == 0) && outExists) {
+          return CONTINUE;
+        }
+
         Files.copy(dir, newdir, copyOptionAttributes);
       } catch (final FileAlreadyExistsException faee) {
         error("File already exists" + faee.getFile());
@@ -262,10 +269,11 @@ class Utils {
   }
 
   public static void copy(final Path inPath,
-                          final Path outPath) throws Throwable {
+                          final Path outPath,
+                          final boolean outExists) throws Throwable {
     final EnumSet<FileVisitOption> opts = EnumSet.of(
             FileVisitOption.FOLLOW_LINKS);
-    final DirCopier tc = new DirCopier(inPath, outPath);
+    final DirCopier tc = new DirCopier(inPath, outPath, outExists);
     Files.walkFileTree(inPath, opts, Integer.MAX_VALUE, tc);
   }
 

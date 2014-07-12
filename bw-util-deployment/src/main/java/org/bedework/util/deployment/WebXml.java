@@ -27,7 +27,7 @@ public class WebXml extends XmlFile {
   }
 
   public void setConfigName() throws Throwable {
-    findBwappname:
+    findBwappname:chrome://web-developer/content/generated/view-response-headers.html
     for (final Element el : XmlUtil.getElementsArray(root)) {
       if (!"context-param".equals(el.getNodeName())) {
         continue findBwappname;

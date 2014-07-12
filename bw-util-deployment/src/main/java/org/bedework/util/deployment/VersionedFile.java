@@ -24,4 +24,8 @@ public class VersionedFile {
 
     theFile = Utils.subDirectory(path, sn.name);
   }
+
+  public SplitName getSplitName() {
+    return sn;
+  }
 }

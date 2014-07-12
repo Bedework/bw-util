@@ -19,9 +19,7 @@ public class ApplicationXml extends XmlFile {
   public ApplicationXml(final File meta) throws Throwable {
     super(meta, "application.xml", false);
 
-    final Element[] modules = XmlUtil.getElementsArray(root);
-
-    for (final Element module : modules) {
+    for (final Element module: XmlUtil.getElementsArray(root)) {
       if (!"module".equals(module.getTagName())) {
         continue;
       }
@@ -60,8 +58,48 @@ public class ApplicationXml extends XmlFile {
     return webModules.keySet();
   }
 
+  /** Add a web module.
+   *
+   * @param moduleName - the module name
+   * @throws Throwable
+   */
+  public void addWebModule(final String moduleName) throws Throwable {
+    final Element mdlEl = doc.createElement("module");
+    final Element webEl = doc.createElement("web");
+
+    mdlEl.appendChild(webEl);
+
+    final Element weburiEl = doc.createElement("web-uri");
+    weburiEl.appendChild(doc.createTextNode(moduleName));
+    webEl.appendChild(weburiEl);
+
+    final Element contextEl = doc.createElement("context-root");
+    contextEl.appendChild(doc.createTextNode("${app.context}"));
+    webEl.appendChild(contextEl);
+
+    /* Find the first module element. Note this won't work if there are
+       no modules.
+     */
+    for (final Element module : XmlUtil.getElementsArray(root)) {
+      if (!"module".equals(module.getTagName())) {
+        continue;
+      }
+
+      root.insertBefore(mdlEl, module);
+      updated = true;
+      break;
+    }
+
+    final Module mdl = new Module();
+    mdl.moduleEl = mdlEl;
+    mdl.webEl = webEl;
+    mdl.webUriEl = weburiEl;
+
+    webModules.put(moduleName, mdl);
+  }
+
   /** Update the context for the given module - value may reference a
-   * proeprty.
+   * property.
    *
    * @param moduleName - the module
    * @param props for replacement value

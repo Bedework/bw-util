@@ -30,7 +30,7 @@ import java.util.Properties;
 public class ProcessEars {
   static void usage(final String error_msg) {
     if (error_msg != null) {
-      Utils.print(error_msg);
+      Utils.error(error_msg);
     }
 
     Utils.print("Usage: processEar [options]\n" +
@@ -38,6 +38,7 @@ public class ProcessEars {
                         "    -h            Print this help and exit\n" +
                         "    --in          Directory for ears\n" +
                         "    --out         Directory for modified ears\n" +
+                        "    --resources   Base for resource references\n" +
                         "    --delete      If specified delete target ear if it exists\n" +
                         "    --prop        Path to property file defining configuration\n" +
                         "    --ear         If specified restrict processing to named ear\n" +
@@ -53,6 +54,8 @@ public class ProcessEars {
     }
   }
 
+  private static boolean error;
+
   private static String inDirPath;
 
   private static String outDirPath;
@@ -61,9 +64,13 @@ public class ProcessEars {
 
   private static String earName;
 
+  private static String resourcesBase;
+
   private static String propsPath;
 
   private static Properties props;
+
+  private final static PropertiesChain pc = new PropertiesChain();
 
   private final static Map<String, Ear> ears = new HashMap<>();
 
@@ -99,6 +106,8 @@ public class ProcessEars {
         delete = true;
       } else if (args.ifMatch("--ear")) {
         earName = args.next();
+      } else if (args.ifMatch("--resources")) {
+        resourcesBase = args.next();
       } else if (args.ifMatch("--h")) {
         usage(null);
         return false;
@@ -128,26 +137,28 @@ public class ProcessEars {
 
       loadProperties();
 
-      if (inDirPath == null) {
-        inDirPath = props.getProperty("org.bedework.postdeploy.in");
-      }
+      pc.push(props);
 
-      if (outDirPath == null) {
-        outDirPath = props.getProperty("org.bedework.postdeploy.out");
-      }
+      inDirPath = defaultVal(inDirPath,
+                             "org.bedework.postdeploy.in",
+                             "--in");
 
-      if ((inDirPath == null) ||
-              (outDirPath == null)) {
-        usage("Must specify --in and --out or provide the values in the properties");
+      outDirPath = defaultVal(outDirPath,
+                              "org.bedework.postdeploy.out",
+                              "--out");
+
+      resourcesBase = defaultVal(resourcesBase,
+                                 "org.bedework.postdeploy.resources.base",
+                                 "--resources");
+
+      if (error) {
+        usage(null);
         return;
       }
 
       Utils.info("input: " + inDirPath);
       Utils.info("output: " + outDirPath);
-
-      final PropertiesChain pc = new PropertiesChain();
-
-      pc.push(props);
+      Utils.info("resources: " + resourcesBase);
 
       final List<String> earNames =
               pc.listProperty("org.bedework.ear.names");
@@ -193,7 +204,7 @@ public class ProcessEars {
           }
         }
 
-        Utils.copy(inPath, outPath);
+        Utils.copy(inPath, outPath, false);
 
         final Ear theEar = new Ear(outDirPath, sn, pc);
 
@@ -206,5 +217,23 @@ public class ProcessEars {
     } catch (final Throwable t) {
       t.printStackTrace();
     }
+  }
+
+  private static String defaultVal(final String val,
+                                   final String pname,
+                                   final String argName) {
+    String nval = val;
+    if (nval == null) {
+      nval = props.getProperty(pname);
+    }
+
+    if (nval == null) {
+      Utils.error("Must specify " + argName +
+                          " or provide the value in the properties with the" +
+                          " '" + pname + "' property");
+      error = true;
+    }
+
+    return nval;
   }
 }
