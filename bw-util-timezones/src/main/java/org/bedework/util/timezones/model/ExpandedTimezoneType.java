@@ -28,28 +28,35 @@ import java.util.List;
  *         for expanded timezone data.
  *
  *
- * <p>Java class for TimezonesType complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType name="TimezonesType">
- *   &lt;complexContent>
- *     &lt;extension base="{urn:ietf:params:xml:ns:timezone-service}BaseResultType">
- *       &lt;sequence>
- *         &lt;element name="dtstamp" type="{urn:ietf:params:xml:ns:timezone-service}DtstampType"/>
- *         &lt;element name="tzdata" type="{urn:ietf:params:xml:ns:timezone-service}TzdataType" maxOccurs="unbounded"/>
- *       &lt;/sequence>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- *
- *
  */
-public class TimezonesType extends BaseResultType {
+public class ExpandedTimezoneType extends BaseResultType {
+  //protected String tzid;
   protected String dtstamp;
-  protected List<TzdataType> tzdata;
+  protected List<ObservanceType> observances;
+
+  /* *
+   * Gets the value of the tzid property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+  public String getTzid() {
+    return tzid;
+  }
+  */
+
+  /* *
+   * Sets the value of the tzid property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+  public void setTzid(final String value) {
+    tzid = value;
+  }
+   */
 
   /**
    * Gets the value of the dtstamp property.
@@ -76,34 +83,29 @@ public class TimezonesType extends BaseResultType {
   }
 
   /**
-   * Gets the value of the tzdata property.
-   * @return List of data
+   * Gets the value of the observances property.
    *
+   * @return list of observances
    */
-  public List<TzdataType> getTzdata() {
-    return tzdata;
+  public List<ObservanceType> getObservances() {
+    return observances;
   }
 
   /**
-   * Sets the value of the tzdata property.
+   * Sets the value of the observances property.
    *
-   * @param val List of data
-   *
+   * @param val list of observances
    */
-  public void setTzdata(final List<TzdataType> val) {
-    tzdata = val;
+  public void setObservances(final List<ObservanceType> val) {
+    observances = val;
   }
 
   @Override
   public String toString() {
-    ToString ts = new ToString(this);
+    final ToString ts = new ToString(this);
 
-    ts.append("dtstamp", getDtstamp().toString());
-
-    for (TzdataType tzd: getTzdata()){
-      ts.newLine();
-      ts.append(tzd);
-    }
+    ts.append("dtstamp", getDtstamp());
+    ts.append("observances", getObservances(), true);
 
     return ts.toString();
   }
