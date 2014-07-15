@@ -20,8 +20,7 @@ package org.bedework.util.timezones.model;
 
 import org.bedework.util.misc.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -69,7 +68,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 public class ObservanceType {
   protected String name;
-  protected List<LocalNameType> localName;
   protected String onset;
   protected String utcOffsetFrom;
   protected String utcOffsetTo;
@@ -96,33 +94,6 @@ public class ObservanceType {
    */
   public void setName(final String value) {
     name = value;
-  }
-
-  /**
-   * Gets the value of the localName property.
-   *
-   * <p>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getLocalName().add(newItem);
-   * </pre>
-   *
-   *
-   * <p>
-   * Objects of the following type(s) are allowed in the list
-   * {@link LocalNameType }
-   * @return A a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the localName property.
-   *
-   *
-   */
-  public List<LocalNameType> getLocalName() {
-    if (localName == null) {
-      localName = new ArrayList<LocalNameType>();
-    }
-    return localName;
   }
 
   /**
@@ -157,6 +128,7 @@ public class ObservanceType {
    *     {@link String }
    *
    */
+  @JsonProperty("utc-offset-from")
   public String getUtcOffsetFrom() {
     return utcOffsetFrom;
   }
@@ -181,6 +153,7 @@ public class ObservanceType {
    *     {@link String }
    *
    */
+  @JsonProperty("utc-offset-to")
   public String getUtcOffsetTo() {
     return utcOffsetTo;
   }
@@ -199,7 +172,7 @@ public class ObservanceType {
 
   @Override
   public String toString() {
-    ToString ts = new ToString(this);
+    final ToString ts = new ToString(this);
 
     ts.append("name", getName());
     ts.append("onset", getOnset());
