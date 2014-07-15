@@ -154,7 +154,6 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   private HttpResponse response;
 
-  @SuppressWarnings("unused")
   private ConnectionKeepAliveStrategy kas = new ConnectionKeepAliveStrategy() {
 
     @Override
@@ -236,6 +235,7 @@ public class BasicHttpClient extends DefaultHttpClient {
                          final int timeOut,
                          final boolean followRedirects) throws HttpException {
     super(connManager, null);
+    setKeepAliveStrategy(kas);
 
     debug = getLogger().isDebugEnabled();
 
