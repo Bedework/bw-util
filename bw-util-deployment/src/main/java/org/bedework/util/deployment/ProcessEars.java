@@ -38,16 +38,25 @@ public class ProcessEars {
                         "    -h            Print this help and exit\n" +
                         "    --in          Directory for ears\n" +
                         "    --out         Directory for modified ears\n" +
+                        "    --deploy      Directory to deploy modified ears\n" +
                         "    --resources   Base for resource references\n" +
                         "    --delete      If specified delete target ear if it exists\n" +
                         "    --prop        Path to property file defining configuration\n" +
                         "    --ear         If specified restrict processing to named ear\n" +
+                        "    --debug       Enable debugging messages\n" +
                         "\n" +
                         "Description:\n" +
                         "    This utility updates an exploded ear making it ready\n" +
-                        "    for deployment.\n\n" +
-                        "    The ears is first copied from the specified in directory \n" +
-                        "    and then modified.\n");
+                        "    for deployment.\n" +
+                        "\n" +
+                        "    The ear is first copied from the specified 'in' directory \n" +
+                        "    to the 'out' and then modified.\n" +
+                        "\n" +
+                        "    If '--deploy' has been specified the modified ear is then \n" +
+                        "    copied from the 'out' directory to the 'deploy' directory.\n" +
+                        "\n" +
+                        "    This process avoids the application server attempting to \n" +
+                        "    deploy partially modified ears.\n");
 
     if (error_msg != null) {
       throw new RuntimeException(error_msg);
@@ -59,6 +68,8 @@ public class ProcessEars {
   private static String inDirPath;
 
   private static String outDirPath;
+
+  private static String deployDirPath;
 
   private static boolean delete;
 
@@ -106,6 +117,8 @@ public class ProcessEars {
         delete = true;
       } else if (args.ifMatch("--ear")) {
         earName = args.next();
+      } else if (args.ifMatch("--debug")) {
+        Utils.debug = true;
       } else if (args.ifMatch("--resources")) {
         resourcesBase = args.next();
       } else if (args.ifMatch("--h")) {
@@ -147,6 +160,9 @@ public class ProcessEars {
                               "org.bedework.postdeploy.out",
                               "--out");
 
+      deployDirPath = defaultVal(deployDirPath,
+                                 "org.bedework.postdeploy.deploy");
+
       resourcesBase = defaultVal(resourcesBase,
                                  "org.bedework.postdeploy.resources.base",
                                  "--resources");
@@ -158,10 +174,17 @@ public class ProcessEars {
 
       Utils.info("input: " + inDirPath);
       Utils.info("output: " + outDirPath);
+      if (deployDirPath != null) {
+        Utils.info("deploy: " + deployDirPath);
+      }
       Utils.info("resources: " + resourcesBase);
 
       final List<String> earNames =
               pc.listProperty("org.bedework.ear.names");
+
+      if (Utils.makeDir(outDirPath)) {
+        Utils.debug("created " + outDirPath);
+      }
 
       final File inDir = Utils.directory(inDirPath);
 
@@ -214,26 +237,56 @@ public class ProcessEars {
       for (final Ear ear: ears.values()) {
         ear.update();
       }
+
+      if (deployDirPath == null) {
+        return;
+      }
+
+      final File outDir = Utils.directory(outDirPath);
+
+      final String[] deployEarNames = outDir.list();
+
+      for (final String nm: deployEarNames) {
+        final Path outPath = Paths.get(outDirPath, nm);
+        final Path deployPath = Paths.get(deployDirPath, nm);
+
+        if (delete) {
+          final File deployFile = deployPath.toFile();
+
+          if (deployFile.exists()) {
+            Utils.deleteAll(deployPath);
+          }
+        }
+
+        Utils.copy(outPath, deployPath, false);
+      }
     } catch (final Throwable t) {
       t.printStackTrace();
     }
   }
 
   private static String defaultVal(final String val,
+                                   final String pname) {
+    if (val != null) {
+      return val;
+    }
+
+    return props.getProperty(pname);
+  }
+
+  private static String defaultVal(final String val,
                                    final String pname,
                                    final String argName) {
-    String nval = val;
-    if (nval == null) {
-      nval = props.getProperty(pname);
+    final String nval = defaultVal(val, pname);
+    if (nval != null) {
+      return nval;
     }
 
-    if (nval == null) {
-      Utils.error("Must specify " + argName +
-                          " or provide the value in the properties with the" +
-                          " '" + pname + "' property");
-      error = true;
-    }
+    Utils.error("Must specify " + argName +
+                        " or provide the value in the properties with the" +
+                        " '" + pname + "' property");
+    error = true;
 
-    return nval;
+    return null;
   }
 }

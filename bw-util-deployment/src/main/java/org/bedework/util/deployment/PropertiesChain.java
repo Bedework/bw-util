@@ -151,10 +151,10 @@ public class PropertiesChain {
       return s;
     }
 
-    Utils.info("Got pname " + s.substring(start + 2, end));
+    Utils.debug("Got pname " + s.substring(start + 2, end));
     final String pval = getExtended(s.substring(start + 2, end));
 
-    Utils.info("Got pval " + pval);
+    Utils.debug("Got pval " + pval);
     if (pval == null) {
       return s;
     }

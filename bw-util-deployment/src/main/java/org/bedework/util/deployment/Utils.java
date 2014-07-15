@@ -46,6 +46,8 @@ import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 
 class Utils {
+  public static boolean debug;
+
   public static Path createFile(final String path) throws Throwable {
     final Path pathToFile = Paths.get(path);
     Files.createDirectories(pathToFile.getParent());
@@ -54,6 +56,21 @@ class Utils {
 
   public static boolean empty(final String path) {
     return delete(new File(path), false);
+  }
+
+  public static boolean makeDir(final String path) throws Throwable {
+    final File f = new File(path);
+
+    if (!f.exists()) {
+      return f.mkdir();
+    }
+
+    if (!f.isDirectory()) {
+      throw new Exception(f.getAbsolutePath() +
+                                  " must be a directory");
+    }
+
+    return false;
   }
 
   public static File directory(final String path) throws Throwable {
@@ -455,6 +472,12 @@ class Utils {
 
   static void error(final String msg) {
     System.err.println("ERROR: " + msg);
+  }
+
+  static void debug(final String msg) {
+    if (debug) {
+      System.out.println("DEBUG: " + msg);
+    }
   }
 
   static void warn(final String msg) {
