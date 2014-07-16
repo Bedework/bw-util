@@ -69,8 +69,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class ObservanceType {
   protected String name;
   protected String onset;
-  protected String utcOffsetFrom;
-  protected String utcOffsetTo;
+  protected int utcOffsetFrom;
+  protected int utcOffsetTo;
 
   /**
    * Gets the value of the name property.
@@ -121,52 +121,44 @@ public class ObservanceType {
   }
 
   /**
-   * Gets the value of the utcOffsetFrom property.
+   * Gets the value of the utcOffsetFrom property - seconds.
    *
-   * @return
-   *     possible object is
-   *     {@link String }
+   * @return int seconds
    *
    */
   @JsonProperty("utc-offset-from")
-  public String getUtcOffsetFrom() {
+  public int getUtcOffsetFrom() {
     return utcOffsetFrom;
   }
 
   /**
    * Sets the value of the utcOffsetFrom property.
    *
-   * @param value
-   *     allowed object is
-   *     {@link String }
+   * @param value seconds
    *
    */
-  public void setUtcOffsetFrom(final String value) {
+  public void setUtcOffsetFrom(final int value) {
     utcOffsetFrom = value;
   }
 
   /**
-   * Gets the value of the utcOffsetTo property.
+   * Gets the value of the utcOffsetTo property - seconds.
    *
-   * @return
-   *     possible object is
-   *     {@link String }
+   * @return int seconds
    *
    */
   @JsonProperty("utc-offset-to")
-  public String getUtcOffsetTo() {
+  public int getUtcOffsetTo() {
     return utcOffsetTo;
   }
 
   /**
    * Sets the value of the utcOffsetTo property.
    *
-   * @param value
-   *     allowed object is
-   *     {@link String }
+   * @param value seconds
    *
    */
-  public void setUtcOffsetTo(final String value) {
+  public void setUtcOffsetTo(final int value) {
     utcOffsetTo = value;
   }
 
