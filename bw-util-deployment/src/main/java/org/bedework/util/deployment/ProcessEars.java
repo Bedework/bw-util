@@ -49,6 +49,8 @@ public class ProcessEars {
                         "    This utility updates an exploded ear making it ready\n" +
                         "    for deployment.\n" +
                         "\n" +
+                        "    The 'out' directory is first deleted and recreated\n" +
+                        "\n" +
                         "    The ear is first copied from the specified 'in' directory \n" +
                         "    to the 'out' and then modified.\n" +
                         "\n" +
@@ -182,6 +184,8 @@ public class ProcessEars {
       final List<String> earNames =
               pc.listProperty("org.bedework.ear.names");
 
+      Utils.deleteAll(Paths.get(outDirPath));
+
       if (Utils.makeDir(outDirPath)) {
         Utils.debug("created " + outDirPath);
       }
@@ -248,6 +252,9 @@ public class ProcessEars {
 
       for (final String nm: deployEarNames) {
         final Path outPath = Paths.get(outDirPath, nm);
+        final SplitName sn = SplitName.testName(nm);
+
+        Utils.deleteMatching(deployDirPath, sn);
         final Path deployPath = Paths.get(deployDirPath, nm);
 
         if (delete) {

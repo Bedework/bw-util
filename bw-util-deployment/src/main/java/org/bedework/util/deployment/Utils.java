@@ -459,6 +459,24 @@ class Utils {
     }
   }
 
+  static void deleteMatching(final String dirPath,
+                             final SplitName sn) throws Throwable {
+    if ((sn.prefix.length() < 3) || (sn.suffix.length() < 3)) {
+      throw new Exception("Suspect name " + sn);
+    }
+
+    final File dir = directory(dirPath);
+
+    final String[] names = dir.list();
+
+    for (final String nm: names) {
+      if (nm.startsWith(sn.prefix) && nm.endsWith(sn.suffix)) {
+        final Path p = Paths.get(dirPath, nm);
+        deleteAll(p);
+      }
+    }
+  }
+
   static void print(final String fmt,
                     final Object... params) {
     final Formatter f = new Formatter();
