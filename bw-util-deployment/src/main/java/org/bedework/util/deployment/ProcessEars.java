@@ -184,11 +184,7 @@ public class ProcessEars {
       final List<String> earNames =
               pc.listProperty("org.bedework.ear.names");
 
-      Utils.deleteAll(Paths.get(outDirPath));
-
-      if (Utils.makeDir(outDirPath)) {
-        Utils.debug("created " + outDirPath);
-      }
+      cleanOut(outDirPath);
 
       final File inDir = Utils.directory(inDirPath);
 
@@ -269,6 +265,18 @@ public class ProcessEars {
       }
     } catch (final Throwable t) {
       t.printStackTrace();
+    }
+  }
+
+  private static void cleanOut(final String outDirPath) throws Throwable {
+    final Path outPath = Paths.get(outDirPath);
+
+    if (outPath.toFile().exists()) {
+      Utils.deleteAll(outPath);
+    }
+
+    if (Utils.makeDir(outDirPath)) {
+      Utils.debug("created " + outDirPath);
     }
   }
 
