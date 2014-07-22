@@ -4,6 +4,7 @@ import org.bedework.util.xml.XmlUtil;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 
@@ -27,7 +28,7 @@ public class WebXml extends XmlFile {
   }
 
   public void setConfigName() throws Throwable {
-    findBwappname:chrome://web-developer/content/generated/view-response-headers.html
+    findBwappname:
     for (final Element el : XmlUtil.getElementsArray(root)) {
       if (!"context-param".equals(el.getNodeName())) {
         continue findBwappname;
@@ -50,19 +51,23 @@ public class WebXml extends XmlFile {
   }
 
   public void setTransportGuarantee() throws Throwable {
-    final Node sc = XmlUtil.getOneTaggedNode(root, "security-constraint");
+    final NodeList children = root.getChildNodes();
 
-    if (sc == null) {
-      return;
+    for (int i = 0; i < children.getLength(); i++) {
+      final Node n = children.item(i);
+
+      if (!"security-constraint".equals(n.getNodeName())) {
+        continue;
+      }
+
+      final Node udc = XmlUtil.getOneTaggedNode(n, "user-data-constraint");
+
+      if (udc == null) {
+        continue;
+      }
+
+      propsReplaceContent((Element)udc, "transport-guarantee", props);
     }
-
-    final Node udc = XmlUtil.getOneTaggedNode(sc, "user-data-constraint");
-
-    if (udc == null) {
-      return;
-    }
-
-    propsReplaceContent((Element)udc, "transport-guarantee", props);
   }
 
   public void setSecurityDomain() throws Throwable {
