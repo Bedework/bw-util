@@ -181,7 +181,7 @@ public class DavUtil implements Serializable {
     public String href;
 
     /** */
-    public List<PropstatElement> propstats = new ArrayList<PropstatElement>();
+    public List<PropstatElement> propstats = new ArrayList<>();
 
     /** May be null */
     public String responseDescription;
@@ -194,7 +194,7 @@ public class DavUtil implements Serializable {
   public static class MultiStatusResponse {
     /** */
     public List<MultiStatusResponseElement> responses =
-      new ArrayList<MultiStatusResponseElement>();
+      new ArrayList<>();
 
     /** May be null */
     public String responseDescription;
@@ -480,6 +480,51 @@ public class DavUtil implements Serializable {
     expect(root, WebdavTags.multistatus);
 
     return getChildren(root);
+  }
+
+  /**
+   * @param cl the client
+   * @param methodName
+   * @param url
+   * @param header
+   * @param contentType
+   * @param contentLen
+   * @param content
+   * @return
+   * @throws Throwable
+   */
+  public int sendRequest(final BasicHttpClient cl,
+                         final String methodName,
+                         final String url,
+                         final Header header,
+                         final String contentType,
+                         final int contentLen,
+                         final byte[] content) throws Throwable {
+    int hdrSize = 0;
+
+    if (header != null) {
+      hdrSize = 1;
+    }
+
+    if (!Util.isEmpty(extraHeaders)) {
+      hdrSize += extraHeaders.size();
+    }
+
+    List<Header> hdrs = null;
+
+    if (hdrSize > 0) {
+      hdrs = new ArrayList<>(hdrSize);
+      if (header != null) {
+        hdrs.add(header);
+      }
+
+      if (!Util.isEmpty(extraHeaders)) {
+        hdrs.addAll(extraHeaders);
+      }
+    }
+
+    return cl.sendRequest(methodName, url, hdrs,
+                          contentType, contentLen, content);
   }
 
   /* ====================================================================
@@ -792,40 +837,6 @@ public class DavUtil implements Serializable {
     }
 
     return path;
-  }
-
-  private int sendRequest(final BasicHttpClient cl,
-                          final String methodName,
-                          final String url,
-                          final Header header,
-                          final String contentType,
-                          final int contentLen,
-                          final byte[] content) throws Throwable {
-    int hdrSize = 0;
-
-    if (header != null) {
-      hdrSize = 1;
-    }
-
-    if (!Util.isEmpty(extraHeaders)) {
-      hdrSize += extraHeaders.size();
-    }
-
-    List<Header> hdrs = null;
-
-    if (hdrSize > 0) {
-      hdrs = new ArrayList<>(hdrSize);
-      if (header != null) {
-        hdrs.add(header);
-      }
-
-      if (!Util.isEmpty(extraHeaders)) {
-        hdrs.addAll(extraHeaders);
-      }
-    }
-
-    return cl.sendRequest(methodName, url, hdrs,
-                          contentType, contentLen, content);
   }
 
   /** ===================================================================

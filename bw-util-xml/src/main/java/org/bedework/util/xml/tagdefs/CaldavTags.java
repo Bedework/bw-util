@@ -79,6 +79,10 @@ public class CaldavTags implements CaldavDefs {
                                                                "calendar-user-address-set");
 
   /**   */
+  public static final QName calendarUserType = new QName(caldavNamespace,
+                                                         "calendar-user-type");
+
+  /**   */
   public static final QName comp = new QName(caldavNamespace,
                                              "comp");
 
