@@ -75,6 +75,7 @@
     <module>bw-util-servlet-filters</module>
     <module>bw-util-struts</module>
     <module>bw-util-timezones</module>
+    <module>bw-util-vcard</module>
     <module>bw-util-xml</module>
   </modules>
 
