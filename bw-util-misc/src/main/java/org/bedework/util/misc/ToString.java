@@ -196,6 +196,11 @@ public class ToString {
    */
   public ToString append(final String name, final List value) {
     nameEquals(name);
+    if (value == null) {
+      sb.append("null");
+      return this;
+    }
+
     sb.append("[");
 
     final String saveDelim = delim;
