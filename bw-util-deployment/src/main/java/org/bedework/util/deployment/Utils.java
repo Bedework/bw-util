@@ -311,7 +311,7 @@ class Utils {
     public FileVisitResult visitFile(final Path file,
                                      final BasicFileAttributes attributes)
             throws IOException {
-      if(attributes.isRegularFile()){
+      if(attributes.isRegularFile()) {
         Files.delete(file);
       }
       return FileVisitResult.CONTINUE;
