@@ -280,7 +280,7 @@ public class ReqUtil implements Serializable {
    */
   public void setSessionAttr(final String attrName,
                              final Object val) {
-    HttpSession sess = request.getSession(false);
+    final HttpSession sess = request.getSession(false);
 
     if (sess == null) {
       return;
@@ -289,13 +289,27 @@ public class ReqUtil implements Serializable {
     sess.setAttribute(attrName, val);
   }
 
+  /** Remove a named session attribute.
+   *
+   * @param attrName    Name of the attribute
+   */
+  public void removeSessionAttr(final String attrName) {
+    final HttpSession sess = request.getSession(false);
+
+    if (sess == null) {
+      return;
+    }
+
+    sess.removeAttribute(attrName);
+  }
+
   /** Return the value of a named session attribute.
    *
    * @param attrName    Name of the attribute
    * @return Object     Attribute value or null
    */
   public Object getSessionAttr(final String attrName) {
-    HttpSession sess = request.getSession(false);
+    final HttpSession sess = request.getSession(false);
 
     if (sess == null) {
       return null;
