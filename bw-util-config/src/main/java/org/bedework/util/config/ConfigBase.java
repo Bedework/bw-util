@@ -183,7 +183,7 @@ public abstract class ConfigBase<T extends ConfigBase>
 
   /** Get a property stored as a String name = val
    *
-   * @param col
+   * @param col of property name+val
    * @param name
    * @return value or null
    */
