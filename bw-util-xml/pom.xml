@@ -24,5 +24,10 @@
       <artifactId>bw-ws-calws-soap</artifactId>
       <version>${bw-ws.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-util-misc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
