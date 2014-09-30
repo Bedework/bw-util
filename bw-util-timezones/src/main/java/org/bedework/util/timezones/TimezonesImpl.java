@@ -551,14 +551,14 @@ public class TimezonesImpl extends Timezones {
       a.load(is);
 
       aliases = a;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       error("loadTimezones error: " + t.getMessage());
       t.printStackTrace();
     } finally {
       if (is != null) {
         try {
           is.close();
-        } catch (Throwable t1) {}
+        } catch (final Throwable ignored) {}
       }
 
       server.close();
