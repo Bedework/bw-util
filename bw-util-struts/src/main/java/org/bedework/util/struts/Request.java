@@ -53,12 +53,18 @@ public class Request extends ReqUtil {
                                               "resource"};
 
   protected int actionType;
+
+  /** request parameter names */
+
   /** */
+  public static final String refreshIntervalReqPar = "refinterval";
+
+  /** action mapping keys - note the "=" */
   public static final String actionTypeKey = "actionType=";
   /** */
   public static final String conversationKey = "conversation=";
   /** */
-  public static final String refreshIntervalKey = "refinterval=";
+  public static final String refreshIntervalKey = refreshIntervalReqPar + "=";
   /** */
   public static final String refreshActionKey = "refaction=";
     /** */
@@ -111,10 +117,11 @@ public class Request extends ReqUtil {
   protected String moduleName;
 
   /**
-   * @param request
-   * @param response
-   * @param form
-   * @param action
+   * @param request the http request
+   * @param response the response
+   * @param form form object
+   * @param action the actions
+   * @param mapping  and the mapping
    */
   public Request(final HttpServletRequest request,
                  final HttpServletResponse response,
@@ -126,7 +133,7 @@ public class Request extends ReqUtil {
     this.action = action;
     this.mapping = mapping;
 
-    String at = getStringActionPar(actionTypeKey);
+    final String at = getStringActionPar(actionTypeKey);
     if (at != null) {
       for (int ati = 0; ati < actionTypes.length; ati++) {
         if (Request.actionTypes[ati].equals(at)) {
@@ -136,7 +143,7 @@ public class Request extends ReqUtil {
       }
     }
 
-    String convType = getStringActionPar(conversationKey);
+    final String convType = getStringActionPar(conversationKey);
     if (convType != null) {
       for (int ati = 0; ati < Request.conversationTypes.length; ati++) {
         if (Request.conversationTypes[ati].equals(convType)) {
@@ -234,6 +241,14 @@ public class Request extends ReqUtil {
   }
 
   public Integer getRefreshInt() {
+    try {
+      final Integer res = super.getIntReqPar(refreshIntervalReqPar);
+      if (res != null) {
+        return res;
+      }
+    } catch (final Throwable ignored) {
+    }
+
     return getIntActionPar(refreshIntervalKey);
   }
 
@@ -245,7 +260,7 @@ public class Request extends ReqUtil {
    * non integer
    *
    * @param name    name of parameter
-   * @param errProp
+   * @param errProp error to emit
    * @return  Integer   value or null
    * @throws Throwable
    */
@@ -253,7 +268,7 @@ public class Request extends ReqUtil {
                               final String errProp) throws Throwable {
     try {
       return super.getIntReqPar(name);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       getErr().emit(errProp, getReqPar(name));
       return null;
     }
@@ -286,7 +301,7 @@ public class Request extends ReqUtil {
       }
 
       return Integer.valueOf(par.substring(pos, epos));
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       form.getErr().emit("edu.rpi.bad.actionparameter", par);
       return null;
     }
@@ -311,7 +326,7 @@ public class Request extends ReqUtil {
       }
 
       return par.substring(pos, epos);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       form.getErr().emit("edu.rpi.bad.actionparameter", par);
       return null;
     }
