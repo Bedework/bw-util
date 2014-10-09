@@ -19,6 +19,7 @@
 package org.bedework.util.timezones;
 
 import org.bedework.util.caching.FlushMap;
+import org.bedework.util.timezones.DateTimeUtil.BadDateException;
 import org.bedework.util.timezones.model.TimezoneListType;
 import org.bedework.util.timezones.model.TimezoneType;
 
@@ -57,13 +58,13 @@ public class TimezonesImpl extends Timezones {
   protected String defaultTimeZoneId;
   protected transient TimeZone defaultTimeZone;
 
-  private static FlushMap<String, TzServer> tzServers =
-      new FlushMap<String, TzServer>();
+  private static final FlushMap<String, TzServer> tzServers =
+      new FlushMap<>();
 
   /* TimezoneInfo cache */
   protected FlushMap<String, TimeZone> timezones =
-      new FlushMap<String, TimeZone>(60 * 1000 * 60, // 1 hour
-                                     100); // 100 timezones
+      new FlushMap<>(60 * 1000 * 60, // 1 hour
+                     100); // 100 timezones
 
   protected static volatile Collection<TimeZoneName> timezoneNames;
 
@@ -112,7 +113,7 @@ public class TimezonesImpl extends Timezones {
         return super.put(key, val);
       }
 
-      UTCDateCache cache = defaultDateCache;
+      final UTCDateCache cache = defaultDateCache;
 
       defaultDateCache = val;
       return cache;
@@ -126,9 +127,9 @@ public class TimezonesImpl extends Timezones {
 
       return defaultDateCache;
     }
-  };
+  }
 
-  private UTCDateCaches dateCaches = new UTCDateCaches();
+  private final UTCDateCaches dateCaches = new UTCDateCaches();
 
   private static Properties aliases;
 
@@ -172,23 +173,20 @@ public class TimezonesImpl extends Timezones {
     return fetchTimeZone(id, etag);
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#getTimeZoneNames()
-   */
   @Override
   public Collection<TimeZoneName> getTimeZoneNames() throws TimezonesException {
     if (timezoneNames != null) {
       return timezoneNames;
     }
 
-    TzServer server = getTzServer(serverUrl);
+    final TzServer server = getTzServer(serverUrl);
 
     try {
-      TimezoneListType tzlist = server.getList(null);
+      final TimezoneListType tzlist = server.getList(null);
 
-      Collection<TimeZoneName> ids = new TreeSet<TimeZoneName>();
+      final Collection<TimeZoneName> ids = new TreeSet<>();
 
-      for (TimezoneType s: tzlist.getTimezones()) {
+      for (final TimezoneType s: tzlist.getTimezones()) {
         ids.add(new TimeZoneName(s.getTzid()));
       }
 
@@ -200,12 +198,9 @@ public class TimezonesImpl extends Timezones {
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.timezones.Timezones#getList(java.lang.String)
-   */
   @Override
   public TimezoneListType getList(final String changedSince) throws TimezonesException {
-    TzServer server = getTzServer(serverUrl);
+    final TzServer server = getTzServer(serverUrl);
 
     try {
       return server.getList(changedSince);
@@ -214,18 +209,12 @@ public class TimezonesImpl extends Timezones {
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#refreshTimezones()
-   */
   @Override
   public synchronized void refreshTimezones() throws TimezonesException {
     timezoneNames = null;
     timezones.clear();
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#unalias(java.lang.String)
-   */
   @Override
   public String unalias(String tzid) throws TimezonesException {
     /* First transform the name if it follows a known pattern, for example
@@ -243,7 +232,7 @@ public class TimezonesImpl extends Timezones {
     }
 
     for (int i = 0; i < 100; i++) {   // Just in case we get a circular chain
-      String unaliased = aliases.getProperty(target);
+      final String unaliased = aliases.getProperty(target);
 
       if (unaliased == null) {
         return target;
@@ -262,38 +251,29 @@ public class TimezonesImpl extends Timezones {
   }
 
 //  private static DateFormat formatTd  = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-  private static Calendar cal = Calendar.getInstance();
-  private static java.util.TimeZone utctz;
+  private static final Calendar cal = Calendar.getInstance();
+  private static final java.util.TimeZone utctz;
 
   static {
     try {
       utctz = TimeZone.getTimeZone(TimeZones.UTC_ID);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new RuntimeException("Unable to initialise UTC timezone");
     }
     cal.setTimeZone(utctz);
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#setDefaultTimeZoneId(java.lang.String)
-   */
   @Override
   public void setDefaultTimeZoneId(final String id) throws TimezonesException {
     defaultTimeZone = null;
     defaultTimeZoneId = id;
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#getDefaultTimeZoneId()
-   */
   @Override
   public String getDefaultTimeZoneId() throws TimezonesException {
     return defaultTimeZoneId;
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#getDefaultTimeZone()
-   */
   @Override
   public TimeZone getDefaultTimeZone() throws TimezonesException {
     if ((defaultTimeZone == null) && (defaultTimeZoneId != null)) {
@@ -303,9 +283,6 @@ public class TimezonesImpl extends Timezones {
     return defaultTimeZone;
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.timezones.Timezones#calculateUtc(java.lang.String, java.lang.String)
-   */
   @Override
   public synchronized String calculateUtc(final String timePar,
                                           final String tzidPar) throws TimezonesException {
@@ -331,7 +308,7 @@ public class TimezonesImpl extends Timezones {
         /* See if we have it cached */
 
         if (cache != null) {
-          String utc = cache.get(time);
+          final String utc = cache.get(time);
 
           if (utc != null) {
             dateCacheHits++;
@@ -345,10 +322,10 @@ public class TimezonesImpl extends Timezones {
         dateKey = time;
         time += "T000000";
       } else if (!DateTimeUtil.isISODateTime(time)) {
-        throw new DateTimeUtil.BadDateException(time);
+        throw new BadDateException(time);
       }
 
-      TimeZone tz = null;
+      final TimeZone tz;
 
       if (cache != null) {
         // Sanity check
@@ -369,10 +346,10 @@ public class TimezonesImpl extends Timezones {
         dateCaches.put(tzid, cache);
       }
 
-      DateFormat formatTd  = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
+      final DateFormat formatTd  = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
       formatTd.setTimeZone(tz);
 
-      java.util.Date date = formatTd.parse(time);
+      final java.util.Date date = formatTd.parse(time);
 
       cal.clear();
       cal.setTime(date);
@@ -380,7 +357,7 @@ public class TimezonesImpl extends Timezones {
       //formatTd.setTimeZone(utctz);
       //trace("formatTd with utc: " + formatTd.format(date));
 
-      StringBuilder sb = new StringBuilder();
+      final StringBuilder sb = new StringBuilder();
       digit4(sb, cal.get(Calendar.YEAR));
       digit2(sb, cal.get(Calendar.MONTH) + 1); // Month starts at 0
       digit2(sb, cal.get(Calendar.DAY_OF_MONTH));
@@ -390,7 +367,7 @@ public class TimezonesImpl extends Timezones {
       digit2(sb, cal.get(Calendar.SECOND));
       sb.append('Z');
 
-      String utc = sb.toString();
+      final String utc = sb.toString();
 
       if (dateKey != null) {
         cache.put(dateKey, utc);
@@ -398,27 +375,21 @@ public class TimezonesImpl extends Timezones {
       }
 
       return utc;
-    } catch (TimezonesException cfe) {
+    } catch (final TimezonesException cfe) {
       throw cfe;
-    } catch (DateTimeUtil.BadDateException bde) {
+    } catch (final BadDateException bde) {
       throw new TimezonesException(TimezonesException.badDate, timePar);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       //t.printStackTrace();
       throw new TimezonesException(t);
     }
   }
 
-  /**
-   * @return Number of utc values cached
-   */
   @Override
   public long getDatesCached() {
     return datesCached;
   }
 
-  /**
-   * @return date cache hits
-   */
   @Override
   public long getDateCacheHits() {
     return dateCacheHits;
@@ -438,12 +409,12 @@ public class TimezonesImpl extends Timezones {
 
   /** Fetch a timezone object from the server given the id.
    *
-   * @param id
+   * @param id the tzid
    * @return TimeZone with id or null
    * @throws TimezonesException
    */
   protected TimeZone fetchTimeZone(final String id) throws TimezonesException {
-    TaggedTimeZone ttz = fetchTimeZone(id, null);
+    final TaggedTimeZone ttz = fetchTimeZone(id, null);
 
     if (ttz == null) {
       return null;
@@ -456,44 +427,40 @@ public class TimezonesImpl extends Timezones {
 
   protected TaggedTimeZone fetchTimeZone(final String id,
                                          final String etag) throws TimezonesException {
-    TzServer server = getTzServer(serverUrl);
+    final TzServer server = getTzServer(serverUrl);
 
     try {
-      TaggedTimeZone ttz = server.getTz(id, etag);
+      final TaggedTimeZone ttz = server.getTz(id, etag);
 
       if (ttz == null) {
         return null;
       }
 
-      CalendarBuilder cb = new CalendarBuilder();
+      final CalendarBuilder cb = new CalendarBuilder();
 
-      UnfoldingReader ufrdr = new UnfoldingReader(new StringReader(ttz.vtz),
-                                                  true);
+      final UnfoldingReader ufrdr =
+              new UnfoldingReader(new StringReader(ttz.vtz),
+                                  true);
 
-      net.fortuna.ical4j.model.Calendar cal = cb.build(ufrdr);
-      VTimeZone vtz = (VTimeZone)cal.getComponents().getComponent(Component.VTIMEZONE);
+      final net.fortuna.ical4j.model.Calendar cal = cb.build(ufrdr);
+      final VTimeZone vtz = (VTimeZone)cal.getComponents().getComponent(Component.VTIMEZONE);
       if (vtz == null) {
         throw new TimezonesException("Incorrectly stored timezone");
       }
 
-      TimeZone tz = new TimeZone(vtz);
-
-      ttz.tz = tz;
+      ttz.tz = new TimeZone(vtz);
 
       return ttz;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new TimezonesException(t);
     } finally {
       server.close();
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#register(java.lang.String, net.fortuna.ical4j.model.TimeZone)
-   */
   @Override
   public synchronized void register(final String id,
-                                               final TimeZone timezone)
+                                    final TimeZone timezone)
           throws TimezonesException {
     timezones.put(id, timezone);
   }
@@ -518,10 +485,10 @@ public class TimezonesImpl extends Timezones {
   }
 
   private static String transformTzid(final String tzid) {
-    int len = tzid.length();
+    final int len = tzid.length();
 
     if ((len > 13) && (tzid.startsWith("/mozilla.org/"))) {
-      int pos = tzid.indexOf('/', 13);
+      final int pos = tzid.indexOf('/', 13);
 
       if ((pos < 0) || (pos == (len - 1))) {
         return tzid;
@@ -529,23 +496,15 @@ public class TimezonesImpl extends Timezones {
       return tzid.substring(pos + 1);
     }
 
-    /* Special to get James Andrewartha going */
-    String ss = "/softwarestudio.org/Tzfile/";
-
-    if ((len > ss.length()) &&
-        (tzid.startsWith(ss))) {
-      return tzid.substring(ss.length());
-    }
-
     return tzid;
   }
 
   private void loadAliases() throws TimezonesException {
-    TzServer server = getTzServer(serverUrl);
+    final TzServer server = getTzServer(serverUrl);
     InputStream is = null;
 
     try {
-      Properties a = new Properties();
+      final Properties a = new Properties();
 
       is = server.getAliases();
       a.load(is);
@@ -566,10 +525,9 @@ public class TimezonesImpl extends Timezones {
   }
 
 
-  private void digit2(final StringBuilder sb, final int val)
-          throws DateTimeUtil.BadDateException {
+  private void digit2(final StringBuilder sb, final int val) throws BadDateException {
     if (val > 99) {
-      throw new DateTimeUtil.BadDateException();
+      throw new BadDateException();
     }
     if (val < 10) {
       sb.append("0");
@@ -577,10 +535,9 @@ public class TimezonesImpl extends Timezones {
     sb.append(val);
   }
 
-  private void digit4(final StringBuilder sb, final int val)
-          throws DateTimeUtil.BadDateException {
+  private void digit4(final StringBuilder sb, final int val) throws BadDateException {
     if (val > 9999) {
-      throw new DateTimeUtil.BadDateException();
+      throw new BadDateException();
     }
     if (val < 10) {
       sb.append("000");
