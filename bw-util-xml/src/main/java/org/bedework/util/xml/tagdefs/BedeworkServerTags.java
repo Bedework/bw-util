@@ -32,6 +32,9 @@ public class BedeworkServerTags {
   /** */
   public static final String bedeworkCaldavNamespace = "http://bedeworkcalserver.org/ns/";
 
+  /** */
+  public static final String bedeworkCarddavNamespace = "http://bedeworkcardserver.org/ns/";
+
   /**   */
   public static final QName adminContact = new QName(bedeworkCaldavNamespace,
                                                      "admin-contact");
@@ -141,4 +144,8 @@ public class BedeworkServerTags {
   /**   */
   public static final QName xprop = new QName(bedeworkCaldavNamespace,
                                                      "xprop");
+
+  /**   */
+  public static final QName emailProp = new QName(bedeworkCarddavNamespace,
+                                             "email");
 }

@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 
 /** Define Carddav tags for XMlEmit
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@rpi.edu
  */
 public class CarddavTags {
   /** Namespace for these tags
@@ -33,7 +33,7 @@ public class CarddavTags {
 
   /** Tables of QNames indexed by name
    */
-  public final static HashMap<String, QName> qnames = new HashMap<String, QName>();
+  public final static HashMap<String, QName> qnames = new HashMap<>();
 
   /** */
   public static final QName addressbook = makeQName("addressbook");
@@ -108,7 +108,7 @@ public class CarddavTags {
   public static final QName textMatch = makeQName("text-match");
 
   private static QName makeQName(final String name) {
-    QName q = new QName(namespace, name);
+    final QName q = new QName(namespace, name);
     qnames.put(name, q);
 
     return q;
