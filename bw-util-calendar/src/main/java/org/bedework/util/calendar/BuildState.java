@@ -25,6 +25,7 @@ import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /** Track the state while building calendars.
@@ -48,14 +49,9 @@ public class BuildState {
   private Calendar calendar;
 
   /**
-   * The current component instance created by the builder.
+   * The current component instances created by the builder.
    */
-  private Component component;
-
-  /**
-   * The current sub-component instance created by the builder.
-   */
-  private Component subComponent;
+  private LinkedList<Component> components = new LinkedList<>();
 
   /**
    * The current property instance created by the builder.
@@ -117,19 +113,25 @@ public class BuildState {
   }
 
   public Component getComponent() {
-    return component;
-  }
-
-  public void setComponent(final Component component) {
-    this.component = component;
+    if (components.size() == 0) {
+      return null;
+    }
+    return components.peek();
   }
 
   public Component getSubComponent() {
-    return subComponent;
+    if (components.size() < 2) {
+      return null;
+    }
+    return components.get(1);
   }
 
-  public void setSubComponent(final Component subComponent) {
-    this.subComponent = subComponent;
+  public void startComponent(final Component component) {
+    components.push(component);
+  }
+
+  public void endComponent() {
+    components.pop();
   }
 
   public Property getProperty() {

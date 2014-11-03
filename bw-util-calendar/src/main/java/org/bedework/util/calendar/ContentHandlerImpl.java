@@ -33,11 +33,13 @@ import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyFactory;
 import net.fortuna.ical4j.model.PropertyFactoryRegistry;
 import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.component.VAlarm;
 import net.fortuna.ical4j.model.component.VAvailability;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VPoll;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.component.VToDo;
+import net.fortuna.ical4j.model.component.VVoter;
 import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.property.DateListProperty;
 import net.fortuna.ical4j.model.property.DateProperty;
@@ -55,7 +57,7 @@ import java.text.ParseException;
  *
  */
 public class ContentHandlerImpl implements ContentHandler {
-  private BuildState bs;
+  private final BuildState bs;
 
   private final ComponentFactory componentFactory;
 
@@ -64,7 +66,7 @@ public class ContentHandlerImpl implements ContentHandler {
   private final ParameterFactory parameterFactory;
 
   /**
-   * @param bs
+   * @param bs the state
    */
   public ContentHandlerImpl(final BuildState bs) {
     this.bs = bs;
@@ -82,27 +84,39 @@ public class ContentHandlerImpl implements ContentHandler {
   public void endComponent(final String name) {
     assertComponent(bs.getComponent());
 
-    if (bs.getSubComponent() != null) {
-      if (bs.getComponent() instanceof VTimeZone) {
-        ((VTimeZone)bs.getComponent()).getObservances().add(bs.getSubComponent());
-      } else if (bs.getComponent() instanceof VEvent) {
-        ((VEvent)bs.getComponent()).getAlarms().add(bs.getSubComponent());
-      } else if (bs.getComponent() instanceof VToDo) {
-        ((VToDo)bs.getComponent()).getAlarms().add(bs.getSubComponent());
-      } else if (bs.getComponent() instanceof VAvailability) {
-        ((VAvailability)bs.getComponent()).getAvailable().add(bs.getSubComponent());
-      } else if (bs.getComponent() instanceof VPoll) {
-        ((VPoll)bs.getComponent()).getCandidates().add(bs.getSubComponent());
+    final Component component = bs.getComponent();
+
+    bs.endComponent();
+
+    final Component parent = bs.getComponent();
+
+    if (parent != null) {
+      // This is a sub-component of another component
+      if (parent instanceof VTimeZone) {
+        ((VTimeZone)parent).getObservances().add(component);
+      } else if (parent instanceof VEvent) {
+        ((VEvent)parent).getAlarms().add(component);
+      } else if (parent instanceof VToDo) {
+        ((VToDo)parent).getAlarms().add(component);
+      } else if (parent instanceof VAvailability) {
+        ((VAvailability)parent).getAvailable().add(component);
+      } else if (parent instanceof VVoter) {
+        ((VVoter) parent).getVotes().add(component);
+      } else if (parent instanceof VPoll) {
+        if (component instanceof VAlarm) {
+          ((VPoll)parent).getAlarms().add(component);
+        } else if (component instanceof VVoter) {
+          ((VPoll)parent).getVoters().add(component);
+        } else {
+          ((VPoll)parent).getCandidates().add(component);
+        }
       }
-      bs.setSubComponent(null);
-    }
-    else {
-      bs.getCalendar().getComponents().add(bs.getComponent());
-      if ((bs.getComponent() instanceof VTimeZone) && (bs.getTzRegistry() != null)) {
+    } else {
+      bs.getCalendar().getComponents().add(component);
+      if ((component instanceof VTimeZone) && (bs.getTzRegistry() != null)) {
         // register the timezone for use with iCalendar objects..
-        bs.getTzRegistry().register(new TimeZone((VTimeZone) bs.getComponent()));
+        bs.getTzRegistry().register(new TimeZone((VTimeZone) component));
       }
-      bs.setComponent(null);
     }
   }
 
@@ -113,12 +127,7 @@ public class ContentHandlerImpl implements ContentHandler {
     // replace with a constant instance if applicable..
     bs.setProperty(Constants.forProperty(bs.getProperty()));
     if (bs.getComponent() != null) {
-      if (bs.getSubComponent() != null) {
-        bs.getSubComponent().getProperties().add(bs.getProperty());
-      }
-      else {
-        bs.getComponent().getProperties().add(bs.getProperty());
-      }
+      bs.getComponent().getProperties().add(bs.getProperty());
     }
     else if (bs.getCalendar() != null) {
       bs.getCalendar().getProperties().add(bs.getProperty());
@@ -144,7 +153,7 @@ public class ContentHandlerImpl implements ContentHandler {
         if (!timezone.getID().equals(param.getValue())) {
             /* Fetched timezone has a different id */
 
-          ParameterList pl = bs.getProperty().getParameters();
+          final ParameterList pl = bs.getProperty().getParameters();
 
           pl.replace(ParameterFactoryImpl.getInstance().
                   createParameter(Parameter.TZID, timezone.getID()));
@@ -188,12 +197,7 @@ public class ContentHandlerImpl implements ContentHandler {
    */
   @Override
   public void startComponent(final String name) {
-    if (bs.getComponent() != null) {
-      bs.setSubComponent(componentFactory.createComponent(name));
-    }
-    else {
-      bs.setComponent(componentFactory.createComponent(name));
-    }
+    bs.startComponent(componentFactory.createComponent(name));
   }
 
   /**
@@ -221,11 +225,11 @@ public class ContentHandlerImpl implements ContentHandler {
     try {
       ((DateProperty) property).setTimeZone(timezone);
     }
-    catch (ClassCastException e) {
+    catch (final ClassCastException e) {
       try {
         ((DateListProperty) property).setTimeZone(timezone);
       }
-      catch (ClassCastException e2) {
+      catch (final ClassCastException e2) {
         if (CompatibilityHints.isHintEnabled(
                 CompatibilityHints.KEY_RELAXED_PARSING)) {
 //            log.warn("Error setting timezone [" + timezone.getID()

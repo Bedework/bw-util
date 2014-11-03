@@ -917,12 +917,22 @@ public class PropertyIndex implements Serializable {
     POLL_ITEM_ID(XcalTags.pollItemId,
                  PollItemIdPropType.class,
                  DataType.INTEGER,
-                 IS_MULTI, notTimezone),
+        IS_SINGLE, event_Todo_Journal_Freebusy),
 
     /** Poll-item */
     POLL_ITEM(BedeworkServerTags.xprop,
               null,
               IS_MULTI, vpollOnly),
+
+    /** vvoter component */
+    VVOTER(BedeworkServerTags.xprop,
+           null,
+           IS_MULTI, vpollOnly),
+
+    /** vote component */
+    VOTE(BedeworkServerTags.xprop,
+           null,
+           IS_MULTI, vpollOnly),
 
     /** Poll-mode */
     POLL_MODE(XcalTags.pollMode,
