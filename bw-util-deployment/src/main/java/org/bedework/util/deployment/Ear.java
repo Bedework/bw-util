@@ -6,8 +6,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bedework.util.deployment.Utils.SplitName;
-
 /** Represent a ear for deployment.
  *
  * @author douglm

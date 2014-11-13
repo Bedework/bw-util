@@ -1,17 +1,28 @@
 package org.bedework.util.deployment;
 
 import org.bedework.util.args.Args;
-import org.bedework.util.deployment.Utils.SplitName;
+import org.bedework.util.dav.DavUtil;
+import org.bedework.util.dav.DavUtil.DavChild;
+import org.bedework.util.http.BasicHttpClient;
+import org.bedework.util.misc.Util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /** Process a ear for deployment. The ear is in its exploded form -
  * nothing zipped. This app will use the wars inside as patterns
@@ -35,23 +46,34 @@ public class ProcessEars {
 
     Utils.print("Usage: processEar [options]\n" +
                         "Options:\n" +
-                        "    -h            Print this help and exit\n" +
-                        "    --in          Directory for ears\n" +
-                        "    --out         Directory for modified ears\n" +
-                        "    --deploy      Directory to deploy modified ears\n" +
-                        "    --resources   Base for resource references\n" +
-                        "    --delete      If specified delete target ear if it exists\n" +
-                        "    --prop        Path to property file defining configuration\n" +
-                        "    --ear         If specified restrict processing to named ear\n" +
-                        "    --debug       Enable debugging messages\n" +
+                        "    -h             Print this help and exit\n" +
+                        "    --in           Directory for ears\n" +
+                        "    --inurl        WebDAV location for ears\n" +
+                        "    --out          Directory for modified ears\n" +
+                        "    --deploy       Directory to deploy modified ears\n" +
+                        "    --resources    Base for resource references\n" +
+                        "    --noclean      Don't delete temp dirs - helps debugging\n" +
+                        "    --noversion    If specified suppress version check\n" +
+                        "    --checkonly    Display what would be deployed without this flag\n" +
+                        "    --delete       If specified delete target ear if it exists\n" +
+                        "    --prop         Path to property file defining configuration\n" +
+                        "    --ear          If specified restrict processing to named ear\n" +
+                        "    --debug        Enable debugging messages\n" +
                         "\n" +
                         "Description:\n" +
                         "    This utility updates an exploded ear making it ready\n" +
                         "    for deployment.\n" +
                         "\n" +
+                        "    Only ear files later than the currently deployed ears\n" +
+                        "    will be processed.\n" +
+                        "\n" +
                         "    The 'out' directory is first deleted and recreated\n" +
                         "\n" +
-                        "    The ear is first copied from the specified 'in' directory \n" +
+                        "    If 'inurl' is specified a list of the latest ears from\n" +
+                        "    that location is created. These ears will be downloaded to a\n" +
+                        "    temporary input directory and unzipped.\n" +
+                        "\n" +
+                        "    The ear is copied from the specified 'in' directory \n" +
                         "    to the 'out' and then modified.\n" +
                         "\n" +
                         "    If '--deploy' has been specified the modified ear is then \n" +
@@ -67,13 +89,21 @@ public class ProcessEars {
 
   private static boolean error;
 
+  private static String inUrl;
+
   private static String inDirPath;
 
   private static String outDirPath;
 
   private static String deployDirPath;
 
+  private static boolean noversion;
+
+  private static boolean checkonly;
+
   private static boolean delete;
+
+  private static boolean cleanup = true;
 
   private static String earName;
 
@@ -86,6 +116,8 @@ public class ProcessEars {
   private final static PropertiesChain pc = new PropertiesChain();
 
   private final static Map<String, Ear> ears = new HashMap<>();
+
+  private final static List<Path> tempDirs = new ArrayList<>();
 
   private static void loadProperties() throws Throwable {
     final File f = Utils.file(propsPath);
@@ -110,11 +142,29 @@ public class ProcessEars {
       if (args.ifMatch("-h")) {
         usage(null);
       } else if (args.ifMatch("--in")) {
+        if (inUrl != null) {
+          usage("Only one of --in or --inurl: " + args.current());
+          return false;
+        }
+
         inDirPath = args.next();
+      } else if (args.ifMatch("--inurl")) {
+        if (inDirPath != null) {
+          usage("Only one of --in or --inurl: " + args.current());
+          return false;
+        }
+
+        inUrl = args.next();
       } else if (args.ifMatch("--out")) {
         outDirPath = args.next();
       } else if (args.ifMatch("--props")) {
         propsPath = args.next();
+      } else if (args.ifMatch("--noclean")) {
+        cleanup = false;
+      } else if (args.ifMatch("--noversion")) {
+        noversion = true;
+      } else if (args.ifMatch("--checkonly")) {
+        checkonly = true;
       } else if (args.ifMatch("--delete")) {
         delete = true;
       } else if (args.ifMatch("--ear")) {
@@ -154,9 +204,19 @@ public class ProcessEars {
 
       pc.push(props);
 
-      inDirPath = defaultVal(inDirPath,
-                             "org.bedework.postdeploy.in",
-                             "--in");
+      inUrl = defaultVal(inUrl,
+                         "org.bedework.postdeploy.inurl");
+
+      if (inUrl == null) {
+        inDirPath = defaultVal(inDirPath,
+                               "org.bedework.postdeploy.in",
+                               "--in");
+      } else {
+        inDirPath = getRemoteFiles(inUrl);
+        if (inDirPath == null) {
+          return;
+        }
+      }
 
       outDirPath = defaultVal(outDirPath,
                               "org.bedework.postdeploy.out",
@@ -186,35 +246,35 @@ public class ProcessEars {
 
       cleanOut(outDirPath);
 
-      final File inDir = Utils.directory(inDirPath);
+      final List<SplitName> earSplitNames = getInEars(inDirPath,
+                                                      earNames);
 
-      final String[] names = inDir.list();
-
-      final List<SplitName> earSplitNames = new ArrayList<>();
-
-      for (final String nm: names) {
-        final SplitName sn = SplitName.testName(nm, earNames);
-
-        if ((sn == null) || (!"ear".equals(sn.suffix))) {
-          continue;
-        }
-
-        earSplitNames.add(sn);
-      }
-
-      Utils.info("Found " + earSplitNames.size() + " ears");
+      final List<SplitName> deployedEars = deployedEars(outDirPath);
 
       for (final SplitName sn: earSplitNames) {
         if ((earName != null) && !earName.equals(sn.prefix)) {
           continue;
         }
 
-        Utils.info("Processing " + sn.name);
+        if (!noversion) {
+          // See if this is a later version than the deployed file
+          if (!sn.laterThan(deployedEars)) {
+            Utils.warn("File " + sn.name + " not later than deployed file. Skipping");
+            continue;
+          }
+        }
 
         if (!earNames.contains(sn.prefix)) {
           Utils.warn(sn.name + " is not in the list of supported ears. Skipped");
           continue;
         }
+
+        if (checkonly) {
+          Utils.info("Ear " + sn.name + " is deployable");
+          continue;
+        }
+
+        Utils.info("Processing " + sn.name);
 
         final Path inPath = Paths.get(inDirPath, sn.name);
         final Path outPath = Paths.get(outDirPath, sn.name);
@@ -234,6 +294,10 @@ public class ProcessEars {
         ears.put(sn.name, theEar);
       }
 
+      if (checkonly) {
+        return;
+      }
+
       for (final Ear ear: ears.values()) {
         ear.update();
       }
@@ -242,16 +306,9 @@ public class ProcessEars {
         return;
       }
 
-      final File outDir = Utils.directory(outDirPath);
-
-      final String[] deployEarNames = outDir.list();
-
-      for (final String nm: deployEarNames) {
-        final Path outPath = Paths.get(outDirPath, nm);
-        final SplitName sn = SplitName.testName(nm);
-
+      for (final SplitName sn: deployedEars) {
         Utils.deleteMatching(deployDirPath, sn);
-        final Path deployPath = Paths.get(deployDirPath, nm);
+        final Path deployPath = Paths.get(deployDirPath, sn.name);
 
         if (delete) {
           final File deployFile = deployPath.toFile();
@@ -261,11 +318,133 @@ public class ProcessEars {
           }
         }
 
+        final Path outPath = Paths.get(outDirPath, sn.name);
         Utils.copy(outPath, deployPath, false);
       }
     } catch (final Throwable t) {
       t.printStackTrace();
     }
+
+    if (cleanup) {
+      // Try to delete any temp directories
+      for (final Path tempPath: tempDirs) {
+        try {
+          Utils.deleteAll(tempPath);
+        } catch (final Throwable t) {
+          Utils.warn("Error trying to delete " + tempPath);
+        }
+      }
+    }
+  }
+
+  private static Path getTempDirectory(final String prefix)  throws Throwable {
+    final Path tempPath = Files.createTempDirectory(prefix);
+
+    tempDirs.add(tempPath);
+    return tempPath;
+  }
+
+  /**
+   *
+   * @param inUrl the remote ear repository
+   * @return path to directory containing downloaded files or null for errors.
+   * @throws Throwable
+   */
+  private static String getRemoteFiles(final String inUrl) throws Throwable {
+    final BasicHttpClient cl = new BasicHttpClient(30000);
+
+    final Path downloadPath = getTempDirectory("bwdownload");
+    final Path expandPath = getTempDirectory("bwexpand");
+    final String sourceEars = expandPath.toAbsolutePath().toString();
+
+    try {
+      final DavUtil du = new DavUtil();
+
+      final Collection<DavChild> dcs = du.getChildrenUrls(cl, inUrl, null);
+
+      final URI inUri = new URI(inUrl);
+
+      if (Util.isEmpty(dcs)) {
+        Utils.warn("No files at " + inUrl);
+        return null;
+      }
+
+      for (final DavChild dc: dcs) {
+        URI dcUri = new URI(dc.uri);
+        if (dcUri.getHost() == null) {
+          dcUri = inUri.resolve(dc.uri);
+        }
+
+        if (Utils.debug) {
+          Utils.info("Found url " + dcUri);
+        }
+
+        final InputStream is = cl.get(dcUri.toString());
+
+        if (is == null) {
+          Utils.warn("Unable to fetch " + dcUri);
+          return null;
+        }
+
+        final String zipName = dc.displayName + ".zip";
+
+        final Path zipPath = downloadPath.resolve(zipName);
+
+        Files.copy(is, zipPath);
+        unzip(zipPath.toAbsolutePath().toString(),
+              sourceEars);
+      }
+    } finally {
+      cl.release();
+    }
+
+    return sourceEars;
+  }
+
+  private static void unzip(final String zipPath,
+                            final String destDir) throws Throwable {
+    final byte[] buffer = new byte[4096];
+
+    final FileInputStream fis = new FileInputStream(zipPath);
+    final ZipInputStream zis = new ZipInputStream(fis);
+    ZipEntry ze = zis.getNextEntry();
+    while(ze != null){
+      final File newFile = new File(destDir + File.separator +
+                                            ze.getName());
+
+      if (ze.isDirectory()) {
+        if (Utils.debug) {
+          Utils.info("Directory entry " + newFile.getAbsolutePath());
+        }
+
+        zis.closeEntry();
+        ze = zis.getNextEntry();
+        continue;
+      }
+
+      if (Utils.debug) {
+        Utils.info("Unzip " + newFile.getAbsolutePath());
+      }
+
+      /* Zip entry has relative path which may require sub directories
+       */
+      //noinspection ResultOfMethodCallIgnored
+      new File(newFile.getParent()).mkdirs();
+      final FileOutputStream fos = new FileOutputStream(newFile);
+      int len;
+      while ((len = zis.read(buffer)) > 0) {
+        fos.write(buffer, 0, len);
+      }
+      fos.close();
+      //close this ZipEntry
+      zis.closeEntry();
+      ze = zis.getNextEntry();
+    }
+
+    //close last ZipEntry
+    zis.closeEntry();
+    zis.close();
+    fis.close();
   }
 
   private static void cleanOut(final String outDirPath) throws Throwable {
@@ -278,6 +457,52 @@ public class ProcessEars {
     if (Utils.makeDir(outDirPath)) {
       Utils.debug("created " + outDirPath);
     }
+  }
+
+  private static List<SplitName> getInEars(final String dirPath,
+                                           final List<String> earNames) throws Throwable {
+    final File inDir = Utils.directory(dirPath);
+
+    final String[] names = inDir.list();
+
+    final List<SplitName> earSplitNames = new ArrayList<>();
+
+    for (final String nm: names) {
+      final SplitName sn = SplitName
+              .testName(nm, earNames);
+
+      if ((sn == null) || (!"ear".equals(sn.suffix))) {
+        continue;
+      }
+
+      earSplitNames.add(sn);
+    }
+
+    Utils.info("Found " + earSplitNames.size() + " ears");
+
+    return earSplitNames;
+  }
+
+  private static List<SplitName> deployedEars(final String dirPath) throws Throwable {
+    final File outDir = Utils.directory(dirPath);
+
+    final String[] deployEarNames = outDir.list();
+
+    final List<SplitName> earSplitNames = new ArrayList<>();
+
+    for (final String nm: deployEarNames) {
+      final SplitName sn = SplitName
+              .testName(nm);
+
+      if ((sn == null) || (!"ear".equals(sn.suffix))) {
+        Utils.warn("Unable to process " + nm);
+        continue;
+      }
+
+      earSplitNames.add(sn);
+    }
+
+    return earSplitNames;
   }
 
   private static String defaultVal(final String val,

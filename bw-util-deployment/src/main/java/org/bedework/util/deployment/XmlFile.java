@@ -69,7 +69,7 @@ public class XmlFile {
     final Node n = XmlUtil.getOneTaggedNode(root, tagname);
 
     if (n == null) {
-      Utils.info("no element with name " + tagname);
+      //Utils.info("no element with name " + tagname);
       return;
     }
 

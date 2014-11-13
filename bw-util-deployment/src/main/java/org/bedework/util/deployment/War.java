@@ -4,8 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.bedework.util.deployment.Utils.SplitName;
-
 /** Represent a ear for deployment.
  *
  * @author douglm

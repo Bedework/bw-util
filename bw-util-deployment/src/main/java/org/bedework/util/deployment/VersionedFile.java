@@ -2,8 +2,6 @@ package org.bedework.util.deployment;
 
 import java.io.File;
 
-import static org.bedework.util.deployment.Utils.SplitName;
-
 /** Represent a versioned file for deployment.
  *
  * @author douglm

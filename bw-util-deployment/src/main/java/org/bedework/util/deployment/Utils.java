@@ -35,7 +35,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.EnumSet;
 import java.util.Formatter;
-import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -389,76 +388,13 @@ class Utils {
     return s.substring(0, start) + pval + s.substring(end + 1);
   }
 
-  /** Result of splitting a name into its component parts, e.g.
+  /** Delete any files on the given path that have a name part that
+   * matches the split name. Allows us to remove old versions.
    *
-   * anapp-3.10.5.war
-   *
-   * has prefix = "anapp"
-   * version = "3.10.5"
-   * suffix = "."
-   *
-   * <p>Note the prefix must be longer than 3 characters - to avoid the
-   * "bw-" part of the name</p>
-   *
+   * @param dirPath the directory
+   * @param sn the split name
+   * @throws Throwable
    */
-  static class SplitName {
-    String name;
-
-    String prefix;
-    String version;
-    String suffix;
-
-    SplitName(final String name,
-              final String prefix) {
-      this.name = name;
-      this.prefix = prefix;
-
-      final int dashPos = prefix.length();
-      if (name.charAt(prefix.length()) != '-') {
-        throw new RuntimeException("Bad name/prefix");
-      }
-
-      final int dotPos = name.lastIndexOf(".");
-
-      version = name.substring(dashPos + 1, dotPos);
-      suffix = name.substring(dotPos + 1);
-    }
-
-    static SplitName testName(final String name) {
-      /* Try to figure out the prefix */
-      final int dashPos = name.indexOf("-", 3);
-
-      if (dashPos < 0) {
-        return null;
-      }
-
-      final int dotPos = name.lastIndexOf(".");
-
-      if (dotPos > dashPos) {
-        return new SplitName(name, name.substring(0, dashPos));
-      }
-
-      return null;
-    }
-
-    static SplitName testName(final String name,
-                              final List<String> prefixes) {
-      for (final String prefix: prefixes) {
-        if (name.startsWith(prefix) &&
-          // Next char must be "-"
-                     (name.charAt(prefix.length()) == '-')) {
-          final int dotPos = name.lastIndexOf(".");
-
-          if (dotPos > prefix.length()) {
-            return new SplitName(name, prefix);
-          }
-        }
-      }
-
-      return null;
-    }
-  }
-
   static void deleteMatching(final String dirPath,
                              final SplitName sn) throws Throwable {
     if ((sn.prefix.length() < 3) || (sn.suffix.length() < 3)) {
