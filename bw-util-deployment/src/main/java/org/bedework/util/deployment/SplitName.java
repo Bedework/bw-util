@@ -117,6 +117,10 @@ public class SplitName {
    * @return true if this is later than same file in list.
    */
   public boolean laterThan(final List<SplitName> them) {
+    if (them == null) {
+      return false;
+    }
+
     for (final SplitName sn: them) {
       if (!sameAs(sn)) {
         continue;

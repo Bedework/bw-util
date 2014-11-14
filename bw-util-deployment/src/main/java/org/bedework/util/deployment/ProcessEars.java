@@ -249,7 +249,7 @@ public class ProcessEars {
       final List<SplitName> earSplitNames = getInEars(inDirPath,
                                                       earNames);
 
-      final List<SplitName> deployedEars = deployedEars(outDirPath);
+      final List<SplitName> deployedEars = getEarNames(deployDirPath);
 
       for (final SplitName sn: earSplitNames) {
         if ((earName != null) && !earName.equals(sn.prefix)) {
@@ -303,10 +303,16 @@ public class ProcessEars {
       }
 
       if (deployDirPath == null) {
+        Utils.info("No deployment path specified. Terminating");
         return;
       }
 
-      for (final SplitName sn: deployedEars) {
+      int deployed = 0;
+
+      for (final SplitName sn: getEarNames(outDirPath)) {
+        Utils.info("Deploying " + sn.name);
+        deployed++;
+
         Utils.deleteMatching(deployDirPath, sn);
         final Path deployPath = Paths.get(deployDirPath, sn.name);
 
@@ -321,6 +327,8 @@ public class ProcessEars {
         final Path outPath = Paths.get(outDirPath, sn.name);
         Utils.copy(outPath, deployPath, false);
       }
+
+      Utils.info("Deployed " + deployed + " ears");
     } catch (final Throwable t) {
       t.printStackTrace();
     }
@@ -468,8 +476,7 @@ public class ProcessEars {
     final List<SplitName> earSplitNames = new ArrayList<>();
 
     for (final String nm: names) {
-      final SplitName sn = SplitName
-              .testName(nm, earNames);
+      final SplitName sn = SplitName.testName(nm, earNames);
 
       if ((sn == null) || (!"ear".equals(sn.suffix))) {
         continue;
@@ -483,7 +490,7 @@ public class ProcessEars {
     return earSplitNames;
   }
 
-  private static List<SplitName> deployedEars(final String dirPath) throws Throwable {
+  private static List<SplitName> getEarNames(final String dirPath) throws Throwable {
     final File outDir = Utils.directory(dirPath);
 
     final String[] deployEarNames = outDir.list();
@@ -491,11 +498,10 @@ public class ProcessEars {
     final List<SplitName> earSplitNames = new ArrayList<>();
 
     for (final String nm: deployEarNames) {
-      final SplitName sn = SplitName
-              .testName(nm);
+      final SplitName sn = SplitName.testName(nm);
 
       if ((sn == null) || (!"ear".equals(sn.suffix))) {
-        Utils.warn("Unable to process " + nm);
+        //Utils.warn("Unable to process " + nm);
         continue;
       }
 
