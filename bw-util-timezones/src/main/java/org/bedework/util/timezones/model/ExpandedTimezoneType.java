@@ -30,33 +30,33 @@ import java.util.List;
  *
  */
 public class ExpandedTimezoneType extends BaseResultType {
-  //protected String tzid;
+  protected String tzid;
   protected String dtstamp;
   protected List<ObservanceType> observances;
 
-  /* *
+  /**
    * Gets the value of the tzid property.
    *
    * @return
    *     possible object is
    *     {@link String }
    *
+   */
   public String getTzid() {
     return tzid;
   }
-  */
 
-  /* *
+  /**
    * Sets the value of the tzid property.
    *
    * @param value
    *     allowed object is
    *     {@link String }
    *
+   */
   public void setTzid(final String value) {
     tzid = value;
   }
-   */
 
   /**
    * Gets the value of the dtstamp property.
@@ -105,6 +105,7 @@ public class ExpandedTimezoneType extends BaseResultType {
     final ToString ts = new ToString(this);
 
     ts.append("dtstamp", getDtstamp());
+    ts.append("tzid", getTzid());
     ts.append("observances", getObservances(), true);
 
     return ts.toString();

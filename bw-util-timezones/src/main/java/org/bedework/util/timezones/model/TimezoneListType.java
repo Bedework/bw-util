@@ -86,7 +86,7 @@ public class TimezoneListType extends BaseResultType {
 
   @Override
   public String toString() {
-    ToString ts = new ToString(this);
+    final ToString ts = new ToString(this);
 
     ts.append("dtstamp", getDtstamp());
     ts.append("timezones", getTimezones(), true);
