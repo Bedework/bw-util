@@ -24,6 +24,12 @@
 
     <dependency>
       <groupId>org.bedework</groupId>
+      <artifactId>bw-util-dav</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bedework</groupId>
       <artifactId>bw-util-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
