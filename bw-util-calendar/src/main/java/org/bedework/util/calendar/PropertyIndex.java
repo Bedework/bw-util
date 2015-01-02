@@ -96,7 +96,7 @@ import javax.xml.namespace.QName;
  * @author Mike Douglass   douglm  rpi.edu
  */
 public class PropertyIndex implements Serializable {
-  private PropertyIndex() {};
+  private PropertyIndex() {}
 
   static class ComponentFlags {
     private boolean vcalendarProperty;
@@ -235,28 +235,28 @@ public class PropertyIndex implements Serializable {
     VTODO(XcalTags.vtodo, "VTODO", VtodoType.class),
     ;
 
-    private QName qname;
+    private final QName qname;
 
-    private String pname;
+    private final String pname;
 
     private String pnameLC;
 
     private String jname;
 
-    private Class xmlClass;
+    private final Class xmlClass;
 
-    private static Map<String, ComponentInfoIndex> pnameLookup =
+    private final static Map<String, ComponentInfoIndex> pnameLookup =
             new HashMap<>();
 
-    private static Map<QName, ComponentInfoIndex> qnameLookup =
+    private final static Map<QName, ComponentInfoIndex> qnameLookup =
             new HashMap<>();
 
-    private static Map<Class, ComponentInfoIndex> xmlClassLookup =
+    private final static Map<Class, ComponentInfoIndex> xmlClassLookup =
             new HashMap<>();
 
     static {
-      for (ComponentInfoIndex cii: values()) {
-        String pname = cii.getPnameLC();
+      for (final ComponentInfoIndex cii: values()) {
+        final String pname = cii.getPnameLC();
 
         pnameLookup.put(pname, cii);
 
@@ -323,7 +323,7 @@ public class PropertyIndex implements Serializable {
     }
 
     /** get the index given the XML class
-     * @param cl
+     * @param cl the class
      * @return ComponentInfoIndex
      */
     public static ComponentInfoIndex fromXmlClass(final Class cl) {
@@ -332,7 +332,7 @@ public class PropertyIndex implements Serializable {
 
     /** get the index given the property name
      *
-     * @param val
+     * @param val the name
      * @return ComponentInfoIndex
      */
     public static ComponentInfoIndex lookupPname(final String val) {
@@ -341,7 +341,7 @@ public class PropertyIndex implements Serializable {
 
     /** get the index given the qname
      *
-     * @param val
+     * @param val the qname
      * @return ComponentInfoIndex
      */
     public static ComponentInfoIndex lookupQname(final QName val) {
@@ -558,20 +558,20 @@ public class PropertyIndex implements Serializable {
      */
     UID("UID");
 
-    private String pname;
+    private final String pname;
 
     private String pnameLC;
 
     private String jname;
 
-    private DataType ptype;
+    private final DataType ptype;
 
-    private static HashMap<String, ParameterInfoIndex> pnameLookup =
+    private final static HashMap<String, ParameterInfoIndex> pnameLookup =
             new HashMap<>();
 
     static {
-      for (ParameterInfoIndex pii: values()) {
-        String pname = pii.getPnameLC();
+      for (final ParameterInfoIndex pii: values()) {
+        final String pname = pii.getPnameLC();
         pnameLookup.put(pname, pii);
       }
     }
@@ -635,7 +635,7 @@ public class PropertyIndex implements Serializable {
 
     /** get the index given the parameter name
      *
-     * @param val
+     * @param val name
      * @return ParameterInfoIndex
      */
     public static ParameterInfoIndex lookupPname(final String val) {
@@ -1137,7 +1137,7 @@ public class PropertyIndex implements Serializable {
 
     IMAGE(BedeworkServerTags.xprop,
           null,
-               IS_SINGLE, allComponents),
+          IS_SINGLE, allComponents),
 
     /**  date/time utc value */
     INDEX_END(XcalTags.dtstart,
@@ -1156,14 +1156,14 @@ public class PropertyIndex implements Serializable {
              null,
              IS_SINGLE, allComponents),
 
-    /** location uid */
-    LOCATION_UID(XcalTags.location,
-                 LocationPropType.class,
+    /** location uid - saved in the index */
+    LOCATION_UID(BedeworkServerTags.xprop,
+                 null,
                  IS_SINGLE, event_Todo),
 
-    /** location string value */
-    LOCATION_STR(XcalTags.location,
-                 LocationPropType.class,
+    /** location string value for the indexer */
+    LOCATION_STR(BedeworkServerTags.xprop,
+                 null,
                  IS_SINGLE, event_Todo),
 
     /* For bedework annotations/overrides */
@@ -1264,7 +1264,7 @@ public class PropertyIndex implements Serializable {
 
     /** link to some related resource */
     URI(BedeworkServerTags.xprop,
-        UrlPropType.class,
+        null,
         DataType.URI,
         IS_SINGLE, allComponents),
 
@@ -1297,18 +1297,14 @@ public class PropertyIndex implements Serializable {
           IS_SINGLE, allComponents),
     ;
 
-    private QName qname;
+    private final QName qname;
 
-    private String pname;
-
-    private String pnameLC;
-
-    private Class xmlClass;
+    private final Class xmlClass;
 
     private DataType ptype;
 
     /* true if the standard says it's multi */
-    private boolean multiValued;
+    private final boolean multiValued;
 
     /* true if we store multi - e.g. multi-language */
     private boolean dbMultiValued;
@@ -1317,16 +1313,16 @@ public class PropertyIndex implements Serializable {
 
     private boolean immutable;
 
-    private ComponentFlags components;
+    private final ComponentFlags components;
 
-    private static Map<QName, PropertyInfoIndex> qnameLookup =
+    private final static Map<QName, PropertyInfoIndex> qnameLookup =
             new HashMap<>();
 
-    private static Map<Class, PropertyInfoIndex> xmlClassLookup =
+    private final static Map<Class, PropertyInfoIndex> xmlClassLookup =
             new HashMap<>();
 
     static {
-      for (PropertyInfoIndex pii: values()) {
+      for (final PropertyInfoIndex pii: values()) {
         qnameLookup.put(pii.getQname(), pii);
 
         xmlClassLookup.put(pii.xmlClass, pii);
