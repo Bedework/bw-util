@@ -79,6 +79,10 @@ public class BedeworkServerTags {
   public static final QName maxWebCalPeriod = new QName(bedeworkCaldavNamespace,
                                                          "maxWebCalPeriod");
 
+  /**   */
+  public static final QName synchAdminCreateEpropsProperty = new QName(bedeworkCaldavNamespace,
+                                                                       "org.bedework.synchAdminCreateEprops");
+
   /* used for property index */
 
   /**   */
