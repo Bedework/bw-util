@@ -381,15 +381,10 @@ public abstract class ConfigBase<T extends ConfigBase>
     if (!XmlUtil.hasChildren(subroot)) {
       /* A primitive value for which we should have a setter */
 
-      Object val = simpleValue(elClass, subroot);
-      if (val == null) {
-        error("Unsupported par class " + elClass +
-              " for field " + name);
-        throw new ConfigException("Unsupported par class " + elClass +
-                                  " for field " + name);
+      Object val = simpleValue(elClass, subroot, name);
+      if (val != null) {
+        assign(val, col, o, meth);
       }
-
-      assign(val, col, o, meth);
 
       return;
     }
@@ -516,10 +511,14 @@ public abstract class ConfigBase<T extends ConfigBase>
   }
 
   private static Object simpleValue(final Class cl,
-                                    final Element el) throws Throwable {
+                                    final Element el,
+                                    final String name) throws Throwable {
     if (!XmlUtil.hasChildren(el)) {
       /* A primitive value for which we should have a setter */
-      String ndval = XmlUtil.getElementContent(el);
+      final String ndval = XmlUtil.getElementContent(el);
+      if (ndval.length() == 0) {
+        return null;
+      }
 
       if (cl.getName().equals("java.lang.String")) {
         return ndval;
@@ -540,9 +539,10 @@ public abstract class ConfigBase<T extends ConfigBase>
         return Boolean.valueOf(ndval);
       }
 
-
-      // XXX Should do byte, char, short, float, and double.
-      return null;
+      error("Unsupported par class " + cl +
+                    " for field " + name);
+      throw new ConfigException("Unsupported par class " + cl +
+                                        " for field " + name);
     }
 
     // Complex value
