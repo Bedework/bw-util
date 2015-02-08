@@ -145,7 +145,7 @@ public class ReqUtil implements Serializable {
       par = Util.checkNull(par);
       if (par != null) {
         if (res == null) {
-          res = new ArrayList<String>();
+          res = new ArrayList<>();
         }
 
         res.add(par);
