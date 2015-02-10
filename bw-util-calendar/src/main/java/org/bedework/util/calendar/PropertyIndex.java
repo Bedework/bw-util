@@ -1215,6 +1215,10 @@ public class PropertyIndex implements Serializable {
                  null,
                  IS_SINGLE, allComponents),
 
+    SUGGESTED_TO(BedeworkServerTags.xprop,
+                 null,
+                 IS_MULTI, allComponents),
+
     /* For bedework annotations/overrides */
     TARGET(BedeworkServerTags.xprop,
            null,
