@@ -112,8 +112,10 @@ public abstract class ConfigBase<T extends ConfigBase>
 
   private String name;
 
+  private long lastChanged;
+
   /**
-   * @param val
+   * @param val the name
    */
   public void setName(final String val) {
     name = val;
@@ -127,12 +129,21 @@ public abstract class ConfigBase<T extends ConfigBase>
     return name;
   }
 
+  public void markChanged() {
+    lastChanged = System.currentTimeMillis();
+  }
+
+  public long getLastChanged() {
+    return lastChanged;
+  }
+
   /** Add our stuff to the StringBuilder
    *
    * @param ts    ToString for result
    */
   public void toStringSegment(final ToString ts) {
     ts.append("name", getName());
+    ts.append("lastChanged", getLastChanged());
   }
 
   /* ====================================================================

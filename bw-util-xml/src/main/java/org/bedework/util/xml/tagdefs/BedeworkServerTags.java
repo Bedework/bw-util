@@ -80,8 +80,14 @@ public class BedeworkServerTags {
                                                          "maxWebCalPeriod");
 
   /**   */
-  public static final QName synchAdminCreateEpropsProperty = new QName(bedeworkCaldavNamespace,
-                                                                       "org.bedework.synchAdminCreateEprops");
+  public static final QName synchAdminCreateEpropsProperty =
+          new QName(bedeworkCaldavNamespace,
+                    "org.bedework.synchAdminCreateEprops");
+
+  /**   */
+  public static final QName synchXlocXcontacts =
+          new QName(bedeworkCaldavNamespace,
+                    "org.bedework.synchXlocXcontacts");
 
   /* used for property index */
 

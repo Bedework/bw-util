@@ -84,6 +84,8 @@ import ietf.params.xml.ns.icalendar_2.VoterPropType;
 import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkCostPropType;
+import ietf.params.xml.ns.icalendar_2.XBwContactPropType;
+import ietf.params.xml.ns.icalendar_2.XBwLocationPropType;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -697,6 +699,11 @@ public class PropertyIndex implements Serializable {
             ContactPropType.class,
             IS_MULTI, event_Todo_Journal_Freebusy),
 
+    /** Moved String contact */
+    XBWCONTACT(XcalTags.xBedeworkContact,
+               XBwContactPropType.class,
+               IS_MULTI, event_Todo_Journal_Freebusy),
+
     /** UTC datetime */
     CREATED(XcalTags.created,
             CreatedPropType.class,
@@ -773,6 +780,11 @@ public class PropertyIndex implements Serializable {
     LOCATION(XcalTags.location,
              LocationPropType.class,
              IS_SINGLE, event_Todo),
+
+    /** moved simple location value */
+    XBWLOCATION(XcalTags.xBedeworkLocation,
+                XBwLocationPropType.class,
+                IS_SINGLE, event_Todo),
 
     /** meeting organizer */
     ORGANIZER(XcalTags.organizer,

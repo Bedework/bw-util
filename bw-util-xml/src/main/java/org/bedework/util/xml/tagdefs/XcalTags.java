@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 /** Define tags for icalendar in XML.
  *
- * @author Mike Douglass   douglm - bedework.edu
+ * @author Mike Douglass   douglm - rpi.edu
  */
 public class XcalTags {
   /** */
@@ -460,4 +460,10 @@ public class XcalTags {
 
   /**   */
   public static final QName xBedeworkCost = new QName(namespace, "x-bedework-cost");
+
+  /**   */
+  public static final QName xBedeworkLocation = new QName(namespace, "x-bedework-location");
+
+  /**   */
+  public static final QName xBedeworkContact = new QName(namespace, "x-bedework-contact");
 }
