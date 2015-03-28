@@ -92,6 +92,11 @@
       <artifactId>bw-ws-calws-soap</artifactId>
       <version>${bw-ws.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-ws-icalendar</artifactId>
+      <version>${bw-ws.version}</version>
+    </dependency>
     <!-- Third Party Libraries -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

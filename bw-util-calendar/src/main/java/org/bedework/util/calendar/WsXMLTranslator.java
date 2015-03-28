@@ -28,7 +28,6 @@ import net.fortuna.ical4j.model.parameter.Value;
 
 import org.apache.log4j.Logger;
 
-import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
 import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
@@ -40,7 +39,6 @@ import ietf.params.xml.ns.icalendar_2.CalAddressListParamType;
 import ietf.params.xml.ns.icalendar_2.CalAddressParamType;
 import ietf.params.xml.ns.icalendar_2.CalAddressPropertyType;
 import ietf.params.xml.ns.icalendar_2.CalscalePropType;
-import ietf.params.xml.ns.icalendar_2.ClassPropType;
 import ietf.params.xml.ns.icalendar_2.DateDatetimePropertyType;
 import ietf.params.xml.ns.icalendar_2.DatetimePropertyType;
 import ietf.params.xml.ns.icalendar_2.DurationParameterType;
@@ -53,11 +51,9 @@ import ietf.params.xml.ns.icalendar_2.RangeParamType;
 import ietf.params.xml.ns.icalendar_2.RecurPropertyType;
 import ietf.params.xml.ns.icalendar_2.RecurType;
 import ietf.params.xml.ns.icalendar_2.RequestStatusPropType;
-import ietf.params.xml.ns.icalendar_2.StatusPropType;
 import ietf.params.xml.ns.icalendar_2.TextListPropertyType;
 import ietf.params.xml.ns.icalendar_2.TextParameterType;
 import ietf.params.xml.ns.icalendar_2.TextPropertyType;
-import ietf.params.xml.ns.icalendar_2.TranspPropType;
 import ietf.params.xml.ns.icalendar_2.TriggerPropType;
 import ietf.params.xml.ns.icalendar_2.UntilRecurType;
 import ietf.params.xml.ns.icalendar_2.UriParameterType;
@@ -174,13 +170,13 @@ public class WsXMLTranslator {
 
   private void processComponent(final BaseComponentType comp,
                                 final BuildState bs) throws Throwable {
-    ComponentInfoIndex cii = ComponentInfoIndex.fromXmlClass(comp.getClass());
+    final ComponentInfoIndex cii = ComponentInfoIndex.fromXmlClass(comp.getClass());
 
     if (cii == null) {
       throw new Exception("Unknown component " + comp.getClass());
     }
 
-    String name = cii.getPname();
+    final String name = cii.getPname();
     bs.getContentHandler().startComponent(name);
 
     processProperties(comp.getProperties(), bs);
@@ -193,21 +189,25 @@ public class WsXMLTranslator {
   private void processProperty(final BasePropertyType prop,
                                final QName elname,
                                final BuildState bs) throws Throwable {
-    PropertyInfoIndex pii = PropertyInfoIndex.fromXmlClass(prop.getClass());
+    final PropertyInfoIndex pii = PropertyInfoIndex.fromXmlClass(prop.getClass());
+
+    /*
     String name;
     if (pii == null) {
       name = elname.getLocalPart().toUpperCase();
     } else {
       name = pii.name();
     }
+    */
+    final String name = elname.getLocalPart().toUpperCase();
 
     bs.getContentHandler().startProperty(name);
 
-    ArrayOfParameters aop = prop.getParameters();
+    final ArrayOfParameters aop = prop.getParameters();
 
     if (aop != null) {
       for (JAXBElement<? extends BaseParameterType> e: aop.getBaseParameter()) {
-        String parName = e.getName().getLocalPart().toUpperCase();
+        final String parName = e.getName().getLocalPart().toUpperCase();
 
         bs.getContentHandler().parameter(parName, getParValue(e.getValue()));
       }
@@ -225,9 +225,9 @@ public class WsXMLTranslator {
    * @return iCalendar recurrence rule value
    */
   public String fromRecurProperty(final RecurPropertyType rp) {
-    RecurType r = rp.getRecur();
+    final RecurType r = rp.getRecur();
 
-    List<String> rels = new ArrayList<String>();;
+    final List<String> rels = new ArrayList<>();
 
     /*
     value-recur = element recur {
@@ -285,7 +285,7 @@ public class WsXMLTranslator {
     if (prop instanceof DurationPropType) {
       DurationPropType dp = (DurationPropType)prop;
 
-      propVal(bs, dp.getDuration().toString());
+      propVal(bs, dp.getDuration());
 
       return true;
     }
@@ -387,26 +387,10 @@ public class WsXMLTranslator {
       return true;
     }
 
-    if (prop instanceof ClassPropType) {
-      ClassPropType p = (ClassPropType)prop;
-
-      propVal(bs, p.getText());
-
-      return true;
-    }
-
     if (prop instanceof GeoPropType) {
       GeoPropType p = (GeoPropType)prop;
 
       propVal(bs, p.getLatitude() + ";" + p.getLongitude());
-
-      return true;
-    }
-
-    if (prop instanceof StatusPropType) {
-      StatusPropType p = (StatusPropType)prop;
-
-      propVal(bs, p.getText());
 
       return true;
     }
@@ -419,27 +403,11 @@ public class WsXMLTranslator {
       return true;
     }
 
-    if (prop instanceof TranspPropType) {
-      TranspPropType p = (TranspPropType)prop;
-
-      propVal(bs, p.getText());
-
-      return true;
-    }
-
-    if (prop instanceof ActionPropType) {
-      ActionPropType p = (ActionPropType)prop;
-
-      propVal(bs, p.getText());
-
-      return true;
-    }
-
     if (prop instanceof TriggerPropType) {
       TriggerPropType p = (TriggerPropType)prop;
 
       if (p.getDuration() != null) {
-        propVal(bs, p.getDuration().toString());
+        propVal(bs, p.getDuration());
       } else {
         propVal(bs, XcalUtil.getIcalFormatDateTime(p.getDateTime().toString()));
       }
@@ -466,6 +434,15 @@ public class WsXMLTranslator {
       propVal(bs, sb.toString());
 
       return true;
+    }
+
+    // ClassPropType: TextPropertyType
+    // StatusPropType: TextPropertyType
+    // TranspPropType: TextPropertyType
+    // ActionPropType: TextPropertyType
+
+    if (getLog().isDebugEnabled()) {
+      warn("Unhandled class " + prop.getClass());
     }
 
     return false;

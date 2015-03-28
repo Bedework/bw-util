@@ -85,6 +85,11 @@ public class BedeworkServerTags {
                     "org.bedework.synchAdminCreateEprops");
 
   /**   */
+  public static final QName synchXcategories =
+          new QName(bedeworkCaldavNamespace,
+                    "org.bedework.synchXcategories");
+
+  /**   */
   public static final QName synchXlocXcontacts =
           new QName(bedeworkCaldavNamespace,
                     "org.bedework.synchXlocXcontacts");

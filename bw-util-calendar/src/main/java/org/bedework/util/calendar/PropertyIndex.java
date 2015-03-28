@@ -84,6 +84,7 @@ import ietf.params.xml.ns.icalendar_2.VoterPropType;
 import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkCostPropType;
+import ietf.params.xml.ns.icalendar_2.XBwCategoriesPropType;
 import ietf.params.xml.ns.icalendar_2.XBwContactPropType;
 import ietf.params.xml.ns.icalendar_2.XBwLocationPropType;
 
@@ -678,6 +679,10 @@ public class PropertyIndex implements Serializable {
               CategoriesPropType.class,
                IS_MULTI, event_Todo_Journal_Alarm),
 
+    X_BEDEWORK_CATEGORIES(XcalTags.xBedeworkCategories,
+                          XBwCategoriesPropType.class,
+                          IS_MULTI, event_Todo_Journal_Alarm),
+
     /** classification */
     CLASS(XcalTags._class,
           ClassPropType.class, null,
@@ -700,9 +705,9 @@ public class PropertyIndex implements Serializable {
             IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** Moved String contact */
-    XBWCONTACT(XcalTags.xBedeworkContact,
-               XBwContactPropType.class,
-               IS_MULTI, event_Todo_Journal_Freebusy),
+    X_BEDEWORK_CONTACT(XcalTags.xBedeworkContact,
+                       XBwContactPropType.class,
+                       IS_MULTI, event_Todo_Journal_Freebusy),
 
     /** UTC datetime */
     CREATED(XcalTags.created,
@@ -782,9 +787,9 @@ public class PropertyIndex implements Serializable {
              IS_SINGLE, event_Todo),
 
     /** moved simple location value */
-    XBWLOCATION(XcalTags.xBedeworkLocation,
-                XBwLocationPropType.class,
-                IS_SINGLE, event_Todo),
+    X_BEDEWORK_LOCATION(XcalTags.xBedeworkLocation,
+                        XBwLocationPropType.class,
+                        IS_SINGLE, event_Todo),
 
     /** meeting organizer */
     ORGANIZER(XcalTags.organizer,

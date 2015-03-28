@@ -459,6 +459,10 @@ public class XcalTags {
      ===================================================================== */
 
   /**   */
+  public static final QName xBedeworkCategories =
+          new QName(namespace, "x-bedework-categories");
+
+  /**   */
   public static final QName xBedeworkCost = new QName(namespace, "x-bedework-cost");
 
   /**   */
