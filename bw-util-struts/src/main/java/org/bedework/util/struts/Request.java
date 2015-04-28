@@ -274,11 +274,19 @@ public class Request extends ReqUtil {
     }
   }
 
-  protected Integer getIntActionPar(final String name) {
+  /**
+   * @param name of parameter
+   * @return value of given parameter or null
+   */
+  public Integer getIntActionPar(final String name) {
     return getIntActionPar(name, getActionParameter());
   }
 
-  protected String getStringActionPar(final String name) {
+  /**
+   * @param name of parameter
+   * @return value of given parameter or null
+   */
+  public String getStringActionPar(final String name) {
     return getStringActionPar(name, getActionParameter());
   }
 
