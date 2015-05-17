@@ -22,6 +22,7 @@ import org.bedework.util.config.ConfigBase;
 import org.bedework.util.config.ConfigException;
 import org.bedework.util.config.ConfigurationFileStore;
 import org.bedework.util.config.ConfigurationStore;
+import org.bedework.util.misc.Util;
 
 import org.apache.log4j.Logger;
 
@@ -412,6 +413,14 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
           pfile = new Properties();
           pfile.load(new FileReader(f));
+
+          /* Do any property replacement on values */
+          Set pfileNames = pfile.keySet();
+
+          for (Object o: pfileNames) {
+            pfile.put(o, Util.propertyReplace(pfile.getProperty((String)o),
+                                              System.getProperties()));
+          }
 
           configBase = pfile.getProperty(configBasePname);
 

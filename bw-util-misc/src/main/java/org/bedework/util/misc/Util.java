@@ -282,6 +282,55 @@ public class Util {
     }
   }
 
+  public static String propertyReplace(final String val,
+                                       final Properties props) {
+    if (val == null) {
+      return null;
+    }
+
+    int pos = val.indexOf("${");
+
+    if (pos < 0) {
+      return val;
+    }
+
+    final StringBuilder sb = new StringBuilder(val.length());
+    int segStart = 0;
+
+    while (pos > 0) {
+      sb.append(val.substring(segStart, pos));
+
+      int end = val.indexOf("}", pos);
+
+      if (end < 0) {
+        //No matching close. Just append rest and return.
+        sb.append(val.substring(pos));
+        break;
+      }
+
+      final String pval = props.getProperty(val.substring(pos + 2, end).trim());
+
+      if (pval != null) {
+        sb.append(pval);
+      }
+
+      segStart = end + 1;
+      if (segStart > val.length()) {
+        break;
+      }
+
+      pos = val.indexOf("${", segStart);
+
+      if (pos < 0) {
+        //Done.
+        sb.append(val.substring(segStart));
+        break;
+      }
+    }
+
+    return sb.toString();
+  }
+
   /** Format a message consisting of a format string
    *
    * @param fmt

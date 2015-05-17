@@ -19,6 +19,7 @@
 package org.bedework.util.config;
 
 import org.bedework.util.misc.ToString;
+import org.bedework.util.misc.Util;
 import org.bedework.util.xml.XmlEmit;
 import org.bedework.util.xml.XmlUtil;
 import org.bedework.util.xml.tagdefs.BedeworkServerTags;
@@ -524,40 +525,43 @@ public abstract class ConfigBase<T extends ConfigBase>
   private static Object simpleValue(final Class cl,
                                     final Element el,
                                     final String name) throws Throwable {
-    if (!XmlUtil.hasChildren(el)) {
-      /* A primitive value for which we should have a setter */
-      final String ndval = XmlUtil.getElementContent(el);
-      if (ndval.length() == 0) {
-        return null;
-      }
-
-      if (cl.getName().equals("java.lang.String")) {
-        return ndval;
-      }
-
-      if (cl.getName().equals("int") ||
-          cl.getName().equals("java.lang.Integer")) {
-        return Integer.valueOf(ndval);
-      }
-
-      if (cl.getName().equals("long") ||
-          cl.getName().equals("java.lang.Long")) {
-        return Long.valueOf(ndval);
-      }
-
-      if (cl.getName().equals("boolean") ||
-          cl.getName().equals("java.lang.Boolean")) {
-        return Boolean.valueOf(ndval);
-      }
-
-      error("Unsupported par class " + cl +
-                    " for field " + name);
-      throw new ConfigException("Unsupported par class " + cl +
-                                        " for field " + name);
+    if (XmlUtil.hasChildren(el)) {
+      // Complex value
+      return null;
     }
 
-    // Complex value
-    return null;
+    /* A primitive value for which we should have a setter */
+    final String ndval = XmlUtil.getElementContent(el);
+    if (ndval.length() == 0) {
+      return null;
+    }
+
+    if (cl.getName().equals("java.lang.String")) {
+      // Any tokens to replace?
+
+      return Util.propertyReplace(ndval,
+                                  System.getProperties());
+    }
+
+    if (cl.getName().equals("int") ||
+            cl.getName().equals("java.lang.Integer")) {
+      return Integer.valueOf(ndval);
+    }
+
+    if (cl.getName().equals("long") ||
+            cl.getName().equals("java.lang.Long")) {
+      return Long.valueOf(ndval);
+    }
+
+    if (cl.getName().equals("boolean") ||
+            cl.getName().equals("java.lang.Boolean")) {
+      return Boolean.valueOf(ndval);
+    }
+
+    error("Unsupported par class " + cl +
+                  " for field " + name);
+    throw new ConfigException("Unsupported par class " + cl +
+                                      " for field " + name);
   }
 
   /* ====================================================================
