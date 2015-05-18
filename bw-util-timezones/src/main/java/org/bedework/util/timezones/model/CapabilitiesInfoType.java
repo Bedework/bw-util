@@ -48,9 +48,11 @@ import java.util.List;
  *
  *
  */
+@SuppressWarnings("UnusedDeclaration")
 public class CapabilitiesInfoType {
   protected String source;
   protected String primarySource;
+  protected List<String> formats;
   protected CapabilitiesTruncatedType truncated;
   protected List<String> contacts;
 
@@ -103,6 +105,34 @@ public class CapabilitiesInfoType {
   }
 
   /**
+   * Gets the value of the contact property.
+   *
+   * <p>
+   * This accessor method returns a reference to the live list,
+   * not a snapshot. Therefore any modification you make to the
+   * returned list will be present inside the Json object.
+   * This is why there is not a <CODE>set</CODE> method for the contacts property.
+   *
+   * <p>
+   * For example, to add a new item, do as follows:
+   * <pre>
+   *    getContacts().add(newItem);
+   * </pre>
+   *
+   *
+   * <p>
+   * Objects of the following type(s) are allowed in the list
+   * {@link String }
+   * @return list of contacts
+   */
+  public List<String> getFormats() {
+    if (formats == null) {
+      formats = new ArrayList<>();
+    }
+    return formats;
+  }
+
+  /**
    * Gets the value of the truncated property.
    *
    * @return
@@ -149,17 +179,18 @@ public class CapabilitiesInfoType {
    */
   public List<String> getContacts() {
     if (contacts == null) {
-      contacts = new ArrayList<String>();
+      contacts = new ArrayList<>();
     }
     return contacts;
   }
 
   @Override
   public String toString() {
-    ToString ts = new ToString(this);
+    final ToString ts = new ToString(this);
 
     ts.append("source", getSource());
     ts.append("primarySource", getPrimarySource());
+    ts.append("formats", getFormats());
     ts.append("truncated", getTruncated());
     ts.append("contacts", getContacts(), true);
 

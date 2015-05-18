@@ -20,6 +20,8 @@ package org.bedework.util.timezones.model;
 
 import org.bedework.util.misc.ToString;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import java.util.List;
  */
 public class CapabilitiesActionType {
   protected String name;
+  protected String uriTemplate;
   protected List<CapabilitiesAcceptParameterType> parameters;
 
   /**
@@ -70,6 +73,31 @@ public class CapabilitiesActionType {
   }
 
   /**
+   * Gets the value of the uriTemplate property.
+   *
+   * @return
+   *     possible object is
+   *     {@link String }
+   *
+   */
+  @JsonProperty("uri-template")
+  public String getUriTemplate() {
+    return uriTemplate;
+  }
+
+  /**
+   * Sets the value of the uriTemplate property.
+   *
+   * @param value
+   *     allowed object is
+   *     {@link String }
+   *
+   */
+  public void setUriTemplate(final String value) {
+    uriTemplate = value;
+  }
+
+  /**
    * Gets the value of the acceptParameter property.
    *
    * <p>
@@ -94,16 +122,17 @@ public class CapabilitiesActionType {
    */
   public List<CapabilitiesAcceptParameterType> getParameters() {
     if (parameters == null) {
-      parameters = new ArrayList<CapabilitiesAcceptParameterType>();
+      parameters = new ArrayList<>();
     }
     return parameters;
   }
 
   @Override
   public String toString() {
-    ToString ts = new ToString(this);
+    final ToString ts = new ToString(this);
 
     ts.append("name", getName());
+    ts.append("uriTemplate", getUriTemplate());
     ts.append("parameters", getParameters(), true);
 
     return ts.toString();
