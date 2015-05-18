@@ -297,8 +297,10 @@ public class Util {
     final StringBuilder sb = new StringBuilder(val.length());
     int segStart = 0;
 
-    while (pos > 0) {
-      sb.append(val.substring(segStart, pos));
+    while (pos >= 0) {
+      if (pos > 0) {
+        sb.append(val.substring(segStart, pos));
+      }
 
       int end = val.indexOf("}", pos);
 
