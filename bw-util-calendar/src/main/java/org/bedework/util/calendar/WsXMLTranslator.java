@@ -199,15 +199,33 @@ public class WsXMLTranslator {
       name = pii.name();
     }
     */
-    final String name = elname.getLocalPart().toUpperCase();
-
-    bs.getContentHandler().startProperty(name);
+    String name = elname.getLocalPart().toUpperCase();
 
     final ArrayOfParameters aop = prop.getParameters();
 
-    if (aop != null) {
-      for (JAXBElement<? extends BaseParameterType> e: aop.getBaseParameter()) {
+    final boolean wrapper = name.equals("X-BEDEWORK-WRAPPER");
+
+    if (wrapper) {
+      /* find the wrapped name parameter */
+      for (final JAXBElement<? extends BaseParameterType> e:
+              aop.getBaseParameter()) {
         final String parName = e.getName().getLocalPart().toUpperCase();
+
+        if (parName.equals("X-BEDEWORK-WRAPPED-NAME")) {
+          name = getParValue(e.getValue());
+        }
+      }
+    }
+
+    bs.getContentHandler().startProperty(name);
+
+    if (aop != null) {
+      for (final JAXBElement<? extends BaseParameterType> e: aop.getBaseParameter()) {
+        final String parName = e.getName().getLocalPart().toUpperCase();
+
+        if (parName.equals("X-BEDEWORK-WRAPPED-NAME")) {
+          continue;
+        }
 
         bs.getContentHandler().parameter(parName, getParValue(e.getValue()));
       }

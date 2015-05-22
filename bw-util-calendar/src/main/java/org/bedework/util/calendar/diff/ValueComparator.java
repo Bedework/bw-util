@@ -18,6 +18,8 @@
 */
 package org.bedework.util.calendar.diff;
 
+import org.bedework.util.misc.Util;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +68,7 @@ public class ValueComparator implements Comparable<ValueComparator> {
         return res;
       }
 
-      return value.compareTo(o.value);
+      return Util.compareStrings(value, o.value);
     }
 
     @Override
