@@ -98,6 +98,11 @@ import ietf.params.xml.ns.icalendar_2.VjournalType;
 import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkCostPropType;
+import ietf.params.xml.ns.icalendar_2.XBedeworkWrappedNameParamType;
+import ietf.params.xml.ns.icalendar_2.XBedeworkWrapperPropType;
+import ietf.params.xml.ns.icalendar_2.XBwCategoriesPropType;
+import ietf.params.xml.ns.icalendar_2.XBwContactPropType;
+import ietf.params.xml.ns.icalendar_2.XBwLocationPropType;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.CategoryList;
 import net.fortuna.ical4j.model.Component;
@@ -155,8 +160,9 @@ public class IcalToXcal {
    * @throws Throwable
    */
   public static IcalendarType fromIcal(final Calendar cal,
-                                       final BaseComponentType pattern) throws Throwable {
-    return fromIcal(cal, pattern, false);
+                                       final BaseComponentType pattern,
+                                       final boolean wrapXprops) throws Throwable {
+    return fromIcal(cal, pattern, false, wrapXprops);
   }
 
   /**
@@ -169,30 +175,33 @@ public class IcalToXcal {
   @SuppressWarnings("unchecked")
   public static IcalendarType fromIcal(final Calendar cal,
                                        final BaseComponentType pattern,
-                                       final boolean doTimezones) throws Throwable {
-    IcalendarType ical = new IcalendarType();
-    VcalendarType vcal = new VcalendarType();
+                                       final boolean doTimezones,
+                                       final boolean wrapXprops) throws Throwable {
+    final IcalendarType ical = new IcalendarType();
+    final VcalendarType vcal = new VcalendarType();
 
     ical.getVcalendar().add(vcal);
 
-    processProperties(cal.getProperties(), vcal, pattern);
+    processProperties(cal.getProperties(), vcal,
+                      pattern, wrapXprops);
 
-    ComponentList icComps = cal.getComponents();
+    final ComponentList icComps = cal.getComponents();
 
     if (icComps == null) {
       return ical;
     }
 
-    ArrayOfComponents aoc = new ArrayOfComponents();
+    final ArrayOfComponents aoc = new ArrayOfComponents();
     vcal.setComponents(aoc);
 
-    for (Object o: icComps) {
+    for (final Object o: icComps) {
       if (!doTimezones && (o instanceof VTimeZone)) {
         // Skip these
         continue;
       }
       aoc.getBaseComponent().add(toComponent((CalendarComponent)o,
-                                                           pattern));
+                                             pattern,
+                                             wrapXprops));
     }
 
     return ical;
@@ -209,12 +218,13 @@ public class IcalToXcal {
    */
   public static JAXBElement
                     toComponent(final Component val,
-                                final BaseComponentType pattern) throws Throwable {
+                                final BaseComponentType pattern,
+                                final boolean wrapXprops) throws Throwable {
     if (val == null) {
       return null;
     }
 
-    PropertyList icprops = val.getProperties();
+    final PropertyList icprops = val.getProperties();
     ComponentList icComps = null;
 
     if (icprops == null) {
@@ -222,7 +232,7 @@ public class IcalToXcal {
       return null;
     }
 
-    JAXBElement el;
+    final JAXBElement el;
 
     if (val instanceof VEvent) {
       el = of.createVevent(new VeventType());
@@ -248,22 +258,24 @@ public class IcalToXcal {
           val.getClass().getName());
     }
 
-    BaseComponentType comp = (BaseComponentType)el.getValue();
+    final BaseComponentType comp = (BaseComponentType)el.getValue();
 
-    processProperties(val.getProperties(), comp, pattern);
+    processProperties(val.getProperties(), comp,
+                      pattern, wrapXprops);
 
     if (Util.isEmpty(icComps)) {
       return el;
     }
 
     /* Process any sub-components */
-    ArrayOfComponents aoc = new ArrayOfComponents();
+    final ArrayOfComponents aoc = new ArrayOfComponents();
     comp.setComponents(aoc);
 
-    for (Object o: icComps) {
+    for (final Object o: icComps) {
       @SuppressWarnings("unchecked")
-      JAXBElement<? extends BaseComponentType> subel = toComponent((Component)o,
-                                      pattern);
+      final JAXBElement<? extends BaseComponentType> subel =
+              toComponent((Component)o,
+                          pattern, wrapXprops);
       aoc.getBaseComponent().add(subel);
     }
 
@@ -278,31 +290,29 @@ public class IcalToXcal {
    */
   public static void processProperties(final PropertyList icprops,
                                        final BaseComponentType comp,
-                                       final BaseComponentType pattern) throws Throwable {
+                                       final BaseComponentType pattern,
+                                       final boolean wrapXprops) throws Throwable {
     if ((icprops == null) || icprops.isEmpty()) {
       return;
     }
 
     comp.setProperties(new ArrayOfProperties());
-    List<JAXBElement<? extends BasePropertyType>> pl = comp.getProperties().getBasePropertyOrTzid();
+    final List<JAXBElement<? extends BasePropertyType>> pl =
+            comp.getProperties().getBasePropertyOrTzid();
 
-    Iterator it = icprops.iterator();
+    for (final Object icprop : icprops) {
+      final Property prop = (Property)icprop;
 
-    while (it.hasNext()) {
-      Property prop = (Property)it.next();
+      final PropertyInfoIndex pii = PropertyInfoIndex
+              .fromName(prop.getName());
 
-      PropertyInfoIndex pii = PropertyInfoIndex.fromName(prop.getName());
-
-      if (pii == null) {
+      if ((pii != null) &&
+              !emit(pattern, comp.getClass(), pii.getXmlClass())) {
         continue;
       }
 
-      if (!emit(pattern, comp.getClass(), pii.getXmlClass())) {
-        continue;
-      }
-
-      JAXBElement<? extends BasePropertyType> xmlprop =
-          doProperty(prop, pii);
+      final JAXBElement<? extends BasePropertyType> xmlprop =
+              doProperty(prop, pii, wrapXprops);
 
       if (xmlprop != null) {
         processParameters(prop.getParameters(), xmlprop.getValue());
@@ -312,7 +322,32 @@ public class IcalToXcal {
   }
 
   static JAXBElement<? extends BasePropertyType> doProperty(final Property prop,
-                                                     final PropertyInfoIndex pii) throws Throwable {
+                                                     final PropertyInfoIndex pii,
+                                                     final boolean wrapXprops) throws Throwable {
+    if (prop instanceof XProperty) {
+      if (!wrapXprops) {
+        return null;
+      }
+
+      final XBedeworkWrapperPropType wrapper =
+              new XBedeworkWrapperPropType();
+
+      wrapper.setText(prop.getValue());
+
+      processParameters(prop.getParameters(), wrapper);
+
+      final XBedeworkWrappedNameParamType wnp =
+              new XBedeworkWrappedNameParamType();
+      wnp.setText(prop.getName());
+      if (wrapper.getParameters() == null) {
+        wrapper.setParameters(new ArrayOfParameters());
+      }
+      wrapper.getParameters().getBaseParameter().add(
+              of.createXBedeworkWrappedName(wnp));
+
+      return of.createXBedeworkWrapper(wrapper);
+    }
+
     switch (pii) {
       case ACTION:
         /* ------------------- Action: Alarm -------------------- */
@@ -329,7 +364,7 @@ public class IcalToXcal {
       case ATTENDEE:
         /* ------------------- Attendees -------------------- */
 
-        AttendeePropType att = new AttendeePropType();
+        final AttendeePropType att = new AttendeePropType();
         att.setCalAddress(prop.getValue());
         return of.createAttendee(att);
 
@@ -696,14 +731,14 @@ public class IcalToXcal {
       case UID:
         /* ------------------- Uid -------------------- */
 
-        UidPropType uid = new UidPropType();
+        final UidPropType uid = new UidPropType();
         uid.setText(prop.getValue());
         return of.createUid(uid);
 
       case URL:
         /* ------------------- Url -------------------- */
 
-        UrlPropType u = new UrlPropType();
+        final UrlPropType u = new UrlPropType();
 
         u.setUri(prop.getValue());
         return of.createUrl(u);
@@ -711,29 +746,70 @@ public class IcalToXcal {
       case VERSION:
         /* ------------------- Version - vcal only -------------------- */
 
-        VersionPropType vers = new VersionPropType();
+        final VersionPropType vers = new VersionPropType();
         vers.setText(prop.getValue());
         return of.createVersion(vers);
 
       case XBEDEWORK_COST:
         /* ------------------- Cost -------------------- */
 
-        XBedeworkCostPropType cst = new XBedeworkCostPropType();
+        final XBedeworkCostPropType cst =
+                new XBedeworkCostPropType();
 
         cst.setText(prop.getValue());
         return of.createXBedeworkCost(cst);
+
+      case X_BEDEWORK_CATEGORIES:
+        /* ------------------- Categories -------------------- */
+
+        final XBwCategoriesPropType xpcat =
+                new XBwCategoriesPropType();
+
+        xpcat.getText().add(prop.getValue());
+        return of.createXBedeworkCategories(xpcat);
+
+      case X_BEDEWORK_CONTACT:
+        /* ------------------- Categories -------------------- */
+
+        final XBwContactPropType xpcon =
+                new XBwContactPropType();
+
+        xpcon.setText(prop.getValue());
+        return of.createXBedeworkContact(xpcon);
+
+      case X_BEDEWORK_LOCATION:
+        /* ------------------- Categories -------------------- */
+
+        final XBwLocationPropType xploc =
+                new XBwLocationPropType();
+
+        xploc.setText(prop.getValue());
+        return of.createXBedeworkLocation(xploc);
 
       default:
         if (prop instanceof XProperty) {
           /* ------------------------- x-property --------------------------- */
 
-          PropertyInfoIndex xpii = PropertyInfoIndex.valueOf(prop.getName().toUpperCase());
+          /*
+          final PropertyInfoIndex xpii =
+                  PropertyInfoIndex.fromName(prop.getName());
 
           if (xpii == null) {
             return null;
           }
 
-          return null;
+          return null;*/
+
+          if (!wrapXprops) {
+            return null;
+          }
+
+          final XBedeworkWrapperPropType wrapper =
+                  new XBedeworkWrapperPropType();
+
+          processParameters(prop.getParameters(), wrapper);
+
+          return of.createXBedeworkWrapper(wrapper);
         }
 
     } // switch (pii)
@@ -747,19 +823,19 @@ public class IcalToXcal {
       return;
     }
 
-    Iterator it = icparams.iterator();
+    final Iterator it = icparams.iterator();
 
     while (it.hasNext()) {
-      Parameter param = (Parameter)it.next();
+      final Parameter param = (Parameter)it.next();
 
-      ParameterInfoIndex pii = ParameterInfoIndex.lookupPname(
-              param.getName());
+      final ParameterInfoIndex pii =
+              ParameterInfoIndex.lookupPname(param.getName());
 
       if (pii == null) {
         continue;
       }
 
-      JAXBElement<? extends BaseParameterType> xmlprop =
+      final JAXBElement<? extends BaseParameterType> xmlprop =
           doParameter(param, pii);
 
       if (xmlprop != null) {
