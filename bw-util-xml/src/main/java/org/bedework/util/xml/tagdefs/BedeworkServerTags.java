@@ -156,6 +156,30 @@ public class BedeworkServerTags {
   public static final QName type = new QName(bedeworkSystemNamespace,
                                                   "type");
 
+  /** Apple notification extension for public events */
+  public static final QName suggest = new QName(bedeworkSystemNamespace,
+                                                  "suggest");
+
+  /** Apple notification extension for public events */
+  public static final QName suggesterHref = new QName(bedeworkSystemNamespace,
+                                                "suggesterHref");
+
+  /** Apple notification extension for public events */
+  public static final QName suggesteeHref = new QName(bedeworkSystemNamespace,
+                                                      "suggesteeHref");
+
+  /** Apple notification extension for public events */
+  public static final QName comment = new QName(bedeworkSystemNamespace,
+                                                      "comment");
+
+  /** Apple notification extension for public events */
+  public static final QName accepted = new QName(bedeworkSystemNamespace,
+                                                "accepted");
+
+  /** Apple notification extension for public events */
+  public static final QName suggestReply = new QName(bedeworkSystemNamespace,
+                                                "suggestReply");
+
   /**   */
   public static final QName xprop = new QName(bedeworkCaldavNamespace,
                                                      "xprop");
