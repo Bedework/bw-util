@@ -55,7 +55,7 @@ public class SplitName {
   /** Tries to figure out what the prefix is for the name and then
    * splits it. Assumes we have a "-" in the name.
    *
-   * @param name
+   * @param name the prefixed name
    * @return split name or null if unable to split.
    */
   public static SplitName testName(final String name) {

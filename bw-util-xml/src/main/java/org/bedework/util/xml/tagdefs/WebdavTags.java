@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 
 /** Define Webdav tags for XMlEmit
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@rpi.edu
  */
 public class WebdavTags {
   /** Namespace for these tags
@@ -194,6 +194,9 @@ public class WebdavTags {
 
   /** */
   public static final QName noProtectedAceConflict = makeQName("no-protected-ace-conflict");
+
+  /** */
+  public static final QName notificationURL = makeQName("notification-URL");
 
   /** */
   public static final QName notSupportedPrivilege = makeQName("not-supported-privilege");

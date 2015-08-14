@@ -130,6 +130,21 @@ public class IcalDefs {
   }
 
   /* ====================================================================
+   *        Entity status
+   * ==================================================================== */
+
+  public static final String statusTentative = "TENTATIVE"; // Indicates event is tentative.
+  public static final String statusConfirmed = "CONFIRMED";  // Indicates event is definite.
+  public static final String statusCancelled = "CANCELLED";   // Indicates event/task/journal item was cancelled.
+
+  public static final String statusNeedsAction = "NEEDS-ACTION"; // Indicates to-do needs action.
+  public static final String statusCompleted = "COMPLETED";      //Indicates to-do completed.
+  public static final String statusInProcess = "IN-PROCESS";     //Indicates to-do in process of.
+
+  public static final String statusDraft = "DRAFT";      // Indicates journal is draft.
+  public static final String statusFinal = "FINAL";      // Indicates journal is final.
+
+  /* ====================================================================
    *        status we can set for scheduling requests
    * ==================================================================== */
 

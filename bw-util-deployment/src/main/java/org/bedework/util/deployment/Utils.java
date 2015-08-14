@@ -202,10 +202,7 @@ class Utils {
       }
     }
 
-    if (!deleteThis) {
-      return true;
-    }
-    return file.delete();
+    return !deleteThis || file.delete();
   }
 
   private final static CopyOption[] copyOptionAttributes =

@@ -31,5 +31,15 @@
       <artifactId>bw-util-servlet-filters</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.struts</groupId>
+      <artifactId>struts-core</artifactId>
+    </dependency>
   </dependencies>
 </project>

@@ -44,6 +44,7 @@ public class War extends VersionedFile {
     }
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   private void copyResources() throws Throwable {
     props.pushFiltered("app.copy.resource.", "copy.");
 
