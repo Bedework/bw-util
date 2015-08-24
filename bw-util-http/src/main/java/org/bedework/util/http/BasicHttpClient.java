@@ -773,6 +773,27 @@ public class BasicHttpClient extends DefaultHttpClient {
 
   /**
    * @param path
+   * @return response code
+   * @throws HttpException
+   */
+  public int delete(final String path,
+                    final List<Header> hdrs) throws HttpException {
+    int respCode = sendRequest("DELETE",
+                               path,
+                               hdrs,
+                               null,
+                               0,
+                               null);    //content
+
+    if (debug) {
+      debugMsg("response code " + respCode);
+    }
+
+    return respCode;
+  }
+
+  /**
+   * @param path
    * @param o
    * @param contentType
    * @return response code
