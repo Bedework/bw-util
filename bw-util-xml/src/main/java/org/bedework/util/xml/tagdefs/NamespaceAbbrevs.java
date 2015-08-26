@@ -24,7 +24,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 /** A set of 'standard' abbreviations - useful when storing properties. There is
- * no such thing as a standard abbereviation. These are for internal use.
+ * no such thing as a standard abbreviation. These are for internal use.
+ * (See NsContext for another approach)
  *
  * @author douglm
  *

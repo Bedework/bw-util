@@ -18,6 +18,11 @@
 */
 package org.bedework.util.xml;
 
+import org.bedework.util.xml.tagdefs.AppleServerTags;
+import org.bedework.util.xml.tagdefs.BedeworkServerTags;
+import org.bedework.util.xml.tagdefs.CaldavTags;
+import org.bedework.util.xml.tagdefs.CarddavTags;
+import org.bedework.util.xml.tagdefs.IscheduleTags;
 import org.bedework.util.xml.tagdefs.XcalTags;
 
 import java.util.HashMap;
@@ -35,12 +40,18 @@ import javax.xml.namespace.QName;
  *
  */
 public class NsContext implements NamespaceContext {
-  private static Map<String, String> keyPrefix = new HashMap<String, String>();
-  private static Map<String, String> keyUri = new HashMap<String, String>();
+  private static Map<String, String> keyPrefix = new HashMap<>();
+  private static Map<String, String> keyUri = new HashMap<>();
 
   static {
     addToMap("D", "DAV");
-    addToMap("C", "urn:ietf:params:xml:ns:caldav");
+    addToMap("AS", AppleServerTags.appleCaldavNamespace);
+    addToMap("BW", BedeworkServerTags.bedeworkSystemNamespace);
+    addToMap("BWC", BedeworkServerTags.bedeworkCaldavNamespace);
+    addToMap("BWCD", BedeworkServerTags.bedeworkCarddavNamespace);
+    addToMap("C", CaldavTags.caldavNamespace);
+    addToMap("CD", CarddavTags.namespace);
+    addToMap("IS", IscheduleTags.namespace);
     addToMap("X", XcalTags.namespace);
     addToMap("df", "urn:ietf:params:xml:ns:pidf-diff");
     addToMap("xml", XMLConstants.XML_NS_URI);
@@ -51,7 +62,7 @@ public class NsContext implements NamespaceContext {
 
   /** Constructor
    *
-   * @param defaultNS
+   * @param defaultNS the default namespace
    */
   public NsContext(final String defaultNS) {
     this.defaultNS = defaultNS;
@@ -80,7 +91,7 @@ public class NsContext implements NamespaceContext {
 
   public Iterator<String> getPrefixes(final String val) {
     String prefix = keyUri.get(val);
-    Set<String> pfxs = new TreeSet<String>();
+    Set<String> pfxs = new TreeSet<>();
 
     if (prefix != null) {
       pfxs.add(prefix);
@@ -106,8 +117,8 @@ public class NsContext implements NamespaceContext {
 
   /** Add a namespace to the maps
    *
-   * @param prefix
-   * @param uri
+   * @param prefix the prefix for generated xml
+   * @param uri the namespace uri
    */
   public void add(final String prefix, final String uri) {
     if (prefix == null) {
@@ -127,8 +138,8 @@ public class NsContext implements NamespaceContext {
 
   /** Append the name with abbreviated namespace.
    *
-   * @param sb
-   * @param nm
+   * @param sb for result
+   * @param nm QName object
    */
   public void appendNsName(final StringBuilder sb,
                            final QName nm) {
@@ -153,6 +164,12 @@ public class NsContext implements NamespaceContext {
   }
 
   private static void addToMap(final String prefix, final String uri) {
+    if (keyPrefix.get(prefix) != null) {
+      throw new RuntimeException("Attempt to replace namespace prefix");
+    }
+    if (keyUri.get(uri) != null) {
+      throw new RuntimeException("Attempt to replace namespace");
+    }
     keyPrefix.put(prefix, uri);
     keyUri.put(uri, prefix);
   }
