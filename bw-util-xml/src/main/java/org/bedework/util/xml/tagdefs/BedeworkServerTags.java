@@ -187,4 +187,13 @@ public class BedeworkServerTags {
   /**   */
   public static final QName emailProp = new QName(bedeworkCarddavNamespace,
                                              "email");
+
+  /* =============================================================
+            Event registration
+   */
+
+  /** cancelled */
+  public static final QName eventregCancelled =
+          new QName(bedeworkSystemNamespace,
+                    "eventregCancelled");
 }

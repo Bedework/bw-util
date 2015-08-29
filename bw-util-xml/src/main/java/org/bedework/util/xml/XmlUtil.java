@@ -35,6 +35,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -678,8 +679,8 @@ public final class XmlUtil implements Serializable {
    * @return Collection   element nodes. Always non-null
    * @throws SAXException
    */
-  public static Collection<Element> getElements(final Node nd) throws SAXException {
-    ArrayList<Element> al = new ArrayList<>();
+  public static List<Element> getElements(final Node nd) throws SAXException {
+    final List<Element> al = new ArrayList<>();
 
     NodeList children = nd.getChildNodes();
 
@@ -880,7 +881,6 @@ public final class XmlUtil implements Serializable {
   /** Return a QName for the node
    *
    * @param nd
-   * @param tag
    * @return boolean true for match
    */
   public static QName fromNode(final Node nd) {
