@@ -685,9 +685,16 @@ public abstract class UtilAbstractAction extends Action
   protected String checkLogOut(final HttpServletRequest request,
                                final UtilActionForm form)
                throws Throwable {
-    String temp = request.getParameter(requestLogout);
-    if (temp != null) {
-      HttpSession sess = request.getSession(false);
+    final String reqUser = request.getRemoteUser();
+
+    final boolean forceLogout =
+            !Util.equalsString(reqUser, form.getCurrentUser());
+
+    final String temp = request.getParameter(requestLogout);
+
+
+    if (forceLogout || (temp != null)) {
+      final HttpSession sess = request.getSession(false);
 
       if ((sess != null) && logOutCleanup(request, form)) {
         sess.invalidate();
