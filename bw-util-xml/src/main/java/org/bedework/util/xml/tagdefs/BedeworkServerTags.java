@@ -196,4 +196,14 @@ public class BedeworkServerTags {
   public static final QName eventregCancelled =
           new QName(bedeworkSystemNamespace,
                     "eventregCancelled");
+
+  /** registered */
+  public static final QName eventregRegistered =
+          new QName(bedeworkSystemNamespace,
+                    "eventregRegistered");
+
+  /** Number tickets */
+  public static final QName eventregNumTickets =
+          new QName(bedeworkSystemNamespace,
+                    "eventregNumTickets");
 }
