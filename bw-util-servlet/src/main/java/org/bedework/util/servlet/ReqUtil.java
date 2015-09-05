@@ -83,7 +83,6 @@ public class ReqUtil implements Serializable {
    *
    * @param name    name of parameter
    * @return  String   value
-   * @throws Throwable
    */
   public String getReqPar(final String name) {
     return Util.checkNull(request.getParameter(name));
@@ -97,7 +96,7 @@ public class ReqUtil implements Serializable {
    * @return  String   value
    */
   public String getReqPar(final String name, final String def) {
-    String s = Util.checkNull(request.getParameter(name));
+    final String s = Util.checkNull(request.getParameter(name));
 
     if (s != null) {
       return s;

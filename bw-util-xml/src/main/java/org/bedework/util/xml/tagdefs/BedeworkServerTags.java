@@ -189,6 +189,25 @@ public class BedeworkServerTags {
                                              "email");
 
   /* =============================================================
+            Notification subscriptions
+   */
+
+  /** subscribe for notifications */
+  public static final QName notifySubscribe =
+          new QName(bedeworkSystemNamespace,
+                    "notifySubscribe");
+
+  /** action */
+  public static final QName action =
+          new QName(bedeworkSystemNamespace,
+                    "action");
+
+  /** email */
+  public static final QName email =
+          new QName(bedeworkSystemNamespace,
+                                             "email");
+
+  /* =============================================================
             Event registration
    */
 
