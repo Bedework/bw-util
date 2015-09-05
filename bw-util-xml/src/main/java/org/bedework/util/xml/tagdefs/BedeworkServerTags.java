@@ -202,8 +202,13 @@ public class BedeworkServerTags {
           new QName(bedeworkSystemNamespace,
                     "eventregRegistered");
 
-  /** Number tickets */
+  /** Number tickets assigned */
   public static final QName eventregNumTickets =
           new QName(bedeworkSystemNamespace,
                     "eventregNumTickets");
+
+  /** Number tickets requested */
+  public static final QName eventregNumTicketsRequested =
+          new QName(bedeworkSystemNamespace,
+                    "eventregNumTicketsRequested");
 }
