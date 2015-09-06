@@ -189,6 +189,20 @@ public class BedeworkServerTags {
                                              "email");
 
   /* =============================================================
+            Event administration
+   */
+
+  /** event in pending queue */
+  public static final QName awaitingApproval =
+          new QName(bedeworkSystemNamespace,
+                    "awaitingApproval");
+
+  /** administrator accept/reject */
+  public static final QName approvalResponse =
+          new QName(bedeworkSystemNamespace,
+                    "approvalResponse");
+
+  /* =============================================================
             Notification subscriptions
    */
 
@@ -205,7 +219,7 @@ public class BedeworkServerTags {
   /** email */
   public static final QName email =
           new QName(bedeworkSystemNamespace,
-                                             "email");
+                    "email");
 
   /* =============================================================
             Event registration
