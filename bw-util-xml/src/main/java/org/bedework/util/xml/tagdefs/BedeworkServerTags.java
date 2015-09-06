@@ -202,6 +202,11 @@ public class BedeworkServerTags {
           new QName(bedeworkSystemNamespace,
                     "approvalResponse");
 
+  /** calendar suite group principal URL */
+  public static final QName calsuiteURL =
+          new QName(bedeworkSystemNamespace,
+                    "calsuiteURL");
+
   /* =============================================================
             Notification subscriptions
    */
