@@ -84,6 +84,8 @@ public class Ear extends VersionedFile {
             war.getSplitName().version + ".war";
     final SplitName toSn = new SplitName(toName, toPrefix);
 
+    Utils.info("Copy war " + war.getSplitName().name + " to " + toName);
+
     toSn.version = war.getSplitName().version;
     toSn.suffix = "war";
 

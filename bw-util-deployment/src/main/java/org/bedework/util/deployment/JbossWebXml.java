@@ -22,6 +22,8 @@ public class JbossWebXml extends XmlFile {
   }
 
   public void update() throws Throwable {
+    Utils.debug("Update " + theXml.getAbsolutePath());
+
     final List<String> vhosts = props.listProperty("app.virtual-hosts");
 
     if (vhosts != null) {

@@ -25,6 +25,9 @@ public class WebXml extends XmlFile {
     setConfigName();
     setTransportGuarantee();
     setSecurityDomain();
+    addFilter();
+    addFilterMapping();
+    addListener();
   }
 
   public void setConfigName() throws Throwable {
@@ -78,5 +81,102 @@ public class WebXml extends XmlFile {
     }
 
     propsReplaceContent((Element)n, "realm-name", props);
+  }
+
+  public void addFilter() throws Throwable {
+    final String fltr = props.get("app.filter");
+
+    if (fltr == null) {
+      return;
+    }
+
+    try {
+      final XmlFile fltrDefs = new XmlFile(fltr, false);
+
+      final Element filtersEl = fltrDefs.root;
+
+      /* if we already have a filter def insert in front */
+      Node insertAt = XmlUtil.getOneTaggedNode(root, "filter");
+
+      if (insertAt == null) {
+        // then try for listener
+        insertAt = XmlUtil.getOneTaggedNode(root, "listener");
+      }
+
+      if (insertAt == null) {
+        // Bad web.xml?
+        throw new Exception("Cannot locate place to insert filter");
+      }
+
+      for (final Element el: XmlUtil.getElements(filtersEl)) {
+        root.insertBefore(doc.importNode(el, true), insertAt);
+      }
+    } catch (final Throwable t) {
+      Utils.error("Unable to open/process file " + fltr);
+      throw t;
+    }
+  }
+
+  public void addFilterMapping() throws Throwable {
+    final String fltr = props.get("app.filter-mapping");
+
+    if (fltr == null) {
+      return;
+    }
+
+    try {
+      final XmlFile fltrDefs = new XmlFile(fltr, false);
+
+      final Element filtersEl = fltrDefs.root;
+
+      /* if we already have a filter def insert in front */
+      Node insertAt = XmlUtil.getOneTaggedNode(root, "filter-mapping");
+
+      if (insertAt == null) {
+        // then try for listener
+        insertAt = XmlUtil.getOneTaggedNode(root, "listener");
+      }
+
+      if (insertAt == null) {
+        // Bad web.xml?
+        throw new Exception("Cannot locate place to insert filter-mapping");
+      }
+
+      for (final Element el: XmlUtil.getElements(filtersEl)) {
+        root.insertBefore(doc.importNode(el, true), insertAt);
+      }
+    } catch (final Throwable t) {
+      Utils.error("Unable to open/process file " + fltr);
+      throw t;
+    }
+  }
+
+  public void addListener() throws Throwable {
+    final String fltr = props.get("app.listener");
+
+    if (fltr == null) {
+      return;
+    }
+
+    try {
+      final XmlFile fltrDefs = new XmlFile(fltr, false);
+
+      final Element filtersEl = fltrDefs.root;
+
+      /* Insert in front current listener */
+      final Node insertAt = XmlUtil.getOneTaggedNode(root, "listener");
+
+      if (insertAt == null) {
+        // Bad web.xml?
+        throw new Exception("Cannot locate place to insert listener");
+      }
+
+      for (final Element el: XmlUtil.getElements(filtersEl)) {
+        root.insertBefore(doc.importNode(el, true), insertAt);
+      }
+    } catch (final Throwable t) {
+      Utils.error("Unable to open/process file " + fltr);
+      throw t;
+    }
   }
 }

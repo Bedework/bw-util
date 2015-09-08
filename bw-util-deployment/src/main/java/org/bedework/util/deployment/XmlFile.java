@@ -34,6 +34,16 @@ public class XmlFile {
     root = doc.getDocumentElement();
   }
 
+  public XmlFile(final String path,
+                 final boolean nameSpaced) throws Throwable {
+    theXml = Utils.file(path);
+
+    doc = Utils.parseXml(new FileReader(theXml),
+                         nameSpaced);
+
+    root = doc.getDocumentElement();
+  }
+
   public boolean getUpdated() {
     return updated;
   }

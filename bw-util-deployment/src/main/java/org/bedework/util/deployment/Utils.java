@@ -140,8 +140,7 @@ class Utils {
     final File f = new File(path);
 
     if (!f.exists() || !f.isFile()) {
-      throw new Exception(path +
-                                  " must exist and be a file");
+      throw new Exception(path + " must exist and be a file");
     }
 
     return f;
@@ -202,7 +201,10 @@ class Utils {
       }
     }
 
-    return !deleteThis || file.delete();
+    if (!deleteThis) {
+      return true;
+    }
+    return file.delete();
   }
 
   private final static CopyOption[] copyOptionAttributes =
