@@ -189,6 +189,17 @@ public class BedeworkServerTags {
                                              "email");
 
   /* =============================================================
+            Notifications
+   */
+
+  /** Values provided by notification system to templates.
+   * DO NOT use this in any generated XML
+   */
+  public static final QName notifyValues =
+          new QName(bedeworkSystemNamespace,
+                    "notifyValues");
+
+  /* =============================================================
             Event administration
    */
 
