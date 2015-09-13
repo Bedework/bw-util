@@ -89,7 +89,7 @@ public class HibernateConfigBase<T extends ConfigBase>
 
   @Override
   public String toString() {
-    ToString ts = new ToString(this);
+    final ToString ts = new ToString(this);
 
     toStringSegment(ts);
 

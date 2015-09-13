@@ -50,7 +50,7 @@ public class FromXml extends Logged {
   public Object fromXml(final InputStream is,
                         final Class cl) throws SAXException {
     try {
-      final Element rootEl = parseXml(is);
+      final Document doc = parseXml(is);
 
       final Object o = fromClass(cl);
 
@@ -59,7 +59,7 @@ public class FromXml extends Logged {
         return null;
       }
 
-      for (final Element el: XmlUtil.getElementsArray(rootEl)) {
+      for (final Element el: XmlUtil.getElementsArray(doc.getDocumentElement())) {
         populate(el, o, null, null);
       }
 
@@ -105,7 +105,7 @@ public class FromXml extends Logged {
     }
   }
 
-  public Element parseXml(final InputStream is) throws Throwable {
+  public Document parseXml(final InputStream is) throws Throwable {
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
 
@@ -117,7 +117,7 @@ public class FromXml extends Logged {
       return null;
     }
 
-    return doc.getDocumentElement();
+    return doc;
   }
 
   /* ====================================================================
