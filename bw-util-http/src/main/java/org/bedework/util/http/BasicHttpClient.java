@@ -801,6 +801,21 @@ public class BasicHttpClient extends DefaultHttpClient {
    */
   public int putObject(final String path, final Object o,
                        final String contentType) throws HttpException {
+    return putObject(path, null, o, contentType);
+  }
+
+  /**
+   * @param path
+   * @param hdrs extra headers or null
+   * @param o
+   * @param contentType
+   * @return response code
+   * @throws HttpException
+   */
+  public int putObject(final String path,
+                       final List<Header> hdrs,
+                       final Object o,
+                       final String contentType) throws HttpException {
     String content = String.valueOf(o);
     int respCode = sendRequest("PUT",
                                path,
