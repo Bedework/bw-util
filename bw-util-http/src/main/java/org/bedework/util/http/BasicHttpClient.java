@@ -538,6 +538,27 @@ public class BasicHttpClient extends DefaultHttpClient {
     return status;
   }
 
+  public InputStream post(final String url,
+                          final List<Header> hdrs,
+                          final HttpEntity entity) throws HttpException {
+    final HttpPost poster = new HttpPost(url);
+
+    poster.setEntity(entity);
+
+    try {
+      // Make the request
+      response = execute(poster);
+
+      status = response.getStatusLine().getStatusCode();
+
+      return getResponseBodyAsStream();
+    } catch (final HttpException he) {
+      throw he;
+    } catch (final Throwable t) {
+      throw new HttpException(t.getLocalizedMessage(), t);
+    }
+  }
+
   /** Send content
    *
    * @param content the content as bytes
@@ -551,7 +572,7 @@ public class BasicHttpClient extends DefaultHttpClient {
                                method.getMethod());
     }
 
-    HttpEntityEnclosingRequestBase eem = (HttpEntityEnclosingRequestBase)method;
+    final HttpEntityEnclosingRequestBase eem = (HttpEntityEnclosingRequestBase)method;
 
     ByteArrayEntity entity = new ByteArrayEntity(content);
     entity.setContentType(contentType);
