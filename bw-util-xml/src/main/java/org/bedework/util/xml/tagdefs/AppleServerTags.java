@@ -312,4 +312,12 @@ public class AppleServerTags {
   /**   */
   public static final QName user = new QName(appleCaldavNamespace,
                                                "user");
+
+  /* ------------------ server info ------------------- */
+
+  /**   */
+  public static final QName calendarServerSharing = new QName(appleCaldavNamespace,
+                                             "calendarserver-sharing");
+
+
 }

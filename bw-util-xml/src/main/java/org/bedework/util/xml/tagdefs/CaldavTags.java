@@ -362,7 +362,7 @@ public class CaldavTags implements CaldavDefs {
   public static final QName vpollSupportedComponentSet = new QName(caldavNamespace,
                                             "vpoll-supported-component-set");
 
-  /* ---------------- isched - delete thede ------------------------------- */
+  /* ---------------- isched - delete these ------------------------------- */
 
   /** isched  */
   public static final QName originatorSpecified = new QName(caldavNamespace,
@@ -371,5 +371,21 @@ public class CaldavTags implements CaldavDefs {
   /**   */
   public static final QName recipientSpecified = new QName(caldavNamespace,
                                                   "recipient-specified");
+
+  /**   */
+  public static final QName calendarAccess =
+          new QName(caldavNamespace, "calendar-access");
+
+  /**   */
+  public static final QName calendarAutoschedule =
+          new QName(caldavNamespace, "calendar-auto-schedule");
+
+  /**   */
+  public static final QName calendarDefaultAlarms =
+          new QName(caldavNamespace, "calendar-default-alarms");
+
+  /**   */
+  public static final QName calendarNoTimezone =
+          new QName(caldavNamespace, "calendar-no-timezone");
 }
 

@@ -364,8 +364,63 @@ public class WebdavTags {
   /** */
   public static final QName writeProperties = makeQName("write-properties");
 
+  /* ----------------- Server info --------------------------------*/
+
+  /** */
+  public static final QName application = makeQName("application");
+
+  /** */
+  public static final QName applications = makeQName("applications");
+
+  /** */
+  public static final QName features = makeQName("features");
+
+  /** */
+  public static final QName name = makeQName("name");
+
+  /** */
+  public static final QName serverinfo = makeQName("server-info");
+
+  /** */
+  public static final QName serverInfoHref = makeQName("server-info-href");
+
+  /** */
+  public static final QName token = makeQName("token");
+
+  /* -------------- DAV server info features -----------------------*/
+
+  /** */
+  public static final QName accessControl = makeQName("access-control");
+
+  /* addMember defined as an element */
+
+  /* bind defined as an element */
+
+  /** */
+  public static final QName class1 = makeQName("class-1");
+
+  /** */
+  public static final QName class2 = makeQName("class-2");
+
+  /** */
+  public static final QName class3 = makeQName("class-3");
+
+  /** */
+  public static final QName extendedMkcol = makeQName("extended-mkcol");
+
+  /** */
+  public static final QName quota = makeQName("quota");
+
+  /** */
+  public static final QName search = makeQName("search");
+
+  /* syncCollection defined as an element */
+
+  /** */
+  public static final QName versionControl = makeQName("version-control");
+
   private static QName makeQName(final String name) {
-    QName q = new QName(namespace, name);
+    final QName q = new QName(namespace, name);
     qnames.put(name, q);
 
     return q;

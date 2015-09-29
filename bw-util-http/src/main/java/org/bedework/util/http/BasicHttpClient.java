@@ -499,6 +499,10 @@ public class BasicHttpClient extends DefaultHttpClient {
         u = baseURI.resolve(u);
       }
 
+      if (debug) {
+        debugMsg("      url resolves to " + u);
+      }
+
       method = findMethod(methodName, u);
 
       if (credentials != null) {
