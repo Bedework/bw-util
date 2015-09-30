@@ -382,9 +382,6 @@ public class WebdavTags {
   public static final QName serverinfo = makeQName("server-info");
 
   /** */
-  public static final QName serverInfoHref = makeQName("server-info-href");
-
-  /** */
   public static final QName token = makeQName("token");
 
   /* -------------- DAV server info features -----------------------*/
