@@ -105,6 +105,9 @@ public class DavUtil implements Serializable {
     /* Extracted from returned resource types */
     public List<QName> resourceTypes = new ArrayList<>();
 
+    /** */
+    public int status;
+
     /**
      * @param nm a QName
      * @return DavProp or null
@@ -669,7 +672,7 @@ public class DavUtil implements Serializable {
   }
 
   /**
-   * @param el
+   * @param el - must be status element
    * @return int status
    * @throws Throwable
    */
@@ -678,22 +681,22 @@ public class DavUtil implements Serializable {
       throw new Exception("Bad response. Expected status found " + el);
     }
 
-    String s = getElementContent(el);
+    final String s = getElementContent(el);
 
     if (s == null) {
       throw new Exception("Bad http status. Found null");
     }
 
     try {
-      int start = s.indexOf(" ");
-      int end = s.indexOf(" ", start + 1);
+      final int start = s.indexOf(" ");
+      final int end = s.indexOf(" ", start + 1);
 
       if (end < 0) {
         return Integer.valueOf(s.substring(start));
       }
 
       return Integer.valueOf(s.substring(start + 1, end));
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new Exception("Bad http status. Found " + s);
     }
   }
@@ -873,11 +876,11 @@ public class DavUtil implements Serializable {
     /*    <!ELEMENT response (href, ((href*, status)|(propstat+)),
           responsedescription?) >
      */
-    Iterator<Element> elit = getChildren(resp).iterator();
+    final Iterator<Element> elit = getChildren(resp).iterator();
 
     Node nd = elit.next();
 
-    DavChild dc = new DavChild();
+    final DavChild dc = new DavChild();
 
     if (!XmlUtil.nodeMatches(nd, WebdavTags.href)) {
       throw new Exception("Bad response. Expected href found " + nd);
@@ -888,6 +891,13 @@ public class DavUtil implements Serializable {
 
     while (elit.hasNext()) {
       nd = elit.next();
+
+      if (XmlUtil.nodeMatches(nd, WebdavTags.status)) {
+        dc.status = httpStatus((Element)nd);
+        continue;
+      }
+
+      dc.status = HttpServletResponse.SC_OK;
 
       if (!XmlUtil.nodeMatches(nd, WebdavTags.propstat)) {
         throw new Exception("Bad response. Expected propstat found " + nd);
@@ -906,7 +916,7 @@ public class DavUtil implements Serializable {
         throw new Exception("Bad response. Expected propstat/status");
       }
 
-      int st = httpStatus(propstatit.next());
+      final int st = httpStatus(propstatit.next());
 
       if (propstatit.hasNext()) {
         Node rdesc = propstatit.next();
