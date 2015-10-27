@@ -803,6 +803,7 @@ public class DavUtil implements Serializable {
 
         dc.propVals.add(dp);
 
+        dc.status = HttpServletResponse.SC_OK;
         result.add(dc);
 
         continue;
