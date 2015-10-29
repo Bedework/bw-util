@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bedework</groupId>
   <artifactId>bw-util</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>bw-util</name>
   <description>This project provides a number of utility classes and methods</description>
@@ -49,6 +49,7 @@
     <connection>scm:git:git@github.com:Bedework/bw-util.git</connection>
     <developerConnection>scm:git:git@github.com:Bedework/bw-util.git</developerConnection>
     <url>https://github.com/Bedework/bw-util</url>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
@@ -266,6 +267,17 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <useReleaseProfile>false</useReleaseProfile>
+          <releaseProfiles>release</releaseProfiles>
+        </configuration>
       </plugin>
 
       <plugin>
