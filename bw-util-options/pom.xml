@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.bedework</groupId>
     <artifactId>bw-util</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.0.2</version>
   </parent>
 
   <groupId>org.bedework</groupId>
   <artifactId>bw-util-options</artifactId>
-  <version>4.0.2-SNAPSHOT</version>
+  <version>4.0.2</version>
 
   <packaging>jar</packaging>
 
