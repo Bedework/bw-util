@@ -79,8 +79,8 @@ public abstract class Timezones implements Serializable {
 
   /** Initialize the timezones system.
    *
-   * @param serverUrl
-   * @throws TimezonesException
+   * @param serverUrl url of timezone server
+   * @throws TimezonesException on error
    */
   public static void initTimezones(final String serverUrl) throws TimezonesException {
     try {
@@ -109,8 +109,8 @@ public abstract class Timezones implements Serializable {
 
   /** Set the default timezone id for this system.
    *
-   * @param id
-   * @throws TimezonesException
+   * @param id timezone id e.g. America/New_York
+   * @throws TimezonesException on error
    */
   public static void setSystemDefaultTzid(final String id) throws TimezonesException {
     getTimezones().setDefaultTimeZoneId(id);
@@ -119,7 +119,7 @@ public abstract class Timezones implements Serializable {
   /** Get the default timezone id for this system.
    *
    * @return String id
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public static String getSystemDefaultTzid() throws TimezonesException {
     return getTimezones().getDefaultTimeZoneId();
@@ -127,8 +127,8 @@ public abstract class Timezones implements Serializable {
 
   /** Set the default timezone id for this thread.
    *
-   * @param id
-   * @throws TimezonesException
+   * @param id timezone id e.g. America/New_York
+   * @throws TimezonesException on error
    */
   public static void setThreadDefaultTzid(final String id) throws TimezonesException {
     threadTzid.set(id);
@@ -137,7 +137,7 @@ public abstract class Timezones implements Serializable {
   /** Get the default timezone id for this thread.
    *
    * @return String id
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public static String getThreadDefaultTzid() throws TimezonesException {
     String id = threadTzid.get();
@@ -151,7 +151,7 @@ public abstract class Timezones implements Serializable {
   /** Get the default timezone for this system.
    *
    * @return default TimeZone or null for none set.
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public static TimeZone getDefaultTz() throws TimezonesException {
     return getTz(getThreadDefaultTzid());
@@ -160,9 +160,9 @@ public abstract class Timezones implements Serializable {
   /** Get a timezone object given the id. This will return transient objects
    * registered in the timezone directory
    *
-   * @param id
+   * @param id timezone id e.g. America/New_York
    * @return TimeZone with id or null
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
    public static TimeZone getTz(final String id) throws TimezonesException {
      return getTimezones().getTimeZone(id);
@@ -194,9 +194,9 @@ public abstract class Timezones implements Serializable {
 
   /** Register a timezone object in the current session.
    *
-   * @param id
-   * @param timezone
-   * @throws TimezonesException
+   * @param id timezone id e.g. America/New_York
+   * @param timezone object
+   * @throws TimezonesException on error
    */
   public static void registerTz(final String id, final TimeZone timezone)
           throws TimezonesException {
@@ -207,7 +207,7 @@ public abstract class Timezones implements Serializable {
   /** Get an unmodifiable list of timezone names
    *
    * @return Collection of timezone names
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public static Collection<TimeZoneName> getTzNames() throws TimezonesException {
     return getTimezones().getTimeZoneNames();
@@ -216,7 +216,7 @@ public abstract class Timezones implements Serializable {
   /** Refresh the timezone table - presumably after a call to clearPublicTimezones.
    * and many calls to saveTimeZone.
    *
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public static void refreshTzs() throws TimezonesException {
     getTimezones().refreshTimezones();
@@ -228,8 +228,8 @@ public abstract class Timezones implements Serializable {
 
   /** Initialise the object supplying the url of the timezones server.
    *
-   * @param serverUrl
-   * @throws TimezonesException
+   * @param serverUrl the url
+   * @throws TimezonesException on error
    */
   public abstract void init(String serverUrl) throws TimezonesException;
 
@@ -237,9 +237,9 @@ public abstract class Timezones implements Serializable {
    * a cached timezone and if that fails a will try to fetch the tz from the
    * store by calling fetchTimeZone.
    *
-   * @param id
+   * @param id timezone id e.g. America/New_York
    * @return TimeZone with id or null
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract TimeZone getTimeZone(String id) throws TimezonesException;
 
@@ -259,15 +259,15 @@ public abstract class Timezones implements Serializable {
     public TimeZone tz;
 
     /**
-     * @param etag
+     * @param etag http etag
      */
     public TaggedTimeZone(final String etag) {
       this.etag = etag;
     }
 
     /**
-     * @param etag
-     * @param vtz
+     * @param etag http etag
+     * @param vtz VTIMEZONE
      */
     public TaggedTimeZone(final String etag,
                           final String vtz) {
@@ -279,10 +279,10 @@ public abstract class Timezones implements Serializable {
   /** Get a timezone object given the id and etag. This method will bypass the
    * cach and call a remote service directly.
    *
-   * @param id
+   * @param id timezone id e.g. America/New_York
    * @param etag - null for unconditional fetch
    * @return TaggedTimeZone or null
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract TaggedTimeZone getTimeZone(String id,
                                              String etag) throws TimezonesException;
@@ -290,7 +290,7 @@ public abstract class Timezones implements Serializable {
   /** Get an unmodifiable list of timezone names
    *
    * @return Collection of timezone names
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract Collection<TimeZoneName> getTimeZoneNames()
       throws TimezonesException;
@@ -300,48 +300,48 @@ public abstract class Timezones implements Serializable {
    * @param changedSince if non-null is XML formatted UTC datetime indicating
    *                     last dtstamp received by caller
    * @return Collection of timezone names
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract TimezoneListType getList(String changedSince) throws TimezonesException;
 
   /** Refresh the timezone table - usually after timezones have changed..
    *
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract void refreshTimezones() throws TimezonesException;
 
   /**
-   * @param tzid
+   * @param tzid timezone id e.g. America/New_York
    * @return String
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract String unalias(String tzid) throws TimezonesException;
 
   /**
-   * @param id
-   * @throws TimezonesException
+   * @param id timezone id e.g. America/New_York
+   * @throws TimezonesException on error
    */
   public abstract void setDefaultTimeZoneId(String id) throws TimezonesException;
 
   /** Get the default timezone id for this system.
    *
    * @return String id
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract String getDefaultTimeZoneId() throws TimezonesException;
 
   /** Get the default timezone for this system.
    *
    * @return default TimeZone or null for none set.
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public abstract TimeZone getDefaultTimeZone() throws TimezonesException;
 
   /** Register a timezone object in the current session.
    *
-   * @param id
-   * @param timezone
-   * @throws TimezonesException
+   * @param id timezone id e.g. America/New_York
+   * @param timezone the timezone object
+   * @throws TimezonesException on error
    */
   public abstract void register(String id,
                                 TimeZone timezone)

@@ -36,6 +36,7 @@ public class FileTzFetcher implements TzFetcher {
 
   /**
    * @param path - to a directory.
+   * @throws TimezonesException on error
    */
   public FileTzFetcher(final String path) throws TimezonesException {
     /* Search recursively for all ics files. */

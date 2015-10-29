@@ -20,16 +20,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="TimezoneAliasInfoType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="tzid" type="{urn:ietf:params:xml:ns:timezone-service}TzidType"/>
- *         &lt;element ref="{urn:ietf:params:xml:ns:timezone-service-aliases}aliases"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="TimezoneAliasInfoType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="tzid" type="{urn:ietf:params:xml:ns:timezone-service}TzidType"/&gt;
+ *         &lt;element ref="{urn:ietf:params:xml:ns:timezone-service-aliases}aliases"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  *
  *
@@ -65,7 +65,7 @@ public class TimezoneAliasInfoType {
   /**
    * Gets the value of the aliases property.
    *
-   * @return List<AliasInfoType>
+   * @return List of AliasInfoType
    *
    */
   public List<AliasInfoType> getAliases() {
@@ -75,7 +75,7 @@ public class TimezoneAliasInfoType {
   /**
    * Sets the value of the aliases property.
    *
-   * @param value List<AliasInfoType>
+   * @param value List of AliasInfoType
    *
    */
   public void setAliases(final List<AliasInfoType> value) {

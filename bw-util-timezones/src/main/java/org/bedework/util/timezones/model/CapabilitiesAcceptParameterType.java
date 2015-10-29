@@ -98,7 +98,7 @@ public class CapabilitiesAcceptParameterType {
   /**
    * Sets the value of the required property.
    *
-   * @param value
+   * @param value true/false
    */
   public void setRequired(final boolean value) {
     required = value;
@@ -116,7 +116,7 @@ public class CapabilitiesAcceptParameterType {
   /**
    * Sets the value of the multi property.
    *
-   * @param value
+   * @param value is it multivalued
    */
   public void setMulti(final boolean value) {
     multi = value;

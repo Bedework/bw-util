@@ -67,14 +67,14 @@ public class BuildState {
 
   /**Constructor
    *
-   * @param tzRegistry
+   * @param tzRegistry the timezone registry
    */
   public BuildState(final TimeZoneRegistry tzRegistry) {
     this.tzRegistry = tzRegistry;
   }
 
   /**
-   * @param val
+   * @param val the content handler
    */
   public void setContentHandler(final ContentHandler val) {
     handler = val;

@@ -58,7 +58,7 @@ public class CapabilitiesType extends BaseResultType {
   /**
    * Sets the value of the version property.
    *
-   * @param value
+   * @param value version
    */
   public void setVersion(final int value) {
     version = value;
@@ -118,7 +118,7 @@ public class CapabilitiesType extends BaseResultType {
    */
   public List<CapabilitiesActionType> getActions() {
     if (actions == null) {
-      actions = new ArrayList<CapabilitiesActionType>();
+      actions = new ArrayList<>();
     }
     return actions;
   }

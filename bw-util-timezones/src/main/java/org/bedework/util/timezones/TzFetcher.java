@@ -34,7 +34,7 @@ public interface TzFetcher extends AutoCloseable {
 
   /**
    * @return all known tzids for this source
-   * @throws TimezonesException
+   * @throws TimezonesException if something goes wrong
    */
   List<String> getTzids() throws TimezonesException;
 }

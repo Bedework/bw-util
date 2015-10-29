@@ -23,7 +23,7 @@ package org.bedework.util.timezones;
  */
 public class TzUnknownHostException extends TimezonesException {
   /**
-   * @param msg
+   * @param msg the message
    */
   public TzUnknownHostException(final String msg) {
     super(msg);

@@ -43,7 +43,7 @@ public class ContentHandler {
   private final GroupRegistry groupRegistry = new GroupRegistry();
 
   /**
-   * @param bs
+   * @param bs build state
    */
   public ContentHandler(final BuildState bs) {
     this.bs = bs;

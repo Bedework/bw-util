@@ -75,7 +75,7 @@ public interface HttpAppLogger extends AppLogger {
    *  distinguish applications.
    *
    * @param request    HttpServletRequest
-   * @throws Throwable
+   * @throws Throwable on error
    */
   public void logRequest(HttpServletRequest request)
                throws Throwable;

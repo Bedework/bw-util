@@ -31,6 +31,7 @@ public class ServerTzFetcher implements TzFetcher {
 
   /**
    * @param tzsvrUri - the uri
+   * @throws TimezonesException on error
    */
   public ServerTzFetcher(final String tzsvrUri) throws TimezonesException {
     tzs.init(tzsvrUri);

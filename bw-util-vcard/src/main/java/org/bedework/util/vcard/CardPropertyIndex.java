@@ -243,7 +243,7 @@ public class CardPropertyIndex implements Serializable {
 
     /** get the index given the parameter name
      *
-     * @param val
+     * @param val parameter name
      * @return ParameterInfoIndex
      */
     public static ParameterInfoIndex lookupPname(final String val) {

@@ -45,8 +45,8 @@ public class ErrorResponseType {
   protected String description;
 
   /**
-   * @param error
-   * @param description
+   * @param error the error code
+   * @param description a description
    */
   public ErrorResponseType(final String error,
                            final String description) {

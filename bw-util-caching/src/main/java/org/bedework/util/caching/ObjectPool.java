@@ -35,8 +35,8 @@ import java.util.WeakHashMap;
  * @param <T>
  */
 public class ObjectPool<T> implements Serializable {
-  private WeakHashMap<T, SoftReference<T>> pool =
-    new WeakHashMap<T, SoftReference<T>>();
+  private final WeakHashMap<T, SoftReference<T>> pool =
+    new WeakHashMap<>();
 
   private static long refs;
   private static long hits;
@@ -45,7 +45,7 @@ public class ObjectPool<T> implements Serializable {
   private boolean debug = false;
 
   /**
-   * @param val
+   * @param val key
    * @return value in pool
    */
   public T get(T val) {

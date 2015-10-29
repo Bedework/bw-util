@@ -86,7 +86,7 @@ public class DateTimeUtil {
     }
 
     /**
-     * @param msg
+     * @param msg the message
      */
     public BadDateException(final String msg) {
       super(msg);
@@ -150,6 +150,7 @@ public class DateTimeUtil {
    *
    * @return String "yyyy-MM-dd"
    */
+  @SuppressWarnings("unused")
   public static String rfcDate() {
     return rfcDate(new Date());
   }
@@ -221,6 +222,7 @@ public class DateTimeUtil {
    * @param tz TimeZone
    * @return String "yyyy-MM-ddTHH:mm:ss"
    */
+  @SuppressWarnings("unused")
   public static String rfcDateTime(final Date val, final TimeZone tz) {
     synchronized (rfcDateTimeTZFormat) {
       rfcDateTimeTZFormat.setTimeZone(tz);
@@ -265,7 +267,7 @@ public class DateTimeUtil {
    *
    * @param val String "yyyyMMdd"
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromISODate(final String val) throws BadDateException {
     try {
@@ -286,7 +288,7 @@ public class DateTimeUtil {
    *
    * @param val String "yyyy-MM-dd"
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromRfcDate(final String val) throws BadDateException {
     try {
@@ -307,7 +309,7 @@ public class DateTimeUtil {
    *
    * @param val String "yyyyMMddThhmmss"
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromISODateTime(final String val) throws BadDateException {
     try {
@@ -328,8 +330,9 @@ public class DateTimeUtil {
    *
    * @param val String "yyyy-MM-ddThh:mm:ss"
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
+  @SuppressWarnings("unused")
   public static Date fromRfcDateTime(final String val) throws BadDateException {
     try {
       return fromRfcDateTime(val, Timezones.getDefaultTz());
@@ -345,7 +348,7 @@ public class DateTimeUtil {
    * @param val String "yyyy-ddThh:mm:ss"
    * @param tz TimeZone
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromRfcDateTime(final String val,
                                      final TimeZone tz) throws BadDateException {
@@ -364,7 +367,7 @@ public class DateTimeUtil {
    * @param val String "yyyyMMddThhmmss"
    * @param tz TimeZone
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromISODateTime(final String val,
                                      final TimeZone tz) throws BadDateException {
@@ -383,8 +386,9 @@ public class DateTimeUtil {
    * @param val String "yyyyMMddThhmmssZ"
    * @param tz TimeZone
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
+  @SuppressWarnings("unused")
   public static Date fromISODateTimeUTC(final String val,
                                         final TimeZone tz) throws BadDateException {
     try {
@@ -401,7 +405,7 @@ public class DateTimeUtil {
    *
    * @param val String "yyyyMMddThhmmssZ"
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromISODateTimeUTC(final String val) throws BadDateException {
     try {
@@ -417,7 +421,7 @@ public class DateTimeUtil {
    *
    * @param val String "yyyy-MM-ddThh:mm:ssZ"
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromRfcDateTimeUTC(final String val) throws BadDateException {
     try {
@@ -433,7 +437,7 @@ public class DateTimeUtil {
    *
    * @param val String "yyyyMMddThhmmssZ"
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static String fromISODateTimeUTCtoRfc822(final String val) throws BadDateException {
     try {
@@ -449,7 +453,7 @@ public class DateTimeUtil {
    *
    * @param val String to check
    * @return boolean
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static boolean isISODate(final String val) throws BadDateException {
     try {
@@ -467,7 +471,7 @@ public class DateTimeUtil {
    *
    * @param val String to check
    * @return boolean
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static boolean isISODateTimeUTC(final String val) throws BadDateException {
     try {
@@ -485,7 +489,7 @@ public class DateTimeUtil {
    *
    * @param val String to check
    * @return boolean
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static boolean isISODateTime(final String val) throws BadDateException {
     try {
@@ -501,9 +505,9 @@ public class DateTimeUtil {
 
   /** Return rfc or iso String date or datetime as java Date
    *
-   * @param dt
+   * @param dt string format date
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromDate(final String dt) throws BadDateException {
     try {
@@ -515,7 +519,7 @@ public class DateTimeUtil {
         return fromDateTime(dt);
       }
 
-      if (dt.indexOf("-") < 0) {
+      if (!dt.contains("-")) {
         return fromISODate(dt);
       }
 
@@ -527,9 +531,9 @@ public class DateTimeUtil {
 
   /** Return rfc or iso String datetime as java Date
    *
-   * @param dt
+   * @param dt string date
    * @return Date
-   * @throws BadDateException
+   * @throws BadDateException on format error
    */
   public static Date fromDateTime(final String dt) throws BadDateException {
     try {
@@ -537,7 +541,7 @@ public class DateTimeUtil {
         return null;
       }
 
-      if (dt.indexOf("-") < 0) {
+      if (!dt.contains("-")) {
         return fromISODateTimeUTC(dt);
       }
 

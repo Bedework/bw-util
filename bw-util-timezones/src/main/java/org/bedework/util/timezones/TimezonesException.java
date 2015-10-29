@@ -41,22 +41,22 @@ public class TimezonesException extends Throwable {
   }
 
   /**
-   * @param t
+   * @param t cause
    */
   public TimezonesException(final Throwable t) {
     super(t);
   }
 
   /**
-   * @param msg
+   * @param msg the message
    */
   public TimezonesException(final String msg) {
     super(msg);
   }
 
   /**
-   * @param msg
-   * @param extra
+   * @param msg the message
+   * @param extra an extra message
    */
   public TimezonesException(final String msg, final String extra) {
     super(msg);

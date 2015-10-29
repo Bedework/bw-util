@@ -31,6 +31,7 @@ import java.util.Locale;
  * @version 1.0
  */
 
+@SuppressWarnings("unused")
 public class TimeDateFormatter implements Serializable {
   private SimpleDateFormat formatter;
   private Locale curLocale;
@@ -76,30 +77,30 @@ public class TimeDateFormatter implements Serializable {
   }
 
   /**
-   * @param style
+   * @param style key
    */
   public TimeDateFormatter(int style) {
     this(style, Locale.getDefault());
   }
 
   /**
-   * @param style
-   * @param l
+   * @param style key
+   * @param l locale
    */
   public TimeDateFormatter(int style, Locale l) {
     getFormatter(style, l);
   }
 
   /**
-   * @param pattern
+   * @param pattern for time/date
    */
   public TimeDateFormatter(String pattern) {
     this(pattern, Locale.getDefault());
   }
 
   /**
-   * @param pattern
-   * @param l
+   * @param pattern for time/date
+   * @param l locale
    */
   public TimeDateFormatter(String pattern, Locale l) {
     getFormatter(pattern, l);
@@ -115,7 +116,7 @@ public class TimeDateFormatter implements Serializable {
   }
 
   /**
-   * @param val
+   * @param val pattern for time/date
    * @return parsed parameter
    * @throws Exception
    */
@@ -126,15 +127,15 @@ public class TimeDateFormatter implements Serializable {
   }
 
   /**
-   * @param style
+   * @param style set to default locale
    */
   public void setStyle(int style) {
     getFormatter(style, curLocale);
   }
 
   /**
-   * @param style
-   * @param pattern
+   * @param style key
+   * @param pattern the pattern
    */
   public void setStylePattern(int style, String pattern) {
     if (style == time) {
@@ -143,7 +144,7 @@ public class TimeDateFormatter implements Serializable {
       datePattern = pattern;
     } else if (style == timeDate) {
       timeDatePattern = pattern;
-    } else if (style == timeDate) {
+    } else if (style == dateTime) {
       dateTimePattern = pattern;
     } else if (style == timeShort) {
       timeShortPattern = pattern;
@@ -151,7 +152,7 @@ public class TimeDateFormatter implements Serializable {
       dateShortPattern = pattern;
     } else if (style == timeDateShort) {
       timeDateShortPattern = pattern;
-    } else if (style == timeDateShort) {
+    } else if (style == dateTimeShort) {
       dateTimeShortPattern = pattern;
     }
 
@@ -161,7 +162,7 @@ public class TimeDateFormatter implements Serializable {
   }
 
   /**
-   * @param pattern
+   * @param pattern for time/date
    */
   public void setPattern(String pattern) {
     getFormatter(pattern, curLocale);
@@ -179,7 +180,7 @@ public class TimeDateFormatter implements Serializable {
       pattern = datePattern;
     } else if (style == timeDate) {
       pattern = timeDatePattern;
-    } else if (style == timeDate) {
+    } else if (style == dateTime) {
       pattern = dateTimePattern;
     } else if (style == timeShort) {
       pattern = timeShortPattern;
@@ -187,7 +188,7 @@ public class TimeDateFormatter implements Serializable {
       pattern = dateShortPattern;
     } else if (style == timeDateShort) {
       pattern = timeDateShortPattern;
-    } else if (style == timeDateShort) {
+    } else if (style == dateTimeShort) {
       pattern = dateTimeShortPattern;
     }
 

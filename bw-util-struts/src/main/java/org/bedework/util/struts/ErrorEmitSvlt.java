@@ -48,8 +48,9 @@ public class ErrorEmitSvlt implements MessageEmit {
    * class which we can return as an alternative to the struts message
    * generation.
    */
+  @SuppressWarnings("unused")
   public class Msg implements Serializable {
-    private ArrayList<Object> params = new ArrayList<Object>();
+    private ArrayList<Object> params = new ArrayList<>();
     private Object p1;
     private Object p2;
     private Object p3;
@@ -58,8 +59,8 @@ public class ErrorEmitSvlt implements MessageEmit {
     protected MessageResources messages;
 
     /**
-     * @param messages
-     * @param msgId
+     * @param messages MessageResources object
+     * @param msgId id
      */
     public Msg(final MessageResources messages,
                final String msgId) {
@@ -68,9 +69,9 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
 
     /**
-     * @param messages
-     * @param msgId
-     * @param o
+     * @param messages MessageResources object
+     * @param msgId id
+     * @param o object to output
      */
     public Msg(final MessageResources messages,
                final String msgId, final Object o) {
@@ -81,10 +82,10 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
 
     /**
-     * @param messages
-     * @param msgId
-     * @param o1
-     * @param o2
+     * @param messages MessageResources object
+     * @param msgId id
+     * @param o1 object to output
+     * @param o2 object to output
      */
     public Msg(final MessageResources messages,
                final String msgId, final Object o1, final Object o2) {
@@ -93,15 +94,15 @@ public class ErrorEmitSvlt implements MessageEmit {
       addParam(o1);
       addParam(o2);
       p1 = o1;
-      p1 = o2;
+      p2 = o2;
     }
 
     /**
-     * @param messages
-     * @param msgId
-     * @param o1
-     * @param o2
-     * @param o3
+     * @param messages MessageResources object
+     * @param msgId id
+     * @param o1 object to output
+     * @param o2 object to output
+     * @param o3 object to output
      */
     public Msg(final MessageResources messages,
                final String msgId, final Object o1, final Object o2, final Object o3) {
@@ -111,8 +112,8 @@ public class ErrorEmitSvlt implements MessageEmit {
       addParam(o2);
       addParam(o3);
       p1 = o1;
-      p1 = o2;
-      p1 = o3;
+      p2 = o2;
+      p3 = o3;
     }
 
     /**
@@ -147,7 +148,7 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
   }
 
-  protected ArrayList<Msg> msgList = new ArrayList<Msg>();
+  protected ArrayList<Msg> msgList = new ArrayList<>();
 
   /**
    *
@@ -164,7 +165,7 @@ public class ErrorEmitSvlt implements MessageEmit {
    * @param messages Resources
    * @param errors   Error message will be appended on failure.
    * @param exceptionPname Property name for exceptions
-   * @param clear
+   * @param clear true to clear list
    */
   public void reinit(final String id,
                      final Object caller,
@@ -254,7 +255,7 @@ public class ErrorEmitSvlt implements MessageEmit {
   public void emit(final String pname, final Object o){
     if (debug) {
       if (o == null) {
-        debugMsg(pname, "null object", String.valueOf(o));
+        debugMsg(pname, "null object", "null");
       } else {
         debugMsg(pname, o.getClass().getName(), String.valueOf(o));
       }
@@ -349,7 +350,7 @@ public class ErrorEmitSvlt implements MessageEmit {
 
   /** Debugging
    *
-   * @param msg
+   * @param msg debug msg
    */
   public void debugOut(final String msg) {
     if (!debug) {

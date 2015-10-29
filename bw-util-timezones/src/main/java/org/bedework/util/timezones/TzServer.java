@@ -38,7 +38,7 @@ public class TzServer {
 
   /**
    * @param uri the uri
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public TzServer(final String uri) throws TimezonesException {
     debug = getLogger().isDebugEnabled();
@@ -57,7 +57,7 @@ public class TzServer {
    * @param id the tz id
    * @param etag from last time
    * @return fetch timezone if etag is old
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public TaggedTimeZone getTz(final String id,
                               final String etag) throws TimezonesException {
@@ -97,7 +97,7 @@ public class TzServer {
   /**
    * @param changedSince datestamp
    * @return List of timezone information
-   * @throws TimezonesException
+   * @throws TimezonesException on error unmarshalling
    */
   public TimezoneListType getList(final String changedSince) throws TimezonesException {
     String req = "action=list";
@@ -111,7 +111,7 @@ public class TzServer {
 
   /**
    * @return Input stream of alias data
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public InputStream getAliases() throws TimezonesException {
     return callForStream("aliases");
@@ -125,7 +125,7 @@ public class TzServer {
   }
 
   /**
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   public void close() throws TimezonesException {
     try {
@@ -172,7 +172,7 @@ public class TzServer {
   /**
    * @param req request
    * @return input stream from response
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   protected InputStream callForStream(final String req) throws TimezonesException {
     try {

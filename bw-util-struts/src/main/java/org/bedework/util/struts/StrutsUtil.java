@@ -46,7 +46,7 @@ public class StrutsUtil extends HttpServletUtils {
    * @param pname    String name of the property
    * @param def      String default value
    * @return String  property value or default (may be null)
-   * @throws Throwable
+   * @throws Throwable on error
    */
   public static String getProperty(final MessageResources msg,
                                    final String pname,
@@ -64,7 +64,7 @@ public class StrutsUtil extends HttpServletUtils {
    * @param msg      MessageResources object
    * @param pname    name of the property
    * @return String  property value
-   * @throws Throwable
+   * @throws Throwable on error
    */
   public static String getReqProperty(final MessageResources msg,
                                       final String pname) throws Throwable {
@@ -84,7 +84,7 @@ public class StrutsUtil extends HttpServletUtils {
    * @param pname    String name of the property
    * @param def      boolean default value
    * @return boolean property value or default
-   * @throws Throwable
+   * @throws Throwable on error
    */
   public static boolean getBoolProperty(final MessageResources msg,
                                         final String pname,
@@ -94,7 +94,7 @@ public class StrutsUtil extends HttpServletUtils {
       return def;
     }
 
-    return Boolean.valueOf(p).booleanValue();
+    return Boolean.valueOf(p);
   }
 
   /** Return an int property value or the default
@@ -103,7 +103,7 @@ public class StrutsUtil extends HttpServletUtils {
    * @param pname    String name of the property
    * @param def      int default value
    * @return int     property value or default
-   * @throws Throwable
+   * @throws Throwable on error
    */
   public static int getIntProperty(final MessageResources msg,
                                    final String pname,
@@ -113,7 +113,7 @@ public class StrutsUtil extends HttpServletUtils {
       return def;
     }
 
-    return Integer.valueOf(p).intValue();
+    return Integer.valueOf(p);
   }
 
   /* ==================================================================
@@ -130,8 +130,8 @@ public class StrutsUtil extends HttpServletUtils {
    * @param messages MessageResources object for creating new object
    * @param errorObjAttrName  name of session attribute
    * @param errProp  name of exception message property
-   * @param noActionErrors
-   * @param clear
+   * @param noActionErrors true/false
+   * @param clear list
    * @return MessageEmit null on failure
    */
   public static MessageEmit getErrorObj(final String id,
@@ -224,7 +224,7 @@ public class StrutsUtil extends HttpServletUtils {
    * @param messages           MessageResources object for creating new object
    * @param messageObjAttrName  name of session attribute
    * @param errProp           name of exception message property
-   * @param clear
+   * @param clear             the list
    * @return MessageEmit      null on failure
    */
   public static MessageEmit getMessageObj(final String id,

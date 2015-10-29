@@ -21,18 +21,18 @@ import java.util.Date;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="AliasInfoType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="alias" type="{urn:ietf:params:xml:ns:timezone-service}AliasType"/>
- *         &lt;element name="last-modified" type="{urn:ietf:params:xml:ns:timezone-service}LastmodifiedType"/>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="source" type="{http://www.w3.org/2001/XMLSchema}anyURI"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="AliasInfoType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="alias" type="{urn:ietf:params:xml:ns:timezone-service}AliasType"/&gt;
+ *         &lt;element name="last-modified" type="{urn:ietf:params:xml:ns:timezone-service}LastmodifiedType"/&gt;
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="source" type="{http://www.w3.org/2001/XMLSchema}anyURI"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  *
  *
@@ -56,7 +56,7 @@ public class AliasInfoType {
   /**
    * Sets the value of the alias property.
    *
-   * @param value
+   * @param value the alias
    *
    */
   public void setAlias(final String value) {

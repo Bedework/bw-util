@@ -45,7 +45,7 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
    * @param messages Resources
    * @param msgs     Error message will be appended on failure.
    * @param exceptionPname Property name for exceptions
-   * @param clear
+   * @param clear clear list if true
    */
   public void reinit(final String id,
                      final Object caller,

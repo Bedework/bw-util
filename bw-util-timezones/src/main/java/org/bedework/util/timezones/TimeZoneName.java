@@ -29,7 +29,7 @@ public class TimeZoneName implements Comparable<TimeZoneName>, Serializable {
   public String id;
 
   /**
-   * @param name
+   * @param name the id
    */
   public TimeZoneName(final String name) {
     this.name = name;
@@ -50,6 +50,7 @@ public class TimeZoneName implements Comparable<TimeZoneName>, Serializable {
     return id;
   }
 
+  @SuppressWarnings("NullableProblems")
   @Override
   public int compareTo(final TimeZoneName that) {
     if (that == this) {
@@ -59,8 +60,13 @@ public class TimeZoneName implements Comparable<TimeZoneName>, Serializable {
     return name.compareTo(that.name);
   }
 
+  @SuppressWarnings("SimplifiableIfStatement")
   @Override
   public boolean equals(final Object o) {
+    if (!(o instanceof  TimeZoneName)) {
+      return false;
+    }
+
     return compareTo((TimeZoneName)o) == 0;
   }
 

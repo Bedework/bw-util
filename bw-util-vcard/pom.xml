@@ -37,14 +37,12 @@
     </dependency>
     <!-- Third Party Libraries -->
     <dependency>
-      <groupId>net.fortuna.ical4j</groupId>
-      <artifactId>ical4j</artifactId>
-      <version>${ical4j.version}</version>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-ical4j-cl</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.mnode.ical4j</groupId>
-      <artifactId>ical4j-vcard</artifactId>
-      <version>${ical4j-vcard.version}</version>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-ical4j-vcard</artifactId>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

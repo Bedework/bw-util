@@ -411,7 +411,7 @@ public class TimezonesImpl extends Timezones {
    *
    * @param id the tzid
    * @return TimeZone with id or null
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   protected TimeZone fetchTimeZone(final String id) throws TimezonesException {
     final TaggedTimeZone ttz = fetchTimeZone(id, null);

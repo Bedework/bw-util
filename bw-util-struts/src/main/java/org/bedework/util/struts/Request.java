@@ -262,7 +262,7 @@ public class Request extends ReqUtil {
    * @param name    name of parameter
    * @param errProp error to emit
    * @return  Integer   value or null
-   * @throws Throwable
+   * @throws Throwable on error
    */
   public Integer getIntReqPar(final String name,
                               final String errProp) throws Throwable {
