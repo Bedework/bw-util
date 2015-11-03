@@ -80,6 +80,7 @@
     <module>bw-util-struts</module>
     <module>bw-util-timezones</module>
     <module>bw-util-vcard</module>
+    <module>bw-util-wildfly</module>
     <module>bw-util-xml</module>
   </modules>
 

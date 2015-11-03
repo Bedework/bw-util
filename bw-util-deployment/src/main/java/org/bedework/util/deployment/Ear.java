@@ -1,10 +1,14 @@
 package org.bedework.util.deployment;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 /** Represent a ear for deployment.
  *
@@ -22,12 +26,52 @@ public class Ear extends VersionedFile {
 
     final File earMeta = Utils.subDirectory(theFile, "META-INF");
 
+    if (Boolean.valueOf(props.get("org.bedework.for.wildfly"))) {
+      final File jbossService = Utils.file(earMeta, "jboss-service.xml");
+
+      if (jbossService.exists()) {
+        if (!jbossService.delete()) {
+          Utils.warn("Unable to delete " + jbossService);
+        }
+      }
+    }
+
+    final String dependencies = this.props.get("app.dependencies");
+
+    if (dependencies != null) {
+      final File manifest = Utils.file(earMeta, "MANIFEST.MF");
+
+      if (!manifest.exists()) {
+        Utils.warn("No MANIFEST.MF");
+      } else {
+        final Manifest mf = new Manifest(new FileInputStream(manifest));
+
+        final Attributes mainAttrs = mf.getMainAttributes();
+        final String dep = mainAttrs.getValue("Dependencies");
+
+        if (dep != null) {
+          mainAttrs.putValue("Dependencies", dep + "," + dependencies);
+        } else {
+          mainAttrs.putValue("Dependencies", dependencies);
+        }
+
+        final FileOutputStream fos = new FileOutputStream(manifest, false);
+        mf.write(fos);
+        fos.close();
+      }
+    }
+
     appXml = new ApplicationXml(earMeta);
 
     Utils.info("Web modules");
 
     for (final String wm: appXml.getWebModulesNames()) {
       final SplitName wsn = SplitName.testName(wm);
+
+      if (wsn == null) {
+        Utils.error("Bad ear name " + wm);
+        return;
+      }
 
       Utils.info("   " + wm);
 
@@ -39,6 +83,8 @@ public class Ear extends VersionedFile {
   }
 
   public void update() throws Throwable {
+    Utils.debug("Update ear: " + getSplitName());
+
     /* See if we have any wars to copy */
     copyWars();
 
