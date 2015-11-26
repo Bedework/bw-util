@@ -204,6 +204,11 @@ public class ProcessEars {
 
       pc.push(props);
 
+      final boolean wildfly = Boolean.valueOf(pc.get("org.bedework.for.wildfly"));
+      if (wildfly) {
+        Utils.info("Building for wildfly");
+      }
+
       inUrl = defaultVal(inUrl,
                          "org.bedework.postdeploy.inurl");
 
@@ -324,8 +329,38 @@ public class ProcessEars {
           }
         }
 
+        if (wildfly) {
+          // Remove any deployment directive files
+          Path thePath = Paths.get(deployDirPath, sn.name + ".failed");
+          File theFile = thePath.toFile();
+
+          if (theFile.exists()) {
+            theFile.delete();
+          }
+
+          thePath = Paths.get(deployDirPath, sn.name + ".deployed");
+          theFile = thePath.toFile();
+
+          if (theFile.exists()) {
+            theFile.delete();
+          }
+
+          thePath = Paths.get(deployDirPath, sn.name + ".dodeploy");
+          theFile = thePath.toFile();
+
+          if (theFile.exists()) {
+            theFile.delete();
+          }
+
+        }
         final Path outPath = Paths.get(outDirPath, sn.name);
         Utils.copy(outPath, deployPath, false);
+
+        if (wildfly) {
+          final File doDeploy = Paths.get(deployDirPath,
+                                          sn.name + ".dodeploy").toFile();
+          doDeploy.createNewFile();
+        }
       }
 
       Utils.info("Deployed " + deployed + " ears");

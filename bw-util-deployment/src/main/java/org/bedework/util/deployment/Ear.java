@@ -39,26 +39,33 @@ public class Ear extends VersionedFile {
     final String dependencies = this.props.get("app.dependencies");
 
     if (dependencies != null) {
-      final File manifest = Utils.file(earMeta, "MANIFEST.MF");
+      final File manifest = new File(earMeta.getAbsolutePath(),
+                                     "MANIFEST.MF");
+
+      final Manifest mf;
+      final Attributes mainAttrs;
 
       if (!manifest.exists()) {
         Utils.warn("No MANIFEST.MF");
+        mf = new Manifest();
+        mainAttrs = mf.getMainAttributes();
+        mainAttrs.putValue("Manifest-Version", "1.0");
       } else {
-        final Manifest mf = new Manifest(new FileInputStream(manifest));
-
-        final Attributes mainAttrs = mf.getMainAttributes();
-        final String dep = mainAttrs.getValue("Dependencies");
-
-        if (dep != null) {
-          mainAttrs.putValue("Dependencies", dep + "," + dependencies);
-        } else {
-          mainAttrs.putValue("Dependencies", dependencies);
-        }
-
-        final FileOutputStream fos = new FileOutputStream(manifest, false);
-        mf.write(fos);
-        fos.close();
+        mf = new Manifest(new FileInputStream(manifest));
+        mainAttrs = mf.getMainAttributes();
       }
+
+      final String dep = mainAttrs.getValue("Dependencies");
+
+      if (dep != null) {
+        mainAttrs.putValue("Dependencies", dep + "," + dependencies);
+      } else {
+        mainAttrs.putValue("Dependencies", dependencies);
+      }
+
+      final FileOutputStream fos = new FileOutputStream(manifest, false);
+      mf.write(fos);
+      fos.close();
     }
 
     appXml = new ApplicationXml(earMeta);
