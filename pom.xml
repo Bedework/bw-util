@@ -26,7 +26,7 @@
     <h2.version>1.2.130</h2.version>
     <hibernate.version>3.6.9.Final</hibernate.version>
     <jackson.version>2.3.1</jackson.version>
-    <jms.version>1.1</jms.version>
+    <jms.version>2.0</jms.version>
     <jolokia.version>1.3.1</jolokia.version>
     <jtidy.version>4aug2000r7-dev</jtidy.version>
     <junit.version>4.8.2</junit.version>
@@ -212,7 +212,7 @@
 
       <dependency>
         <groupId>javax.jms</groupId>
-        <artifactId>jms</artifactId>
+        <artifactId>javax.jms-api</artifactId>
         <version>${jms.version}</version>
       </dependency>
 
