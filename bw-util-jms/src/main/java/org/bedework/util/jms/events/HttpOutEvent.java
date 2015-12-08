@@ -18,7 +18,7 @@
 */
 package org.bedework.util.jms.events;
 
-import edu.rpi.sss.util.ToString;
+import org.bedework.util.misc.ToString;
 
 /** Outbound http event.
  * @author douglm

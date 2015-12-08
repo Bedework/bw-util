@@ -23,9 +23,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +60,19 @@ public class Util {
     public int numAdded;
     /**  */
     public int numRemoved;
+  }
+
+  private static final DateFormat icalUTCTimestampFormat =
+          new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+
+  /** Get an ical timestamp of the form "yyyyMMddTHHmmssZ"
+   *
+   * @return String "yyyyMMddTHHmmssZ"
+   */
+  public static String icalUTCTimestamp() {
+    synchronized (icalUTCTimestampFormat) {
+      return icalUTCTimestampFormat.format(new Date());
+    }
   }
 
   /** Used to adjust a collection toAdjust so that it looks like the collection

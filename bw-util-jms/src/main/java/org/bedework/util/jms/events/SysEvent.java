@@ -19,11 +19,8 @@
 package org.bedework.util.jms.events;
 
 import org.bedework.util.jms.NotificationException;
-
-import edu.rpi.sss.util.ToString;
-
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.property.LastModified;
+import org.bedework.util.misc.ToString;
+import org.bedework.util.misc.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -221,7 +218,7 @@ public class SysEvent implements Serializable, Comparable<SysEvent> {
    * Update last mod fields
    */
   private void updateDtstamp() {
-    setDtstamp(new LastModified(new DateTime(true)).getValue());
+    setDtstamp(Util.icalUTCTimestamp());
     setSequence(getSequence() + 1);
   }
 

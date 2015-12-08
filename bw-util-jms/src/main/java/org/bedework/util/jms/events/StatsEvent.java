@@ -18,7 +18,7 @@
 */
 package org.bedework.util.jms.events;
 
-import edu.rpi.sss.util.ToString;
+import org.bedework.util.misc.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
