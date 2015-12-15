@@ -33,6 +33,13 @@ public interface BaseMBean {
   @MBeanInfo("Service name: used to register this service")
   String getServiceName();
 
+  /**
+   *
+   * @return "Done", "Failed", "Running", "Stopped"
+   */
+  @MBeanInfo("Current status code")
+  String getStatus();
+
   /* ========================================================================
    * Operations
    * ======================================================================== */

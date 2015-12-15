@@ -105,6 +105,13 @@ import javax.management.ObjectName;
  *
  */
 public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
+  public static final String statusDone = "Done";
+  public static final String statusFailed = "Failed";
+  public static final String statusRunning = "Running";
+  public static final String statusStopped = "Stopped";
+  public static final String statusTimedout = "Timedout";
+  public static final String statusUnknown = "Unknown";
+
   private transient Logger log;
 
   protected boolean debug;
@@ -115,6 +122,8 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
   /* The absolute path to the directory */
   private String configuri;
+
+  private String status = statusUnknown;
 
   private static volatile Object pfileLock = new Object();
 
@@ -175,6 +184,18 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   @Override
   public String getServiceName() {
     return serviceName;
+  }
+
+  /**
+   * @param val a status.
+   */
+  public void setStatus(final String val) {
+    status = val;
+  }
+
+  @Override
+  public String getStatus() {
+    return status;
   }
 
   @Override

@@ -21,7 +21,9 @@
 
     <!-- Third Party Library Versions -->
     <apache-http.version>4.2.2</apache-http.version>
+    <apache-http-osgi.version>4.3.3</apache-http-osgi.version>
     <commons-codec.version>1.5</commons-codec.version>
+    <commons-lang.version>2.3</commons-lang.version>
     <derby.version>10.8.2.2</derby.version>
     <h2.version>1.2.130</h2.version>
     <hibernate.version>3.6.9.Final</hibernate.version>
@@ -73,6 +75,8 @@
     <module>bw-util-http</module>
     <module>bw-util-indexing</module>
     <module>bw-util-jmx</module>
+    <module>bw-util-jms</module>
+    <module>bw-util-jolokia</module>
     <module>bw-util-json</module>
     <module>bw-util-misc</module>
     <module>bw-util-options</module>
@@ -82,10 +86,7 @@
     <module>bw-util-struts</module>
     <module>bw-util-timezones</module>
     <module>bw-util-vcard</module>
-    <module>bw-util-wildfly</module>
     <module>bw-util-xml</module>
-    <module>bw-util-jms</module>
-    <module>bw-util-jolokia</module>
   </modules>
 
   <developers>
@@ -134,6 +135,16 @@
         <artifactId>bw-ws-icalendar</artifactId>
         <version>${bw-ws.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.bedework</groupId>
+        <artifactId>bw-ical4j-cl</artifactId>
+        <version>${ical4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bedework</groupId>
+        <artifactId>bw-ical4j-vcard</artifactId>
+        <version>${ical4j-vcard.version}</version>
+      </dependency>
       <!-- Third Party Libraries -->
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -161,20 +172,17 @@
         <version>${h2.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-ical4j-cl</artifactId>
-        <version>${ical4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-ical4j-vcard</artifactId>
-        <version>${ical4j-vcard.version}</version>
-      </dependency>
-      <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
         <version>${commons-codec.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
@@ -185,6 +193,11 @@
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
         <version>${apache-http.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient-osgi</artifactId>
+        <version>${apache-http-osgi.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
