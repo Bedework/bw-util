@@ -29,6 +29,10 @@ public class War extends VersionedFile {
   }
 
   public void update() throws Throwable {
+    Utils.debug("Update war " + getSplitName());
+
+    copyDocs();
+
     appXml.setContext(sn.name, props);
 
     jbwXml.update();
@@ -44,7 +48,22 @@ public class War extends VersionedFile {
     }
   }
 
-  @SuppressWarnings("UnusedDeclaration")
+  private void copyDocs() throws Throwable {
+    final String fromName = props.get("app.moredocs");
+    if (fromName == null) {
+      return;
+    }
+
+    final File docs = Utils.subDirectory(theFile, "docs");
+
+    final Path outPath = Paths.get(docs.getAbsolutePath());
+    final Path inPath = Paths.get(fromName);
+
+    Utils.debug("Copy from " + inPath + " to " + outPath);
+
+    Utils.copy(inPath, outPath, true);
+  }
+
   private void copyResources() throws Throwable {
     props.pushFiltered("app.copy.resource.", "copy.");
 

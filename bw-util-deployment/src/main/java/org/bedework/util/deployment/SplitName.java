@@ -133,5 +133,16 @@ public class SplitName {
 
     return false;
   }
+
+  public String toString() {
+    final ToString ts = new ToString(this);
+
+    ts.append("name", name);
+    ts.append("prefix", prefix);
+    ts.append("version", version);
+    ts.append("suffix", suffix);
+
+    return ts.toString();
+  }
 }
 

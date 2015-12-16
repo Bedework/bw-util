@@ -43,6 +43,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 class Utils {
   public static boolean debug;
@@ -208,7 +209,7 @@ class Utils {
   }
 
   private final static CopyOption[] copyOptionAttributes =
-          new CopyOption[] { COPY_ATTRIBUTES };
+          new CopyOption[] { REPLACE_EXISTING, COPY_ATTRIBUTES };
 
   /**
    * A {@code FileVisitor} that copies a file-tree ("cp -r")
@@ -233,10 +234,21 @@ class Utils {
       final Path newdir = out.resolve(in.relativize(dir));
 
       try {
-        if ((newdir.compareTo(out) == 0) && outExists) {
-          return CONTINUE;
-        }
+//        if ((newdir.compareTo(out) == 0) && outExists) {
+  //        return CONTINUE;
+    //    }
 
+        //Utils.debug("**** Visit dir " + dir);
+        final File nd = newdir.toFile();
+        if (nd.exists()) {
+          if (nd.isDirectory()) {
+            return CONTINUE;
+          }
+
+          error(dir.toString() + " already exists and is not a directory");
+          return SKIP_SUBTREE;
+        }
+        //Utils.debug("**** Copy dir " + dir);
         Files.copy(dir, newdir, copyOptionAttributes);
       } catch (final FileAlreadyExistsException faee) {
         error("File already exists" + faee.getFile());
@@ -250,6 +262,7 @@ class Utils {
     @Override
     public FileVisitResult visitFile(final Path file,
                                      final BasicFileAttributes attrs) {
+      //Utils.debug("**** Copy file " + file);
       copyFile(file, out.resolve(in.relativize(file)));
       return CONTINUE;
     }
@@ -294,14 +307,14 @@ class Utils {
 
   static void copyFile(final Path in,
                        final Path out) {
-    if (Files.notExists(out)) {
+//    if (Files.notExists(out)) {
       try {
         Files.copy(in, out, copyOptionAttributes);
       } catch (final Throwable t) {
         error("Unable to copy: " + in + " to " + out +
                       ": " + t);
       }
-    }
+  //  }
   }
 
   public static class DeletingFileVisitor extends SimpleFileVisitor<Path> {

@@ -69,6 +69,39 @@ public class XmlFile {
    * Set updated true if changed.
    *
    * @param root    search below this for named element
+   * @param props to lookup new value
+   * @param tagnames path to element to set content for
+   * @throws Throwable
+   */
+  protected void propsReplaceContent(final Element root,
+                                     final PropertiesChain props,
+                                     final String... tagnames) throws Throwable {
+    Element el = root;
+    if (tagnames != null) {
+      for (final String nm: tagnames) {
+        el = findElement(el, nm);
+        if (el == null) {
+          return;
+        }
+      }
+    }
+
+    final String s = XmlUtil.getElementContent(el);
+
+    final String newS = props.replace(s);
+
+    if (s.equals(newS)) {
+      return;
+    }
+
+    XmlUtil.setElementContent(el, newS);
+    updated = true;
+  }
+
+  /** Update the value if it has a property replacement pattern.
+   * Set updated true if changed.
+   *
+   * @param root    search below this for named element
    * @param tagname element to set content for
    * @param props to lookup new value
    * @throws Throwable

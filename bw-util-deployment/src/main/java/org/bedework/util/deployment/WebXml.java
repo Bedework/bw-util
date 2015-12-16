@@ -22,6 +22,9 @@ public class WebXml extends XmlFile {
   }
 
   public void update() throws Throwable {
+    Utils.debug("Update " + theXml.getAbsolutePath());
+
+    replaceSecurityConstraints();
     setConfigName();
     setTransportGuarantee();
     setSecurityDomain();
@@ -81,6 +84,47 @@ public class WebXml extends XmlFile {
     }
 
     propsReplaceContent((Element)n, "realm-name", props);
+  }
+
+  public void replaceSecurityConstraints() throws Throwable {
+    final String scs = props.get("app.securityConstraints");
+
+    if (scs == null) {
+      return;
+    }
+
+    try {
+      final XmlFile scsDefs = new XmlFile(scs, false);
+
+      final Element scsEl = scsDefs.root;
+
+      while (true) {
+        final NodeList nl = doc.getElementsByTagName(
+                "security-constraint");
+
+        if ((nl == null) || (nl.getLength() == 0)) {
+          break;
+        }
+
+        Element el = (Element)nl.item(0);
+        el.getParentNode().removeChild(el);
+      }
+
+      /* Put in fron of login-config */
+      Node insertAt = XmlUtil.getOneTaggedNode(root, "login-config");
+
+      if (insertAt == null) {
+        // Bad web.xml?
+        throw new Exception("Cannot locate place to insert security constraint");
+      }
+
+      for (final Element el: XmlUtil.getElements(scsEl)) {
+        root.insertBefore(doc.importNode(el, true), insertAt);
+      }
+    } catch (final Throwable t) {
+      Utils.error("Unable to open/process file " + scs);
+      throw t;
+    }
   }
 
   public void addFilter() throws Throwable {
