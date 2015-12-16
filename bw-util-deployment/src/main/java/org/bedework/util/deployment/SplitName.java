@@ -15,6 +15,8 @@
 */
 package org.bedework.util.deployment;
 
+import org.bedework.util.misc.ToString;
+
 import java.util.List;
 
 /** Result of splitting a name into its component parts, e.g.
