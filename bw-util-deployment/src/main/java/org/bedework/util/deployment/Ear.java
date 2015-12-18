@@ -19,19 +19,20 @@ public class Ear extends VersionedFile {
 
   final Map<String, War> wars = new HashMap<>();
 
-  public Ear(final String path,
+  public Ear(final Utils utils,
+             final String path,
              final SplitName sn,
              final PropertiesChain props) throws Throwable {
-    super(path, sn, props, "org.bedework.app." + sn.prefix + ".");
+    super(utils, path, sn, props, "org.bedework.app." + sn.prefix + ".");
 
-    final File earMeta = Utils.subDirectory(theFile, "META-INF");
+    final File earMeta = utils.subDirectory(theFile, "META-INF");
 
     if (Boolean.valueOf(props.get("org.bedework.for.wildfly"))) {
-      final File jbossService = Utils.file(earMeta, "jboss-service.xml");
+      final File jbossService = utils.file(earMeta, "jboss-service.xml");
 
       if (jbossService.exists()) {
         if (!jbossService.delete()) {
-          Utils.warn("Unable to delete " + jbossService);
+          utils.warn("Unable to delete " + jbossService);
         }
       }
     }
@@ -46,7 +47,7 @@ public class Ear extends VersionedFile {
       final Attributes mainAttrs;
 
       if (!manifest.exists()) {
-        Utils.warn("No MANIFEST.MF");
+        utils.warn("No MANIFEST.MF");
         mf = new Manifest();
         mainAttrs = mf.getMainAttributes();
         mainAttrs.putValue("Manifest-Version", "1.0");
@@ -68,21 +69,22 @@ public class Ear extends VersionedFile {
       fos.close();
     }
 
-    appXml = new ApplicationXml(earMeta);
+    appXml = new ApplicationXml(utils, earMeta);
 
-    Utils.info("Web modules");
+    utils.info("Web modules");
 
     for (final String wm: appXml.getWebModulesNames()) {
       final SplitName wsn = SplitName.testName(wm);
 
       if (wsn == null) {
-        Utils.error("Bad ear name " + wm);
+        utils.error("Bad ear name " + wm);
         return;
       }
 
-      Utils.info("   " + wm);
+      utils.info("   " + wm);
 
-      final War war = new War(theFile.getAbsolutePath(),
+      final War war = new War(utils,
+                              theFile.getAbsolutePath(),
                               wsn, appXml, this.props);
 
       wars.put(wsn.name, war);
@@ -90,7 +92,7 @@ public class Ear extends VersionedFile {
   }
 
   public void update() throws Throwable {
-    Utils.debug("Update ear: " + getSplitName());
+    utils.debug("Update ear: " + getSplitName());
 
     /* See if we have any wars to copy */
     copyWars();
@@ -102,6 +104,21 @@ public class Ear extends VersionedFile {
     if (appXml.getUpdated()) {
       appXml.output();
     }
+
+    /* Any jars to add */
+
+    final String jarlib = this.props.get("app.jars");
+
+    utils.debug("jarlib is " + jarlib);
+
+    if (jarlib == null) {
+      return;
+    }
+
+    final File lib = utils.subDirectory(theFile, "lib");
+    final Path fromLib = Paths.get(jarlib);
+
+    utils.copy(fromLib, Paths.get(lib.getAbsolutePath()), true);
   }
 
   public War findWar(final String prefix) {
@@ -114,7 +131,7 @@ public class Ear extends VersionedFile {
   }
 
   private void copyWars() throws Throwable {
-    for (final String pn: props.top().stringPropertyNames()) {
+    for (final String pn: props.topNames()) {
       if (!pn.startsWith("app.copy.")) {
         continue;
       }
@@ -123,7 +140,7 @@ public class Ear extends VersionedFile {
       final War war = findWar(props.get(pn));
 
       if (war == null) {
-        Utils.error("No war to copy for " + pn + "=" + props.get(pn));
+        utils.error("No war to copy for " + pn + "=" + props.get(pn));
         continue;
       }
 
@@ -137,7 +154,7 @@ public class Ear extends VersionedFile {
             war.getSplitName().version + ".war";
     final SplitName toSn = new SplitName(toName, toPrefix);
 
-    Utils.info("Copy war " + war.getSplitName().name + " to " + toName);
+    utils.info("Copy war " + war.getSplitName().name + " to " + toName);
 
     toSn.version = war.getSplitName().version;
     toSn.suffix = "war";
@@ -145,16 +162,17 @@ public class Ear extends VersionedFile {
     final File newWarDir = new File(theFile.getAbsolutePath(), toName);
 
     if (!newWarDir.mkdir()) {
-      Utils.error("Unable to create new war " + toName);
+      utils.error("Unable to create new war " + toName);
       return;
     }
 
     final Path inPath = Paths.get(war.theFile.getAbsolutePath());
     final Path outPath = Paths.get(newWarDir.getAbsolutePath());
 
-    Utils.copy(inPath, outPath, true);
+    utils.copy(inPath, outPath, true);
 
-    final War newWar = new War(theFile.getAbsolutePath(),
+    final War newWar = new War(utils,
+                               theFile.getAbsolutePath(),
                                toSn, appXml, props);
 
     wars.put(toSn.name, newWar);

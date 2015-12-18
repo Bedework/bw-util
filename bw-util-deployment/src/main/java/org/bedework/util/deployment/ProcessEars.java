@@ -6,6 +6,10 @@ import org.bedework.util.dav.DavUtil.DavChild;
 import org.bedework.util.http.BasicHttpClient;
 import org.bedework.util.misc.Util;
 
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,13 +42,22 @@ import java.util.zip.ZipInputStream;
  *
  * @author douglm
  */
-public class ProcessEars {
+@Mojo(name = "bedework-deploy")
+public class ProcessEars extends AbstractMojo {
+  /** The path of the properties file */
+  public static final String propPropertiesFile =
+          "org.bedework.global.propertiesFile";
+
+  /** The path of directory containing the properties file */
+  public static final String propPropertiesDir =
+          "org.bedework.global.propertiesDir";
+
   static void usage(final String error_msg) {
     if (error_msg != null) {
-      Utils.error(error_msg);
+      System.err.println(error_msg);
     }
 
-    Utils.print("Usage: processEar [options]\n" +
+    System.out.print("Usage: processEar [options]\n" +
                         "Options:\n" +
                         "    -h             Print this help and exit\n" +
                         "    --in           Directory for ears\n" +
@@ -87,49 +100,56 @@ public class ProcessEars {
     }
   }
 
-  private static boolean error;
+  private boolean debug;
 
-  private static String inUrl;
+  private boolean error;
 
-  private static String inDirPath;
+  private String inUrl;
 
-  private static String outDirPath;
+  private String inDirPath;
 
-  private static String deployDirPath;
+  private String outDirPath;
 
-  private static boolean noversion;
+  private String deployDirPath;
 
-  private static boolean checkonly;
+  private boolean noversion;
 
-  private static boolean delete;
+  private boolean checkonly;
 
-  private static boolean cleanup = true;
+  private boolean delete;
 
-  private static String earName;
+  private boolean cleanup = true;
 
-  private static String resourcesBase;
+  private String earName;
 
-  private static String propsPath;
+  private String resourcesBase;
 
-  private static Properties props;
+  private String propsPath;
 
-  private final static PropertiesChain pc = new PropertiesChain();
+  private Properties props;
 
-  private final static Map<String, Ear> ears = new HashMap<>();
+  private Utils utils;
 
-  private final static List<Path> tempDirs = new ArrayList<>();
+  private final PropertiesChain pc = new PropertiesChain();
 
-  private static void loadProperties() throws Throwable {
-    final File f = Utils.file(propsPath);
+  private final Map<String, Ear> ears = new HashMap<>();
+
+  private final List<Path> tempDirs = new ArrayList<>();
+
+  private void loadProperties() throws Throwable {
+    final File f = utils.file(propsPath);
 
     final FileReader fr = new FileReader(f);
 
     props = new Properties();
 
     props.load(fr);
+
+    props.setProperty("org.bedework.global.propertiesFile", propsPath);
+    props.setProperty("org.bedework.global.propertiesDir", f.getParent());
   }
 
-  static boolean processArgs(final Args args) throws Throwable {
+  boolean processArgs(final Args args) throws Throwable {
     if (args == null) {
       return true;
     }
@@ -170,7 +190,7 @@ public class ProcessEars {
       } else if (args.ifMatch("--ear")) {
         earName = args.next();
       } else if (args.ifMatch("--debug")) {
-        Utils.debug = true;
+        debug = true;
       } else if (args.ifMatch("--resources")) {
         resourcesBase = args.next();
       } else if (args.ifMatch("--h")) {
@@ -185,28 +205,140 @@ public class ProcessEars {
     return true;
   }
 
+  /** Used by the runnable version with no log4j
+   *
+   */
+  private static class Logger implements Log {
+    public boolean debug;
+
+    @Override
+    public boolean isDebugEnabled() {
+      return debug;
+    }
+
+    @Override
+    public void debug(final CharSequence charSequence) {
+      System.out.println("DEBUG: " + charSequence);
+    }
+
+    @Override
+    public void debug(final CharSequence charSequence,
+                      final Throwable throwable) {
+      System.out.println("DEBUG: " + charSequence);
+      throwable.printStackTrace();
+    }
+
+    @Override
+    public void debug(final Throwable throwable) {
+      System.out.println("DEBUG: " + throwable.getLocalizedMessage());
+      throwable.printStackTrace();
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
+      return true;
+    }
+
+    @Override
+    public void info(final CharSequence charSequence) {
+      System.out.println("INFO: " + charSequence);
+    }
+
+    @Override
+    public void info(final CharSequence charSequence,
+                     final Throwable throwable) {
+      System.out.println("INFO: " + charSequence +
+                                 throwable.getLocalizedMessage());
+    }
+
+    @Override
+    public void info(final Throwable throwable) {
+      System.out.println("INFO: " + throwable.getLocalizedMessage());
+      throwable.printStackTrace();
+    }
+
+    @Override
+    public boolean isWarnEnabled() {
+      return true;
+    }
+
+    @Override
+    public void warn(final CharSequence charSequence) {
+      System.err.println("WARN: " + charSequence);
+    }
+
+    @Override
+    public void warn(final CharSequence charSequence,
+                     final Throwable throwable) {
+      System.err.println("WARN: " + charSequence);
+      throwable.printStackTrace(System.err);
+    }
+
+    @Override
+    public void warn(final Throwable throwable) {
+      throwable.printStackTrace(System.err);
+    }
+
+    @Override
+    public boolean isErrorEnabled() {
+      return true;
+    }
+
+    @Override
+    public void error(final CharSequence charSequence) {
+      System.err.println("ERROR: " + charSequence);
+    }
+
+    @Override
+    public void error(final CharSequence charSequence,
+                      final Throwable throwable) {
+      System.err.println("ERROR: " + charSequence);
+      throwable.printStackTrace(System.err);
+    }
+
+    @Override
+    public void error(final Throwable throwable) {
+      throwable.printStackTrace(System.err);
+    }
+  }
+
   /**
    * @param args program arguments
    * @throws Exception
    */
   public static void main(final String[] args) throws Exception {
+    ProcessEars pe = new ProcessEars();
+
     try {
-      if (!processArgs(new Args(args))) {
+      if (!pe.processArgs(new Args(args))) {
         return;
       }
 
-      if (propsPath == null) {
-        usage("Must specify --props");
-        return;
-      }
+      final Logger logger = new Logger();
+      logger.debug = pe.debug;
+      pe.setLog(logger);
+      pe.execute();
+    } catch (final Throwable t) {
+      t.printStackTrace();
+    }
 
+    if (pe.propsPath == null) {
+      usage("Must specify --props");
+      return;
+    }
+  }
+
+  public void execute() {
+    utils = new Utils(getLog());
+
+    try {
       loadProperties();
 
       pc.push(props);
 
       final boolean wildfly = Boolean.valueOf(pc.get("org.bedework.for.wildfly"));
       if (wildfly) {
-        Utils.info("Building for wildfly");
+        utils.info("Building for wildfly");
       }
 
       inUrl = defaultVal(inUrl,
@@ -239,12 +371,12 @@ public class ProcessEars {
         return;
       }
 
-      Utils.info("input: " + inDirPath);
-      Utils.info("output: " + outDirPath);
+      utils.info("input: " + inDirPath);
+      utils.info("output: " + outDirPath);
       if (deployDirPath != null) {
-        Utils.info("deploy: " + deployDirPath);
+        utils.info("deploy: " + deployDirPath);
       }
-      Utils.info("resources: " + resourcesBase);
+      utils.info("resources: " + resourcesBase);
 
       final List<String> earNames =
               pc.listProperty("org.bedework.ear.names");
@@ -264,22 +396,22 @@ public class ProcessEars {
         if (!noversion) {
           // See if this is a later version than the deployed file
           if (!sn.laterThan(deployedEars)) {
-            Utils.warn("File " + sn.name + " not later than deployed file. Skipping");
+            utils.warn("File " + sn.name + " not later than deployed file. Skipping");
             continue;
           }
         }
 
         if (!earNames.contains(sn.prefix)) {
-          Utils.warn(sn.name + " is not in the list of supported ears. Skipped");
+          utils.warn(sn.name + " is not in the list of supported ears. Skipped");
           continue;
         }
 
         if (checkonly) {
-          Utils.info("Ear " + sn.name + " is deployable");
+          utils.info("Ear " + sn.name + " is deployable");
           continue;
         }
 
-        Utils.info("Processing " + sn.name);
+        utils.info("Processing " + sn.name);
 
         final Path inPath = Paths.get(inDirPath, sn.name);
         final Path outPath = Paths.get(outDirPath, sn.name);
@@ -288,13 +420,13 @@ public class ProcessEars {
           final File outFile = outPath.toFile();
 
           if (outFile.exists()) {
-            Utils.deleteAll(outPath);
+            utils.deleteAll(outPath);
           }
         }
 
-        Utils.copy(inPath, outPath, false);
+        utils.copy(inPath, outPath, false);
 
-        final Ear theEar = new Ear(outDirPath, sn, pc);
+        final Ear theEar = new Ear(utils, outDirPath, sn, pc);
 
         ears.put(sn.name, theEar);
       }
@@ -308,24 +440,24 @@ public class ProcessEars {
       }
 
       if (deployDirPath == null) {
-        Utils.info("No deployment path specified. Terminating");
+        utils.info("No deployment path specified. Terminating");
         return;
       }
 
       int deployed = 0;
 
       for (final SplitName sn: getEarNames(outDirPath)) {
-        Utils.info("Deploying " + sn.name);
+        utils.info("Deploying " + sn.name);
         deployed++;
 
-        Utils.deleteMatching(deployDirPath, sn);
+        utils.deleteMatching(deployDirPath, sn);
         final Path deployPath = Paths.get(deployDirPath, sn.name);
 
         if (delete) {
           final File deployFile = deployPath.toFile();
 
           if (deployFile.exists()) {
-            Utils.deleteAll(deployPath);
+            utils.deleteAll(deployPath);
           }
         }
 
@@ -354,7 +486,7 @@ public class ProcessEars {
 
         }
         final Path outPath = Paths.get(outDirPath, sn.name);
-        Utils.copy(outPath, deployPath, false);
+        utils.copy(outPath, deployPath, false);
 
         if (wildfly) {
           final File doDeploy = Paths.get(deployDirPath,
@@ -363,7 +495,7 @@ public class ProcessEars {
         }
       }
 
-      Utils.info("Deployed " + deployed + " ears");
+      utils.info("Deployed " + deployed + " ears");
     } catch (final Throwable t) {
       t.printStackTrace();
     }
@@ -372,15 +504,15 @@ public class ProcessEars {
       // Try to delete any temp directories
       for (final Path tempPath: tempDirs) {
         try {
-          Utils.deleteAll(tempPath);
+          utils.deleteAll(tempPath);
         } catch (final Throwable t) {
-          Utils.warn("Error trying to delete " + tempPath);
+          utils.warn("Error trying to delete " + tempPath);
         }
       }
     }
   }
 
-  private static Path getTempDirectory(final String prefix)  throws Throwable {
+  private Path getTempDirectory(final String prefix)  throws Throwable {
     final Path tempPath = Files.createTempDirectory(prefix);
 
     tempDirs.add(tempPath);
@@ -393,7 +525,7 @@ public class ProcessEars {
    * @return path to directory containing downloaded files or null for errors.
    * @throws Throwable
    */
-  private static String getRemoteFiles(final String inUrl) throws Throwable {
+  private String getRemoteFiles(final String inUrl) throws Throwable {
     final BasicHttpClient cl = new BasicHttpClient(30000);
 
     final Path downloadPath = getTempDirectory("bwdownload");
@@ -408,7 +540,7 @@ public class ProcessEars {
       final URI inUri = new URI(inUrl);
 
       if (Util.isEmpty(dcs)) {
-        Utils.warn("No files at " + inUrl);
+        utils.warn("No files at " + inUrl);
         return null;
       }
 
@@ -418,14 +550,14 @@ public class ProcessEars {
           dcUri = inUri.resolve(dc.uri);
         }
 
-        if (Utils.debug) {
-          Utils.info("Found url " + dcUri);
+        if (getLog().isDebugEnabled()) {
+          utils.info("Found url " + dcUri);
         }
 
         final InputStream is = cl.get(dcUri.toString());
 
         if (is == null) {
-          Utils.warn("Unable to fetch " + dcUri);
+          utils.warn("Unable to fetch " + dcUri);
           return null;
         }
 
@@ -444,7 +576,7 @@ public class ProcessEars {
     return sourceEars;
   }
 
-  private static void unzip(final String zipPath,
+  private void unzip(final String zipPath,
                             final String destDir) throws Throwable {
     final byte[] buffer = new byte[4096];
 
@@ -456,8 +588,8 @@ public class ProcessEars {
                                             ze.getName());
 
       if (ze.isDirectory()) {
-        if (Utils.debug) {
-          Utils.info("Directory entry " + newFile.getAbsolutePath());
+        if (getLog().isDebugEnabled()) {
+          utils.info("Directory entry " + newFile.getAbsolutePath());
         }
 
         zis.closeEntry();
@@ -465,8 +597,8 @@ public class ProcessEars {
         continue;
       }
 
-      if (Utils.debug) {
-        Utils.info("Unzip " + newFile.getAbsolutePath());
+      if (getLog().isDebugEnabled()) {
+        utils.info("Unzip " + newFile.getAbsolutePath());
       }
 
       /* Zip entry has relative path which may require sub directories
@@ -490,21 +622,21 @@ public class ProcessEars {
     fis.close();
   }
 
-  private static void cleanOut(final String outDirPath) throws Throwable {
+  private void cleanOut(final String outDirPath) throws Throwable {
     final Path outPath = Paths.get(outDirPath);
 
     if (outPath.toFile().exists()) {
-      Utils.deleteAll(outPath);
+      utils.deleteAll(outPath);
     }
 
-    if (Utils.makeDir(outDirPath)) {
-      Utils.debug("created " + outDirPath);
+    if (utils.makeDir(outDirPath)) {
+      utils.debug("created " + outDirPath);
     }
   }
 
-  private static List<SplitName> getInEars(final String dirPath,
+  private List<SplitName> getInEars(final String dirPath,
                                            final List<String> earNames) throws Throwable {
-    final File inDir = Utils.directory(dirPath);
+    final File inDir = utils.directory(dirPath);
 
     final String[] names = inDir.list();
 
@@ -520,13 +652,13 @@ public class ProcessEars {
       earSplitNames.add(sn);
     }
 
-    Utils.info("Found " + earSplitNames.size() + " ears");
+    utils.info("Found " + earSplitNames.size() + " ears");
 
     return earSplitNames;
   }
 
-  private static List<SplitName> getEarNames(final String dirPath) throws Throwable {
-    final File outDir = Utils.directory(dirPath);
+  private List<SplitName> getEarNames(final String dirPath) throws Throwable {
+    final File outDir = utils.directory(dirPath);
 
     final String[] deployEarNames = outDir.list();
 
@@ -536,7 +668,7 @@ public class ProcessEars {
       final SplitName sn = SplitName.testName(nm);
 
       if ((sn == null) || (!"ear".equals(sn.suffix))) {
-        //Utils.warn("Unable to process " + nm);
+        //utils.warn("Unable to process " + nm);
         continue;
       }
 
@@ -546,7 +678,7 @@ public class ProcessEars {
     return earSplitNames;
   }
 
-  private static String defaultVal(final String val,
+  private String defaultVal(final String val,
                                    final String pname) {
     if (val != null) {
       return val;
@@ -555,7 +687,7 @@ public class ProcessEars {
     return props.getProperty(pname);
   }
 
-  private static String defaultVal(final String val,
+  private String defaultVal(final String val,
                                    final String pname,
                                    final String argName) {
     final String nval = defaultVal(val, pname);
@@ -563,7 +695,7 @@ public class ProcessEars {
       return nval;
     }
 
-    Utils.error("Must specify " + argName +
+    utils.error("Must specify " + argName +
                         " or provide the value in the properties with the" +
                         " '" + pname + "' property");
     error = true;

@@ -15,14 +15,15 @@ import java.io.File;
 public class WebXml extends XmlFile {
   private final PropertiesChain props;
 
-  public WebXml(final File webInf,
+  public WebXml(final Utils utils,
+                final File webInf,
                 final PropertiesChain props) throws Throwable {
-    super(webInf, "web.xml", false);
+    super(utils, webInf, "web.xml", false);
     this.props = props;
   }
 
   public void update() throws Throwable {
-    Utils.debug("Update " + theXml.getAbsolutePath());
+    utils.debug("Update " + theXml.getAbsolutePath());
 
     replaceSecurityConstraints();
     setConfigName();
@@ -94,7 +95,7 @@ public class WebXml extends XmlFile {
     }
 
     try {
-      final XmlFile scsDefs = new XmlFile(scs, false);
+      final XmlFile scsDefs = new XmlFile(utils, scs, false);
 
       final Element scsEl = scsDefs.root;
 
@@ -122,7 +123,7 @@ public class WebXml extends XmlFile {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {
-      Utils.error("Unable to open/process file " + scs);
+      utils.error("Unable to open/process file " + scs);
       throw t;
     }
   }
@@ -135,7 +136,7 @@ public class WebXml extends XmlFile {
     }
 
     try {
-      final XmlFile fltrDefs = new XmlFile(fltr, false);
+      final XmlFile fltrDefs = new XmlFile(utils, fltr, false);
 
       final Element filtersEl = fltrDefs.root;
 
@@ -156,7 +157,7 @@ public class WebXml extends XmlFile {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {
-      Utils.error("Unable to open/process file " + fltr);
+      utils.error("Unable to open/process file " + fltr);
       throw t;
     }
   }
@@ -169,7 +170,7 @@ public class WebXml extends XmlFile {
     }
 
     try {
-      final XmlFile fltrDefs = new XmlFile(fltr, false);
+      final XmlFile fltrDefs = new XmlFile(utils, fltr, false);
 
       final Element filtersEl = fltrDefs.root;
 
@@ -190,7 +191,7 @@ public class WebXml extends XmlFile {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {
-      Utils.error("Unable to open/process file " + fltr);
+      utils.error("Unable to open/process file " + fltr);
       throw t;
     }
   }
@@ -203,7 +204,7 @@ public class WebXml extends XmlFile {
     }
 
     try {
-      final XmlFile fltrDefs = new XmlFile(fltr, false);
+      final XmlFile fltrDefs = new XmlFile(utils, fltr, false);
 
       final Element filtersEl = fltrDefs.root;
 
@@ -219,7 +220,7 @@ public class WebXml extends XmlFile {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {
-      Utils.error("Unable to open/process file " + fltr);
+      utils.error("Unable to open/process file " + fltr);
       throw t;
     }
   }

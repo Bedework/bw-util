@@ -15,14 +15,15 @@ import java.util.List;
 public class JbossWebXml extends XmlFile {
   private final PropertiesChain props;
 
-  public JbossWebXml(final File webInf,
+  public JbossWebXml(final Utils utils,
+                     final File webInf,
                      final PropertiesChain props) throws Throwable {
-    super(webInf, "jboss-web.xml", false);
+    super(utils, webInf, "jboss-web.xml", false);
     this.props = props;
   }
 
   public void update() throws Throwable {
-    Utils.debug("Update " + theXml.getAbsolutePath());
+    utils.debug("Update " + theXml.getAbsolutePath());
 
     final List<String> vhosts = props.listProperty("app.virtual-hosts");
 

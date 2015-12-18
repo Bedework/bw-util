@@ -1,11 +1,14 @@
 package org.bedework.util.deployment;
 
+import org.bedework.util.misc.Util;
+
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 /** Allow stacking of Property objects. Generally the bottom of the
  * stack is the full set of unmodified properties.
@@ -57,7 +60,7 @@ import java.util.Properties;
  *
  * @author douglm
  */
-public class PropertiesChain {
+public class PropertiesChain implements Util.PropertyFetcher {
   private final Deque<Properties> pstack = new ArrayDeque<>();
 
   public PropertiesChain copy() {
@@ -79,15 +82,12 @@ public class PropertiesChain {
     pstack.pop();
   }
 
-  public Properties top() {
-    return pstack.peek();
+  public Set<String> topNames() {
+    return pstack.peek().stringPropertyNames();
   }
 
+  @Override
   public String get(final String name) {
-    return pstack.peek().getProperty(name);
-  }
-
-  public String getExtended(final String name) {
     String pname = name;
     int level = pstack.size();
 
@@ -98,7 +98,7 @@ public class PropertiesChain {
 
       final String s = props.getProperty(pname);
       if (s != null) {
-        return s;
+        return Util.propertyReplace(s, this);
       }
 
       level--;
@@ -107,11 +107,12 @@ public class PropertiesChain {
     return null;
   }
 
+  @SuppressWarnings("unused")
   public String getDeep(final String name) {
     for (final Properties props: pstack) {
       final String s = props.getProperty(name);
       if (s != null) {
-        return s;
+        return Util.propertyReplace(s, this);
       }
     }
 
@@ -119,7 +120,7 @@ public class PropertiesChain {
   }
 
   public List<String> listProperty(final String pname) {
-    final String pval = getExtended(pname);
+    final String pval = get(pname);
 
     if (pval == null) {
       return null;
@@ -139,27 +140,7 @@ public class PropertiesChain {
       return null;
     }
 
-    final int start = s.indexOf("${");
-
-    if (start < 0) {
-      return s;
-    }
-
-    final int end = s.indexOf("}", start);
-
-    if (end < 0) {
-      return s;
-    }
-
-    Utils.debug("Got pname " + s.substring(start + 2, end));
-    final String pval = getExtended(s.substring(start + 2, end));
-
-    Utils.debug("Got pval " + pval);
-    if (pval == null) {
-      return s;
-    }
-
-    return s.substring(0, start) + pval + s.substring(end + 1);
+    return Util.propertyReplace(s, this);
   }
 
   public void pushFiltered(final String prefix,

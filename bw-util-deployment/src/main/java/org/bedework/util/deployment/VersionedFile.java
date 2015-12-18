@@ -6,21 +6,23 @@ import java.io.File;
  *
  * @author douglm
  */
-public class VersionedFile {
+public class VersionedFile extends BaseClass {
   protected final SplitName sn;
   protected final PropertiesChain props;
 
   protected final File theFile;
 
-  public VersionedFile(final String path,
+  public VersionedFile(final Utils utils,
+                       final String path,
                        final SplitName sn,
                        final PropertiesChain props,
                        final String propFilterVal) throws Throwable {
+    super(utils);
     this.sn = sn;
     this.props = props.copy();
     this.props.pushFiltered(propFilterVal, "app.");
 
-    theFile = Utils.subDirectory(path, sn.name);
+    theFile = utils.subDirectory(path, sn.name);
   }
 
   public SplitName getSplitName() {

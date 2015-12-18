@@ -15,21 +15,22 @@ public class War extends VersionedFile {
 
   private final WebXml wXml;
 
-  public War(final String path,
+  public War(final Utils utils,
+             final String path,
              final SplitName sn,
              final ApplicationXml appXml,
              final PropertiesChain props) throws Throwable {
-    super(path, sn, props, "app." + sn.prefix + ".");
+    super(utils, path, sn, props, "app." + sn.prefix + ".");
     this.appXml = appXml;
 
-    final File webInf = Utils.subDirectory(theFile, "WEB-INF");
+    final File webInf = utils.subDirectory(theFile, "WEB-INF");
 
-    jbwXml = new JbossWebXml(webInf, this.props);
-    wXml = new WebXml(webInf, this.props);
+    jbwXml = new JbossWebXml(utils, webInf, this.props);
+    wXml = new WebXml(utils, webInf, this.props);
   }
 
   public void update() throws Throwable {
-    Utils.debug("Update war " + getSplitName());
+    utils.debug("Update war " + getSplitName());
 
     copyDocs();
 
@@ -54,25 +55,25 @@ public class War extends VersionedFile {
       return;
     }
 
-    final File docs = Utils.subDirectory(theFile, "docs");
+    final File docs = utils.subDirectory(theFile, "docs");
 
     final Path outPath = Paths.get(docs.getAbsolutePath());
     final Path inPath = Paths.get(fromName);
 
-    Utils.debug("Copy from " + inPath + " to " + outPath);
+    utils.debug("Copy from " + inPath + " to " + outPath);
 
-    Utils.copy(inPath, outPath, true);
+    utils.copy(inPath, outPath, true);
   }
 
   private void copyResources() throws Throwable {
     props.pushFiltered("app.copy.resource.", "copy.");
 
     try {
-      for (final String pname: props.top().stringPropertyNames()) {
+      for (final String pname: props.topNames()) {
         final String toName = pname.substring("copy.".length());
         final String fromName = props.get(pname);
 
-        Utils.info("Copy " + fromName + " to " + toName);
+        utils.info("Copy " + fromName + " to " + toName);
 
         final Path outPath =
                 Paths.get(props.get("org.bedework.server.resource.root.dir"),
@@ -85,10 +86,10 @@ public class War extends VersionedFile {
         final File outFile = outPath.toFile();
 
         if (outFile.exists()) {
-          Utils.deleteAll(outPath);
+          utils.deleteAll(outPath);
         }
 
-        Utils.copy(inPath, outPath, false);
+        utils.copy(inPath, outPath, false);
       }
     } finally {
       props.pop();

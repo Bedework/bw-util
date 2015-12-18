@@ -16,29 +16,33 @@ import java.io.OutputStream;
  *
  * @author douglm
  */
-public class XmlFile {
+public class XmlFile extends BaseClass {
   protected final Document doc;
   protected final File theXml;
   protected final Element root;
 
   protected boolean updated;
 
-  public XmlFile(final File dir,
+  public XmlFile(final Utils utils,
+                 final File dir,
                  final String name,
                  final boolean nameSpaced) throws Throwable {
-    theXml = Utils.file(dir, name);
+    super(utils);
+    theXml = utils.file(dir, name);
 
-    doc = Utils.parseXml(new FileReader(theXml),
+    doc = utils.parseXml(new FileReader(theXml),
                          nameSpaced);
 
     root = doc.getDocumentElement();
   }
 
-  public XmlFile(final String path,
+  public XmlFile(final Utils utils,
+                 final String path,
                  final boolean nameSpaced) throws Throwable {
-    theXml = Utils.file(path);
+    super(utils);
+    theXml = utils.file(path);
 
-    doc = Utils.parseXml(new FileReader(theXml),
+    doc = utils.parseXml(new FileReader(theXml),
                          nameSpaced);
 
     root = doc.getDocumentElement();
@@ -112,7 +116,7 @@ public class XmlFile {
     final Node n = XmlUtil.getOneTaggedNode(root, tagname);
 
     if (n == null) {
-      //Utils.info("no element with name " + tagname);
+      //utils.info("no element with name " + tagname);
       return;
     }
 

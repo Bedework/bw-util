@@ -15,6 +15,7 @@
 */
 package org.bedework.util.deployment;
 
+import org.apache.maven.plugin.logging.Log;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -46,19 +47,25 @@ import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 class Utils {
-  public static boolean debug;
+  private final boolean debug;
+  private final Log logger;
 
-  public static Path createFile(final String path) throws Throwable {
+  public Utils(final Log logger) {
+    this.logger = logger;
+    debug = logger.isDebugEnabled();
+  }
+
+  public Path createFile(final String path) throws Throwable {
     final Path pathToFile = Paths.get(path);
     Files.createDirectories(pathToFile.getParent());
     return Files.createFile(pathToFile);
   }
 
-  public static boolean empty(final String path) {
+  public boolean empty(final String path) {
     return delete(new File(path), false);
   }
 
-  public static boolean makeDir(final String path) throws Throwable {
+  public boolean makeDir(final String path) throws Throwable {
     final File f = new File(path);
 
     if (!f.exists()) {
@@ -73,7 +80,7 @@ class Utils {
     return false;
   }
 
-  public static File directory(final String path) throws Throwable {
+  public File directory(final String path) throws Throwable {
     final File f = new File(path);
 
     if (!f.exists() || !f.isDirectory()) {
@@ -84,8 +91,8 @@ class Utils {
     return f;
   }
 
-  public static File subDirectory(final String path,
-                                  final String name) throws Throwable {
+  public File subDirectory(final String path,
+                           final String name) throws Throwable {
     final Path p = Paths.get(path, name);
     final File f = p.toFile();
 
@@ -98,8 +105,8 @@ class Utils {
     return f;
   }
 
-  public static File subDirectory(final File f,
-                                  final String name) throws Throwable {
+  public File subDirectory(final File f,
+                           final String name) throws Throwable {
     final File dir = new File(f.getAbsolutePath(), name);
 
     if (!dir.exists() || !dir.isDirectory()) {
@@ -111,8 +118,8 @@ class Utils {
     return dir;
   }
 
-  public static File file(final File dir,
-                          final String name) throws Throwable {
+  public File file(final File dir,
+                   final String name) throws Throwable {
     final File f = new File(dir.getAbsolutePath(), name);
 
     if (!f.exists() || !f.isFile()) {
@@ -124,8 +131,8 @@ class Utils {
     return f;
   }
 
-  public static File fileOrDir(final File dir,
-                               final String name) throws Throwable {
+  public File fileOrDir(final File dir,
+                        final String name) throws Throwable {
     final File f = new File(dir.getAbsolutePath(), name);
 
     if (!f.exists()) {
@@ -137,7 +144,7 @@ class Utils {
     return dir;
   }
 
-  public static File file(final String path) throws Throwable {
+  public File file(final String path) throws Throwable {
     final File f = new File(path);
 
     if (!f.exists() || !f.isFile()) {
@@ -154,8 +161,8 @@ class Utils {
    * @return Document  Parsed body or null for no body
    * @exception Throwable Some error occurred.
    */
-  public static Document parseXml(final Reader rdr,
-                                  final boolean nameSpaced) throws Throwable {
+  public Document parseXml(final Reader rdr,
+                           final boolean nameSpaced) throws Throwable {
     if (rdr == null) {
       // No content?
       return null;
@@ -177,8 +184,8 @@ class Utils {
    * @param deleteThis true to delete directory
    * @return true if something deleted
    */
-  public static boolean delete(final File file,
-                               final boolean deleteThis) {
+  public boolean delete(final File file,
+                        final boolean deleteThis) {
     final File[] flist;
 
     if(file == null){
@@ -214,7 +221,7 @@ class Utils {
   /**
    * A {@code FileVisitor} that copies a file-tree ("cp -r")
    */
-  private static class DirCopier implements FileVisitor<Path> {
+  private class DirCopier implements FileVisitor<Path> {
     private final Path in;
     private final Path out;
     private final boolean outExists;
@@ -296,17 +303,17 @@ class Utils {
     }
   }
 
-  public static void copy(final Path inPath,
-                          final Path outPath,
-                          final boolean outExists) throws Throwable {
+  public void copy(final Path inPath,
+                   final Path outPath,
+                   final boolean outExists) throws Throwable {
     final EnumSet<FileVisitOption> opts = EnumSet.of(
             FileVisitOption.FOLLOW_LINKS);
     final DirCopier tc = new DirCopier(inPath, outPath, outExists);
     Files.walkFileTree(inPath, opts, Integer.MAX_VALUE, tc);
   }
 
-  static void copyFile(final Path in,
-                       final Path out) {
+  void copyFile(final Path in,
+                final Path out) {
 //    if (Files.notExists(out)) {
       try {
         Files.copy(in, out, copyOptionAttributes);
@@ -317,7 +324,7 @@ class Utils {
   //  }
   }
 
-  public static class DeletingFileVisitor extends SimpleFileVisitor<Path> {
+  public class DeletingFileVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(final Path file,
                                      final BasicFileAttributes attributes)
@@ -346,12 +353,12 @@ class Utils {
     }
   }
 
-  public static void deleteAll(final Path dir) throws Throwable {
+  public void deleteAll(final Path dir) throws Throwable {
     final DeletingFileVisitor delFileVisitor = new DeletingFileVisitor();
     Files.walkFileTree(dir, delFileVisitor);
   }
 
-  /** Return a Proeprties object containing all those properties that
+  /** Return a Properties object containing all those properties that
    * match the given prefix. The property name will have the prefix
    * replaced by the new prefix.
    *
@@ -374,32 +381,6 @@ class Utils {
     return res;
   }
 
-  public static String propReplace(final Properties props, final String s) {
-    if (s == null) {
-      return null;
-    }
-
-    final int start = s.indexOf("${");
-
-    if (start < 0) {
-      return s;
-    }
-
-    final int end = s.indexOf("}", start);
-
-    if (end < 0) {
-      return s;
-    }
-
-    final String pval = props.getProperty(s.substring(start + 2, end));
-
-    if (pval == null) {
-      return s;
-    }
-
-    return s.substring(0, start) + pval + s.substring(end + 1);
-  }
-
   /** Delete any files on the given path that have a name part that
    * matches the split name. Allows us to remove old versions.
    *
@@ -407,7 +388,7 @@ class Utils {
    * @param sn the split name
    * @throws Throwable
    */
-  static void deleteMatching(final String dirPath,
+  void deleteMatching(final String dirPath,
                              final SplitName sn) throws Throwable {
     if ((sn.prefix.length() < 3) || (sn.suffix.length() < 3)) {
       throw new Exception("Suspect name " + sn);
@@ -425,34 +406,34 @@ class Utils {
     }
   }
 
-  static void print(final String fmt,
+  void print(final String fmt,
                     final Object... params) {
     final Formatter f = new Formatter();
 
     info(f.format(fmt, params).toString());
   }
 
-  static void info(final String msg) {
-    System.out.println("INFO: " + msg);
+  void info(final String msg) {
+    logger.info(msg);
   }
 
-  static void error(final String msg) {
-    System.err.println("ERROR: " + msg);
+  void error(final String msg) {
+    logger.error(msg);
   }
 
-  static void debug(final String msg) {
+  void debug(final String msg) {
     if (debug) {
-      System.out.println("DEBUG: " + msg);
+      logger.debug(msg);
     }
   }
 
-  static void warn(final String msg) {
-    System.err.println("WARN: " + msg);
+  void warn(final String msg) {
+    logger.warn(msg);
   }
 
-  static void assertion(final boolean test,
-                        final String fmt,
-                        final Object... params) {
+  void assertion(final boolean test,
+                 final String fmt,
+                 final Object... params) {
     if (test) {
       return;
     }
@@ -462,7 +443,7 @@ class Utils {
     throw new RuntimeException(f.format(fmt, params).toString());
   }
 
-  static int getInt(final String val) {
+  int getInt(final String val) {
     try {
       return Integer.valueOf(val);
     } catch (final Throwable ignored) {

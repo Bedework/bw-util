@@ -417,14 +417,17 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
       if ((scheme == null) || (scheme.equals("file"))) {
         */
       String path = pfileUri;
-        File f = new File(path);
-        if (!f.exists()) {
-          throw new ConfigException("No configuration pfile at " + path);
-        }
+      File f = new File(path);
+      if (!f.exists()) {
+        throw new ConfigException("No configuration pfile at " + path);
+      }
 
-        if (!f.isFile()) {
-          throw new ConfigException(path + " is not a file");
-        }
+      if (!f.isFile()) {
+        throw new ConfigException(path + " is not a file");
+      }
+
+      final Util.PropertiesPropertyFetcher ppf =
+              new Util.PropertiesPropertyFetcher(System.getProperties());
 
         synchronized (pfileLock) {
           if (pfile != null) {
@@ -440,7 +443,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
           for (Object o: pfileNames) {
             pfile.put(o, Util.propertyReplace(pfile.getProperty((String)o),
-                                              System.getProperties()));
+                                              ppf));
           }
 
           configBase = pfile.getProperty(configBasePname);

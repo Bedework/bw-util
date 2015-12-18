@@ -298,8 +298,30 @@ public class Util {
     }
   }
 
+  public interface PropertyFetcher {
+    /** Get the value or null
+     *
+     * @param name name for proeprty
+     * @return value or null
+     */
+    String get(String name);
+  }
+
+  public static class PropertiesPropertyFetcher implements PropertyFetcher {
+    private final Properties props;
+
+    public PropertiesPropertyFetcher(final Properties props) {
+      this.props = props;
+    }
+
+    @Override
+    public String get(final String name) {
+      return props.getProperty(name);
+    }
+  }
+
   public static String propertyReplace(final String val,
-                                       final Properties props) {
+                                       final PropertyFetcher props) {
     if (val == null) {
       return null;
     }
@@ -326,7 +348,7 @@ public class Util {
         break;
       }
 
-      final String pval = props.getProperty(val.substring(pos + 2, end).trim());
+      final String pval = props.get(val.substring(pos + 2, end).trim());
 
       if (pval != null) {
         sb.append(pval);

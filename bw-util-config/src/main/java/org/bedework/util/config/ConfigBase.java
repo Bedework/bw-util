@@ -31,11 +31,13 @@ import org.xml.sax.InputSource;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
@@ -234,9 +236,9 @@ public abstract class ConfigBase<T extends ConfigBase>
 
   /** Set a property
    *
-   * @param list
-   * @param name
-   * @param val
+   * @param list the list - possibly null
+   * @param name of property
+   * @param val of property
    * @return possibly newly created list
    */
   @SuppressWarnings("unchecked")
@@ -245,6 +247,30 @@ public abstract class ConfigBase<T extends ConfigBase>
                                             final String val) {
     removeProperty(list, name);
     return addListProperty(list, name, val);
+  }
+
+  /**
+   *
+   * @param vals to be converted to a Properties object
+   * @return the Properties
+   */
+  public static Properties toProperties(final List<String> vals) {
+    try {
+      final StringBuilder sb = new StringBuilder();
+
+      for (final String p: vals) {
+        sb.append(p);
+        sb.append("\n");
+      }
+
+      final Properties pr = new Properties();
+
+      pr.load(new StringReader(sb.toString()));
+
+      return pr;
+    } catch (final Throwable t) {
+      throw new RuntimeException(t);
+    }
   }
 
   /* ====================================================================
@@ -540,7 +566,7 @@ public abstract class ConfigBase<T extends ConfigBase>
       // Any tokens to replace?
 
       return Util.propertyReplace(ndval,
-                                  System.getProperties());
+                                  new Util.PropertiesPropertyFetcher(System.getProperties()));
     }
 
     if (cl.getName().equals("int") ||

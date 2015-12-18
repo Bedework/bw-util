@@ -16,8 +16,9 @@ import java.util.Set;
 public class ApplicationXml extends XmlFile {
   private final Map<String, Module> webModules = new HashMap<>();
 
-  public ApplicationXml(final File meta) throws Throwable {
-    super(meta, "application.xml", false);
+  public ApplicationXml(final Utils utils,
+                        final File meta) throws Throwable {
+    super(utils, meta, "application.xml", false);
 
     for (final Element module: XmlUtil.getElementsArray(root)) {
       if (!"module".equals(module.getTagName())) {
@@ -110,7 +111,7 @@ public class ApplicationXml extends XmlFile {
     final Module module = webModules.get(moduleName);
 
     if (module == null) {
-      Utils.error("Module " + moduleName + " not in application.xml");
+      utils.error("Module " + moduleName + " not in application.xml");
       return;
     }
 
