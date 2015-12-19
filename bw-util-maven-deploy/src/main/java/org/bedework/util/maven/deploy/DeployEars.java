@@ -7,6 +7,7 @@ import org.bedework.util.deployment.ProcessEars;
 import org.bedework.util.misc.Util;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -54,7 +55,7 @@ public class DeployEars extends AbstractMojo {
 
   }
 
-  public void execute() {
+  public void execute() throws MojoFailureException {
     final ProcessEars pe = new ProcessEars();
 
     pe.setBaseDirPath(baseDirPath);
