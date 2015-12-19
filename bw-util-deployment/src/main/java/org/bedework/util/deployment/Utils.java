@@ -15,6 +15,7 @@
 */
 package org.bedework.util.deployment;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -84,8 +85,8 @@ class Utils {
     final File f = new File(path);
 
     if (!f.exists() || !f.isDirectory()) {
-      throw new Exception(f.getAbsolutePath() +
-                                  " must exist and be a directory");
+      throw new MojoExecutionException(f.getAbsolutePath() +
+                                               " must exist and be a directory");
     }
 
     return f;
@@ -119,10 +120,17 @@ class Utils {
   }
 
   public File file(final File dir,
-                   final String name) throws Throwable {
+                   final String name,
+                   final boolean mustExist) throws Throwable {
     final File f = new File(dir.getAbsolutePath(), name);
 
-    if (!f.exists() || !f.isFile()) {
+    if (f.exists() && !f.isFile()) {
+      throw new Exception(name + " in " +
+                                  f.getAbsolutePath() +
+                                  " must be a file");
+    }
+
+    if (!f.exists() && mustExist) {
       throw new Exception(name + " in " +
                                   f.getAbsolutePath() +
                                   " must exist and be a file");

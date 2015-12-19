@@ -89,6 +89,7 @@
     <module>bw-util-timezones</module>
     <module>bw-util-vcard</module>
     <module>bw-util-xml</module>
+    <module>bw-util-maven-deploy</module>
   </modules>
 
   <developers>

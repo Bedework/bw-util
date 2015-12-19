@@ -1,14 +1,12 @@
 package org.bedework.util.deployment;
 
-import org.bedework.util.args.Args;
 import org.bedework.util.dav.DavUtil;
 import org.bedework.util.dav.DavUtil.DavChild;
 import org.bedework.util.http.BasicHttpClient;
 import org.bedework.util.misc.Util;
 
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugin.MojoFailureException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +40,6 @@ import java.util.zip.ZipInputStream;
  *
  * @author douglm
  */
-@Mojo(name = "bedework-deploy")
 public class ProcessEars extends AbstractMojo {
   /** The path of the properties file */
   public static final String propPropertiesFile =
@@ -52,57 +49,15 @@ public class ProcessEars extends AbstractMojo {
   public static final String propPropertiesDir =
           "org.bedework.global.propertiesDir";
 
-  static void usage(final String error_msg) {
-    if (error_msg != null) {
-      System.err.println(error_msg);
-    }
+  /** The path of directory containing the appserver
+   * Thsi is the value of the baseDir parameter
+   */
+  public static final String propBaseDir =
+          "org.bedework.global.baseDir";
 
-    System.out.print("Usage: processEar [options]\n" +
-                        "Options:\n" +
-                        "    -h             Print this help and exit\n" +
-                        "    --in           Directory for ears\n" +
-                        "    --inurl        WebDAV location for ears\n" +
-                        "    --out          Directory for modified ears\n" +
-                        "    --deploy       Directory to deploy modified ears\n" +
-                        "    --resources    Base for resource references\n" +
-                        "    --noclean      Don't delete temp dirs - helps debugging\n" +
-                        "    --noversion    If specified suppress version check\n" +
-                        "    --checkonly    Display what would be deployed without this flag\n" +
-                        "    --delete       If specified delete target ear if it exists\n" +
-                        "    --prop         Path to property file defining configuration\n" +
-                        "    --ear          If specified restrict processing to named ear\n" +
-                        "    --debug        Enable debugging messages\n" +
-                        "\n" +
-                        "Description:\n" +
-                        "    This utility updates an exploded ear making it ready\n" +
-                        "    for deployment.\n" +
-                        "\n" +
-                        "    Only ear files later than the currently deployed ears\n" +
-                        "    will be processed.\n" +
-                        "\n" +
-                        "    The 'out' directory is first deleted and recreated\n" +
-                        "\n" +
-                        "    If 'inurl' is specified a list of the latest ears from\n" +
-                        "    that location is created. These ears will be downloaded to a\n" +
-                        "    temporary input directory and unzipped.\n" +
-                        "\n" +
-                        "    The ear is copied from the specified 'in' directory \n" +
-                        "    to the 'out' and then modified.\n" +
-                        "\n" +
-                        "    If '--deploy' has been specified the modified ear is then \n" +
-                        "    copied from the 'out' directory to the 'deploy' directory.\n" +
-                        "\n" +
-                        "    This process avoids the application server attempting to \n" +
-                        "    deploy partially modified ears.\n");
+  private String errorMsg;
 
-    if (error_msg != null) {
-      throw new RuntimeException(error_msg);
-    }
-  }
-
-  private boolean debug;
-
-  private boolean error;
+  private String baseDirPath;
 
   private String inUrl;
 
@@ -145,190 +100,76 @@ public class ProcessEars extends AbstractMojo {
 
     props.load(fr);
 
-    props.setProperty("org.bedework.global.propertiesFile", propsPath);
-    props.setProperty("org.bedework.global.propertiesDir", f.getParent());
+    props.setProperty(propBaseDir, baseDirPath);
+    props.setProperty(propPropertiesFile, propsPath);
+    props.setProperty(propPropertiesDir, f.getParent());
   }
 
-  boolean processArgs(final Args args) throws Throwable {
-    if (args == null) {
-      return true;
-    }
-
-    while (args.more()) {
-      if (args.ifMatch("")) {
-        continue;
-      }
-
-      if (args.ifMatch("-h")) {
-        usage(null);
-      } else if (args.ifMatch("--in")) {
-        if (inUrl != null) {
-          usage("Only one of --in or --inurl: " + args.current());
-          return false;
-        }
-
-        inDirPath = args.next();
-      } else if (args.ifMatch("--inurl")) {
-        if (inDirPath != null) {
-          usage("Only one of --in or --inurl: " + args.current());
-          return false;
-        }
-
-        inUrl = args.next();
-      } else if (args.ifMatch("--out")) {
-        outDirPath = args.next();
-      } else if (args.ifMatch("--props")) {
-        propsPath = args.next();
-      } else if (args.ifMatch("--noclean")) {
-        cleanup = false;
-      } else if (args.ifMatch("--noversion")) {
-        noversion = true;
-      } else if (args.ifMatch("--checkonly")) {
-        checkonly = true;
-      } else if (args.ifMatch("--delete")) {
-        delete = true;
-      } else if (args.ifMatch("--ear")) {
-        earName = args.next();
-      } else if (args.ifMatch("--debug")) {
-        debug = true;
-      } else if (args.ifMatch("--resources")) {
-        resourcesBase = args.next();
-      } else if (args.ifMatch("--h")) {
-        usage(null);
-        return false;
-      } else {
-        usage("Unrecognized option: " + args.current());
-        return false;
-      }
-    }
-
-    return true;
+  public void setBaseDirPath(final String val) {
+    baseDirPath = val;
   }
 
-  /** Used by the runnable version with no log4j
-   *
-   */
-  private static class Logger implements Log {
-    public boolean debug;
-
-    @Override
-    public boolean isDebugEnabled() {
-      return debug;
-    }
-
-    @Override
-    public void debug(final CharSequence charSequence) {
-      System.out.println("DEBUG: " + charSequence);
-    }
-
-    @Override
-    public void debug(final CharSequence charSequence,
-                      final Throwable throwable) {
-      System.out.println("DEBUG: " + charSequence);
-      throwable.printStackTrace();
-    }
-
-    @Override
-    public void debug(final Throwable throwable) {
-      System.out.println("DEBUG: " + throwable.getLocalizedMessage());
-      throwable.printStackTrace();
-    }
-
-    @Override
-    public boolean isInfoEnabled() {
-      return true;
-    }
-
-    @Override
-    public void info(final CharSequence charSequence) {
-      System.out.println("INFO: " + charSequence);
-    }
-
-    @Override
-    public void info(final CharSequence charSequence,
-                     final Throwable throwable) {
-      System.out.println("INFO: " + charSequence +
-                                 throwable.getLocalizedMessage());
-    }
-
-    @Override
-    public void info(final Throwable throwable) {
-      System.out.println("INFO: " + throwable.getLocalizedMessage());
-      throwable.printStackTrace();
-    }
-
-    @Override
-    public boolean isWarnEnabled() {
-      return true;
-    }
-
-    @Override
-    public void warn(final CharSequence charSequence) {
-      System.err.println("WARN: " + charSequence);
-    }
-
-    @Override
-    public void warn(final CharSequence charSequence,
-                     final Throwable throwable) {
-      System.err.println("WARN: " + charSequence);
-      throwable.printStackTrace(System.err);
-    }
-
-    @Override
-    public void warn(final Throwable throwable) {
-      throwable.printStackTrace(System.err);
-    }
-
-    @Override
-    public boolean isErrorEnabled() {
-      return true;
-    }
-
-    @Override
-    public void error(final CharSequence charSequence) {
-      System.err.println("ERROR: " + charSequence);
-    }
-
-    @Override
-    public void error(final CharSequence charSequence,
-                      final Throwable throwable) {
-      System.err.println("ERROR: " + charSequence);
-      throwable.printStackTrace(System.err);
-    }
-
-    @Override
-    public void error(final Throwable throwable) {
-      throwable.printStackTrace(System.err);
-    }
+  public String getBaseDirPath() {
+    return baseDirPath;
   }
 
-  /**
-   * @param args program arguments
-   * @throws Exception
-   */
-  public static void main(final String[] args) throws Exception {
-    ProcessEars pe = new ProcessEars();
-
-    try {
-      if (!pe.processArgs(new Args(args))) {
-        return;
-      }
-
-      final Logger logger = new Logger();
-      logger.debug = pe.debug;
-      pe.setLog(logger);
-      pe.execute();
-    } catch (final Throwable t) {
-      t.printStackTrace();
-    }
-
-    if (pe.propsPath == null) {
-      usage("Must specify --props");
-      return;
-    }
+  public void setInUrl(final String val) {
+    inUrl = val;
   }
 
-  public void execute() {
+  public String getInUrl() {
+    return inUrl;
+  }
+
+  public void setInDirPath(final String val) {
+    inDirPath = val;
+  }
+
+  public String getInDirPath() {
+    return inDirPath;
+  }
+
+  public void setOutDirPath(final String val) {
+    outDirPath = val;
+  }
+
+  public void setDeployDirPath(final String val) {
+    deployDirPath = val;
+  }
+
+  public void setNoversion(final boolean val) {
+    noversion = val;
+  }
+
+  public void setCheckonly(final boolean val) {
+    checkonly = val;
+  }
+
+  public void setDelete(final boolean val) {
+    delete = val;
+  }
+
+  public void setCleanup(final boolean val) {
+    cleanup = val;
+  }
+
+  public void setEarName(final String val) {
+    earName = val;
+  }
+
+  public void setResourcesBase(final String val) {
+    resourcesBase = val;
+  }
+
+  public void setPropsPath(final String val) {
+    propsPath = val;
+  }
+
+  public String getPropsPath() {
+    return propsPath;
+  }
+
+  public void execute() throws MojoFailureException {
     utils = new Utils(getLog());
 
     try {
@@ -366,15 +207,17 @@ public class ProcessEars extends AbstractMojo {
                                  "org.bedework.postdeploy.resources.base",
                                  "--resources");
 
-      if (error) {
-        usage(null);
-        return;
+      if (errorMsg != null) {
+        throw new MojoFailureException(errorMsg);
       }
 
       utils.info("input: " + inDirPath);
       utils.info("output: " + outDirPath);
       if (deployDirPath != null) {
         utils.info("deploy: " + deployDirPath);
+      }
+      if (earName != null) {
+        utils.info("earName: " + earName);
       }
       utils.info("resources: " + resourcesBase);
 
@@ -385,8 +228,16 @@ public class ProcessEars extends AbstractMojo {
 
       final List<SplitName> earSplitNames = getInEars(inDirPath,
                                                       earNames);
+      if (earSplitNames == null) {
+        utils.error("No names available. Terminating");
+        return;
+      }
 
       final List<SplitName> deployedEars = getEarNames(deployDirPath);
+      if (deployedEars == null) {
+        utils.error("No deploy directory available. Terminating");
+        return;
+      }
 
       for (final SplitName sn: earSplitNames) {
         if ((earName != null) && !earName.equals(sn.prefix)) {
@@ -424,7 +275,12 @@ public class ProcessEars extends AbstractMojo {
           }
         }
 
-        utils.copy(inPath, outPath, false);
+        if (inPath.toFile().isFile()) {
+          // Need to unzip it
+          unzip(inPath.toString(), outPath.toString());
+        } else {
+          utils.copy(inPath, outPath, false);
+        }
 
         final Ear theEar = new Ear(utils, outDirPath, sn, pc);
 
@@ -577,7 +433,7 @@ public class ProcessEars extends AbstractMojo {
   }
 
   private void unzip(final String zipPath,
-                            final String destDir) throws Throwable {
+                     final String destDir) throws Throwable {
     final byte[] buffer = new byte[4096];
 
     final FileInputStream fis = new FileInputStream(zipPath);
@@ -679,12 +535,12 @@ public class ProcessEars extends AbstractMojo {
   }
 
   private String defaultVal(final String val,
-                                   final String pname) {
+                            final String pname) {
     if (val != null) {
       return val;
     }
 
-    return props.getProperty(pname);
+    return pc.get(pname);
   }
 
   private String defaultVal(final String val,
@@ -695,10 +551,10 @@ public class ProcessEars extends AbstractMojo {
       return nval;
     }
 
-    utils.error("Must specify " + argName +
+    errorMsg = "Must specify " + argName +
                         " or provide the value in the properties with the" +
-                        " '" + pname + "' property");
-    error = true;
+                        " '" + pname + "' property";
+    utils.error(errorMsg);
 
     return null;
   }

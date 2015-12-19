@@ -28,7 +28,9 @@ public class Ear extends VersionedFile {
     final File earMeta = utils.subDirectory(theFile, "META-INF");
 
     if (Boolean.valueOf(props.get("org.bedework.for.wildfly"))) {
-      final File jbossService = utils.file(earMeta, "jboss-service.xml");
+      final File jbossService = utils.file(earMeta,
+                                           "jboss-service.xml",
+                                           false);
 
       if (jbossService.exists()) {
         if (!jbossService.delete()) {

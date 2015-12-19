@@ -28,7 +28,7 @@ public class XmlFile extends BaseClass {
                  final String name,
                  final boolean nameSpaced) throws Throwable {
     super(utils);
-    theXml = utils.file(dir, name);
+    theXml = utils.file(dir, name, true);
 
     doc = utils.parseXml(new FileReader(theXml),
                          nameSpaced);
