@@ -32,9 +32,12 @@ When the build completes, and the changes are committed and pushed successfully,
 
 For full details, see [Sonatype's documentation for using Maven to publish releases](http://central.sonatype.org/pages/apache-maven.html).
 
-4.0.3 release
+### Release Notes
+#### 4.0.3
   * Add base classes for a jolokia cli
   * Add status operations to the base jmx classes for use by the cli
   * Add some base classes for JMS interactions
   * Update the deploy process to add some wildfly features.
 
+#### 4.0.4
+  * Refactor the post-build deployment module to work as a maven plugin.
