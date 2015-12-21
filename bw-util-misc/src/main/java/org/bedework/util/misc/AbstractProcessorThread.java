@@ -63,7 +63,8 @@ public abstract class AbstractProcessorThread extends Thread {
    * @param val the exception
    * @return false if we did nothing
    */
-  public boolean handleException(Throwable val) {
+  public boolean handleException(
+          @SuppressWarnings("UnusedParameters") final Throwable val) {
     return false;
   }
 
@@ -93,17 +94,17 @@ public abstract class AbstractProcessorThread extends Thread {
     info("************************************************************");
 
     long lastErrorTime = 0;
-    long errorResetTime = 1000 * 60 * 5;  // 5 minutes since last error
+    final long errorResetTime = 1000 * 60 * 5;  // 5 minutes since last error
     int errorCt = 0;
     final int maxErrorCt = 5;
 
     while (running) {
       try {
         runProcess();
-      } catch (InterruptedException ie) {
+      } catch (final InterruptedException ie) {
         running = false;
         break;
-      } catch (Throwable t) {
+      } catch (final Throwable t) {
         if (!handleException(t)) {
           if (System.currentTimeMillis() - lastErrorTime > errorResetTime) {
             errorCt = 0;
@@ -128,15 +129,19 @@ public abstract class AbstractProcessorThread extends Thread {
       } finally {
         close();
       }
+
+      info("************************************************************");
+      info(" * " + getName() + " terminated");
+      info("************************************************************");
     }
   }
 
   /** Shut down a running process.
    *
-   * @param proc
+   * @param proc the thread process
    * @return false for exception or timeout
    */
-  public static boolean stopProcess(AbstractProcessorThread proc) {
+  public static boolean stopProcess(final AbstractProcessorThread proc) {
     proc.info("************************************************************");
     proc.info(" * Stopping " + proc.getName());
     proc.info("************************************************************");
@@ -149,8 +154,8 @@ public abstract class AbstractProcessorThread extends Thread {
 
     try {
       proc.join(20 * 1000);
-    } catch (InterruptedException ie) {
-    } catch (Throwable t) {
+    } catch (final InterruptedException ignored) {
+    } catch (final Throwable t) {
       proc.error("Error waiting for processor termination");
       proc.error(t);
       ok = false;
