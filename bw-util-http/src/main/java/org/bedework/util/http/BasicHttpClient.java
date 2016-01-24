@@ -1045,6 +1045,10 @@ public class BasicHttpClient extends DefaultHttpClient {
    *
    */
   public void close() {
+    try {
+      release();
+    } catch (final Throwable ignored) {
+    }
   }
 
   /** ===================================================================
