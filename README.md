@@ -41,3 +41,7 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 
 #### 4.0.4
   * Refactor the post-build deployment module to work as a maven plugin.
+
+#### 4.0.5
+  * Add setHostLimit method to BasicHttpClient.
+  * Deployment class ProcessEars renamed to Process

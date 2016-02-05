@@ -68,7 +68,7 @@ public class Runnable {
     }
   }
 
-  private final ProcessEars pe = new ProcessEars();
+  private final Process pe = new Process();
 
   private boolean debug;
 

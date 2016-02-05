@@ -373,6 +373,19 @@ public class BasicHttpClient extends DefaultHttpClient {
   public static void setHostLimit(final HttpHost host, final int max) {
     connManager.setHostLimit(host, max);
   }
+  */
+
+  /**
+   * @param host the host
+   * @param port the port number
+   * @param max number connections
+   */
+  public static void setHostLimit(final String host,
+                                  final int port,
+                                  final int max) {
+    HttpHost hostPort = new HttpHost(host, port);
+    connManager.setMaxPerRoute(new HttpRoute(hostPort), max);
+  }
 
   /* *
    * @param host

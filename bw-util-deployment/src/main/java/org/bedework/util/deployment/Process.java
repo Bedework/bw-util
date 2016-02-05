@@ -40,7 +40,7 @@ import java.util.zip.ZipInputStream;
  *
  * @author douglm
  */
-public class ProcessEars extends AbstractMojo {
+public class Process extends AbstractMojo {
   /** The path of the properties file */
   public static final String propPropertiesFile =
           "org.bedework.global.propertiesFile";
