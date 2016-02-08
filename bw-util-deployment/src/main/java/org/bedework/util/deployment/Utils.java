@@ -107,10 +107,17 @@ class Utils {
   }
 
   public File subDirectory(final File f,
-                           final String name) throws Throwable {
+                           final String name,
+                           final boolean mustExist) throws Throwable {
     final File dir = new File(f.getAbsolutePath(), name);
 
-    if (!dir.exists() || !dir.isDirectory()) {
+    if (dir.exists() && !dir.isDirectory()) {
+      throw new Exception(name + " in " +
+                                  f.getAbsolutePath() +
+                                  " must be a directory");
+    }
+
+    if (!dir.exists() && mustExist) {
       throw new Exception(name + " in " +
                                   f.getAbsolutePath() +
                                   " must exist and be a directory");

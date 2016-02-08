@@ -4,16 +4,18 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/** Represent a ear for deployment.
+/** Represent a war for deployment.
  *
  * @author douglm
  */
-public class War extends VersionedFile {
+public class War extends DeployableResource implements Updateable {
   private final ApplicationXml appXml;
 
   private final JbossWebXml jbwXml;
 
   private final WebXml wXml;
+
+  private boolean warsonly;
 
   public War(final Utils utils,
              final String path,
@@ -21,20 +23,25 @@ public class War extends VersionedFile {
              final ApplicationXml appXml,
              final PropertiesChain props) throws Throwable {
     super(utils, path, sn, props, "app." + sn.prefix + ".");
+
+    warsonly = Boolean.valueOf(props.get(Process.propWarsOnly));
     this.appXml = appXml;
 
-    final File webInf = utils.subDirectory(theFile, "WEB-INF");
+    final File webInf = utils.subDirectory(theFile, "WEB-INF", true);
 
     jbwXml = new JbossWebXml(utils, webInf, this.props);
     wXml = new WebXml(utils, webInf, this.props);
   }
 
+  @Override
   public void update() throws Throwable {
     utils.debug("Update war " + getSplitName());
 
     copyDocs();
 
-    appXml.setContext(sn.name, props);
+    if (appXml != null) {
+      appXml.setContext(sn.name, props);
+    }
 
     jbwXml.update();
 
@@ -47,6 +54,8 @@ public class War extends VersionedFile {
     if (wXml.getUpdated()) {
       wXml.output();
     }
+
+    updateLib(warsonly);
   }
 
   private void copyDocs() throws Throwable {
@@ -55,7 +64,7 @@ public class War extends VersionedFile {
       return;
     }
 
-    final File docs = utils.subDirectory(theFile, "docs");
+    final File docs = utils.subDirectory(theFile, "docs", true);
 
     final Path outPath = Paths.get(docs.getAbsolutePath());
     final Path inPath = Paths.get(fromName);

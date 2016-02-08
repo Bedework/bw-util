@@ -140,6 +140,10 @@ public class Runnable {
         pe.setDelete(true);
       } else if (args.ifMatch("--ear")) {
         pe.setEarName(args.next());
+      } else if (args.ifMatch("--war")) {
+        pe.setWarName(args.next());
+      } else if (args.ifMatch("--warsonly")) {
+        pe.setWarsOnly(true);
       } else if (args.ifMatch("--debug")) {
         debug = true;
       } else if (args.ifMatch("--resources")) {
@@ -268,7 +272,7 @@ public class Runnable {
    * @throws Exception
    */
   public static void main(final String[] args) throws Exception {
-    Runnable r = new Runnable();
+    final Runnable r = new Runnable();
 
     try {
       if (!r.processArgs(new Args(args))) {

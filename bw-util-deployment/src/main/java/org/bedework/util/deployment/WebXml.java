@@ -107,12 +107,12 @@ public class WebXml extends XmlFile {
           break;
         }
 
-        Element el = (Element)nl.item(0);
+        final Element el = (Element)nl.item(0);
         el.getParentNode().removeChild(el);
       }
 
-      /* Put in fron of login-config */
-      Node insertAt = XmlUtil.getOneTaggedNode(root, "login-config");
+      /* Put in front of login-config */
+      final Node insertAt = XmlUtil.getOneTaggedNode(root, "login-config");
 
       if (insertAt == null) {
         // Bad web.xml?

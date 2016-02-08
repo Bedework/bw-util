@@ -5,6 +5,12 @@ import org.bedework.util.dav.DavUtil.DavChild;
 import org.bedework.util.http.BasicHttpClient;
 import org.bedework.util.misc.Util;
 
+import edu.rpi.sss.util.deployment.Ear;
+import edu.rpi.sss.util.deployment.PathAndName;
+import edu.rpi.sss.util.deployment.SplitName;
+import edu.rpi.sss.util.deployment.Updateable;
+import edu.rpi.sss.util.deployment.War;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -19,9 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -50,10 +54,15 @@ public class Process extends AbstractMojo {
           "org.bedework.global.propertiesDir";
 
   /** The path of directory containing the appserver
-   * Thsi is the value of the baseDir parameter
+   * This is the value of the baseDir parameter
    */
   public static final String propBaseDir =
           "org.bedework.global.baseDir";
+
+  /** True if we are processing wars rather than ear files.
+   * In this case the war will probably have its own lib */
+  public static final String propWarsOnly =
+          "org.bedework.global.warsonly";
 
   private String errorMsg;
 
@@ -71,9 +80,13 @@ public class Process extends AbstractMojo {
 
   private boolean checkonly;
 
+  private boolean warsonly;
+
   private boolean delete;
 
   private boolean cleanup = true;
+
+  private String warName;
 
   private String earName;
 
@@ -86,8 +99,6 @@ public class Process extends AbstractMojo {
   private Utils utils;
 
   private final PropertiesChain pc = new PropertiesChain();
-
-  private final Map<String, Ear> ears = new HashMap<>();
 
   private final List<Path> tempDirs = new ArrayList<>();
 
@@ -133,8 +144,9 @@ public class Process extends AbstractMojo {
     outDirPath = val;
   }
 
-  public void setDeployDirPath(final String val) {
-    deployDirPath = val;
+  public void setWarsOnly(final boolean val) {
+    warsonly = val;
+    props.setProperty(propWarsOnly, String.valueOf(val));
   }
 
   public void setNoversion(final boolean val) {
@@ -157,6 +169,11 @@ public class Process extends AbstractMojo {
     earName = val;
   }
 
+  public void setWarName(final String val) {
+    warName = val;
+    setWarsOnly(true);
+  }
+
   public void setResourcesBase(final String val) {
     resourcesBase = val;
   }
@@ -176,11 +193,6 @@ public class Process extends AbstractMojo {
       loadProperties();
 
       pc.push(props);
-
-      final boolean wildfly = Boolean.valueOf(pc.get("org.bedework.for.wildfly"));
-      if (wildfly) {
-        utils.info("Building for wildfly");
-      }
 
       inUrl = defaultVal(inUrl,
                          "org.bedework.postdeploy.inurl");
@@ -216,142 +228,17 @@ public class Process extends AbstractMojo {
       if (deployDirPath != null) {
         utils.info("deploy: " + deployDirPath);
       }
-      if (earName != null) {
-        utils.info("earName: " + earName);
-      }
-      utils.info("resources: " + resourcesBase);
 
-      final List<String> earNames =
-              pc.listProperty("org.bedework.ear.names");
+      utils.info("resources: " + resourcesBase);
 
       cleanOut(outDirPath);
 
-      final List<SplitName> earSplitNames = getInEars(inDirPath,
-                                                      earNames);
-      if (earSplitNames == null) {
-        utils.error("No names available. Terminating");
-        return;
+      if (!warsonly) {
+        processEars();
+      } else {
+        processWars();
       }
 
-      final List<SplitName> deployedEars = getEarNames(deployDirPath);
-      if (deployedEars == null) {
-        utils.error("No deploy directory available. Terminating");
-        return;
-      }
-
-      for (final SplitName sn: earSplitNames) {
-        if ((earName != null) && !earName.equals(sn.prefix)) {
-          continue;
-        }
-
-        if (!noversion) {
-          // See if this is a later version than the deployed file
-          if (!sn.laterThan(deployedEars)) {
-            utils.warn("File " + sn.name + " not later than deployed file. Skipping");
-            continue;
-          }
-        }
-
-        if (!earNames.contains(sn.prefix)) {
-          utils.warn(sn.name + " is not in the list of supported ears. Skipped");
-          continue;
-        }
-
-        if (checkonly) {
-          utils.info("Ear " + sn.name + " is deployable");
-          continue;
-        }
-
-        utils.info("Processing " + sn.name);
-
-        final Path inPath = Paths.get(inDirPath, sn.name);
-        final Path outPath = Paths.get(outDirPath, sn.name);
-
-        if (delete) {
-          final File outFile = outPath.toFile();
-
-          if (outFile.exists()) {
-            utils.deleteAll(outPath);
-          }
-        }
-
-        if (inPath.toFile().isFile()) {
-          // Need to unzip it
-          unzip(inPath.toString(), outPath.toString());
-        } else {
-          utils.copy(inPath, outPath, false);
-        }
-
-        final Ear theEar = new Ear(utils, outDirPath, sn, pc);
-
-        ears.put(sn.name, theEar);
-      }
-
-      if (checkonly) {
-        return;
-      }
-
-      for (final Ear ear: ears.values()) {
-        ear.update();
-      }
-
-      if (deployDirPath == null) {
-        utils.info("No deployment path specified. Terminating");
-        return;
-      }
-
-      int deployed = 0;
-
-      for (final SplitName sn: getEarNames(outDirPath)) {
-        utils.info("Deploying " + sn.name);
-        deployed++;
-
-        utils.deleteMatching(deployDirPath, sn);
-        final Path deployPath = Paths.get(deployDirPath, sn.name);
-
-        if (delete) {
-          final File deployFile = deployPath.toFile();
-
-          if (deployFile.exists()) {
-            utils.deleteAll(deployPath);
-          }
-        }
-
-        if (wildfly) {
-          // Remove any deployment directive files
-          Path thePath = Paths.get(deployDirPath, sn.name + ".failed");
-          File theFile = thePath.toFile();
-
-          if (theFile.exists()) {
-            theFile.delete();
-          }
-
-          thePath = Paths.get(deployDirPath, sn.name + ".deployed");
-          theFile = thePath.toFile();
-
-          if (theFile.exists()) {
-            theFile.delete();
-          }
-
-          thePath = Paths.get(deployDirPath, sn.name + ".dodeploy");
-          theFile = thePath.toFile();
-
-          if (theFile.exists()) {
-            theFile.delete();
-          }
-
-        }
-        final Path outPath = Paths.get(outDirPath, sn.name);
-        utils.copy(outPath, deployPath, false);
-
-        if (wildfly) {
-          final File doDeploy = Paths.get(deployDirPath,
-                                          sn.name + ".dodeploy").toFile();
-          doDeploy.createNewFile();
-        }
-      }
-
-      utils.info("Deployed " + deployed + " ears");
     } catch (final Throwable t) {
       t.printStackTrace();
     }
@@ -368,7 +255,220 @@ public class Process extends AbstractMojo {
     }
   }
 
-  private Path getTempDirectory(final String prefix)  throws Throwable {
+  private void processEars() throws Throwable {
+    if (earName != null) {
+      utils.info("earName: " + earName);
+    }
+
+    final List<String> earNames =
+            pc.listProperty("org.bedework.ear.names");
+
+    final List<PathAndName> toProcess = buildUpdateableList(earName,
+                                                            earNames,
+                                                            "ear");
+    if (toProcess == null) {
+      return;
+    }
+
+    final List<Updateable> toUpdate = new ArrayList<>();
+
+    for (final PathAndName pan: toProcess) {
+      toUpdate.add(new Ear(utils, pan.getPath(), pan.getSplitName(), pc));
+    }
+
+    if (checkonly) {
+      return;
+    }
+
+    for (final Updateable upd: toUpdate) {
+      upd.update();
+    }
+
+    deployFiles("ear");
+  }
+
+  private void processWars() throws Throwable {
+    if (warName != null) {
+      utils.info("warName: " + warName);
+    }
+
+    final List<String> warNames =
+            pc.listProperty("org.bedework.war.names");
+
+    final List<PathAndName> toProcess = buildUpdateableList(warName,
+                                                            warNames,
+                                                            "war");
+    if (toProcess == null) {
+      return;
+    }
+
+    final List<Updateable> toUpdate = new ArrayList<>();
+
+    for (final PathAndName pan: toProcess) {
+      toUpdate.add(new War(utils,
+                           pan.getPath(),
+                           pan.getSplitName(), null, pc));
+    }
+
+    if (checkonly) {
+      return;
+    }
+
+    for (final Updateable upd: toUpdate) {
+      upd.update();
+    }
+
+    deployFiles("war");
+  }
+
+  private List<PathAndName> buildUpdateableList(final String specificName,
+                                                final List<String> allowedNames,
+                                                final String suffix) throws Throwable {
+    final List<SplitName> splitNames = getInFiles(inDirPath,
+                                                  allowedNames,
+                                                  suffix);
+    if (splitNames == null) {
+      utils.error("No names available. Terminating");
+      return null;
+    }
+
+    final List<SplitName> deployed = getDeployedNames(deployDirPath,
+                                                      suffix);
+    if (deployed == null) {
+      utils.error("No deploy directory available. Terminating");
+      return null;
+    }
+
+    final List<PathAndName> files = new ArrayList<>();
+
+    for (final SplitName sn: splitNames) {
+      if ((specificName != null) && !specificName.equals(sn.prefix)) {
+        // We were given a specific name and this isn't it
+        continue;
+      }
+
+      if (!noversion) {
+        // See if this is a later version than the deployed file
+        if (!sn.laterThan(deployed)) {
+          utils.warn("File " + sn.name + " not later than deployed file. Skipping");
+          continue;
+        }
+      }
+
+      if (!allowedNames.contains(sn.prefix)) {
+        utils.warn(sn.name + " is not in the list of supported files. Skipped");
+        continue;
+      }
+
+      if (checkonly) {
+        utils.info("File " + sn.name + " is deployable");
+        continue;
+      }
+
+      utils.info("Processing " + sn.name);
+
+      final Path inPath = Paths.get(inDirPath, sn.name);
+      final Path outPath = Paths.get(outDirPath, sn.name);
+
+      if (delete) {
+        final File outFile = outPath.toFile();
+
+        if (outFile.exists()) {
+          utils.deleteAll(outPath);
+        }
+      }
+
+      if (inPath.toFile().isFile()) {
+        // Need to unzip it
+        unzip(inPath.toString(), outPath.toString());
+      } else {
+        utils.copy(inPath, outPath, false);
+      }
+
+      files.add(new PathAndName(outDirPath, sn));
+    }
+
+    return files;
+  }
+
+  private void deployFiles(final String suffix) throws Throwable {
+    if (deployDirPath == null) {
+      utils.info("No deployment path specified. Terminating");
+      return;
+    }
+
+    int deployed = 0;
+
+    final boolean wildfly = Boolean.valueOf(pc.get("org.bedework.for.wildfly"));
+    if (wildfly) {
+      utils.info("Processing for wildfly");
+    }
+
+    for (final SplitName sn: getDeployedNames(outDirPath,
+                                              suffix)) {
+      utils.info("Deploying " + sn.name);
+      deployed++;
+
+      utils.deleteMatching(deployDirPath, sn);
+      final Path deployPath = Paths.get(deployDirPath, sn.name);
+
+      if (delete) {
+        final File deployFile = deployPath.toFile();
+
+        if (deployFile.exists()) {
+          utils.deleteAll(deployPath);
+        }
+      }
+
+      if (wildfly) {
+        // Remove any deployment directive files
+        Path thePath = Paths.get(deployDirPath, sn.name + ".failed");
+        File theFile = thePath.toFile();
+
+        if (theFile.exists()) {
+          if (!theFile.delete()) {
+            utils.warn("Unable to delete file " + theFile);
+          }
+        }
+
+        thePath = Paths.get(deployDirPath, sn.name + ".deployed");
+        theFile = thePath.toFile();
+
+        if (theFile.exists()) {
+          if (!theFile.delete()) {
+            utils.warn("Unable to delete file " + theFile);
+          }
+        }
+
+        thePath = Paths.get(deployDirPath, sn.name + ".dodeploy");
+        theFile = thePath.toFile();
+
+        if (theFile.exists()) {
+          if (!theFile.delete()) {
+            utils.warn("Unable to delete file " + theFile);
+          }
+        }
+
+      }
+
+      final Path outPath = Paths.get(outDirPath, sn.name);
+      utils.copy(outPath, deployPath, false);
+
+      if (wildfly) {
+        final File doDeploy = Paths.get(deployDirPath,
+                                        sn.name + ".dodeploy").toFile();
+        if (!doDeploy.createNewFile()) {
+          utils.warn("Unable to create file " + doDeploy);
+        }
+      }
+    }
+
+    utils.info("Deployed " + deployed + " " +
+                       suffix +
+                       "s");
+  }
+
+  private Path getTempDirectory(final String prefix) throws Throwable {
     final Path tempPath = Files.createTempDirectory(prefix);
 
     tempDirs.add(tempPath);
@@ -490,48 +590,59 @@ public class Process extends AbstractMojo {
     }
   }
 
-  private List<SplitName> getInEars(final String dirPath,
-                                           final List<String> earNames) throws Throwable {
+  /** Return list of files in given directory that have the supplied
+   * suffix and whose name part is in the supplied list. If no list
+   * all files are returned.
+   *
+   * @param dirPath the directory
+   * @param allowedNames names must be in this list
+   * @return split names of located files.
+   * @throws Throwable
+   */
+  private List<SplitName> getInFiles(final String dirPath,
+                                     final List<String> allowedNames,
+                                     final String suffix) throws Throwable {
     final File inDir = utils.directory(dirPath);
 
     final String[] names = inDir.list();
 
-    final List<SplitName> earSplitNames = new ArrayList<>();
+    final List<SplitName> splitNames = new ArrayList<>();
 
     for (final String nm: names) {
-      final SplitName sn = SplitName.testName(nm, earNames);
+      final SplitName sn = SplitName.testName(nm, allowedNames);
 
-      if ((sn == null) || (!"ear".equals(sn.suffix))) {
+      if ((sn == null) || (!suffix.equals(sn.suffix))) {
         continue;
       }
 
-      earSplitNames.add(sn);
+      splitNames.add(sn);
     }
 
-    utils.info("Found " + earSplitNames.size() + " ears");
+    utils.info("Found " + splitNames.size() + " ears");
 
-    return earSplitNames;
+    return splitNames;
   }
 
-  private List<SplitName> getEarNames(final String dirPath) throws Throwable {
+  private List<SplitName> getDeployedNames(final String dirPath,
+                                           final String suffix) throws Throwable {
     final File outDir = utils.directory(dirPath);
 
-    final String[] deployEarNames = outDir.list();
+    final String[] deployedNames = outDir.list();
 
-    final List<SplitName> earSplitNames = new ArrayList<>();
+    final List<SplitName> splitNames = new ArrayList<>();
 
-    for (final String nm: deployEarNames) {
+    for (final String nm: deployedNames) {
       final SplitName sn = SplitName.testName(nm);
 
-      if ((sn == null) || (!"ear".equals(sn.suffix))) {
+      if ((sn == null) || (!suffix.equals(sn.suffix))) {
         //utils.warn("Unable to process " + nm);
         continue;
       }
 
-      earSplitNames.add(sn);
+      splitNames.add(sn);
     }
 
-    return earSplitNames;
+    return splitNames;
   }
 
   private String defaultVal(final String val,

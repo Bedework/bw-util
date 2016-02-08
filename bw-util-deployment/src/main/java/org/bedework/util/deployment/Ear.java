@@ -14,7 +14,7 @@ import java.util.jar.Manifest;
  *
  * @author douglm
  */
-public class Ear extends VersionedFile {
+public class Ear extends DeployableResource implements Updateable {
   private final ApplicationXml appXml;
 
   final Map<String, War> wars = new HashMap<>();
@@ -25,7 +25,7 @@ public class Ear extends VersionedFile {
              final PropertiesChain props) throws Throwable {
     super(utils, path, sn, props, "org.bedework.app." + sn.prefix + ".");
 
-    final File earMeta = utils.subDirectory(theFile, "META-INF");
+    final File earMeta = utils.subDirectory(theFile, "META-INF", true);
 
     if (Boolean.valueOf(props.get("org.bedework.for.wildfly"))) {
       final File jbossService = utils.file(earMeta,
@@ -93,6 +93,7 @@ public class Ear extends VersionedFile {
     }
   }
 
+  @Override
   public void update() throws Throwable {
     utils.debug("Update ear: " + getSplitName());
 
@@ -107,20 +108,7 @@ public class Ear extends VersionedFile {
       appXml.output();
     }
 
-    /* Any jars to add */
-
-    final String jarlib = this.props.get("app.jars");
-
-    utils.debug("jarlib is " + jarlib);
-
-    if (jarlib == null) {
-      return;
-    }
-
-    final File lib = utils.subDirectory(theFile, "lib");
-    final Path fromLib = Paths.get(jarlib);
-
-    utils.copy(fromLib, Paths.get(lib.getAbsolutePath()), true);
+    updateLib(true);
   }
 
   public War findWar(final String prefix) {
