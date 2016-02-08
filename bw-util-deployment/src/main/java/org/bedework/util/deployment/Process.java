@@ -5,12 +5,6 @@ import org.bedework.util.dav.DavUtil.DavChild;
 import org.bedework.util.http.BasicHttpClient;
 import org.bedework.util.misc.Util;
 
-import edu.rpi.sss.util.deployment.Ear;
-import edu.rpi.sss.util.deployment.PathAndName;
-import edu.rpi.sss.util.deployment.SplitName;
-import edu.rpi.sss.util.deployment.Updateable;
-import edu.rpi.sss.util.deployment.War;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 
