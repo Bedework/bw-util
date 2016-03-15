@@ -16,7 +16,7 @@
 
     <!-- Bedework Versions -->
     <bw-ws.version>4.0.3</bw-ws.version>
-    <ical4j.version>1.1.1</ical4j.version>
+    <ical4j.version>1.1.4-SNAPSHOT</ical4j.version>
     <ical4j-vcard.version>1.0.1</ical4j-vcard.version>
 
     <!-- Third Party Library Versions -->
@@ -25,6 +25,7 @@
     <commons-codec.version>1.5</commons-codec.version>
     <commons-lang.version>2.3</commons-lang.version>
     <derby.version>10.8.2.2</derby.version>
+    <elasticsearch.version>1.5.2</elasticsearch.version>
     <h2.version>1.2.130</h2.version>
     <hibernate.version>3.6.9.Final</hibernate.version>
     <jackson.version>2.3.1</jackson.version>
@@ -90,6 +91,7 @@
     <module>bw-util-vcard</module>
     <module>bw-util-xml</module>
     <module>bw-util-maven-deploy</module>
+    <module>bw-util-elasticsearch</module>
   </modules>
 
   <developers>
@@ -149,6 +151,12 @@
         <version>${ical4j-vcard.version}</version>
       </dependency>
       <!-- Third Party Libraries -->
+      <dependency>
+        <groupId>org.elasticsearch</groupId>
+        <artifactId>elasticsearch</artifactId>
+        <version>${elasticsearch.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>

@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>org.bedework</groupId>
     <artifactId>bw-util</artifactId>
+    <groupId>org.bedework</groupId>
     <version>4.0.6-SNAPSHOT</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>bw-util-servlet</artifactId>
-  <version>4.0.6-SNAPSHOT</version>
-
-  <packaging>jar</packaging>
-
+  <artifactId>bw-util-elasticsearch</artifactId>
   <dependencies>
     <!-- Bedework -->
     <dependency>
@@ -20,28 +17,34 @@
       <artifactId>bw-util-config</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.bedework</groupId>
-      <artifactId>bw-util-misc</artifactId>
+      <artifactId>bw-util-indexing</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.bedework</groupId>
       <artifactId>bw-util-jmx</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-util-misc</artifactId>
+      <version>${project.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>org.apache.struts</groupId>
-      <artifactId>struts-core</artifactId>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-util-timezones</artifactId>
+      <version>${project.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
     </dependency>
   </dependencies>
 </project>
