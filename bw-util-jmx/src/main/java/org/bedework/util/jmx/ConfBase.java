@@ -548,7 +548,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
     try {
       /* Try to load it */
 
-      return (T)getStore().getConfig(configName, cl);
+      return (T)cfs.getConfig(configName, cl);
     } catch (ConfigException cfe) {
       throw cfe;
     } catch (Throwable t) {
