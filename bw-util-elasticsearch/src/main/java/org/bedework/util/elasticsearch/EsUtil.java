@@ -4,6 +4,8 @@
 package org.bedework.util.elasticsearch;
 
 import org.bedework.util.indexing.IndexException;
+import org.bedework.util.jmx.ConfBase;
+import org.bedework.util.jmx.MBeanUtil;
 import org.bedework.util.misc.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.timezones.DateTimeUtil;
@@ -46,10 +48,13 @@ import org.elasticsearch.node.NodeBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.management.ObjectName;
 
 /**
  * User: mike Date: 3/13/16 Time: 23:28
@@ -84,6 +89,88 @@ public class EsUtil extends Logged {
     }
   }
   
+  private static EsCtlMBean esCtl;
+
+  static class Configurator extends ConfBase {
+    EsCtl esCtl;
+
+    Configurator() {
+      super("org.bedework.es:service=es");
+    }
+
+    @Override
+    public String loadConfig() {
+      return null;
+    }
+
+    @Override
+    public void start() {
+      String status = null;
+      
+      try {
+        getManagementContext().start();
+
+        esCtl = new EsCtl();
+        register(new ObjectName(esCtl.getServiceName()),
+                 esCtl);
+
+        status = esCtl.loadConfig();
+      } catch (Throwable t){
+        t.printStackTrace();
+        throw new RuntimeException(t);
+      }
+
+      if (!"OK".equals(status)) {
+        throw new RuntimeException("Unable to load configuration. " +
+                                           "Status: " + status);
+      }
+    }
+
+    @Override
+    public void stop() {
+      try {
+        getManagementContext().stop();
+      } catch (Throwable t){
+        t.printStackTrace();
+      }
+    }
+    
+    boolean isRegistered() {
+      try {
+        return getManagementContext()
+                .getMBeanServer()
+                .isRegistered(new ObjectName(EsCtlMBean.serviceName));
+      } catch (final Throwable t) {
+        t.printStackTrace();
+        throw new RuntimeException(t);
+      }
+    }
+  }
+
+  private static Configurator conf = new Configurator();
+
+  public static EsCtlMBean getEsCtl() throws IndexException {
+    if (esCtl != null) {
+      return esCtl;
+    }
+
+    try {
+      /* See if somebody else registered the mbean
+       */
+      if (!conf.isRegistered()) {
+        /* We need to register it */
+        conf.start();
+      }
+      
+      esCtl = (EsCtlMBean)MBeanUtil.getMBean(EsCtlMBean.class,
+                                             EsCtlMBean.serviceName);
+    } catch (final Throwable t) {
+      throw new IndexException(t);
+    }
+
+    return esCtl;
+  }
+
   public Client getClient() throws IndexException {
     if (theClient != null) {
       return theClient;
@@ -299,16 +386,15 @@ public class EsUtil extends Logged {
     }
   }
 
-  /**
+  /** Remove any index that doesn't have an alias and starts with 
+   * the given prefix
    * 
-   * @param aliases Don't delete an index pointed to by any of these
    * @param prefixes Ignore indexes that have names that don't start 
    *                 with any of these
    * @return list of purged indexes
    * @throws IndexException
    */
-  public List<String> purgeIndexes(final Set<String> aliases,
-                                   final Set<String> prefixes) 
+  public List<String> purgeIndexes(final Set<String> prefixes) 
           throws IndexException {
     final Set<IndexInfo> indexes = getIndexInfo();
     final List<String> purged = new ArrayList<>();
@@ -328,11 +414,7 @@ public class EsUtil extends Logged {
       /* Don't delete those pointed to by any aliases */
 
       if (!Util.isEmpty(ii.getAliases())) {
-        for (final String alias: ii.getAliases()) {
-          if (aliases.contains(alias)) {
-            continue purge;
-          }
-        }
+        continue purge;
       }
 
       purged.add(idx);
@@ -439,7 +521,7 @@ public class EsUtil extends Logged {
     // ES only allows lower case letters in names (and digits)
     final StringBuilder suffix = new StringBuilder("p");
 
-    final char[] ch = DateTimeUtil.isoDateTime().toCharArray();
+    final char[] ch = DateTimeUtil.isoDateTimeUTC(new Date()).toCharArray();
 
     for (int i = 0; i < 8; i++) {
       suffix.append(ch[i]);

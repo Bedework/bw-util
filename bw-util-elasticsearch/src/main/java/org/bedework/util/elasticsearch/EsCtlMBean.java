@@ -20,13 +20,13 @@ package org.bedework.util.elasticsearch;
 
 import org.bedework.util.jmx.ConfBaseMBean;
 
-/** Parameters for interactiosn with elastic search
+/** Parameters for interactions with elastic search
  * 
  * @author douglm
  *
  */
 public interface EsCtlMBean extends ConfBaseMBean, IndexProperties {
-  String serviceName = "org.bedework:service=esctl";
+  String serviceName = "org.bedework.es:service=esctl";
   
   /**
    * @return list of indexes maintained by indexer.

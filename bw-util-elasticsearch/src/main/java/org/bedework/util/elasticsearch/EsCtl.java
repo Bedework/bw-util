@@ -31,7 +31,7 @@ import java.util.Set;
 public class EsCtl extends ConfBase<IndexPropertiesImpl>
         implements EsCtlMBean {
   /* Name of the property holding the location of the config data */
-  public static final String confuriPname = "org.bedework.bwengine.confuri";
+  public static final String confuriPname = "org.bedework.esctl.confuri";
 
   public void runInit() {
     /* List the indexes in use - ensures we have an indexer early on */
@@ -68,7 +68,7 @@ public class EsCtl extends ConfBase<IndexPropertiesImpl>
    * @return object name value for the mbean with this name
    */
   public static String getServiceName(final String name) {
-    return serviceName;
+    return EsCtlMBean.serviceName;
   }
 
   @Override
