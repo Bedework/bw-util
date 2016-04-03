@@ -188,6 +188,18 @@ public class BedeworkServerTags {
   public static final QName emailProp = new QName(bedeworkCarddavNamespace,
                                              "email");
 
+  /**   */
+  public static final QName aliasUri = new QName(bedeworkCaldavNamespace,
+                                                "aliasUri");
+
+  /**   */
+  public static final QName remoteId = new QName(bedeworkCaldavNamespace,
+                                                "remoteId");
+
+ /**   */
+  public static final QName remotePw = new QName(bedeworkCaldavNamespace,
+                                                "remotePw");
+
   /* =============================================================
             Notifications
    */
