@@ -16,7 +16,6 @@
     specific language governing permissions and limitations
     under the License.
 */
-
 package org.bedework.util.misc;
 
 import java.io.InputStream;
@@ -149,15 +148,46 @@ public class Util {
     return s;
   }
 
+  /** if an href with terminating "/" the name part is that between the
+   * ending "/" and the one before. 
+   *
+   * <p>Otherwise it's the part after the last "/"</p>
+   *
+   * @param href to split
+   * @return name split into path and name part
+   */
+  public static String[] splitName(final String href) {
+    if ((href == null) || (href.length() == 0)) {
+      return null;
+    }
+
+    final String stripped;
+
+    if (href.endsWith("/")) {
+      stripped = href.substring(0, href.length() - 1);
+    } else {
+      stripped = href;
+    }
+
+    final int pos = stripped.lastIndexOf("/");
+
+    if (pos <= 0) {
+      return null;
+    }
+
+    return new String[]{stripped.substring(0, pos),
+                        stripped.substring(0, pos + 1)};
+  }
+
   /** get the nth element from the path - first is 0.
    *
    * @param index of element we want
-   * @param path
+   * @param path from which we extract the element
    * @return element or null
    */
   public static String pathElement(final int index,
                                    final String path) {
-    String[] paths = path.split("/");
+    final String[] paths = path.split("/");
 
     int idx = index;
 
