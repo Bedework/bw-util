@@ -301,6 +301,14 @@ public abstract class JolokiaCli {
 
     return tkn;
   }
+  
+  public String nextSval() throws Throwable {
+    return tokenizer.sval;
+  }
+
+  public void pushback() throws Throwable {
+    tokenizer.pushBack();
+  }
 
   public JolokiaClient getClient() throws Throwable {
     if (client == null) {
