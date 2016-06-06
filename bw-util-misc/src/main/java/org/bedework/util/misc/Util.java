@@ -176,7 +176,7 @@ public class Util {
     }
 
     return new String[]{stripped.substring(0, pos),
-                        stripped.substring(0, pos + 1)};
+                        stripped.substring(pos + 1)};
   }
 
   /** get the nth element from the path - first is 0.
