@@ -808,6 +808,12 @@ public class PropertyIndex implements Serializable {
              DataType.INTEGER,
              IS_SINGLE, event_Todo),
 
+    /** A (shorter?) url used to reference the entity */
+    PUBLISH_URL(XcalTags.url,
+        UrlPropType.class,
+        DataType.URI,
+        IS_SINGLE, event_Todo_Journal_Freebusy),
+
     /** recurrence date/time */
     RDATE(XcalTags.rdate,
           RdatePropType.class,
@@ -1080,9 +1086,28 @@ public class PropertyIndex implements Serializable {
         null,
         IS_MULTI, allComponents),
 
+    // Boolean flag
+    AFFECTS_FREE_BUSY(BedeworkServerTags.xprop,
+                      null,
+                      IS_SINGLE, allComponents),
+
+    // URI this is aliased to
+    ALIAS_URI(BedeworkServerTags.xprop,
+              null,
+              IS_SINGLE, allComponents),
+
     ATTENDEE_SCHEDULING_OBJECT(BedeworkServerTags.xprop,
                                null,
                                IS_SINGLE, allComponents),
+
+    CALTYPE(BedeworkServerTags.xprop,
+            null,
+            IS_SINGLE, allComponents),
+
+    // Collection properties 
+    COL_PROPERTIES(BedeworkServerTags.xprop,
+                   null,
+                   IS_SINGLE, allComponents),
 
     /** path to containing collection */
     COLPATH(BedeworkServerTags.xprop,
@@ -1120,6 +1145,11 @@ public class PropertyIndex implements Serializable {
             null,
             IS_SINGLE, allComponents),
 
+    // Boolean display flag
+    DISPLAY(BedeworkServerTags.xprop,
+            null,
+            IS_SINGLE, allComponents),
+
     DOCTYPE(BedeworkServerTags.xprop,
             null,
             IS_SINGLE, allComponents),
@@ -1140,6 +1170,10 @@ public class PropertyIndex implements Serializable {
                    null,
                    IS_SINGLE, allComponents),
 
+    FILTER_EXPR(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
     /** date/time - local */
     LOCAL(XcalTags.dtstart,
           null,
@@ -1151,6 +1185,11 @@ public class PropertyIndex implements Serializable {
              null,
              DataType.DATE_TIME,
              IS_SINGLE, notAlarm),
+
+    // Boolean flag
+    IGNORE_TRANSP(BedeworkServerTags.xprop,
+                  null,
+                  IS_SINGLE, allComponents),
 
     IMAGE(BedeworkServerTags.xprop,
           null,
@@ -1172,6 +1211,21 @@ public class PropertyIndex implements Serializable {
     INSTANCE(BedeworkServerTags.xprop,
              null,
              IS_SINGLE, allComponents),
+
+    // string
+    LAST_ETAG(BedeworkServerTags.xprop,
+              null,
+              IS_SINGLE, allComponents),
+
+    // timestamp
+    LAST_REFRESH(BedeworkServerTags.xprop,
+                 null,
+                 IS_SINGLE, allComponents),
+
+    // string
+    LAST_REFRESH_STATUS(BedeworkServerTags.xprop,
+                        null,
+                        IS_SINGLE, allComponents),
 
     /** location uid - saved in the index */
     LOCATION_UID(BedeworkServerTags.xprop,
@@ -1218,6 +1272,21 @@ public class PropertyIndex implements Serializable {
               null,
               IS_SINGLE, allComponents),
 
+    // int
+    REFRESH_RATE(BedeworkServerTags.xprop,
+                 null,
+                 IS_SINGLE, allComponents),
+
+    // string
+    REMOTE_ID(BedeworkServerTags.xprop,
+              null,
+              IS_SINGLE, allComponents),
+
+    // string
+    REMOTE_PW(BedeworkServerTags.xprop,
+              null,
+              IS_SINGLE, allComponents),
+
     /** schedule method */
     SCHEDULE_METHOD(BedeworkServerTags.xprop,
                     null,
@@ -1252,6 +1321,11 @@ public class PropertyIndex implements Serializable {
     TRIGGER_DATE_TIME(BedeworkServerTags.xprop,
                       null,
                       IS_SINGLE, allComponents),
+
+    // Boolean flag
+    UNREMOVEABLE(BedeworkServerTags.xprop,
+                 null,
+                 IS_SINGLE, allComponents),
 
     /**  date/time utc value */
     UTC(XcalTags.dtstart,
