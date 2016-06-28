@@ -5,11 +5,10 @@
   <parent>
     <groupId>org.bedework</groupId>
     <artifactId>bw-util</artifactId>
-    <version>4.0.7</version>
+    <version>4.0.7-SNAPSHOT</version>
   </parent>
 
   <artifactId>bw-util-hibernate</artifactId>
-  <version>4.0.7</version>
 
   <packaging>jar</packaging>
 
