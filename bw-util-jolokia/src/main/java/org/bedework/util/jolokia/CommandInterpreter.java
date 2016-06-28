@@ -18,6 +18,9 @@
 */
 package org.bedework.util.jolokia;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * User: mike Date: 12/9/15 Time: 10:08
  */
@@ -25,6 +28,7 @@ public abstract class CommandInterpreter {
   private final String cmdName;
   private final String cmdPars;
   private final String cmdDescription;
+  private List<String> cmdHelp;
 
   public CommandInterpreter(final String cmdName,
                             final String cmdPars,
@@ -45,6 +49,16 @@ public abstract class CommandInterpreter {
   public String getCmdDescription() {
     return cmdDescription;
   }
+
+  public void setHelp(final String... cmdHelp) {
+    if ((cmdHelp != null) && (cmdHelp.length > 0)) {
+      this.cmdHelp = Arrays.asList(cmdHelp);
+    } else {
+      this.cmdHelp = null;
+    }
+  }
+  
+  public List<String> getHelp() { return cmdHelp; }
 
   public abstract void execute(final JolokiaCli cli);
 }

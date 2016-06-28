@@ -3,6 +3,8 @@
 */
 package org.bedework.util.jolokia;
 
+import org.bedework.util.misc.Util;
+
 import org.apache.commons.lang.WordUtils;
 
 import java.io.BufferedReader;
@@ -12,6 +14,7 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -49,6 +52,7 @@ public abstract class JolokiaCli {
       this.url = url;
     }
 
+    register(new CmdHelp());
     register(new CmdSou());
     register(new CmdMemory());
   }
@@ -92,12 +96,15 @@ public abstract class JolokiaCli {
           continue;
         }
 
-        final CommandInterpreter ci = interpreters.get(cmd);
+        CommandInterpreter ci = interpreters.get(cmd);
 
         if (ci == null) {
           error("Unknown command: " + cmd);
-          cmdHelp();
-          continue;
+
+          ci = interpreters.get("help");
+          if (ci == null) {
+            ci = new CmdHelp();
+          }
         }
 
         ci.execute(this);
@@ -108,54 +115,71 @@ public abstract class JolokiaCli {
     }
   }
 
-  private void cmdHelp() {
-    info("Commands are:");
+  public static class CmdHelp extends CommandInterpreter {
+    CmdHelp() {
+      this("help");
+    }
 
-    final SortedSet<String> cmds = new TreeSet<>(interpreters.keySet());
+    CmdHelp(final String commandName) {
+      super(commandName, null, "This help");
+    }
 
-    for (final String cmd: cmds) {
-      final CommandInterpreter ci = interpreters.get(cmd);
+    public void execute(final JolokiaCli cli) {
+      String cmdName = null;
+      
+      try {
+        cmdName = cli.word(null);
+      } catch (Throwable t) {
+        cli.error(t.getLocalizedMessage());
+      }
+
+      if (cmdName != null) {
+        final CommandInterpreter ci = cli.getCmd(cmdName);
+        
+        if (ci != null) {
+          cmdInfo(cli, ci);
+          final List<String> help = ci.getHelp();
+          if (!Util.isEmpty(help)) {
+            for (final String helpLine : help) {
+              cli.info(WordUtils.wrap(helpLine, 70,
+                                      "\n\t",
+                                      true));
+            }
+          }
+          
+          return;
+        }
+        cli.error("Unknown commmand " + cmdName);
+      }
+      
+      cli.info("Commands are:");
+
+      final SortedSet<String> cmds = cli.getCommands();
+
+      for (final String cmd : cmds) {
+        cmdInfo(cli, cli.getCmd(cmd));
+      }
+    }
+    
+    private void cmdInfo(final JolokiaCli cli,
+                         final CommandInterpreter ci) {
 
       String pars = ci.getCmdPars();
       if (pars == null) {
         pars = "";
       }
-      info("  " + cmd + ": " +
-                   pars + "\t" +
-                   WordUtils.wrap(ci.getCmdDescription(), 70, "\n\t",
-                                  true));
-    }
-  }
-
-  private static class CmdHelp extends CommandInterpreter {
-    CmdHelp() {
-      super("help", null, "This help");
-    }
-
-    public void execute(final JolokiaCli cli) {
-      cli.info("Commands are:");
-
-      final SortedSet<String> cmds = cli.getCommands();
-
-      for (final String cmd: cmds) {
-        final CommandInterpreter ci = cli.getCmd(cmd);
-
-        String pars = ci.getCmdPars();
-        if (pars == null) {
-          pars = "";
-        }
-        cli.info("  " + cmd + ": " +
-                         pars + "\t" +
-                         WordUtils.wrap(ci.getCmdDescription(), 70,
-                                        "\n\t",
-                                        true));
-      }
+      cli.info(ci.getCmdName() + ": " +
+                       pars + "\n\tDescription: " +
+                       WordUtils.wrap(ci.getCmdDescription(), 70,
+                                      "\n\t\t",
+                                      true));
     }
   }
 
   private static class CmdSou extends CommandInterpreter {
     CmdSou() {
-      super("sou", "<filename>", "Execute comands from given file");
+      super("sou", "<quoted-filename>", 
+            "Execute comands from given file");
     }
 
     public void execute(final JolokiaCli cli) {
@@ -262,7 +286,11 @@ public abstract class JolokiaCli {
       return tokenizer.sval;
     }
 
-    error("Expect a quoted string here");
+    if (tr != null) {
+      error("Expect a quoted string here");
+    }
+    pushback();
+    
     return null;
   }
 
