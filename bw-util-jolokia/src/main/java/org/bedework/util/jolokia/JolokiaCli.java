@@ -37,6 +37,10 @@ public abstract class JolokiaCli {
   private SfpTokenizer tokenizer;
 
   private Reader inReader;
+  
+  private String singleCmd;
+  
+  private int exitStatus;
 
   private long startTime;
 
@@ -77,7 +81,13 @@ public abstract class JolokiaCli {
 
   public void processCmds() {
     while (true) {
-      final String line = nextLine();
+      final String line;
+      if (getSingleCmd() != null) {
+        line = getSingleCmd();
+      } else {
+        line = nextLine();
+      }
+      
       if (line == null) {
         return;
       }
@@ -112,7 +122,27 @@ public abstract class JolokiaCli {
         error("Exception processing command:");
         t.printStackTrace();
       }
+      
+      if (getSingleCmd() != null) {
+        break;
+      }
     }
+  }
+  
+  public void setExitStatus(final int val) {
+    exitStatus = val;
+  }
+  
+  public int getExitStatus() {
+    return exitStatus;
+  }
+
+  public void setSingleCmd(final String val) {
+    singleCmd = val;
+  }
+
+  public String getSingleCmd() {
+    return singleCmd;
   }
 
   public static class CmdHelp extends CommandInterpreter {
