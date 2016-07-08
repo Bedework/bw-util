@@ -816,12 +816,13 @@ public class DavUtil implements Serializable {
 
       DavChild dc = makeDavResponse(resp);
 
-      /* We get the collection back as well - check for it and skip it. */
-      URI childURI = new URI(dc.uri);
+      if (parentURI != null) {
+        /* We get the collection back as well - check for it and skip it. */
+        URI childURI = new URI("http", "localhost", dc.uri, null);
 
-      if ((parentURI != null) &&
-              parentURI.getPath().equals(childURI.getPath())) {
-        continue;
+        if (parentURI.getPath().equals(childURI.getPath())) {
+          continue;
+        }
       }
 
       result.add(dc);
