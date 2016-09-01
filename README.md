@@ -52,3 +52,6 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 #### 4.0.7
   * Fix tokenizer so that string method will pushback.
   * More help support
+
+#### 4.0.9
+  * Property replacement on non-string values. Lost this version trying to release
