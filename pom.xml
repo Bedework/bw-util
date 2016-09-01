@@ -346,6 +346,14 @@
           <failOnError>false</failOnError>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
