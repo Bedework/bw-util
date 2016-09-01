@@ -562,26 +562,28 @@ public abstract class ConfigBase<T extends ConfigBase>
       return null;
     }
 
-    if (cl.getName().equals("java.lang.String")) {
-      // Any tokens to replace?
+    // Any tokens to replace?
+    final String replaced =
+            Util.propertyReplace(ndval,
+                                 new Util.PropertiesPropertyFetcher(System.getProperties()));
 
-      return Util.propertyReplace(ndval,
-                                  new Util.PropertiesPropertyFetcher(System.getProperties()));
+    if (cl.getName().equals("java.lang.String")) {
+      return replaced;
     }
 
     if (cl.getName().equals("int") ||
             cl.getName().equals("java.lang.Integer")) {
-      return Integer.valueOf(ndval);
+      return Integer.valueOf(replaced);
     }
 
     if (cl.getName().equals("long") ||
             cl.getName().equals("java.lang.Long")) {
-      return Long.valueOf(ndval);
+      return Long.valueOf(replaced);
     }
 
     if (cl.getName().equals("boolean") ||
             cl.getName().equals("java.lang.Boolean")) {
-      return Boolean.valueOf(ndval);
+      return Boolean.valueOf(replaced);
     }
 
     error("Unsupported par class " + cl +
