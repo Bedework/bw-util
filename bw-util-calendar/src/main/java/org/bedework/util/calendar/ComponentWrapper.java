@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-
+        
     http://www.apache.org/licenses/LICENSE-2.0
-
+        
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,12 +20,17 @@ package org.bedework.util.calendar;
 
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.Sequence;
+
+import java.sql.Timestamp;
+
 //import net.fortuna.ical4j.model.property.Categories;
 //import net.fortuna.ical4j.model.property.Clazz;
 //import net.fortuna.ical4j.model.property.Contact;
 //import net.fortuna.ical4j.model.property.Created;
 //import net.fortuna.ical4j.model.property.Description;
-import net.fortuna.ical4j.model.property.DtEnd;
 //import net.fortuna.ical4j.model.property.DtStamp;
 //import net.fortuna.ical4j.model.property.DtStart;
 //import net.fortuna.ical4j.model.property.Due;
@@ -37,14 +42,10 @@ import net.fortuna.ical4j.model.property.DtEnd;
 //import net.fortuna.ical4j.model.property.ProdId;
 //import net.fortuna.ical4j.model.property.RDate;
 //import net.fortuna.ical4j.model.property.RRule;
-import net.fortuna.ical4j.model.property.Sequence;
 //import net.fortuna.ical4j.model.property.Summary;
 //import net.fortuna.ical4j.model.property.Uid;
 //import net.fortuna.ical4j.model.property.Url;
 //import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.model.PropertyList;
-
-import java.sql.Timestamp;
 
 /** Wrap an ical4j object so we can easily access properties
  *

@@ -1170,6 +1170,10 @@ public class PropertyIndex implements Serializable {
                    null,
                    IS_SINGLE, allComponents),
 
+    EVENTREG_WAIT_LIST_LIMIT(BedeworkServerTags.xprop,
+                             null,
+                             IS_SINGLE, allComponents),
+
     FILTER_EXPR(BedeworkServerTags.xprop,
                 null,
                 IS_SINGLE, allComponents),
