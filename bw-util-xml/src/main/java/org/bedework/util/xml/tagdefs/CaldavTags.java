@@ -347,6 +347,10 @@ public class CaldavTags implements CaldavDefs {
                                                     "valid-filter");
 
   /**   */
+  public static final QName validTimezone = new QName(caldavNamespace,
+                                                    "valid-timezone");
+
+  /**   */
   public static final QName vpollMaxActive = new QName(caldavNamespace,
                                             "vpoll-max-active");
 

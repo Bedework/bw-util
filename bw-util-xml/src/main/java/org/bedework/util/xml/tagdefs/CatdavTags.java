@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 
 /** Define Catdav tags
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@bedework.org
  */
 public class CatdavTags {
   /** Namespace for these tags

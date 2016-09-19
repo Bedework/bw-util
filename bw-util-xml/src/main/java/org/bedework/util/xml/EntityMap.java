@@ -26,7 +26,7 @@ import java.util.HashMap;
 /**
  * Utility routines to handle entities
  *
- * @author Mike Douglass   douglm@bedework.edu
+ * @author Mike Douglass   douglm@bedework.org
  */
 public final class EntityMap implements Serializable {
   /**
