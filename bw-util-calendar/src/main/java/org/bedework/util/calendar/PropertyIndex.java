@@ -1045,6 +1045,13 @@ public class PropertyIndex implements Serializable {
          IS_PARAM, NOT_IMMUTABLE),
 
     /** */
+    RANGE(XcalTags.range,
+         null,
+         DataType.DURATION,
+         IS_SINGLE, noComponent,
+         IS_PARAM, NOT_IMMUTABLE),
+
+    /** */
     TZIDPAR(XcalTags.tzid,
             TzidParamType.class,
             DataType.TEXT, IS_SINGLE, noComponent,
@@ -1321,6 +1328,10 @@ public class PropertyIndex implements Serializable {
     TOPICAL_AREA(BedeworkServerTags.xprop,
                  null,
                  IS_SINGLE, allComponents),
+
+    NEXT_TRIGGER_DATE_TIME(BedeworkServerTags.xprop,
+                           null,
+                           IS_SINGLE, allComponents),
 
     TRIGGER_DATE_TIME(BedeworkServerTags.xprop,
                       null,
