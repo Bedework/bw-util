@@ -327,6 +327,10 @@ public class CaldavTags implements CaldavDefs {
   public static final QName timezone = new QName(caldavNamespace, "timezone");
 
   /**   */
+  public static final QName timezoneId = 
+          new QName(caldavNamespace, "timezone-id");
+
+  /**   */
   public static final QName timezoneServiceSet =
           new QName(caldavNamespace, "timezone-service-set");
 
