@@ -31,6 +31,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -41,29 +44,99 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * @author Mike Douglass
  */
 public class FromXml extends Logged {
+  public static class Callback {
+    protected Map<String, Class> classForName = new HashMap<>();
+
+    protected Set<String> skipThese = new TreeSet<>();
+    
+    /** Called to get the object for a complex element.
+     * 
+     * @param el element representing object
+     * @return Class of object to restore
+     * @throws Throwable on error
+     */
+    public Class forElement(final Element el) throws Throwable {
+      return classForName.get(el.getTagName());
+    }
+
+    public void addClassForName(final String name,
+                                final Class cl) {
+      classForName.put(name, cl);
+    }
+
+    /**
+     * 
+     * @param cl of Value we are restoring
+     * @param val String representation of the value
+     * @return Object of given class or null
+     * @throws Throwable opn error
+     */
+    public Object simpleValue(final Class cl,
+                              final String val) throws Throwable {
+      return null;
+    }
+
+    /** Called to check if element should be skipped. This implementation
+     * presumes we are ignoring namespaces.
+     *
+     * @param el the element
+     * @return true to skip this one
+     * @throws Throwable on error
+     */
+    public boolean skipElement(final Element el) throws Throwable {
+      return skipThese.contains(el.getTagName());
+    }
+
+    public void addSkips(final String... names) {
+      for (final String s: names) {
+        skipThese.add(s);
+      }
+    }
+    
+    /** Called to get the field name given the element, e.g
+     * an element with name the-field may be for a field with 
+     * the name theField
+     *
+     * @param el element representing object
+     * @return String name or null for default
+     * @throws Throwable on error
+     */
+    public String getFieldlName(final Element el) throws Throwable {
+      return null;
+    }
+
+    /** Save the value in the object. Return false for default
+     * behavior. Only called for object classes not recognized
+     * or for which no setter can be found.
+     * 
+     * @param el XML element
+     * @param theObject to save into 
+     * @param theValue to be saved
+     * @return true if saved
+     * @throws Throwable on erro
+     */
+    public boolean save(final Element el,
+                        final Object theObject,
+                        final Object theValue) throws Throwable {
+      return false;
+    }
+  }
+  
+  private Callback cb;
+  
   /**
    * @param is input stream
    * @param cl class of object we want to restore
    * @return parsed object or null
-   * @throws org.xml.sax.SAXException
+   * @throws SAXException on error
    */
-  public Object fromXml(final InputStream is,
-                        final Class cl) throws SAXException {
+  public <T>T fromXml(final InputStream is,
+                      final Class<T> cl,
+                      final Callback cb) throws SAXException {
     try {
       final Document doc = parseXml(is);
-
-      final Object o = fromClass(cl);
-
-      if (o == null) {
-        // Can't do this
-        return null;
-      }
-
-      for (final Element el: XmlUtil.getElementsArray(doc.getDocumentElement())) {
-        populate(el, o, null, null);
-      }
-
-      return o;
+      
+      return (T)fromXml(doc.getDocumentElement(), cl, cb);
     } catch (final SAXException se) {
       if (debug) {
         error(se);
@@ -77,9 +150,16 @@ public class FromXml extends Logged {
     }
   }
 
-  public Object fromXml(final Element rootEl,
-                        final Class cl) throws SAXException {
+  public <T>T fromXml(final Element rootEl,
+                      final Class<T> cl,
+                      final Callback cb) throws SAXException {
     try {
+      if (cb == null) {
+        this.cb = new Callback();
+      } else {
+        this.cb = cb;
+      }
+      
       final Object o = fromClass(cl);
 
       if (o == null) {
@@ -91,7 +171,7 @@ public class FromXml extends Logged {
         populate(el, o, null, null);
       }
 
-      return o;
+      return (T)o;
     } catch (final SAXException se) {
       if (debug) {
         error(se);
@@ -140,24 +220,26 @@ public class FromXml extends Logged {
    * @param subroot of XML data
    * @param col a collection
    * @param cl the class
-   * @throws Throwable
+   * @throws Throwable on error
    */
   private void populate(final Element subroot,
                         final Object o,
                         final Collection<Object> col,
                         final Class cl) throws Throwable {
-    final String name = subroot.getNodeName();
-
+    if (cb.skipElement(subroot)) {
+      return;
+    }
+    
     Method meth = null;
 
-    final Class elClass;
+    Class elClass = cb.forElement(subroot);
 
     if (col == null) {
       /* We must have a setter */
-      meth = findSetter(o, name);
+      meth = findSetter(o, subroot);
 
       if (meth == null) {
-        error("No setter for " + name);
+        error("No setter for " + subroot);
 
         return;
       }
@@ -166,27 +248,34 @@ public class FromXml extends Logged {
 
       final Class[] parClasses = meth.getParameterTypes();
       if (parClasses.length != 1) {
-        error("Invalid setter method " + name);
-        throw new SAXException("Invalid setter method " + name);
+        error("Invalid setter method " + subroot);
+        throw new SAXException("Invalid setter method " + subroot);
       }
 
       elClass = parClasses[0];
-    } else {
+    } else if (cl != null) {
       elClass = cl;
+    } else {
+      elClass = null;
     }
 
+    if (elClass == null) {
+      error("No class for element " + subroot);
+      return;
+    }
+    
     if (!XmlUtil.hasChildren(subroot)) {
       /* A primitive value for which we should have a setter */
 
       final Object val = simpleValue(elClass, subroot);
       if (val == null) {
         error("Unsupported par class " + elClass +
-              " for field " + name);
+              " for field " + subroot);
         throw new SAXException("Unsupported par class " + elClass +
-                                  " for field " + name);
+                                  " for field " + subroot);
       }
 
-      assign(val, col, o, meth);
+      assign(val, subroot, col, o, meth);
 
       return;
     }
@@ -202,13 +291,15 @@ public class FromXml extends Logged {
         colVal = new TreeSet<>();
       } else if (elClass.getName().equals("java.util.List")) {
         colVal = new ArrayList<>();
+      } else if (elClass.getName().equals("java.util.Collection")) {
+        colVal = new ArrayList<>();
       } else {
         error("Unsupported element class " + elClass +
-              " for field " + name);
+              " for field " + subroot);
         return;
       }
 
-      assign(colVal, col, o, meth);
+      assign(colVal, subroot, col, o, meth);
 
       // Figure out the class of the elements
       /* I thought I might be able to extract it from the generic info -
@@ -220,7 +311,7 @@ public class FromXml extends Logged {
       /* Should only be one parameter */
       if (gpts.length != 1) {
         error("Unsupported type " + elClass +
-                      " with name " + name);
+                      " with name " + subroot);
         return;
       }
 
@@ -228,7 +319,7 @@ public class FromXml extends Logged {
 
       if (!(gpt instanceof ParameterizedType)) {
         error("Unsupported type " + elClass +
-                      " with name " + name);
+                      " with name " + subroot);
         return;
       }
 
@@ -239,7 +330,7 @@ public class FromXml extends Logged {
       /* Should only be one arg */
       if (parameterArgTypes.length != 1) {
         error("Unsupported type " + elClass +
-                      " with name " + name);
+                      " with name " + subroot);
         return;
       }
 
@@ -269,7 +360,7 @@ public class FromXml extends Logged {
 
     final Object val = fromClass(elClass);
 
-    assign(val, col, o, meth);
+    assign(val, subroot, col, o, meth);
 
     for (final Element el: XmlUtil.getElementsArray(subroot)) {
       populate(el, val, null, null);
@@ -277,7 +368,12 @@ public class FromXml extends Logged {
   }
 
   private Method findSetter(final Object val,
-                            final String name) throws Throwable {
+                            final Element el) throws Throwable {
+    String name = cb.getFieldlName(el);
+    if (name == null) {
+      name = el.getNodeName();
+    } 
+
     final String methodName = "set" + name.substring(0, 1).toUpperCase() +
                         name.substring(1);
     final Method[] meths = val.getClass().getMethods();
@@ -287,14 +383,14 @@ public class FromXml extends Logged {
       if (m.getName().equals(methodName)) {
         if (meth != null) {
           throw new SAXException(
-                  "Multiple setters for field " + name);
+                  "Multiple setters for field " + el);
         }
         meth = m;
       }
     }
 
     if (meth == null) {
-      error("No setter method for property " + name +
+      error("No setter method for property " + el +
                     " for class " + val.getClass().getName());
       return null;
     }
@@ -303,27 +399,30 @@ public class FromXml extends Logged {
   }
 
   /** Assign a value - either to collection col or to a setter of o defined by meth
-   * @param val the vlue
+   * 
+   * @param val the value
+   * @param el the element for the current node
    * @param col - if non-null add to this.
    * @param o the object
    * @param meth the method
-   * @throws Throwable
+   * @throws Throwable on error
    */
-  private static void assign(final Object val,
+  private void assign(final Object val,
+                             final Element el,
                              final Collection<Object> col,
                              final Object o,
                              final Method meth) throws Throwable {
     if (col != null) {
       col.add(val);
-    } else {
+    } else if (!cb.save(el, o, val)) {
       final Object[] pars = new Object[]{val};
 
       meth.invoke(o, pars);
     }
   }
 
-  private static Object simpleValue(final Class cl,
-                                    final Element el) throws Throwable {
+  private Object simpleValue(final Class cl,
+                             final Element el) throws Throwable {
     if (!XmlUtil.hasChildren(el)) {
       /* A primitive value for which we should have a setter */
       final String ndval = XmlUtil.getElementContent(el);
@@ -349,7 +448,7 @@ public class FromXml extends Logged {
 
 
       // XXX Should do byte, char, short, float, and double.
-      return null;
+      return cb.simpleValue(cl, ndval);
     }
 
     // Complex value

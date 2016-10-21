@@ -21,6 +21,7 @@ package org.bedework.util.config;
 import org.bedework.util.misc.ToString;
 import org.bedework.util.misc.Util;
 import org.bedework.util.xml.XmlEmit;
+import org.bedework.util.xml.XmlEmit.NameSpace;
 import org.bedework.util.xml.XmlUtil;
 import org.bedework.util.xml.tagdefs.BedeworkServerTags;
 
@@ -106,7 +107,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * @author Mike Douglass
  * @param <T>
  */
-public abstract class ConfigBase<T extends ConfigBase>
+public class ConfigBase<T extends ConfigBase>
         implements Comparable<T>, Serializable {
   /** The default namespace for the XML elements.
    *
@@ -285,7 +286,7 @@ public abstract class ConfigBase<T extends ConfigBase>
   public void toXml(final Writer wtr) throws ConfigException {
     try {
       XmlEmit xml = new XmlEmit();
-      xml.addNs(new XmlEmit.NameSpace(ns, "BW"), true);
+      xml.addNs(new NameSpace(ns, "BW"), true);
       xml.startEmit(wtr);
 
       dump(xml, false);
@@ -297,41 +298,59 @@ public abstract class ConfigBase<T extends ConfigBase>
     }
   }
 
-  /**
-   * @param is
+  /** XML root element must have type attribute
+   * 
+   * @param is an input stream
    * @return parsed notification or null
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   public static ConfigBase fromXml(final InputStream is) throws ConfigException {
     return fromXml(is, null);
   }
 
-  /**
-   * @param is
-   * @param cl
+  /** XML root element must have type attribute if cl is null
+   *
+   * @param is an input stream
+   * @param cl class of object or null
    * @return parsed notification or null
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   public static ConfigBase fromXml(final InputStream is,
                                    final Class cl) throws ConfigException {
     try {
-      Element rootEl = parseXml(is);
+      return fromXml(parseXml(is), cl);
+    } catch (final ConfigException ce) {
+      throw ce;
+    } catch (final Throwable t) {
+      throw new ConfigException(t);
+    }
+  }
 
-      ConfigBase cb = (ConfigBase)getObject(rootEl, cl);
+  /** XML root element must have type attribute
+   *
+   * @param rootEl - root of parsed document
+   * @param cl class of object or null
+   * @return parsed notification or null
+   * @throws ConfigException on error
+   */
+  public static ConfigBase fromXml(final Element rootEl,
+                                   final Class cl) throws ConfigException {
+    try {
+      final ConfigBase cb = (ConfigBase)getObject(rootEl, cl);
 
       if (cb == null) {
         // Can't do this
         return null;
       }
 
-      for (Element el: XmlUtil.getElementsArray(rootEl)) {
+      for (final Element el: XmlUtil.getElementsArray(rootEl)) {
         populate(el, cb, null, null);
       }
 
       return cb;
-    } catch (ConfigException ce) {
+    } catch (final ConfigException ce) {
       throw ce;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new ConfigException(t);
     }
   }
@@ -562,28 +581,26 @@ public abstract class ConfigBase<T extends ConfigBase>
       return null;
     }
 
-    // Any tokens to replace?
-    final String replaced =
-            Util.propertyReplace(ndval,
-                                 new Util.PropertiesPropertyFetcher(System.getProperties()));
-
     if (cl.getName().equals("java.lang.String")) {
-      return replaced;
+      // Any tokens to replace?
+
+      return Util.propertyReplace(ndval,
+                                  new Util.PropertiesPropertyFetcher(System.getProperties()));
     }
 
     if (cl.getName().equals("int") ||
             cl.getName().equals("java.lang.Integer")) {
-      return Integer.valueOf(replaced);
+      return Integer.valueOf(ndval);
     }
 
     if (cl.getName().equals("long") ||
             cl.getName().equals("java.lang.Long")) {
-      return Long.valueOf(replaced);
+      return Long.valueOf(ndval);
     }
 
     if (cl.getName().equals("boolean") ||
             cl.getName().equals("java.lang.Boolean")) {
-      return Boolean.valueOf(replaced);
+      return Boolean.valueOf(ndval);
     }
 
     error("Unsupported par class " + cl +

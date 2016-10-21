@@ -47,7 +47,7 @@ import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-class Utils {
+public class Utils {
   private final boolean debug;
   private final Log logger;
 
