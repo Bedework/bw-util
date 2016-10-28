@@ -31,9 +31,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,85 +41,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * @author Mike Douglass
  */
 public class FromXml extends Logged {
-  public static class Callback {
-    protected Map<String, Class> classForName = new HashMap<>();
-
-    protected Set<String> skipThese = new TreeSet<>();
-    
-    /** Called to get the object for a complex element.
-     * 
-     * @param el element representing object
-     * @return Class of object to restore
-     * @throws Throwable on error
-     */
-    public Class forElement(final Element el) throws Throwable {
-      return classForName.get(el.getTagName());
-    }
-
-    public void addClassForName(final String name,
-                                final Class cl) {
-      classForName.put(name, cl);
-    }
-
-    /**
-     * 
-     * @param cl of Value we are restoring
-     * @param val String representation of the value
-     * @return Object of given class or null
-     * @throws Throwable opn error
-     */
-    public Object simpleValue(final Class cl,
-                              final String val) throws Throwable {
-      return null;
-    }
-
-    /** Called to check if element should be skipped. This implementation
-     * presumes we are ignoring namespaces.
-     *
-     * @param el the element
-     * @return true to skip this one
-     * @throws Throwable on error
-     */
-    public boolean skipElement(final Element el) throws Throwable {
-      return skipThese.contains(el.getTagName());
-    }
-
-    public void addSkips(final String... names) {
-      for (final String s: names) {
-        skipThese.add(s);
-      }
-    }
-    
-    /** Called to get the field name given the element, e.g
-     * an element with name the-field may be for a field with 
-     * the name theField
-     *
-     * @param el element representing object
-     * @return String name or null for default
-     * @throws Throwable on error
-     */
-    public String getFieldlName(final Element el) throws Throwable {
-      return null;
-    }
-
-    /** Save the value in the object. Return false for default
-     * behavior. Only called for object classes not recognized
-     * or for which no setter can be found.
-     * 
-     * @param el XML element
-     * @param theObject to save into 
-     * @param theValue to be saved
-     * @return true if saved
-     * @throws Throwable on erro
-     */
-    public boolean save(final Element el,
-                        final Object theObject,
-                        final Object theValue) throws Throwable {
-      return false;
-    }
-  }
-  
-  private Callback cb;
+  private FromXmlCallback cb;
   
   /**
    * @param is input stream
@@ -132,7 +51,7 @@ public class FromXml extends Logged {
    */
   public <T>T fromXml(final InputStream is,
                       final Class<T> cl,
-                      final Callback cb) throws SAXException {
+                      final FromXmlCallback cb) throws SAXException {
     try {
       final Document doc = parseXml(is);
       
@@ -152,10 +71,10 @@ public class FromXml extends Logged {
 
   public <T>T fromXml(final Element rootEl,
                       final Class<T> cl,
-                      final Callback cb) throws SAXException {
+                      final FromXmlCallback cb) throws SAXException {
     try {
       if (cb == null) {
-        this.cb = new Callback();
+        this.cb = new FromXmlCallback();
       } else {
         this.cb = cb;
       }
@@ -255,8 +174,6 @@ public class FromXml extends Logged {
       elClass = parClasses[0];
     } else if (cl != null) {
       elClass = cl;
-    } else {
-      elClass = null;
     }
 
     if (elClass == null) {
