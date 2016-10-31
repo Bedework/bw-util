@@ -41,7 +41,7 @@ public class ConfigurationFileStore implements ConfigurationStore {
 
   /**
    * @param dirPath location of config
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   public ConfigurationFileStore(final String dirPath) throws ConfigException {
     try {

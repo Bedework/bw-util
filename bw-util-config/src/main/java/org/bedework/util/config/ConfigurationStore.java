@@ -41,13 +41,13 @@ public interface ConfigurationStore {
 
   /**
    * @return path for this store
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   String getLocation() throws ConfigException;
 
   /**
    * @param config to save
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   void saveConfiguration(ConfigBase config) throws ConfigException;
 
@@ -55,7 +55,7 @@ public interface ConfigurationStore {
    *
    * @param name of the object
    * @return config or null
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   ConfigBase getConfig(String name) throws ConfigException;
 
@@ -63,7 +63,7 @@ public interface ConfigurationStore {
    * @param name of the object
    * @param cl - class of config object
    * @return config or null
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   ConfigBase getConfig(String name,
                        Class cl) throws ConfigException;
@@ -71,7 +71,7 @@ public interface ConfigurationStore {
   /** List the configurations in the store
    *
    * @return list of configurations
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   List<String> getConfigs() throws ConfigException;
 
@@ -79,7 +79,7 @@ public interface ConfigurationStore {
    *
    * @param name of the store
    * @return store
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   ConfigurationStore getStore(String name) throws ConfigException;
 
@@ -87,7 +87,7 @@ public interface ConfigurationStore {
    * @param name of bundle
    * @param locale null for default or a locale String e.g. en_US
    * @return a ResourceBundle object or null.
-   * @throws ConfigException
+   * @throws ConfigException on error
    */
   ResourceBundle getResource(String name,
                              String locale) throws ConfigException;
