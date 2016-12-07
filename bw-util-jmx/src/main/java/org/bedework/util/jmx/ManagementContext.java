@@ -302,7 +302,7 @@ public class ManagementContext {
   /**
    * @param bean to register
    * @param name its name
-   * @throws Exception
+   * @throws Exception on error
    */
   public void registerMBean(final Object bean,
                             final ObjectName name) throws Exception {
@@ -313,9 +313,10 @@ public class ManagementContext {
     }
 
     // See https://groups.google.com/forum/#!topic/mobicents-public/yiDzhnbQNvI
-    Map<String, Object> values = new HashMap<>();
-    ClassLoader classLoader = getClass().getClassLoader();
-    info(String.format("Registering to JMX with classLoader [%s]",
+    final Map<String, Object> values = new HashMap<>();
+    final ClassLoader classLoader = getClass().getClassLoader();
+    info(String.format("Registering " + name +
+                               " to JMX with classLoader [%s]",
                        classLoader.toString()));
     values.put(CLASSLOADER, classLoader);
 
