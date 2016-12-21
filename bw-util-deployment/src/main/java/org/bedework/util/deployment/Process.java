@@ -138,10 +138,6 @@ public class Process extends AbstractMojo {
     outDirPath = val;
   }
 
-  public void setDeployDirPath(final String val) {
-    deployDirPath = val;
-  }
-
   public void setWarsOnly(final boolean val) {
     warsonly = val;
     props.setProperty(propWarsOnly, String.valueOf(val));
@@ -214,7 +210,7 @@ public class Process extends AbstractMojo {
                                  "org.bedework.postdeploy.deploy");
 
       resourcesBase = defaultVal(resourcesBase,
-                                 "org.bedework.postdeploy.resources.base",
+                                 "org.bedework.postdeploy.resource.base",
                                  "--resources");
 
       if (errorMsg != null) {

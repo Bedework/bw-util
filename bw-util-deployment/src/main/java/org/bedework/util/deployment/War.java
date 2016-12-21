@@ -15,7 +15,7 @@ public class War extends DeployableResource implements Updateable {
 
   private final WebXml wXml;
 
-  private boolean warsonly;
+  private final boolean warsonly;
 
   public War(final Utils utils,
              final String path,
@@ -38,6 +38,7 @@ public class War extends DeployableResource implements Updateable {
     utils.debug("Update war " + getSplitName());
 
     copyDocs();
+    copyResources();
 
     if (appXml != null) {
       appXml.setContext(sn.name, props);
@@ -82,8 +83,6 @@ public class War extends DeployableResource implements Updateable {
         final String toName = pname.substring("copy.".length());
         final String fromName = props.get(pname);
 
-        utils.info("Copy " + fromName + " to " + toName);
-
         final Path outPath =
                 Paths.get(props.get("org.bedework.server.resource.root.dir"),
                           toName);
@@ -97,6 +96,12 @@ public class War extends DeployableResource implements Updateable {
         if (outFile.exists()) {
           utils.deleteAll(outPath);
         }
+        
+        if (!outFile.mkdirs()) {
+          utils.error("Unable to create output directory " + outPath);
+        }
+
+        utils.info("Copy " + inPath + " to " + outPath);
 
         utils.copy(inPath, outPath, false);
       }
