@@ -1,7 +1,6 @@
 package org.bedework.util.deployment;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.io.File;
 import java.util.List;
@@ -43,10 +42,9 @@ public class JbossAllXml extends XmlFile {
       return;
     }
     
-    final Node depNode = doc.createElement("dependency");
-    final Node textNode = doc.createTextNode(dep + "-" + version + ".ear");
+    final Element depNode = doc.createElement("dependency");
+    depNode.setAttribute("name", dep + "-" + version + ".ear");
 
-    depNode.appendChild(textNode);
     el.appendChild(depNode);
 
     updated = true;
