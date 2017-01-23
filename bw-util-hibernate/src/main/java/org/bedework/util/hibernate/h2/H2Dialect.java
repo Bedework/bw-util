@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-
+        
     http://www.apache.org/licenses/LICENSE-2.0
-
+        
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,8 +18,8 @@
 */
 package org.bedework.util.hibernate.h2;
 
-import org.hibernate.Hibernate;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.IntegerType;
 
 import java.sql.Types;
 
@@ -39,6 +39,6 @@ public class H2Dialect extends org.hibernate.dialect.H2Dialect {
     registerColumnType(Types.NUMERIC, "decimal($p,$s)");
 
     registerFunction("quarter",
-                     new StandardSQLFunction("quarter", Hibernate.INTEGER));
+                     new StandardSQLFunction("quarter", IntegerType.INSTANCE));
   }
 }

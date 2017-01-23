@@ -20,6 +20,7 @@
 package org.bedework.util.hibernate;
 
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.AbstractStandardBasicType;
 import org.hibernate.type.TypeResolver;
@@ -40,7 +41,7 @@ import java.util.Properties;
  * @author Chun ping Wang.
  *
  */
-public class GenericEnumUserType  implements UserType, ParameterizedType {
+public class GenericEnumUserType implements UserType, ParameterizedType {
   private static final String DEFAULT_IDENTIFIER_METHOD_NAME = "name";
   private static final String DEFAULT_VALUE_OF_METHOD_NAME = "valueOf";
 
@@ -95,7 +96,10 @@ public class GenericEnumUserType  implements UserType, ParameterizedType {
   }
 
   @Override
-  public Object nullSafeGet(final ResultSet rs, final String[] names, final Object owner) throws HibernateException, SQLException {
+  public Object nullSafeGet(final ResultSet rs, 
+                            final String[] names,
+                            final SharedSessionContractImplementor ssci, 
+                            final Object owner) throws HibernateException, SQLException {
     Object identifier = type.get(rs, names[0], null);
     if (rs.wasNull()) {
       return null;
@@ -110,7 +114,10 @@ public class GenericEnumUserType  implements UserType, ParameterizedType {
   }
 
   @Override
-  public void nullSafeSet(final PreparedStatement st, final Object value, final int index) throws HibernateException, SQLException {
+  public void nullSafeSet(final PreparedStatement st, 
+                          final Object value, final int index,
+                          final SharedSessionContractImplementor ssci) 
+          throws HibernateException, SQLException {
     try {
       if (value == null) {
         st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());

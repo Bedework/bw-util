@@ -33,12 +33,12 @@ import java.util.Properties;
 public class HibSessionFactory {
   private static SessionFactory sessionFactory;
 
-  private static volatile Object lock = new Object();
+  private static final Object lock = new Object();
 
   /**
    * @param hibProps possibly null list of hibernate properties
    * @return the SessionFactory
-   * @throws HibException
+   * @throws HibException on fatal error
    */
   public static SessionFactory getSessionFactory(List<String> hibProps) throws HibException {
     if (sessionFactory != null) {
@@ -50,7 +50,7 @@ public class HibSessionFactory {
         return sessionFactory;
       }
 
-      /** Get a new hibernate session factory. This is configured from an
+      /* Get a new hibernate session factory. This is configured from an
        * application resource hibernate.cfg.xml together with some run time values
        */
       try {
