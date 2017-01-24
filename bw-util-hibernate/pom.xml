@@ -15,7 +15,13 @@
   <dependencies>
     <!-- Bedework -->
     <dependency>
-      <groupId>org.bedework</groupId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>bw-util-jmx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>bw-util-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
