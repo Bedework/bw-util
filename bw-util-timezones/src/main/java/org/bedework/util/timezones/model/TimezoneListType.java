@@ -39,31 +39,31 @@ import java.util.List;
  *
  */
 public class TimezoneListType extends BaseResultType {
-  protected String dtstamp;
+  protected String synctoken;
   protected List<TimezoneType> timezones;
 
   /**
-   * Gets the value of the dtstamp property.
+   * Gets the value of the synctoken property.
    *
    * @return
    *     possible object is
    *     {@link String } Format is yyyy-MM-ddTHH:mm:ssZ
    *
    */
-  public String getDtstamp() {
-    return dtstamp;
+  public String getSynctoken() {
+    return synctoken;
   }
 
   /**
-   * Sets the value of the dtstamp property.
+   * Sets the value of the synctoken property.
    *
    * @param value
    *     allowed object is
    *     {@link String }
    *
    */
-  public void setDtstamp(final String value) {
-    dtstamp = value;
+  public void setSynctoken(final String value) {
+    synctoken = value;
   }
 
   /**
@@ -88,7 +88,7 @@ public class TimezoneListType extends BaseResultType {
   public String toString() {
     final ToString ts = new ToString(this);
 
-    ts.append("dtstamp", getDtstamp());
+    ts.append("synctoken", getSynctoken());
     ts.append("timezones", getTimezones(), true);
 
     return ts.toString();

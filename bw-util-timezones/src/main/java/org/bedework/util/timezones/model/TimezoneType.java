@@ -64,6 +64,7 @@ import java.util.List;
  */
 public class TimezoneType {
   protected String tzid;
+  protected String etag;
   protected Date lastModified;
   protected Boolean inactive;
   protected List<String> aliases;
@@ -91,6 +92,21 @@ public class TimezoneType {
    */
   public void setTzid(final String value) {
     tzid = value;
+  }
+
+  /** Etag value for last fetch from primary or load from data
+   *
+   * @param val the etag
+   */
+  public void setEtag(final String val) {
+    etag = val;
+  }
+
+  /**
+   * @return etag or null
+   */
+  public String getEtag() {
+    return etag;
   }
 
   /**
@@ -181,6 +197,7 @@ public class TimezoneType {
     ToString ts = new ToString(this);
 
     ts.append("tzid", getTzid());
+    ts.append("etag", getEtag());
     ts.append("lastModified", getLastModified());
     ts.append("inactive", getInactive());
     ts.append("aliases", getAliases(), true);
