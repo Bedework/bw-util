@@ -21,13 +21,6 @@ package org.bedework.util.calendar;
 import org.bedework.util.calendar.PropertyIndex.ComponentInfoIndex;
 import org.bedework.util.calendar.PropertyIndex.PropertyInfoIndex;
 
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.parameter.Value;
-
-import org.apache.log4j.Logger;
-
 import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
 import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
@@ -61,6 +54,11 @@ import ietf.params.xml.ns.icalendar_2.UriPropertyType;
 import ietf.params.xml.ns.icalendar_2.UtcDatetimePropertyType;
 import ietf.params.xml.ns.icalendar_2.UtcOffsetPropertyType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.parameter.Value;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

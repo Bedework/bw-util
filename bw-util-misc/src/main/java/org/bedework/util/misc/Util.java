@@ -22,12 +22,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,17 +61,15 @@ public class Util {
     public int numRemoved;
   }
 
-  private static final DateFormat icalUTCTimestampFormat =
-          new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
-
+  private static final DateTimeFormatter icalUTCTimestampFormatter =
+          DateTimeFormatter.ofPattern("yyyyMMdd'T'hhmmss'Z'");
+  
   /** Get an ical timestamp of the form "yyyyMMddTHHmmssZ"
    *
    * @return String "yyyyMMddTHHmmssZ"
    */
   public static String icalUTCTimestamp() {
-    synchronized (icalUTCTimestampFormat) {
-      return icalUTCTimestampFormat.format(new Date());
-    }
+    return ZonedDateTime.now(ZoneOffset.UTC).format(icalUTCTimestampFormatter);
   }
 
   /** Used to adjust a collection toAdjust so that it looks like the collection

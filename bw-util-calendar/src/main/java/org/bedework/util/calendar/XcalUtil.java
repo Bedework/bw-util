@@ -20,9 +20,6 @@ package org.bedework.util.calendar;
 
 import org.bedework.util.xml.tagdefs.XcalTags;
 
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.TimeZone;
-
 import ietf.params.xml.ns.icalendar_2.ArrayOfComponents;
 import ietf.params.xml.ns.icalendar_2.ArrayOfParameters;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
@@ -43,6 +40,8 @@ import ietf.params.xml.ns.icalendar_2.VfreebusyType;
 import ietf.params.xml.ns.icalendar_2.VjournalType;
 import ietf.params.xml.ns.icalendar_2.VtimezoneType;
 import ietf.params.xml.ns.icalendar_2.VtodoType;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.TimeZone;
 
 import java.util.ArrayList;
 import java.util.HashMap;

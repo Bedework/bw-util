@@ -15,9 +15,16 @@
     <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
 
     <!-- Bedework Versions -->
-    <bw-ws.version>4.0.3</bw-ws.version>
+    <bw-ws.version>4.0.4-SNAPSHOT</bw-ws.version>
+    <ical4j.groupId>org.bedework.ical4j</ical4j.groupId>
+    <ical4j.artifactId>ical4j</ical4j.artifactId>
+    <ical4j.version>2.0.3</ical4j.version>
+    <!--
+    <ical4j.groupId>org.bedework.ical4j</ical4j.groupId>
+    <ical4j.artifactId>ical4j</ical4j.artifactId>
     <ical4j.version>1.1.4</ical4j.version>
-    <ical4j-vcard.version>1.0.3</ical4j-vcard.version>
+    -->
+    <ical4j-vcard.version>1.0.4</ical4j-vcard.version>
 
     <!-- Third Party Library Versions -->
     <apache-http.version>4.2.2</apache-http.version>
@@ -141,8 +148,8 @@
         <version>${bw-ws.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-ical4j-cl</artifactId>
+        <groupId>${ical4j.groupId}</groupId>
+        <artifactId>${ical4j.artifactId}</artifactId>
         <version>${ical4j.version}</version>
       </dependency>
       <dependency>
@@ -303,8 +310,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven.compiler.plugin.version}</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <showDeprecation>false</showDeprecation>
           <showWarnings>false</showWarnings>
         </configuration>

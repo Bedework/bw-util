@@ -104,7 +104,6 @@ import ietf.params.xml.ns.icalendar_2.XBwCategoriesPropType;
 import ietf.params.xml.ns.icalendar_2.XBwContactPropType;
 import ietf.params.xml.ns.icalendar_2.XBwLocationPropType;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.CategoryList;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
@@ -116,7 +115,7 @@ import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.Recur;
-import net.fortuna.ical4j.model.ResourceList;
+import net.fortuna.ical4j.model.TextList;
 import net.fortuna.ical4j.model.WeekDay;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.Daylight;
@@ -377,7 +376,7 @@ public class IcalToXcal {
         // LANG - filter on language - group language in one cat list?
 
         CategoriesPropType c = new CategoriesPropType();
-        CategoryList cats = ((Categories)prop).getCategories();
+        TextList cats = ((Categories)prop).getCategories();
 
         Iterator pit = cats.iterator();
         while (pit.hasNext()) {
@@ -649,7 +648,7 @@ public class IcalToXcal {
         ResourcesPropType r = new ResourcesPropType();
 
         List<String> rl = r.getText();
-        ResourceList rlist = ((Resources)prop).getResources();
+        TextList rlist = ((Resources)prop).getResources();
 
         Iterator rlit = rlist.iterator();
         while (rlit.hasNext()) {
@@ -990,7 +989,7 @@ public class IcalToXcal {
       List<String> l = rt.getByday();
 
       for (Object o: r.getDayList()) {
-        l.add(((WeekDay)o).getDay());
+        l.add(((WeekDay)o).getDay().name());
       }
     }
 
