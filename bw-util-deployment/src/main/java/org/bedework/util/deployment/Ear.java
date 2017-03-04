@@ -17,12 +17,6 @@ import java.util.jar.Manifest;
 public class Ear extends DeployableResource implements Updateable {
   private final ApplicationXml appXml;
   
-  private final String jbossAllTemplate =
-          "<jboss xmlns=\"urn:jboss:1.0\">\n" +
-                  "    <jboss-deployment-dependencies xmlns=\"urn:jboss:deployment-dependencies:1.0\">\n" +
-                  "    </jboss-deployment-dependencies>\n" +
-                  "</jboss>";
-
   final Map<String, War> wars = new HashMap<>();
 
   public Ear(final Utils utils,
@@ -48,12 +42,7 @@ public class Ear extends DeployableResource implements Updateable {
     final String earDependencies = this.props.get("app.ear.dependencies");
     if (earDependencies != null) {
       // Generate a jboss-all.xml
-      final File jbossAllF = new File(earMeta.getAbsolutePath(),
-                                     "jboss-all.xml");
-
-      final FileOutputStream fos = new FileOutputStream(jbossAllF, false);
-      fos.write(jbossAllTemplate.getBytes());
-      fos.close();
+      JbossAllXml.generate(earMeta);
       
       // Now update it
       final JbossAllXml jbossAll = new JbossAllXml(utils, 
@@ -62,6 +51,20 @@ public class Ear extends DeployableResource implements Updateable {
                                                    this.props);
       jbossAll.update();
       jbossAll.output();
+    }
+
+    final String earExclusions = this.props.get("app.ear.exclusions");
+    if (earExclusions != null) {
+      // Generate a jboss-deployment-structure.xml
+      JbossDeploymentStructureXml.generate(earMeta);
+
+      // Now update it
+      final JbossDeploymentStructureXml jbossDsx = 
+              new JbossDeploymentStructureXml(utils,
+                                              earMeta,
+                                              this.props);
+      jbossDsx.update();
+      jbossDsx.output();
     }
 
     final String dependencies = this.props.get("app.dependencies");

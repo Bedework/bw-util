@@ -3,6 +3,7 @@ package org.bedework.util.deployment;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /** Represent a jboss-web.xml file.
@@ -10,8 +11,24 @@ import java.util.List;
  * @author douglm
  */
 public class JbossAllXml extends XmlFile {
+  private static final String jbossAllTemplate =
+          "<jboss xmlns=\"urn:jboss:1.0\">\n" +
+                  "    <jboss-deployment-dependencies xmlns=\"urn:jboss:deployment-dependencies:1.0\">\n" +
+                  "    </jboss-deployment-dependencies>\n" +
+                  "</jboss>";
+
   private final PropertiesChain props;
   private final String version;
+  
+  public static void generate(final File earMeta) throws Throwable {
+    // Generate a jboss-all.xml
+    final File jbossAllF = new File(earMeta.getAbsolutePath(),
+                                    "jboss-all.xml");
+
+    final FileOutputStream fos = new FileOutputStream(jbossAllF, false);
+    fos.write(jbossAllTemplate.getBytes());
+    fos.close();
+  }
 
   public JbossAllXml(final Utils utils,
                      final File metaInf,
