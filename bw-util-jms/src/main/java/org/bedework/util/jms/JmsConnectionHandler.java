@@ -199,6 +199,11 @@ public class JmsConnectionHandler {
     try {
       return consumer.receive();
     } catch (final JMSException je) {
+      if (je.getCause() instanceof InterruptedException) {
+        warn("Received interrupted exception");
+        return null;
+      }
+      
       throw new NotificationException(je);
     }
   }
