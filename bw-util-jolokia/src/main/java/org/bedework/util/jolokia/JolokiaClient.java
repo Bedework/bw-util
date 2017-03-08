@@ -102,9 +102,10 @@ public class JolokiaClient extends Logged {
   }
 
   public void execute(final String objectName,
-                      final String operation) throws Throwable {
+                      final String operation,
+                      final Object... args) throws Throwable {
     final J4pExecRequest execRequest =
-            new J4pExecRequest(objectName, operation);
+            new J4pExecRequest(objectName, operation, args);
     getClient().execute(execRequest);
   }
 

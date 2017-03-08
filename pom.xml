@@ -99,6 +99,7 @@
     <module>bw-util-xml</module>
     <module>bw-util-maven-deploy</module>
     <module>bw-util-elasticsearch</module>
+    <module>bw-util-cli</module>
   </modules>
 
   <developers>
