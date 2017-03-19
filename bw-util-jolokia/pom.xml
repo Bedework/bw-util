@@ -12,6 +12,12 @@
   <dependencies>
     <dependency>
       <groupId>org.bedework</groupId>
+      <artifactId>bw-util-cli</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bedework</groupId>
       <artifactId>bw-util-jmx</artifactId>
       <version>${project.version}</version>
     </dependency>
