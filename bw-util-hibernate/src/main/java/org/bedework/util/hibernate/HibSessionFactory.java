@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-
+        
     http://www.apache.org/licenses/LICENSE-2.0
-
+        
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,17 +28,17 @@ import java.util.Properties;
 /** Convenience class to do the actual hibernate interaction. Intended for
  * one use only.
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@rpi.edu
  */
 public class HibSessionFactory {
   private static SessionFactory sessionFactory;
 
-  private static final Object lock = new Object();
+  private static volatile Object lock = new Object();
 
   /**
    * @param hibProps possibly null list of hibernate properties
    * @return the SessionFactory
-   * @throws HibException on fatal error
+   * @throws HibException
    */
   public static SessionFactory getSessionFactory(List<String> hibProps) throws HibException {
     if (sessionFactory != null) {
@@ -50,7 +50,7 @@ public class HibSessionFactory {
         return sessionFactory;
       }
 
-      /* Get a new hibernate session factory. This is configured from an
+      /** Get a new hibernate session factory. This is configured from an
        * application resource hibernate.cfg.xml together with some run time values
        */
       try {
@@ -67,7 +67,7 @@ public class HibSessionFactory {
           }
         }
         */
-
+        
         if (hibProps != null) {
           StringBuilder sb = new StringBuilder();
 
