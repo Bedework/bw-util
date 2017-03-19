@@ -21,10 +21,6 @@ package org.bedework.util.calendar.diff;
 import org.bedework.util.calendar.XcalUtil.TzGetter;
 import org.bedework.util.xml.tagdefs.XcalTags;
 
-import org.apache.log4j.Logger;
-import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
-import org.oasis_open.docs.ws_calendar.ns.soap.ObjectFactory;
-
 import ietf.params.xml.ns.icalendar_2.CreatedPropType;
 import ietf.params.xml.ns.icalendar_2.DtstampPropType;
 import ietf.params.xml.ns.icalendar_2.IcalendarType;
@@ -33,6 +29,9 @@ import ietf.params.xml.ns.icalendar_2.ProdidPropType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
 import ietf.params.xml.ns.icalendar_2.VersionPropType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkUidParamType;
+import org.apache.log4j.Logger;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ObjectFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;

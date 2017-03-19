@@ -18,10 +18,9 @@
 */
 package org.bedework.util.calendar.diff;
 
+import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 import org.oasis_open.docs.ws_calendar.ns.soap.ParameterReferenceType;
 import org.oasis_open.docs.ws_calendar.ns.soap.ParameterSelectionType;
-
-import ietf.params.xml.ns.icalendar_2.BaseParameterType;
 
 import javax.xml.namespace.QName;
 

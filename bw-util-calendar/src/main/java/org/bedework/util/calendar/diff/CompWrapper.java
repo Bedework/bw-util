@@ -19,19 +19,17 @@
 package org.bedework.util.calendar.diff;
 
 import org.bedework.util.calendar.XcalUtil;
-import org.bedework.util.calendar.diff.XmlIcalCompare.Globals;
 import org.bedework.util.xml.tagdefs.XcalTags;
-
-import org.oasis_open.docs.ws_calendar.ns.soap.ComponentReferenceType;
-import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
-import org.oasis_open.docs.ws_calendar.ns.soap.ComponentsSelectionType;
-import org.oasis_open.docs.ws_calendar.ns.soap.PropertiesSelectionType;
 
 import ietf.params.xml.ns.icalendar_2.ActionPropType;
 import ietf.params.xml.ns.icalendar_2.ArrayOfProperties;
 import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import ietf.params.xml.ns.icalendar_2.UidPropType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentReferenceType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.ComponentsSelectionType;
+import org.oasis_open.docs.ws_calendar.ns.soap.PropertiesSelectionType;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -61,7 +59,7 @@ class CompWrapper extends BaseEntityWrapper<CompWrapper,
     kind = XcalUtil.getCompKind(name);
   }
 
-  CompWrapper(final Globals globals,
+  CompWrapper(final XmlIcalCompare.Globals globals,
               final QName name,
               final BaseComponentType c) {
     super(null, name, c);

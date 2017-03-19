@@ -20,11 +20,10 @@ package org.bedework.util.calendar.diff;
 
 import org.bedework.util.xml.tagdefs.XcalTags;
 
+import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 import org.oasis_open.docs.ws_calendar.ns.soap.ComponentReferenceType;
 import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
 import org.oasis_open.docs.ws_calendar.ns.soap.ComponentsSelectionType;
-
-import ietf.params.xml.ns.icalendar_2.BaseComponentType;
 
 import java.util.Iterator;
 import java.util.List;
