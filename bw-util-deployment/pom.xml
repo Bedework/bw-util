@@ -8,9 +8,9 @@
     <version>4.0.13-SNAPSHOT</version>
   </parent>
 
-  <artifactId>bw-util-deployment</artifactId>
+  <artifactId>bwdeployment-maven-plugin</artifactId>
 
-  <packaging>jar</packaging>
+  <packaging>maven-plugin</packaging>
 
   <dependencies>
     <!-- Bedework -->

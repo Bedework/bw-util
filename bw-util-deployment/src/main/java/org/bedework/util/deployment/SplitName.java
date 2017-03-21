@@ -50,8 +50,12 @@ public class SplitName {
 
     final int dotPos = name.lastIndexOf(".");
 
-    version = name.substring(dashPos + 1, dotPos);
-    suffix = name.substring(dotPos + 1);
+    if (dotPos > 0) {
+      version = name.substring(dashPos + 1, dotPos);
+      suffix = name.substring(dotPos + 1);
+    } else {
+      version = name.substring(dashPos + 1);
+    }
   }
 
   /** Tries to figure out what the prefix is for the name and then
