@@ -7,8 +7,6 @@ import org.bedework.util.misc.Util;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +38,6 @@ import java.util.zip.ZipInputStream;
  *
  * @author douglm
  */
-@Mojo(name = "bw-deploy")
 public class Process extends AbstractMojo {
   /** The path of the properties file */
   public static final String propPropertiesFile =
@@ -63,45 +60,32 @@ public class Process extends AbstractMojo {
 
   private String errorMsg;
 
-  @Parameter
   private String baseDirPath;
 
-  @Parameter
   private String inUrl;
 
-  @Parameter(defaultValue = "${project.build.directory}/")
   private String inDirPath;
 
-  @Parameter(defaultValue = "${java.io.tmpdir}/bedework/deployment/")
   private String outDirPath;
 
   private String deployDirPath;
 
-  @Parameter
   private boolean noversion;
 
-  @Parameter
   private boolean checkonly;
 
-  @Parameter
   private boolean warsonly;
 
-  @Parameter(defaultValue = "true")
   private boolean delete;
 
-  @Parameter
   private boolean cleanup = true;
 
-  @Parameter
   private String warName;
 
-  @Parameter
   private String earName;
 
-  @Parameter
   private String resourcesBase;
 
-  @Parameter
   private String propsPath;
 
   private Properties props;
@@ -619,13 +603,22 @@ public class Process extends AbstractMojo {
     final File inDir = utils.directory(dirPath);
 
     final String[] names = inDir.list();
+    
+    if (names == null) {
+      utils.info("No names found. Exiting");
+      return null;
+      
+    }
 
     final List<SplitName> splitNames = new ArrayList<>();
 
     for (final String nm: names) {
+      utils.debug("Name: " + nm);
       final SplitName sn = SplitName.testName(nm, allowedNames);
 
       // Allow for a generated ear without a suffix (maven plugin)
+      utils.debug("Split name: " + sn);
+      
       if ((sn == null) || 
               ((sn.suffix != null) && (!suffix.equals(sn.suffix)))) {
         continue;

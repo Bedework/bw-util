@@ -16,7 +16,7 @@ import java.io.File;
 /**
  * User: mike Date: 12/18/15 Time: 00:15
  */
-@Mojo(name = "deploy-ears")
+@Mojo(name = "bw-deploy")
 public class DeployEars extends AbstractMojo {
   @Parameter(defaultValue = "${project.build.directory}", readonly = true)
   private File target;
@@ -36,7 +36,7 @@ public class DeployEars extends AbstractMojo {
   @Parameter
   private boolean checkonly;
 
-  @Parameter
+  @Parameter(defaultValue = "true")
   private boolean delete;
 
   @Parameter(defaultValue = "true")

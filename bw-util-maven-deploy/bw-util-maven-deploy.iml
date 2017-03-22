@@ -15,7 +15,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.bedework:bw-util-deployment:4.0.13-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="bw-util-deployment" />
     <orderEntry type="module" module-name="bw-util-args" />
     <orderEntry type="module" module-name="bw-util-dav" />
     <orderEntry type="module" module-name="bw-util-http" />
