@@ -290,6 +290,20 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
 
       uriStr = pfile.getProperty(configPname);
       if (uriStr == null) {
+        /* If configPname ends with ".confuri" we'll take the 
+           preceding segment as a possible directory
+         */
+        if (configPname.endsWith(".confuri")) {
+          final int lastDotpos = configPname.length() - 8;
+          final int pos = configPname
+                  .lastIndexOf('.', lastDotpos - 1);
+          if (pos > 0) {
+            uriStr = configPname.substring(pos + 1, lastDotpos);
+          }
+        }
+      }
+      
+      if (uriStr == null) {
         throw new ConfigException("No property with name \"" +
                                           configPname + "\"");
       }

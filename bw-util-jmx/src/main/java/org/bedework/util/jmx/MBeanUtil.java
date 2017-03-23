@@ -44,10 +44,35 @@ public class MBeanUtil {
   @SuppressWarnings("unchecked")
   public static Object getMBean(final Class c,
                                 final String name) throws Throwable {
-    MBeanServer server = getMbeanServer();
+    final MBeanServer server = getMbeanServer();
 
 //    return MBeanProxyExt.create(c, name, server);
     return JMX.newMBeanProxy(server, new ObjectName(name), c);
+  }
+
+  public static Object invoke(final String serviceName,
+                              final String operationName,
+                              final Object[] params,
+                              final String[] signature) throws Throwable {
+    final MBeanServer server = getMbeanServer();
+
+    return server.invoke(new ObjectName(serviceName),
+                         operationName, params, signature);
+  }
+
+  /**
+   *
+   * @param name
+   * @param attribute
+   * @return attribute or null
+   * @throws Throwable
+   */
+  public static Object getAttribute(final String name,
+                                    final String attribute) throws Throwable {
+
+    MBeanServer server = getMbeanServer();
+
+    return server.getAttribute(new ObjectName(name), attribute);
   }
 
   /**
