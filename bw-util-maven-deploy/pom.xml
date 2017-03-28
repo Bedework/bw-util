@@ -3,7 +3,7 @@
   <parent>
     <artifactId>bw-util</artifactId>
     <groupId>org.bedework</groupId>
-    <version>4.0.13</version>
+    <version>4.0.14-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <packaging>maven-plugin</packaging>
