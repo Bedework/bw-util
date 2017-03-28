@@ -94,9 +94,10 @@ public class JolokiaClient extends Logged {
    * @throws Throwable on error
    */
   public String execString(final String objectName,
-                           final String operation) throws Throwable {
+                           final String operation,
+                           final Object... args) throws Throwable {
     final J4pExecRequest execRequest =
-            new J4pExecRequest(objectName, operation);
+            new J4pExecRequest(objectName, operation, args);
     final J4pResponse response = getClient().execute(execRequest);
     return (String)response.getValue();
   }

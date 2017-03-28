@@ -26,6 +26,8 @@ public abstract class Cli {
 
   private final BufferedReader stdin = new BufferedReader(new InputStreamReader(
           System.in));
+  
+  private String curline;
 
   private SfpTokenizer tokenizer;
 
@@ -60,17 +62,17 @@ public abstract class Cli {
 
   public void processCmds() {
     while (true) {
-      final String line = nextLine();
-      if (line == null) {
+      curline = nextLine();
+      if (curline == null) {
         return;
       }
 
-      if (line.equals("q")) {
+      if (curline.equals("q")) {
         info("Quitting");
         return;
       }
 
-      tokenizer = new SfpTokenizer(new StringReader(line));
+      tokenizer = new SfpTokenizer(new StringReader(curline));
 
       try {
         final String cmd = word("cmd");
@@ -204,6 +206,10 @@ public abstract class Cli {
     } catch (final Throwable t) {
       return null;
     }
+  }
+  
+  public String getCurline() {
+    return curline;
   }
 
   public String word(final String tr) throws Throwable {
