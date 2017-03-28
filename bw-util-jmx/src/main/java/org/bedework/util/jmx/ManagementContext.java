@@ -159,7 +159,7 @@ public class ManagementContext {
    *
    * @return the MBeanServer
    */
-  protected MBeanServer getMBeanServer() {
+  public MBeanServer getMBeanServer() {
     if (beanServer == null) {
       beanServer = findMBeanServer();
     }

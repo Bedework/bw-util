@@ -269,7 +269,7 @@ public class EsUtil extends Logged {
   }
 
   public IndexResponse indexDoc(final EsDocInfo di,
-                                final String targetIndex) throws Throwable {
+                                final String targetIndex) throws IndexException {
     //batchCurSize++;
     final IndexRequestBuilder req = getClient().
                  prepareIndex(targetIndex, di.getType(), di.getId());
@@ -290,7 +290,7 @@ public class EsUtil extends Logged {
   
   public GetResponse get(final String index,
                          final String docType,
-                         final String id) throws Throwable {
+                         final String id) throws IndexException {
     final GetRequestBuilder grb = getClient().prepareGet(index,
                                                          docType,
                                                          id);
