@@ -22,6 +22,8 @@ public class FromXmlCallback {
 
   private final Set<String> skipThese = new TreeSet<>();
 
+  private final Map<String, String> mapFields = new HashMap<>();
+
   /** Called to get the object for a complex element.
    *
    * @param el element representing object
@@ -35,6 +37,15 @@ public class FromXmlCallback {
   public void addClassForName(final String name,
                               final Class cl) {
     classForName.put(name, cl);
+  }
+
+  public void addMapField(final String from,
+                          final String to) {
+    mapFields.put(from, to);
+  }
+  
+  public String mappedField(final String from) {
+    return mapFields.get(from);
   }
 
   /**
@@ -73,7 +84,7 @@ public class FromXmlCallback {
    * @throws Throwable on error
    */
   public String getFieldlName(final Element el) throws Throwable {
-    return null;
+    return mappedField(el.getNodeName());
   }
 
   /** Save the value in the object. Return false for default
