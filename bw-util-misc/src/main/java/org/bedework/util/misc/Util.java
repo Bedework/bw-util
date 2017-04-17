@@ -62,7 +62,7 @@ public class Util {
   }
 
   private static final DateTimeFormatter icalUTCTimestampFormatter =
-          DateTimeFormatter.ofPattern("yyyyMMdd'T'hhmmss'Z'");
+          DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
   
   /** Get an ical timestamp of the form "yyyyMMddTHHmmssZ"
    *
