@@ -21,6 +21,7 @@ package org.bedework.util.jolokia;
 import org.bedework.util.jmx.ConfBase;
 import org.bedework.util.misc.Logged;
 
+import org.jolokia.client.BasicAuthenticator;
 import org.jolokia.client.J4pClient;
 import org.jolokia.client.request.J4pExecRequest;
 import org.jolokia.client.request.J4pReadRequest;
@@ -35,6 +36,8 @@ import java.util.List;
  */
 public class JolokiaClient extends Logged {
   private final String url;
+  private final String id;
+  private final String pw;
   private J4pClient client;
 
   /**
@@ -43,6 +46,20 @@ public class JolokiaClient extends Logged {
    */
   public JolokiaClient(final String url) {
     this.url = url;
+    this.id = null;
+    this.pw = null;
+  }
+
+  /**
+   *
+   * @param url Usually something like "http://localhost:8080/hawtio/jolokia"
+   */
+  public JolokiaClient(final String url,
+                       final String id,
+                       final String pw) {
+    this.url = url;
+    this.id = id;
+    this.pw = pw;
   }
 
   public J4pClient getClient() {
@@ -50,7 +67,18 @@ public class JolokiaClient extends Logged {
       return client;
     }
 
-    client = new J4pClient(url);
+    if (id == null) {
+      client = J4pClient.url(url).build();
+
+      return client;
+    }
+
+    client = J4pClient.url(url)
+                      .user(id)
+                      .password(pw)
+                      .authenticator(new BasicAuthenticator().preemptive())
+                      .connectionTimeout(3000)
+                      .build();
 
     return client;
   }
