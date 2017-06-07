@@ -32,6 +32,8 @@ import javax.xml.namespace.QName;
 public class XmlEmit {
   private Writer wtr;
 
+  private boolean forHtml = false;
+
   private boolean noHeaders = false;
 
   private String dtd;
@@ -116,6 +118,16 @@ public class XmlEmit {
    */
   public XmlEmit(final boolean noHeaders) {
     this.noHeaders = noHeaders;
+  }
+
+  /** construct an object which will be used to emit HTML.
+   *
+   */
+  public static XmlEmit getHtmlEmitter() {
+    final XmlEmit xml = new XmlEmit();
+    xml.forHtml = true;
+    
+    return xml;
   }
 
   /** Allows applications to provide parameters to methods using this object class,
@@ -634,6 +646,10 @@ public class XmlEmit {
   }
 
   private void emitNs() throws IOException {
+    if (forHtml) {
+      return;
+    }
+    
     nameSpaces.emitNs(wtr);
   }
 
@@ -715,6 +731,11 @@ public class XmlEmit {
   /* Write out the xml header
    */
   private void writeHeader(final String dtd) throws IOException {
+    if (forHtml){
+      wtr.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
+      return;
+    }
+    
     wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 
     if (dtd == null) {
