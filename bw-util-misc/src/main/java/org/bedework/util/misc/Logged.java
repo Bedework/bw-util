@@ -20,15 +20,26 @@ package org.bedework.util.misc;
 
 import org.apache.log4j.Logger;
 
-/** This class provides support for diffing timezone data to determine if
- * updates need to be made to stored data.
+import java.util.HashMap;
+import java.util.Map;
+
+/** This class provides basic logging support. It also allows for some
+ * log messages to be output to multiple loggers.
  *
+ * Each stream will be for this class possible appended by "." + name.
+ * 
  * @author douglm
  */
 public class Logged {
   protected boolean debug;
 
   private transient Logger log;
+  
+  private final Map<String, Logger> loggers = new HashMap<>(5);
+  
+  public final String errorLoggerName = "errors";
+  public final String auditLoggerName = "audit"; // INFO only
+  public final String metricsLoggerName = "metrics"; // INFO only
 
   protected Logged() {
     debug = getLogger().isDebugEnabled();
@@ -46,10 +57,77 @@ public class Logged {
   }
 
   /**
+   * @return Logger
+   */
+  protected Logger getLogger(final String name) {
+    Logger theLogger = loggers.get(name);
+    if (theLogger != null) {
+      return theLogger;
+    }
+    
+    theLogger = Logger.getLogger(this.getClass().getName() + 
+                                         "." + name);
+
+    loggers.put(name, theLogger);
+    
+    return theLogger;
+  }
+  
+  @SuppressWarnings("unused")
+  protected void enableErrorLogger() {
+    getLogger(errorLoggerName);
+  }
+
+  @SuppressWarnings("unused")
+  protected void enableAuditLogger() {
+    getLogger(auditLoggerName);
+  }
+
+  @SuppressWarnings("unused")
+  protected void enableMetricsLogger() {
+    getLogger(metricsLoggerName);
+  }
+
+  @SuppressWarnings("unused")
+  protected boolean isErrorLoggerEnabled() {
+    return getLogger(errorLoggerName) != null;
+  }
+
+  @SuppressWarnings("unused")
+  protected boolean isAuditLoggerEnabled() {
+    return getLogger(auditLoggerName) != null;
+  }
+
+  @SuppressWarnings("unused")
+  protected boolean isMetricsLoggerEnabled() {
+    return getLogger(metricsLoggerName) != null;
+  }
+
+  protected Logger getErrorLoggerIfEnabled() {
+    return loggers.get(errorLoggerName);
+  }
+
+  @SuppressWarnings("unused")
+  protected Logger getAuditLoggerIfEnabled() {
+    return loggers.get(auditLoggerName);
+  }
+
+  @SuppressWarnings("unused")
+  protected Logger getMetricsLoggerIfEnabled() {
+    return loggers.get(metricsLoggerName);
+  }
+
+  /**
    * @param t exception
    */
   protected void error(final Throwable t) {
     getLogger().error(this, t);
+
+    final Logger errorLogger = getErrorLoggerIfEnabled();
+    
+    if (errorLogger != null) {
+      errorLogger.error(this, t);
+    }
   }
 
   /**
@@ -57,6 +135,12 @@ public class Logged {
    */
   protected void error(final String msg) {
     getLogger().error(msg);
+
+    final Logger errorLogger = getErrorLoggerIfEnabled();
+
+    if (errorLogger != null) {
+      errorLogger.error(msg);
+    }
   }
 
   /**
@@ -71,6 +155,26 @@ public class Logged {
    */
   protected void info(final String msg) {
     getLogger().info(msg);
+  }
+
+  /**
+   * @param msg to output
+   */
+  @SuppressWarnings("unused")
+  protected void audit(final String msg) {
+    if (isAuditLoggerEnabled()) {
+      getLogger(auditLoggerName).info(msg);
+    }
+  }
+
+  /**
+   * @param msg to output
+   */
+  @SuppressWarnings("unused")
+  protected void metrics(final String msg) {
+    if (isMetricsLoggerEnabled()) {
+      getLogger(metricsLoggerName).info(msg);
+    }
   }
 
   /**

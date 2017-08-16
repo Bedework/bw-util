@@ -61,3 +61,4 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 
 #### 4.0.14
   * Fix UTC timestamp format
+  * Add error, audit and metrics log streams
