@@ -18,6 +18,7 @@
 */
 package org.bedework.util.config;
 
+import org.bedework.util.misc.Logged;
 import org.bedework.util.misc.ToString;
 import org.bedework.util.misc.Util;
 import org.bedework.util.xml.XmlEmit;
@@ -25,7 +26,6 @@ import org.bedework.util.xml.XmlEmit.NameSpace;
 import org.bedework.util.xml.XmlUtil;
 import org.bedework.util.xml.tagdefs.BedeworkServerTags;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -108,7 +108,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * @param <T>
  */
 public class ConfigBase<T extends ConfigBase>
-        implements Comparable<T>, Serializable {
+        extends Logged implements Comparable<T>, Serializable {
   /** The default namespace for the XML elements.
    *
    */
@@ -304,7 +304,7 @@ public class ConfigBase<T extends ConfigBase>
    * @return parsed notification or null
    * @throws ConfigException on error
    */
-  public static ConfigBase fromXml(final InputStream is) throws ConfigException {
+  public ConfigBase fromXml(final InputStream is) throws ConfigException {
     return fromXml(is, null);
   }
 
@@ -315,8 +315,8 @@ public class ConfigBase<T extends ConfigBase>
    * @return parsed notification or null
    * @throws ConfigException on error
    */
-  public static ConfigBase fromXml(final InputStream is,
-                                   final Class cl) throws ConfigException {
+  public ConfigBase fromXml(final InputStream is,
+                            final Class cl) throws ConfigException {
     try {
       return fromXml(parseXml(is), cl);
     } catch (final ConfigException ce) {
@@ -333,8 +333,8 @@ public class ConfigBase<T extends ConfigBase>
    * @return parsed notification or null
    * @throws ConfigException on error
    */
-  public static ConfigBase fromXml(final Element rootEl,
-                                   final Class cl) throws ConfigException {
+  public ConfigBase fromXml(final Element rootEl,
+                            final Class cl) throws ConfigException {
     try {
       final ConfigBase cb = (ConfigBase)getObject(rootEl, cl);
 
@@ -359,8 +359,8 @@ public class ConfigBase<T extends ConfigBase>
    *                   Private from xml methods
    * ==================================================================== */
 
-  private static Object getObject(final Element el,
-                                  final Class cl) throws Throwable {
+  private Object getObject(final Element el,
+                           final Class cl) throws Throwable {
     Class objClass = cl;
 
     /* Element may have type attribute */
@@ -402,10 +402,10 @@ public class ConfigBase<T extends ConfigBase>
    * @param cl
    * @throws ConfigException
    */
-  private static void populate(final Element subroot,
-                               final Object o,
-                               final Collection<Object> col,
-                               final Class cl) throws Throwable {
+  private void populate(final Element subroot,
+                        final Object o,
+                        final Collection<Object> col,
+                        final Class cl) throws Throwable {
     String name = subroot.getNodeName();
 
     Method meth = null;
@@ -515,8 +515,8 @@ public class ConfigBase<T extends ConfigBase>
     }
   }
 
-  private static Method findSetter(final Object val,
-                                   final String name) throws Throwable {
+  private Method findSetter(final Object val,
+                            final String name) throws Throwable {
     String methodName = "set" + name.substring(0, 1).toUpperCase() +
                         name.substring(1);
     Method[] meths = val.getClass().getMethods();
@@ -539,8 +539,8 @@ public class ConfigBase<T extends ConfigBase>
     }
 
     if (meth == null) {
-      getLog().error("No setter method for property " + name +
-                     " for class " + val.getClass().getName());
+      error("No setter method for property " + name +
+                    " for class " + val.getClass().getName());
       return null;
     }
 
@@ -554,10 +554,10 @@ public class ConfigBase<T extends ConfigBase>
    * @param meth
    * @throws Throwable
    */
-  private static void assign(final Object val,
-                             final Collection<Object> col,
-                             final Object o,
-                             final Method meth) throws Throwable {
+  private void assign(final Object val,
+                      final Collection<Object> col,
+                      final Object o,
+                      final Method meth) throws Throwable {
     if (col != null) {
       col.add(val);
     } else {
@@ -567,9 +567,9 @@ public class ConfigBase<T extends ConfigBase>
     }
   }
 
-  private static Object simpleValue(final Class cl,
-                                    final Element el,
-                                    final String name) throws Throwable {
+  private Object simpleValue(final Class cl,
+                             final Element el,
+                             final String name) throws Throwable {
     if (XmlUtil.hasChildren(el)) {
       // Complex value
       return null;
@@ -889,13 +889,5 @@ public class ConfigBase<T extends ConfigBase>
     }
 
     return getters;
-  }
-
-  private static Logger getLog() {
-    return Logger.getLogger(ConfigBase.class);
-  }
-
-  private static void error(final String msg) {
-    getLog().error(msg);
   }
 }

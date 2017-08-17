@@ -19,9 +19,9 @@
 package org.bedework.util.elasticsearch;
 
 import org.bedework.util.indexing.IndexException;
+import org.bedework.util.misc.Logged;
 import org.bedework.util.misc.Util;
 
-import org.apache.log4j.Logger;
 import org.elasticsearch.index.get.GetField;
 
 import java.util.ArrayDeque;
@@ -38,12 +38,7 @@ import java.util.TreeSet;
  * @author Mike Douglass douglm - rpi.edu
  *
  */
-public class EntityBuilderBase {
-  private transient Logger log;
-
-  @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"})
-  private final boolean debug;
-
+public class EntityBuilderBase extends Logged {
   private final Deque<Map<String, Object>> fieldStack = new ArrayDeque<>();
 
   private final long version;
@@ -55,8 +50,6 @@ public class EntityBuilderBase {
    */
   protected EntityBuilderBase(final Map<String, ?> fields,
                     final long version) throws IndexException {
-    debug = getLog().isDebugEnabled();
-
     pushFields(fields);
 
     this.version = version;
@@ -278,33 +271,5 @@ public class EntityBuilderBase {
 
   protected String getString(final String id) {
     return (String)getFirstValue(id);
-  }
-
-  protected Logger getLog() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  protected void info(final String msg) {
-    getLog().info(msg);
-  }
-
-  protected void debug(final String msg) {
-    getLog().debug(msg);
-  }
-
-  protected void warn(final String msg) {
-    getLog().warn(msg);
-  }
-
-  protected void error(final String msg) {
-    getLog().error(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLog().error(this, t);
   }
 }

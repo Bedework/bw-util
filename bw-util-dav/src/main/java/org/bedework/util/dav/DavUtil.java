@@ -19,6 +19,7 @@
 package org.bedework.util.dav;
 
 import org.bedework.util.http.BasicHttpClient;
+import org.bedework.util.misc.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.xml.XmlEmit;
 import org.bedework.util.xml.XmlEmit.NameSpace;
@@ -28,7 +29,6 @@ import org.bedework.util.xml.tagdefs.WebdavTags;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -54,11 +54,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 *
 * @author Mike Douglass  douglm - rpi.edu
 */
-public class DavUtil implements Serializable {
-  protected boolean debug;
-
-  private transient Logger log;
-
+public class DavUtil extends Logged implements Serializable {
   /** */
   public static final Header depth0 = new BasicHeader("depth", "0");
   /** */
@@ -72,7 +68,6 @@ public class DavUtil implements Serializable {
   /**
    */
   public DavUtil() {
-    debug = getLogger().isDebugEnabled();
   }
 
   /**
@@ -372,7 +367,7 @@ public class DavUtil implements Serializable {
     final int SC_MULTI_STATUS = 207; // not defined for some reason
     if (res != SC_MULTI_STATUS) {
       if (debug) {
-        debugMsg("Got response " + res + " for path " + path);
+        debug("Got response " + res + " for path " + path);
       }
 
       //throw new Exception("Got response " + res + " for path " + path);
@@ -480,7 +475,7 @@ public class DavUtil implements Serializable {
     final int SC_MULTI_STATUS = 207; // not defined for some reason
     if (res != SC_MULTI_STATUS) {
       if (debug) {
-        debugMsg("Got response " + res + " for path " + path);
+        debug("Got response " + res + " for path " + path);
       }
 
       //throw new Exception("Got response " + res + " for path " + path);
@@ -970,28 +965,5 @@ public class DavUtil implements Serializable {
     }
 
     return path;
-  }
-
-  /** ===================================================================
-   *                   Logging methods
-   *  =================================================================== */
-
-  /**
-   * @return Logger
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  protected void debugMsg(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
   }
 }

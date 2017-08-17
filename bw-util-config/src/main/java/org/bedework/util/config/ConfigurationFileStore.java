@@ -113,7 +113,7 @@ public class ConfigurationFileStore implements ConfigurationStore {
 
       fis = new FileInputStream(f);
 
-      ConfigBase config = ConfigBase.fromXml(fis, cl);
+      ConfigBase config = new ConfigBase().fromXml(fis, cl);
 
       return config;
     } catch (ConfigException ce) {

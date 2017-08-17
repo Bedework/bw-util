@@ -39,9 +39,17 @@ public interface HibSession extends Serializable {
    * @param sessFactory
    * @param log
    * @throws HibException
+   * @deprecated 
    */
   public void init(SessionFactory sessFactory,
                    Logger log) throws HibException;
+
+  /** Set up for a hibernate interaction. Throw the object away on exception.
+   *
+   * @param sessFactory
+   * @throws HibException
+   */
+  public void init(SessionFactory sessFactory) throws HibException;
 
   /**
    * @return Session

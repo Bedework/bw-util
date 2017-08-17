@@ -22,9 +22,8 @@
  */
 package org.bedework.util.jmx;
 
+import org.bedework.util.misc.Logged;
 import org.bedework.util.misc.Util;
-
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -46,9 +45,7 @@ import javax.management.QueryExp;
  * Heavily modified version from activemq.
  *
  */
-public class ManagementContext {
-  private transient Logger log;
-
+public class ManagementContext extends Logged {
   /** Default jmx domain
    */
   public static final String DEFAULT_DOMAIN =
@@ -432,35 +429,5 @@ public class ManagementContext {
     locallyCreateMBeanServer = true;
 
     return mbeanServer;
-  }
-
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  protected void debug(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  /* Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 }

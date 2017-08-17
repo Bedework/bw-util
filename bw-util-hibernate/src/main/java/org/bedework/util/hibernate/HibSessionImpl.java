@@ -18,6 +18,8 @@
 */
 package org.bedework.util.hibernate;
 
+import org.bedework.util.misc.Logged;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -42,9 +44,7 @@ import java.util.List;
  *
  * @author Mike Douglass douglm@rpi.edu
  */
-public class HibSessionImpl implements HibSession {
-  transient Logger log;
-
+public class HibSessionImpl extends Logged implements HibSession {
   Session sess;
   transient Transaction tx;
   boolean rolledBack;
@@ -57,17 +57,14 @@ public class HibSessionImpl implements HibSession {
 
   private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-  /** Set up for a hibernate interaction. Throw the object away on exception.
-   *
-   * @param sessFactory
-   * @param log
-   * @throws HibException
-   */
   @Override
   public void init(final SessionFactory sessFactory,
                    final Logger log) throws HibException {
+    init(sessFactory);
+  }
+  @Override
+  public void init(final SessionFactory sessFactory) throws HibException {
     try {
-      this.log = log;
       sess = sessFactory.openSession();
       rolledBack = false;
       //sess.setFlushMode(FlushMode.COMMIT);
@@ -1117,13 +1114,5 @@ public class HibSessionImpl implements HibSession {
       getLogger().debug("HibSession: ", t);
     }
     getLogger().error(this, t);
-  }
-
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 }

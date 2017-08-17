@@ -19,6 +19,7 @@
 package org.bedework.util.calendar.diff;
 
 import org.bedework.util.calendar.XcalUtil.TzGetter;
+import org.bedework.util.misc.Logged;
 import org.bedework.util.xml.tagdefs.XcalTags;
 
 import ietf.params.xml.ns.icalendar_2.CreatedPropType;
@@ -29,7 +30,6 @@ import ietf.params.xml.ns.icalendar_2.ProdidPropType;
 import ietf.params.xml.ns.icalendar_2.VcalendarType;
 import ietf.params.xml.ns.icalendar_2.VersionPropType;
 import ietf.params.xml.ns.icalendar_2.XBedeworkUidParamType;
-import org.apache.log4j.Logger;
 import org.oasis_open.docs.ws_calendar.ns.soap.ComponentSelectionType;
 import org.oasis_open.docs.ws_calendar.ns.soap.ObjectFactory;
 
@@ -51,9 +51,7 @@ import java.util.Map;
  *
  * @author Mike Douglass
  */
-public class XmlIcalCompare {
-  protected transient Logger log;
-
+public class XmlIcalCompare extends Logged {
   /** */
   public static final List<Object> defaultSkipList;
 
@@ -133,18 +131,5 @@ public class XmlIcalCompare {
                                       ov);
 
     return ncw.diff(ocw);
-  }
-
-  private Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  @SuppressWarnings("unused")
-  private void trace(final String msg) {
-    getLogger().debug(msg);
   }
 }

@@ -3,6 +3,8 @@
 */
 package org.bedework.util.cli;
 
+import org.bedework.util.misc.Util;
+
 import org.apache.commons.lang.WordUtils;
 
 import java.io.BufferedReader;
@@ -12,6 +14,7 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -21,12 +24,17 @@ import java.util.TreeSet;
  * Date: 5/5/15
  * Time: 4:26 PM
  */
+@SuppressWarnings("unused")
 public abstract class Cli {
   private final boolean debug;
 
+  private int exitStatus;
+  
   private final BufferedReader stdin = new BufferedReader(new InputStreamReader(
           System.in));
-  
+
+  private String singleCmd;
+
   private String curline;
 
   private SfpTokenizer tokenizer;
@@ -41,6 +49,7 @@ public abstract class Cli {
   public Cli(final boolean debug) throws Throwable {
     this.debug = debug;
 
+    register(new CmdHelp());
     register(new CmdSou());
   }
 
@@ -60,9 +69,30 @@ public abstract class Cli {
     inReader = val;
   }
 
+  public void setExitStatus(final int val) {
+    exitStatus = val;
+  }
+
+  public int getExitStatus() {
+    return exitStatus;
+  }
+
+  public void setSingleCmd(final String val) {
+    singleCmd = val;
+  }
+
+  public String getSingleCmd() {
+    return singleCmd;
+  }
+
   public void processCmds() {
     while (true) {
-      curline = nextLine();
+      if (getSingleCmd() != null) {
+        curline = getSingleCmd();
+      } else {
+        curline = nextLine();
+      }
+
       if (curline == null) {
         return;
       }
@@ -81,18 +111,24 @@ public abstract class Cli {
           continue;
         }
 
-        final CommandInterpreter ci = interpreters.get(cmd);
+        CommandInterpreter ci = interpreters.get(cmd);
 
         if (ci == null) {
           error("Unknown command: " + cmd);
-          cmdHelp();
-          continue;
+          ci = interpreters.get("help");
+          if (ci == null) {
+            ci = new CmdHelp();
+          }
         }
 
         ci.execute(this);
       } catch (final Throwable t) {
         error("Exception processing command:");
         t.printStackTrace();
+      }
+
+      if (getSingleCmd() != null) {
+        break;
       }
     }
   }
@@ -122,23 +158,54 @@ public abstract class Cli {
     }
 
     public void execute(final Cli cli) {
+      String cmdName = null;
+
+      try {
+        cmdName = cli.word(null);
+      } catch (Throwable t) {
+        cli.error(t.getLocalizedMessage());
+      }
+
+      if (cmdName != null) {
+        final CommandInterpreter ci = cli.getCmd(cmdName);
+
+        if (ci != null) {
+          cmdInfo(cli, ci);
+          final List<String> help = ci.getHelp();
+          if (!Util.isEmpty(help)) {
+            for (final String helpLine : help) {
+              cli.info(WordUtils.wrap(helpLine, 70,
+                                      "\n\t",
+                                      true));
+            }
+          }
+
+          return;
+        }
+        cli.error("Unknown commmand " + cmdName);
+      }
+
       cli.info("Commands are:");
 
       final SortedSet<String> cmds = cli.getCommands();
 
-      for (final String cmd: cmds) {
-        final CommandInterpreter ci = cli.getCmd(cmd);
-
-        String pars = ci.getCmdPars();
-        if (pars == null) {
-          pars = "";
-        }
-        cli.info("  " + cmd + ": " +
-                         pars + "\t" +
-                         WordUtils.wrap(ci.getCmdDescription(), 70,
-                                        "\n\t",
-                                        true));
+      for (final String cmd : cmds) {
+        cmdInfo(cli, cli.getCmd(cmd));
       }
+    }
+
+    private void cmdInfo(final Cli cli,
+                         final CommandInterpreter ci) {
+
+      String pars = ci.getCmdPars();
+      if (pars == null) {
+        pars = "";
+      }
+      cli.info(ci.getCmdName() + ": " +
+                       pars + "\n\tDescription: " +
+                       WordUtils.wrap(ci.getCmdDescription(), 70,
+                                      "\n\t\t",
+                                      true));
     }
   }
 

@@ -110,7 +110,7 @@ public class ConfigurationDavStore implements ConfigurationStore {
     try {
       is = client.get(path + "/" + name + ".xml");
 
-      ConfigBase config = ConfigBase.fromXml(is, cl);
+      ConfigBase config = new ConfigBase().fromXml(is, cl);
 
       return config;
     } catch (ConfigException ce) {
