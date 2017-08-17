@@ -3,7 +3,7 @@
   <parent>
     <artifactId>bw-util</artifactId>
     <groupId>org.bedework</groupId>
-    <version>4.0.16-SNAPSHOT</version>
+    <version>4.0.16</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>org.bedework</groupId>
       <artifactId>bw-util-misc</artifactId>
-      <version>4.0.16-SNAPSHOT</version>
+      <version>4.0.16</version>
     </dependency>
   </dependencies>
 
