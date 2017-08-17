@@ -26,7 +26,7 @@ import java.util.Map;
 /** This class provides basic logging support. It also allows for some
  * log messages to be output to multiple loggers.
  *
- * Each stream will be for this class possible appended by "." + name.
+ * Each stream will be for this class possible prefixed by name + ".".
  * 
  * @author douglm
  */
@@ -65,8 +65,7 @@ public class Logged {
       return theLogger;
     }
     
-    theLogger = Logger.getLogger(this.getClass().getName() + 
-                                         "." + name);
+    theLogger = Logger.getLogger(name + "." + this.getClass().getName());
 
     loggers.put(name, theLogger);
     

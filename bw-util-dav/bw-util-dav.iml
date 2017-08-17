@@ -10,7 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="bw-util-http" />
-    <orderEntry type="library" name="Maven: org.bedework:bw-util-config:4.0.15-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="bw-util-config" />
     <orderEntry type="module" module-name="bw-util-jmx" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.2.2" level="project" />
     <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
