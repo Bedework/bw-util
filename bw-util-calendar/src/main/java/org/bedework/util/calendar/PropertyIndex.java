@@ -1107,6 +1107,11 @@ public class PropertyIndex implements Serializable {
                                null,
                                IS_SINGLE, allComponents),
 
+    // string - name of calsuite
+    CALSUITE(BedeworkServerTags.xprop,
+              null,
+              IS_SINGLE, allComponents),
+
     CALTYPE(BedeworkServerTags.xprop,
             null,
             IS_SINGLE, allComponents),

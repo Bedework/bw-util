@@ -82,11 +82,11 @@ public class DocBuilderBase extends Logged {
     /* Set this true if we write something to the index */
     private boolean update;
 
-    UpdateInfo() {
+    public UpdateInfo() {
     }
 
-    UpdateInfo(final String dtstamp,
-               final Long count) {
+    public UpdateInfo(final String dtstamp,
+                      final Long count) {
       this.dtstamp = dtstamp;
       this.count = count;
     }
@@ -125,6 +125,15 @@ public class DocBuilderBase extends Logged {
     public String getChangeToken() {
       return dtstamp + ";" + count;
     }
+  }
+
+  public static UpdateInfo makeUpdateInfo(String timestamp, Long l) {
+    if (l == null) {
+      l = 0L;
+    }
+
+    return new UpdateInfo(timestamp,
+                          l);
   }
 
   protected void startObject() throws IndexException {
@@ -169,44 +178,36 @@ public class DocBuilderBase extends Logged {
 
   /* Return the docinfo for the indexer */
   public EsDocInfo makeDoc(final UpdateInfo ent) throws IndexException {
-    try {
-      startObject();
+    startObject();
 
-      builder.field("count", ent.getCount());
+    makeField("count", ent.getCount());
 
-      endObject();
+    endObject();
 
-      return new EsDocInfo(builder,
-                           docTypeUpdateTracker, 0,
-                           updateTrackerId);
-    } catch (final IndexException cfe) {
-      throw cfe;
-    } catch (final Throwable t) {
-      throw new IndexException(t);
-    }
-  }
-  
-  protected void makeField(final String id,
-                           final String val) throws IndexException {
-    if (val == null) {
-      return;
-    }
-
-    try {
-      builder.field(id, val);
-    } catch (IOException e) {
-      throw new IndexException(e);
-    }
+    return makeDocInfo(docTypeUpdateTracker, 0,
+                       updateTrackerId);
   }
 
   protected void makeField(final String id,
-                         final Object val) throws IndexException {
+                           final Object val) throws IndexException {
     if (val == null) {
       return;
     }
 
     try {
       builder.field(id, String.valueOf(val));
+    } catch (IOException e) {
+      throw new IndexException(e);
+    }
+  }
+
+  protected void value(final Object val) throws IndexException {
+    if (val == null) {
+      return;
+    }
+
+    try {
+      builder.value(String.valueOf(val));
     } catch (IOException e) {
       throw new IndexException(e);
     }
