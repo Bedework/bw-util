@@ -226,6 +226,7 @@ public abstract class Cli {
         }
 
         cli.setInReader(new BufferedReader(new FileReader(fname)));
+        cli.setSingleCmd(null); // In case we had a single command
       } catch (final Throwable t) {
         t.printStackTrace();
       }
