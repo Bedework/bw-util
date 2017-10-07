@@ -105,7 +105,7 @@ public abstract class Cli {
       tokenizer = new SfpTokenizer(new StringReader(curline));
 
       try {
-        final String cmd = word("cmd");
+        final String cmd = getDottedWords(false);
 
         if (cmd == null) {
           continue;
@@ -355,6 +355,33 @@ public abstract class Cli {
 
   public void pushback() throws Throwable {
     tokenizer.pushBack();
+  }
+
+  public String getDottedWords(final boolean required) throws Throwable {
+      int tkn = nextToken("getDottedWords");
+      String dws = "";
+
+      for (; ; ) {
+        if (tkn != StreamTokenizer.TT_WORD) {
+          if (required) {
+            error("Expecting a word");
+          }
+          return null;
+        }
+
+        dws += nextSval();
+
+        tkn = nextToken("getDottedWords");
+
+        if (tkn != '.') {
+          pushback();
+          return dws;
+        }
+
+        dws += ".";
+
+        tkn = nextToken("getDottedWords: word");
+      }
   }
 
   public void start() {

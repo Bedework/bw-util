@@ -193,12 +193,12 @@ public class JolokiaClient extends Logged {
         } else {
           starting = false;
 
-          if (status.equals("Done")) {
+          if (status.equals(ConfBase.statusDone)) {
             info("Received status Done");
             return status;
           }
 
-          if (!status.equals("Running")) {
+          if (!status.equals(ConfBase.statusRunning)) {
             error("Status is " + status);
             return status;
           }
@@ -219,6 +219,17 @@ public class JolokiaClient extends Logged {
     } catch (final Throwable t) {
       error(t);
       return ConfBase.statusFailed;
+    }
+  }
+
+  protected void multiLine(final List<String> resp) {
+    if (resp == null) {
+      info("Null response");
+      return;
+    }
+
+    for (final String s: resp) {
+      info(s);
     }
   }
 }

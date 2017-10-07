@@ -28,7 +28,18 @@ public interface ConfBaseMBean extends BaseMBean {
    * ======================================================================== */
 
   /**
-   * @param val
+   * @param val current status
+   */
+  void setStatus(final String val);
+
+  /**
+   * @return String status
+   */
+  @MBeanInfo("Stopped, Done, Running")
+  String getStatus();
+
+  /**
+   * @param val name
    */
   void setConfigName(final String val);
 
@@ -46,6 +57,7 @@ public interface ConfBaseMBean extends BaseMBean {
    *
    * @return completion message
    */
+  @SuppressWarnings("UnusedReturnValue")
   @MBeanInfo("Save the configuration")
   String saveConfig();
 }

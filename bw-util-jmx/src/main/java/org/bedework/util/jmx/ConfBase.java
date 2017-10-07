@@ -112,6 +112,7 @@ public abstract class ConfBase<T extends ConfigBase>
   public static final String statusRunning = "Running";
   public static final String statusStopped = "Stopped";
   public static final String statusTimedout = "Timedout";
+  public static final String statusInterrupted = "Interrupted";
   public static final String statusUnknown = "Unknown";
 
   protected T cfg;
