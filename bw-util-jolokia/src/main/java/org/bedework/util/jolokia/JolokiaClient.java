@@ -130,6 +130,22 @@ public class JolokiaClient extends Logged {
     return (String)response.getValue();
   }
 
+  /**
+   *
+   * @param objectName of mbean
+   * @param operation that returns a string
+   * @return the object
+   * @throws Throwable on error
+   */
+  public Object exec(final String objectName,
+                     final String operation,
+                     final Object... args) throws Throwable {
+    final J4pExecRequest execRequest =
+            new J4pExecRequest(objectName, operation, args);
+    final J4pResponse response = getClient().execute(execRequest);
+    return response.getValue();
+  }
+
   public void execute(final String objectName,
                       final String operation,
                       final Object... args) throws Throwable {
