@@ -69,11 +69,11 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
 
   @Override
   public void disableSSL() {
-    try {
+/*    try {
       new BasicHttpClient(0).disableSSL();
     } catch (Throwable t) {
       error(t);
-    }
+    }*/
   }
 
   /*
