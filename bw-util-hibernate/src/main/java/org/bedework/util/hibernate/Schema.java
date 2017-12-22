@@ -47,9 +47,11 @@ public class Schema {
 //        se.setDelimiter(getDelimiter());
 //      }
 
+      se.setDelimiter(";");
       se.setFormat(true);       // getFormat());
       se.setHaltOnError(false); // getHaltOnError());
       se.setOutputFile(outFile);
+      se.setManageNamespaces(true);
         /* There appears to be a bug in the hibernate code. Everybody initialises
         this to /import.sql. Set to null causes an NPE
         Make sure it refers to a non-existant file */

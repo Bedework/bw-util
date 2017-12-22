@@ -18,6 +18,7 @@
 */
 package org.bedework.util.timezones;
 
+import org.bedework.util.misc.Logged;
 import org.bedework.util.timezones.model.TimezoneListType;
 
 import net.fortuna.ical4j.model.TimeZone;
@@ -32,9 +33,9 @@ import java.util.Collection;
  * @author Mike Douglass
  *
  */
-public abstract class Timezones implements Serializable {
-  private static ThreadLocal<String> threadTzid =
-    new ThreadLocal<String>();
+public abstract class Timezones extends Logged implements Serializable {
+  private final static ThreadLocal<String> threadTzid =
+    new ThreadLocal<>();
 
   private static Timezones tzs;
 
@@ -64,7 +65,7 @@ public abstract class Timezones implements Serializable {
     }
   }
 
-  private static TimeZoneRegistry tzRegistry = new TzRegistry();
+  private final static TimeZoneRegistry tzRegistry = new TzRegistry();
 
   /**
    * @return a registry for fetching timezones.
@@ -89,9 +90,9 @@ public abstract class Timezones implements Serializable {
       }
 
       tzs.init(serverUrl);
-    } catch (TimezonesException te) {
+    } catch (final TimezonesException te) {
       throw te;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new TimezonesException(t);
     }
   }
@@ -140,7 +141,7 @@ public abstract class Timezones implements Serializable {
    * @throws TimezonesException on error
    */
   public static String getThreadDefaultTzid() throws TimezonesException {
-    String id = threadTzid.get();
+    final String id = threadTzid.get();
 
     if (id != null) {
       return id;

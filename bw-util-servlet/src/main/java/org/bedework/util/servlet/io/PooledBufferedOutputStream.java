@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * @author Mike Douglass
  */
 public class PooledBufferedOutputStream extends OutputStream {
-    /**
+  /**
    * The number of valid bytes in the virtual buffer.
    */
   protected int count;

@@ -24,7 +24,7 @@ import java.io.InputStream;
  *
  */
 public class OptionsFactory {
-  private final static String envclass = "org.bedework.util.options.Options";
+  private final static String envclass = "edu.rpi.sss.util.Options";
 
   /** Obtain and initialise an options object.
    *

@@ -219,13 +219,13 @@ public class XcalUtil {
   /**
    * Class allowing fetch of timezones
    */
-  public abstract static class TzGetter {
+  public interface TzGetter {
     /**
      * @param id
      * @return A timezone or null if non found
      * @throws Throwable
      */
-    public abstract TimeZone getTz(final String id) throws Throwable;
+    TimeZone getTz(final String id) throws Throwable;
   }
 
   /** For date only values and floating convert to local UTC. For UTC just return

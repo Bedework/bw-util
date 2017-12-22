@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 /** This class allows error message generation in the servlet world.
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@rpi.edu
  * @version 1.0
  */
 public class ErrorEmitSvlt implements MessageEmit {
@@ -212,9 +212,6 @@ public class ErrorEmitSvlt implements MessageEmit {
     }
   }
 
-  /* (non-Javadoc)
-   * @see edu.bedework.sss.util.log.MessageEmit#emit(java.lang.String, int)
-   */
   @Override
   public void emit(final String pname, final int num) {
     if (debug) {
@@ -224,17 +221,11 @@ public class ErrorEmitSvlt implements MessageEmit {
     emit(pname, new Integer(num));
   }
 
-  /* (non-Javadoc)
-   * @see edu.bedework.sss.util.log.MessageEmit#setExceptionPname(java.lang.String)
-   */
   @Override
   public void setExceptionPname(final String pname) {
     exceptionPname = pname;
   }
 
-  /* (non-Javadoc)
-   * @see edu.bedework.sss.util.log.MessageEmit#emit(java.lang.Throwable)
-   */
   @Override
   public void emit(final Throwable t) {
     if (debug) {

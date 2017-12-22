@@ -231,6 +231,20 @@ public class BedeworkServerTags {
                     "calsuiteURL");
 
   /* =============================================================
+            Synch engine
+   */
+
+  /** Target type - "file" | "orgsyncv2" */
+  public static final QName subscriptionTargetType =
+          new QName(bedeworkSystemNamespace,
+                    "subscriptionTargetType");
+
+  /** orgsync public only */
+  public static final QName orgSyncPublicOnly =
+          new QName(bedeworkSystemNamespace,
+                    "orgSyncPublicOnly");
+
+  /* =============================================================
             Notification subscriptions
    */
 

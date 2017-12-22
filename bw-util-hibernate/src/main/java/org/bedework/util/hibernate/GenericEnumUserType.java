@@ -100,7 +100,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
                             final String[] names,
                             final SharedSessionContractImplementor ssci, 
                             final Object owner) throws HibernateException, SQLException {
-    Object identifier = type.get(rs, names[0], null);
+    Object identifier = type.get(rs, names[0], ssci);
     if (rs.wasNull()) {
       return null;
     }
@@ -123,7 +123,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
         st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());
       } else {
         Object identifier = identifierMethod.invoke(value, new Object[0]);
-        type.nullSafeSet(st, identifier, index, null);
+        type.nullSafeSet(st, identifier, index, ssci);
       }
     } catch (Exception e) {
       throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +

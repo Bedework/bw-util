@@ -25,7 +25,7 @@ package org.bedework.util.struts;
  * log. They are generally informational messages at a certain level of
  * urgency.
  *
- * @author Mike Douglass  douglm@bedework.edu
+ * @author Mike Douglass  douglm@rpi.edu
  */
 public interface AppLogger {
   /** Log an informational message.

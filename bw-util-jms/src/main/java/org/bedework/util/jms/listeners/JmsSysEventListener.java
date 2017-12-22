@@ -21,8 +21,7 @@ package org.bedework.util.jms.listeners;
 import org.bedework.util.jms.JmsConnectionHandler;
 import org.bedework.util.jms.NotificationException;
 import org.bedework.util.jms.events.SysEvent;
-
-import org.apache.log4j.Logger;
+import org.bedework.util.misc.Logged;
 
 import java.io.InvalidClassException;
 import java.util.Properties;
@@ -38,10 +37,8 @@ import javax.jms.ObjectMessage;
  *
  * @author Mike Douglass
  */
-public abstract class JmsSysEventListener
+public abstract class JmsSysEventListener extends Logged
     implements MessageListener, ExceptionListener {
-  private transient Logger log;
-
   private JmsConnectionHandler conn;
 
   private MessageConsumer consumer;
@@ -50,7 +47,7 @@ public abstract class JmsSysEventListener
 
   /**
    * @param queueName queue to listen on
-   * @param pr jms properties
+   * @param pr        jms properties
    * @throws NotificationException
    */
   public void open(final String queueName,
@@ -62,8 +59,8 @@ public abstract class JmsSysEventListener
     consumer = conn.getConsumer();
   }
 
-  /** Close and release resources.
-   *
+  /**
+   * Close and release resources.
    */
   public void close() {
     if (consumer != null) {
@@ -77,13 +74,15 @@ public abstract class JmsSysEventListener
     conn.close();
   }
 
-  /** For asynch we do the onMessage listener style. Otherwise we wait
+  /**
+   * For asynch we do the onMessage listener style. Otherwise we wait
    * synchronously for incoming messages.
    *
    * @param asynch true if we just want to set the listener
    * @throws NotificationException
    */
-  public void process(final boolean asynch) throws NotificationException {
+  public void process(final boolean asynch)
+          throws NotificationException {
     if (asynch) {
       try {
         consumer.setMessageListener(this);
@@ -128,44 +127,12 @@ public abstract class JmsSysEventListener
   public synchronized void onException(final JMSException ex) {
   }
 
-  /** Called whenever a matching event occurs.
+  /**
+   * Called whenever a matching event occurs.
    *
    * @param ev
    * @throws NotificationException
    */
-  public abstract void action(SysEvent ev) throws NotificationException;
-
-  /* ====================================================================
-   *                   Protected methods
-   * ==================================================================== */
-
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  /* Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
+  public abstract void action(SysEvent ev)
+          throws NotificationException;
 }

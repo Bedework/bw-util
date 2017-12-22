@@ -1,4 +1,3 @@
-package org.bedework.util.jms;
 /* ********************************************************************
     Licensed to Jasig under one or more contributor license
     agreements. See the NOTICE file distributed with this work
@@ -17,6 +16,7 @@ package org.bedework.util.jms;
     specific language governing permissions and limitations
     under the License.
 */
+package org.bedework.util.jms;
 
 /** Exception for notifications classes
  *

@@ -27,8 +27,6 @@ import org.bedework.util.security.pki.PKITools;
  */
 public class GenKeys extends ConfBase<GenKeysConfigImpl>
         implements GenKeysMBean {
-  private PKITools pki;
-
   /** Following is some random text which we encode and decode to ensure
    *  generated keys work
    */
@@ -42,22 +40,27 @@ public class GenKeys extends ConfBase<GenKeysConfigImpl>
     setConfigPname(confuriPname);
   }
 
+  @Override
   public String getServiceName() {
     return serviceName;
   }
 
+  @Override
   public void setPrivKeyFileName(final String val) {
     getConfig().setPrivKeyFileName(val);
   }
 
+  @Override
   public String getPrivKeyFileName() {
     return getConfig().getPrivKeyFileName();
   }
 
+  @Override
   public void setPublicKeyFileName(final String val) {
     getConfig().setPublicKeyFileName(val);
   }
 
+  @Override
   public String getPublicKeyFileName() {
     return getConfig().getPublicKeyFileName();
   }
@@ -66,11 +69,12 @@ public class GenKeys extends ConfBase<GenKeysConfigImpl>
    * Operations
    * ======================================================================== */
 
+  @Override
   public Msg genKeys() {
-    Msg infoLines = new Msg();
+    final Msg infoLines = new Msg();
 
     try {
-      pki = new PKITools(true);
+      final PKITools pki = new PKITools(true);
 
       if (getPrivKeyFileName() == null) {
         infoLines.add("Must provide a -privkey <file> parameter");
@@ -82,9 +86,10 @@ public class GenKeys extends ConfBase<GenKeysConfigImpl>
         return infoLines;
       }
 
-      PKITools.RSAKeys keys = pki.genRSAKeysIntoFiles(getPrivKeyFileName(),
-                                                      getPublicKeyFileName(),
-                                                      true);
+      final PKITools.RSAKeys keys =
+              pki.genRSAKeysIntoFiles(getPrivKeyFileName(),
+                                      getPublicKeyFileName(),
+                                      true);
       if (keys == null) {
         infoLines.add("Generation of keys failed");
         return infoLines;
@@ -92,18 +97,18 @@ public class GenKeys extends ConfBase<GenKeysConfigImpl>
 
       // Now try the keys on the test text.
 
-      int numKeys = pki.countKeys(getPrivKeyFileName());
+      final int numKeys = pki.countKeys(getPrivKeyFileName());
 
       //if (debug) {
       //  infoLines.add("Number of keys: " + numKeys);
       //}
 
       infoLines.add("test with---->" + testText);
-      String etext = pki.encryptWithKeyFile(getPublicKeyFileName(),
-                                            testText, numKeys - 1);
+      final String etext = pki.encryptWithKeyFile(getPublicKeyFileName(),
+                                                  testText, numKeys - 1);
       infoLines.add("encrypts to-->" + etext);
-      String detext = pki.decryptWithKeyFile(getPrivKeyFileName(),
-                                             etext, numKeys - 1);
+      final String detext = pki.decryptWithKeyFile(getPrivKeyFileName(),
+                                                   etext, numKeys - 1);
       infoLines.add("decrypts to-->" + detext);
 
       if (!testText.equals(detext)) {
@@ -112,7 +117,7 @@ public class GenKeys extends ConfBase<GenKeysConfigImpl>
         infoLines.add("");
         infoLines.add("Validity check succeeded");
       }
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       error(t);
       infoLines.add("Exception - check logs: " + t.getMessage());
     }

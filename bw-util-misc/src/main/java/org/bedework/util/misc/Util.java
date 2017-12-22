@@ -363,12 +363,12 @@ public class Util {
     final StringBuilder sb = new StringBuilder(val.length());
     int segStart = 0;
 
-    while (pos >= 0) {
+    while (true) {
       if (pos > 0) {
         sb.append(val.substring(segStart, pos));
       }
 
-      int end = val.indexOf("}", pos);
+      final int end = val.indexOf("}", pos);
 
       if (end < 0) {
         //No matching close. Just append rest and return.

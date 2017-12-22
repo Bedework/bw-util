@@ -20,7 +20,6 @@ package org.bedework.util.hibernate;
 
 import org.bedework.util.misc.Logged;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.LockMode;
@@ -57,11 +56,11 @@ public class HibSessionImpl extends Logged implements HibSession {
 
   private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-  @Override
-  public void init(final SessionFactory sessFactory,
-                   final Logger log) throws HibException {
-    init(sessFactory);
-  }
+  /** Set up for a hibernate interaction. Throw the object away on exception.
+   *
+   * @param sessFactory
+   * @throws HibException
+   */
   @Override
   public void init(final SessionFactory sessFactory) throws HibException {
     try {

@@ -29,9 +29,7 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.util.TimeZones;
-import org.apache.log4j.Logger;
 
-import java.io.InputStream;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,10 +47,6 @@ import java.util.TreeSet;
  *
  */
 public class TimezonesImpl extends Timezones {
-  private transient Logger log;
-
-  protected boolean debug;
-
   private String serverUrl;
 
   protected String defaultTimeZoneId;
@@ -146,12 +140,8 @@ public class TimezonesImpl extends Timezones {
   @Override
   public void init(final String serverUrl) throws TimezonesException {
     this.serverUrl = serverUrl;
-    debug = getLogger().isDebugEnabled();
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.calfacade.timezones.CalTimezones#getTimeZone(java.lang.String)
-   */
   @Override
   public TimeZone getTimeZone(final String id) throws TimezonesException {
     //id = unalias(id);
@@ -179,9 +169,7 @@ public class TimezonesImpl extends Timezones {
       return timezoneNames;
     }
 
-    final TzServer server = getTzServer(serverUrl);
-
-    try {
+    try (TzServer server = getTzServer(serverUrl)) {
       final TimezoneListType tzlist = server.getList(null);
 
       final Collection<TimeZoneName> ids = new TreeSet<>();
@@ -193,19 +181,14 @@ public class TimezonesImpl extends Timezones {
       timezoneNames = Collections.unmodifiableCollection(ids);
 
       return timezoneNames;
-    } finally {
-      server.close();
     }
   }
 
   @Override
   public TimezoneListType getList(final String changedSince) throws TimezonesException {
-    final TzServer server = getTzServer(serverUrl);
 
-    try {
+    try (TzServer server = getTzServer(serverUrl)) {
       return server.getList(changedSince);
-    } finally {
-      server.close();
     }
   }
 
@@ -228,7 +211,7 @@ public class TimezonesImpl extends Timezones {
     String target = tzid;
 
     if (aliases == null) {
-      loadAliases();
+      aliases = getTzServer(serverUrl).getAliases();
     }
 
     for (int i = 0; i < 100; i++) {   // Just in case we get a circular chain
@@ -427,9 +410,7 @@ public class TimezonesImpl extends Timezones {
 
   protected TaggedTimeZone fetchTimeZone(final String id,
                                          final String etag) throws TimezonesException {
-    final TzServer server = getTzServer(serverUrl);
-
-    try {
+    try (final TzServer server = getTzServer(serverUrl)) {
       final TaggedTimeZone ttz = server.getTz(id, etag);
 
       if (ttz == null) {
@@ -453,8 +434,6 @@ public class TimezonesImpl extends Timezones {
       return ttz;
     } catch (final Throwable t) {
       throw new TimezonesException(t);
-    } finally {
-      server.close();
     }
   }
 
@@ -499,32 +478,6 @@ public class TimezonesImpl extends Timezones {
     return tzid;
   }
 
-  private void loadAliases() throws TimezonesException {
-    final TzServer server = getTzServer(serverUrl);
-    InputStream is = null;
-
-    try {
-      final Properties a = new Properties();
-
-      is = server.getAliases();
-      a.load(is);
-
-      aliases = a;
-    } catch (final Throwable t) {
-      error("loadTimezones error: " + t.getMessage());
-      t.printStackTrace();
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (final Throwable ignored) {}
-      }
-
-      server.close();
-    }
-  }
-
-
   private void digit2(final StringBuilder sb, final int val) throws BadDateException {
     if (val > 99) {
       throw new BadDateException();
@@ -547,24 +500,5 @@ public class TimezonesImpl extends Timezones {
       sb.append("0");
     }
     sb.append(val);
-  }
-
-  /* Get a logger for messages
-   */
-  private Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  private void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  @SuppressWarnings("unused")
-  private void trace(final String msg) {
-    getLogger().debug(msg);
   }
 }

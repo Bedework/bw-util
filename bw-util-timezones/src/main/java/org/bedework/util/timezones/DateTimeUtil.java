@@ -26,7 +26,7 @@ import java.util.TimeZone;
 
 /** Date and time utilities
  *
- * @author Mike Douglass     douglm - bedework.edu
+ * @author Mike Douglass     douglm - rpi.edu
  *  @version 1.0
  */
 public class DateTimeUtil {

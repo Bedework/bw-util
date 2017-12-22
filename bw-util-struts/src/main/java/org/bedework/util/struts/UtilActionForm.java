@@ -20,7 +20,6 @@ package org.bedework.util.struts;
 
 import org.bedework.util.misc.Util;
 import org.bedework.util.servlet.MessageEmit;
-import org.bedework.util.servlet.filters.PresentationState;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;

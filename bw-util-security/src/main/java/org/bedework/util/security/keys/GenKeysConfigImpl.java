@@ -26,7 +26,7 @@ import org.bedework.util.config.ConfigBase;
  * @author Mike Douglass
  */
 @ConfInfo(elementName = "genkeys",
-          type = "edu.rpi.cmt.security.keys.GenKeysConfig")
+          type = "org.bedework.util.security.keys.GenKeysConfig")
 public class GenKeysConfigImpl
         extends ConfigBase<GenKeysConfigImpl>
         implements GenKeysConfig {

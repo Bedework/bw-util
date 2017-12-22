@@ -18,12 +18,22 @@
 */
 package org.bedework.util.http;
 
+import org.apache.http.Header;
 import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicStatusLine;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,6 +43,84 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpUtil implements Serializable {
   private HttpUtil() {
+  }
+
+  public static CloseableHttpClient getClient(final boolean disableRedirects) {
+    final HttpClientBuilder bldr =
+            HttpClientBuilder.create();
+
+    if (disableRedirects) {
+      bldr.disableRedirectHandling();
+    }
+
+    return bldr.build();
+  }
+
+  public static CloseableHttpResponse doGet(final CloseableHttpClient cl,
+                                            final URI uri,
+                                            final Headers hdrs,
+                                            final String acceptContentType)
+          throws IOException {
+    final Headers headers = ensureHeaders(hdrs);
+
+    if (acceptContentType != null) {
+      headers.add("Accept", acceptContentType);
+    }
+
+    final HttpGet httpGet = new HttpGet(uri);
+
+    httpGet.setHeaders(headers.asArray());
+
+    return cl.execute(httpGet);
+  }
+
+  public static CloseableHttpResponse doPost(final CloseableHttpClient cl,
+                                             final URI uri,
+                                             final Headers hdrs,
+                                             final String acceptContentType,
+                                             final String content)
+          throws IOException {
+    final Headers headers = ensureHeaders(hdrs);
+
+    if (acceptContentType != null) {
+      headers.add("Accept", acceptContentType);
+    }
+
+    final HttpPost httpPost = new HttpPost(uri);
+
+    httpPost.setHeaders(hdrs.asArray());
+
+    final StringEntity entity = new StringEntity(content);
+    httpPost.setEntity(entity);
+
+
+    return cl.execute(httpPost);
+  }
+
+  private static Headers ensureHeaders(final Headers hdrs) {
+    if (hdrs == null) {
+      return new Headers();
+    }
+    return hdrs;
+  }
+
+  /**
+   * @param name of header
+   * @return value of header or null if no header
+   */
+  public static String getFirstHeaderValue(final HttpResponse resp,
+                                           final String name) {
+    final Header h = resp.getFirstHeader(name);
+
+    if (h == null) {
+      return null;
+    }
+
+    return h.getValue();
+  }
+
+  public static int getStatus(final HttpResponse resp) {
+    return resp.getStatusLine().getStatusCode();
   }
 
   /**

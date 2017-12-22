@@ -24,7 +24,7 @@ import org.apache.struts.util.MessageResources;
 
 /** This class allows informational message generation in the struts world.
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@rpi.edu
  * @version 1.0
  */
 public class MessageEmitSvlt extends ErrorEmitSvlt {
@@ -139,7 +139,7 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
   }
 
   /* (non-Javadoc)
-   * @see edu.bedework.sss.util.log.MessageEmit#messagesEmitted()
+   * @see edu.rpi.sss.util.log.MessageEmit#messagesEmitted()
    */
   @Override
   public boolean messagesEmitted() {

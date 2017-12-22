@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class JbossDeploymentStructureXml extends XmlFile {
   private static final String jbossAllTemplate =
-        "<jboss-deployment-structure xmlns=\"urn:jboss:deployment-structure:1.1\">\n" +
+        "<jboss-deployment-structure xmlns=\"urn:jboss:deployment-structure:1.3\">\n" +
         "    <deployment>\n" +
         //"        <exclusions>\n" +
         //"            <module name=\"org.javassist\" />\n" +

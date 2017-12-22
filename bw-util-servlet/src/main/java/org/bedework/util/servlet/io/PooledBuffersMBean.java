@@ -25,8 +25,7 @@ import org.bedework.util.jmx.MBeanInfo;
  *
  * @author Mike Douglass
  */
-public interface PooledBuffersMBean extends ConfBaseMBean,
-        PooledBuffersProperties {
+public interface PooledBuffersMBean extends ConfBaseMBean, PooledBuffersProperties {
   /**
    * @return buffer usage stats
    */

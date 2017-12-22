@@ -183,7 +183,7 @@ public abstract class UtilAbstractAction extends Action
       isPortlet = isPortletRequest(request);
 
       noActionErrors = StrutsUtil.getProperty(messages,
-                                              "org.bedework.action.noactionerrors",
+                                              "edu.rpi.sss.util.action.noactionerrors",
                                               "no").equals("yes");
 
       err = getErrorObj(request, messages);
@@ -212,9 +212,9 @@ public abstract class UtilAbstractAction extends Action
       if (!form.getInitialised()) {
         // Do one time settings
         form.setNocache(
-            StrutsUtil.getProperty(messages,
-                                   "org.bedework.action.nocache",
-                                   "no").equals("yes"));
+                StrutsUtil.getProperty(messages,
+                                       "edu.rpi.sss.util.action.nocache",
+                                       "no").equals("yes"));
 
         form.setInitialised(true);
       }
@@ -236,7 +236,7 @@ public abstract class UtilAbstractAction extends Action
 
       String defaultContentType =
           StrutsUtil.getProperty(messages,
-                                 "org.bedework.action.contenttype",
+                                 "edu.rpi.sss.util.action.contenttype",
                                  "text/html");
 
       Request req = new Request(request, response, form,
@@ -557,9 +557,6 @@ public abstract class UtilAbstractAction extends Action
     le.emit();
   }
 
-  /* (non-Javadoc)
-   * @see edu.bedework.sss.util.log.HttpAppLogger#logRequest(javax.servlet.http.HttpServletRequest)
-   */
   @Override
   public void logRequest(final HttpServletRequest request) throws Throwable {
     LogEntry le = getLogEntry(request, "REQUEST");
@@ -629,7 +626,7 @@ public abstract class UtilAbstractAction extends Action
     try {
       if (logPrefix == null) {
         logPrefix = StrutsUtil.getProperty(getMessages(),
-                                        "edu.rpi.sss.util.action.logprefix",
+                                           "edu.rpi.sss.util.action.logprefix",
                                            "unknown");
       }
 
@@ -747,7 +744,8 @@ public abstract class UtilAbstractAction extends Action
 
     if (nocache) {
       response.setHeader("Pragma", "No-cache");
-      response.setHeader("Cache-Control", "no-cache");
+      //response.setHeader("Cache-Control", "no-cache");
+      response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
       response.setDateHeader("Expires", 1);
     }
   }
@@ -1036,7 +1034,7 @@ public abstract class UtilAbstractAction extends Action
     request.setRequestAttr(getPresentationAttrName(), ps);
 
     if (debug) {
-      ps.debugDump("action", getLogger());
+      ps.debugDump("action");
     }
   }
 
@@ -1371,12 +1369,12 @@ public abstract class UtilAbstractAction extends Action
    */
   private MessageEmitSvlt getMessageObj(final HttpServletRequest request,
                                         final MessageResources messages) {
-    return (MessageEmitSvlt)StrutsUtil.getMessageObj(getId(), this,
-                                                     request,
-                                                     messages,
-                                                     getMessageObjAttrName(),
-                                                     getErrorObjErrProp(),
-                                                     clearMessages());
+    return (MessageEmitSvlt)StrutsUtil
+            .getMessageObj(getId(), this, request,
+                           messages,
+                           getMessageObjAttrName(),
+                           getErrorObjErrProp(),
+                           clearMessages());
   }
 
   /**
@@ -1398,6 +1396,7 @@ public abstract class UtilAbstractAction extends Action
       log.debug("query=" + req.getQueryString());
       log.debug("contentlen=" + req.getContentLength());
       log.debug("request=" + req);
+      log.debug("host=" + req.getHeader("host"));
       log.debug("parameters:");
 
       log.debug(title);
@@ -1409,7 +1408,7 @@ public abstract class UtilAbstractAction extends Action
           log.debug("  " + key + " = \"" + val + "\"");
         }
       }
-    } catch (Throwable t) {
+    } catch (final Throwable ignored) {
     }
   }
 

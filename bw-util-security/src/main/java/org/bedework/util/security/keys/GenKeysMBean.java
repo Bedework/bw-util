@@ -27,7 +27,7 @@ import java.util.ArrayList;
  *
  */
 public interface GenKeysMBean extends ConfBaseMBean, GenKeysConfig {
-  public String serviceName = "org.bedework.util:service=BwGenKeys";
+  String serviceName = "org.bedework.util:service=BwGenKeys";
 
   /* ========================================================================
    * Operations
@@ -36,12 +36,12 @@ public interface GenKeysMBean extends ConfBaseMBean, GenKeysConfig {
   /** Output multi-line messages
    *
    */
-  public class Msg extends ArrayList<String> {
+  class Msg extends ArrayList<String> {
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
+      final StringBuilder sb = new StringBuilder();
 
-      for (String s: this) {
+      for (final String s: this) {
         sb.append(s);
         sb.append("\n");
       }
@@ -54,5 +54,5 @@ public interface GenKeysMBean extends ConfBaseMBean, GenKeysConfig {
    *
    * @return message giving outcome
    */
-  public Msg genKeys();
+  Msg genKeys();
 }

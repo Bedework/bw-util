@@ -468,6 +468,10 @@ public class XcalTags {
   /**   */
   public static final QName xBedeworkLocation = new QName(namespace, "x-bedework-location");
 
+  /** parameter  */
+  public static final QName xBedeworkLocationKey =
+          new QName(namespace, "x-bedework-loc-key");
+
   /**   */
   public static final QName xBedeworkContact = new QName(namespace, "x-bedework-contact");
 }

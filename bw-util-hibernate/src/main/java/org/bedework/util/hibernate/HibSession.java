@@ -18,7 +18,6 @@
 */
 package org.bedework.util.hibernate;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -34,16 +33,6 @@ import java.util.List;
  * @author Mike Douglass douglm at rpi.edu
  */
 public interface HibSession extends Serializable {
-  /** Set up for a hibernate interaction. Throw the object away on exception.
-   *
-   * @param sessFactory
-   * @param log
-   * @throws HibException
-   * @deprecated 
-   */
-  public void init(SessionFactory sessFactory,
-                   Logger log) throws HibException;
-
   /** Set up for a hibernate interaction. Throw the object away on exception.
    *
    * @param sessFactory

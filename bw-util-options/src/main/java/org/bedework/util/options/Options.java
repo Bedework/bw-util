@@ -44,7 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 /** Access properties in an xml format.
  *
- * @author Mike Douglass    douglm @ bedework.edu
+ * @author Mike Douglass    douglm @ rpi.edu
  *
  */
 public class Options implements OptionsI {
@@ -573,7 +573,7 @@ public class Options implements OptionsI {
   }
 
   /* (non-Javadoc)
-   * @see org.bedework.util.options.OptionsI#getNames(java.lang.String)
+   * @see edu.rpi.sss.util.OptionsI#getNames(java.lang.String)
    */
   @Override
   public Collection<String> getNames(final String name) throws OptionsException {

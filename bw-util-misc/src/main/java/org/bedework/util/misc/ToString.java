@@ -18,7 +18,7 @@
 */
 package org.bedework.util.misc;
 
-import java.util.List;
+import java.util.Collection;
 
 /** Help with ToString. And yes I know there's an Apache Commons one but I want
  * easier formatting and this is trivial.
@@ -194,7 +194,7 @@ public class ToString {
    * @param value - list of values
    * @return this object
    */
-  public ToString append(final String name, final List value) {
+  public ToString append(final String name, final Collection value) {
     nameEquals(name);
     if (value == null) {
       sb.append("null");

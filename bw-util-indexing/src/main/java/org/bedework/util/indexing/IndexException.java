@@ -6,9 +6,9 @@
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
     copy of the License at:
-
+        
     http://www.apache.org/licenses/LICENSE-2.0
-
+        
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,25 +31,25 @@ public class IndexException extends Exception {
    */
 
   /** "No files found - probably needs create" */
-  public final static String noFiles = "edu.bedework.sss.indexing.exc.nofiles";
+  public final static String noFiles = "edu.rpi.sss.indexing.exc.nofiles";
 
   /** "No base path specified" */
-  public final static String noBasePath = "edu.bedework.sss.indexing.exc.nobasepath";
+  public final static String noBasePath = "edu.rpi.sss.indexing.exc.nobasepath";
 
   /** "Insufficient access to create an index" */
-  public final static String noIdxCreateAccess = "edu.bedework.sss.indexing.exc.noIdxCreateAccess";
+  public final static String noIdxCreateAccess = "edu.rpi.sss.indexing.exc.noIdxCreateAccess";
 
   /** "Non-unique key term {0}" */
-  public final static String dupKey = "edu.bedework.sss.indexing.exc.dupkey";
+  public final static String dupKey = "edu.rpi.sss.indexing.exc.dupkey";
 
   /** "Insufficient access" */
-  public final static String noAccess = "edu.bedework.sss.indexing.exc.noaccess";
+  public final static String noAccess = "edu.rpi.sss.indexing.exc.noaccess";
 
   /** "Application error: Unknown record type {0}" */
-  public final static String unknownRecordType = "edu.bedework.sss.indexing.exc.unknownrecordtype";
+  public final static String unknownRecordType = "edu.rpi.sss.indexing.exc.unknownrecordtype";
 
   /** "Exception occurred" */
-  public final static String errException = "edu.bedework.sss.indexing.exc.exception";
+  public final static String errException = "edu.rpi.sss.indexing.exc.exception";
 
   private String reason1;
 

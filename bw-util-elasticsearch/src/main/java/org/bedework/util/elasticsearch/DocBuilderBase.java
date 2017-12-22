@@ -38,7 +38,7 @@ public class DocBuilderBase extends Logged {
 
   public static final String updateTrackerId = "updateTracker";
 
-  private XContentBuilder builder;
+  private final XContentBuilder builder;
 
   //private IndexProperties props;
 
@@ -64,7 +64,7 @@ public class DocBuilderBase extends Logged {
       }
 
       return builder;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new IndexException(t);
     }
   }
@@ -77,7 +77,7 @@ public class DocBuilderBase extends Logged {
 
   public static class UpdateInfo {
     private String dtstamp;
-    private Long count = 0l;
+    private Long count = 0L;
 
     /* Set this true if we write something to the index */
     private boolean update;
@@ -127,7 +127,8 @@ public class DocBuilderBase extends Logged {
     }
   }
 
-  public static UpdateInfo makeUpdateInfo(String timestamp, Long l) {
+  public static UpdateInfo makeUpdateInfo(final String timestamp,
+                                          Long l) {
     if (l == null) {
       l = 0L;
     }
@@ -155,7 +156,7 @@ public class DocBuilderBase extends Logged {
   protected void endObject() throws IndexException {
     try {
       builder.endObject();
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new IndexException(t);
     }
   }
@@ -171,7 +172,7 @@ public class DocBuilderBase extends Logged {
   protected void endArray() throws IndexException {
     try {
       builder.endArray();
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       throw new IndexException(t);
     }
   }
@@ -189,6 +190,19 @@ public class DocBuilderBase extends Logged {
   }
 
   protected void makeField(final String id,
+                           final Number val) throws IndexException {
+    if (val == null) {
+      return;
+    }
+
+    try {
+      builder.field(id, val);
+    } catch (final IOException e) {
+      throw new IndexException(e);
+    }
+  }
+
+  protected void makeField(final String id,
                            final Object val) throws IndexException {
     if (val == null) {
       return;
@@ -196,7 +210,7 @@ public class DocBuilderBase extends Logged {
 
     try {
       builder.field(id, String.valueOf(val));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new IndexException(e);
     }
   }
@@ -208,11 +222,12 @@ public class DocBuilderBase extends Logged {
 
     try {
       builder.value(String.valueOf(val));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new IndexException(e);
     }
   }
 
+  @SuppressWarnings("unused")
   protected void makeField(final String id,
                            final Collection<String> vals) throws IndexException {
     try {

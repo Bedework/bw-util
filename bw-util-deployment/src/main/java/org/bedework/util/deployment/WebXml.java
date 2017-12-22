@@ -27,6 +27,7 @@ public class WebXml extends XmlFile {
 
     replaceSecurityConstraints();
     setConfigName();
+    setSessionTimeout();
     setTransportGuarantee();
     setSecurityDomain();
     addFilter();
@@ -55,6 +56,16 @@ public class WebXml extends XmlFile {
 
       propsReplaceContent(el, "param-value", props);
     }
+  }
+
+  public void setSessionTimeout() throws Throwable {
+    final Node n = XmlUtil.getOneTaggedNode(root, "session-config");
+
+    if (n == null) {
+      return;
+    }
+
+    propsReplaceContent((Element)n, "session-timeout", props);
   }
 
   public void setTransportGuarantee() throws Throwable {
@@ -97,8 +108,6 @@ public class WebXml extends XmlFile {
     try {
       final XmlFile scsDefs = new XmlFile(utils, scs, false);
 
-      final Element scsEl = scsDefs.root;
-
       while (true) {
         final NodeList nl = doc.getElementsByTagName(
                 "security-constraint");
@@ -119,7 +128,7 @@ public class WebXml extends XmlFile {
         throw new Exception("Cannot locate place to insert security constraint");
       }
 
-      for (final Element el: XmlUtil.getElements(scsEl)) {
+      for (final Element el: XmlUtil.getElements(scsDefs.root)) {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {
@@ -138,8 +147,6 @@ public class WebXml extends XmlFile {
     try {
       final XmlFile fltrDefs = new XmlFile(utils, fltr, false);
 
-      final Element filtersEl = fltrDefs.root;
-
       /* if we already have a filter def insert in front */
       Node insertAt = XmlUtil.getOneTaggedNode(root, "filter");
 
@@ -153,7 +160,7 @@ public class WebXml extends XmlFile {
         throw new Exception("Cannot locate place to insert filter");
       }
 
-      for (final Element el: XmlUtil.getElements(filtersEl)) {
+      for (final Element el: XmlUtil.getElements(fltrDefs.root)) {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {
@@ -172,8 +179,6 @@ public class WebXml extends XmlFile {
     try {
       final XmlFile fltrDefs = new XmlFile(utils, fltr, false);
 
-      final Element filtersEl = fltrDefs.root;
-
       /* if we already have a filter def insert in front */
       Node insertAt = XmlUtil.getOneTaggedNode(root, "filter-mapping");
 
@@ -187,7 +192,7 @@ public class WebXml extends XmlFile {
         throw new Exception("Cannot locate place to insert filter-mapping");
       }
 
-      for (final Element el: XmlUtil.getElements(filtersEl)) {
+      for (final Element el: XmlUtil.getElements(fltrDefs.root)) {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {
@@ -206,8 +211,6 @@ public class WebXml extends XmlFile {
     try {
       final XmlFile fltrDefs = new XmlFile(utils, fltr, false);
 
-      final Element filtersEl = fltrDefs.root;
-
       /* Insert in front current listener */
       final Node insertAt = XmlUtil.getOneTaggedNode(root, "listener");
 
@@ -216,7 +219,7 @@ public class WebXml extends XmlFile {
         throw new Exception("Cannot locate place to insert listener");
       }
 
-      for (final Element el: XmlUtil.getElements(filtersEl)) {
+      for (final Element el: XmlUtil.getElements(fltrDefs.root)) {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
     } catch (final Throwable t) {

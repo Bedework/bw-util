@@ -30,16 +30,10 @@ import org.apache.struts.util.MessageResources;
    @author Mike Douglass    douglm rpi.edu
  */
 public class UtilRenderAction extends UtilAbstractAction {
-  /* (non-Javadoc)
-   * @see org.bedework.util.struts.UtilAbstractAction#getId()
-   */
   public String getId() {
     return "UtilRenderAction";
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.struts.UtilAbstractAction#performAction(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.bedework.util.struts.UtilActionForm, org.apache.struts.util.MessageResources)
-   */
   public String performAction(Request request,
                               MessageResources messages)
                throws Throwable {

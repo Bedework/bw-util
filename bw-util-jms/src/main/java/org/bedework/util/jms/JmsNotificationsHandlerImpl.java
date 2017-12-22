@@ -18,9 +18,6 @@
  */
 package org.bedework.util.jms;
 
-import org.bedework.util.jms.JmsConnectionHandler;
-import org.bedework.util.jms.NotificationException;
-import org.bedework.util.jms.NotificationsHandler;
 import org.bedework.util.jms.events.SysEvent;
 import org.bedework.util.jms.listeners.SysEventListener;
 
@@ -38,8 +35,7 @@ import javax.jms.ObjectMessage;
  *
  * @author Mike Douglass douglm - rpi.edu
  */
-public class JmsNotificationsHandlerImpl extends
-        NotificationsHandler {
+public class JmsNotificationsHandlerImpl extends NotificationsHandler  {
   private transient Logger log;
 
   /* Default sysevents queue - everything goes here */

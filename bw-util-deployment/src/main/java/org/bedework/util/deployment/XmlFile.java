@@ -131,4 +131,27 @@ public class XmlFile extends BaseClass {
     XmlUtil.setElementContent(n, newS);
     updated = true;
   }
+
+  /** Update the value if it has a property replacement pattern.
+   * Set updated true if changed.
+   *
+   * @param el    element
+   * @param attrname attribute to change
+   * @param props to lookup new value
+   * @throws Throwable on xml error
+   */
+  protected void propsReplaceAttr(final Element el,
+                                  final String attrname,
+                                  final PropertiesChain props) throws Throwable {
+    final String s = XmlUtil.getAttrVal(el, attrname);
+
+    final String newS = props.replace(s);
+
+    if ((s != null) && s.equals(newS)) {
+      return;
+    }
+
+    el.setAttribute(attrname, newS);
+    updated = true;
+  }
 }

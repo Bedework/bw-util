@@ -39,6 +39,7 @@ public class War extends DeployableResource implements Updateable {
 
     copyDocs();
     copyResources();
+    processWsdls();
 
     if (appXml != null) {
       appXml.setContext(sn.name, props);
@@ -76,8 +77,20 @@ public class War extends DeployableResource implements Updateable {
   }
 
   private void copyResources() throws Throwable {
+    if (utils.debug()) {
+      utils.debug("before push");
+      for (final String pname : props.topNames()) {
+        utils.debug(pname);
+      }
+    }
     props.pushFiltered("app.copy.resource.", "copy.");
 
+    if (utils.debug()) {
+      utils.debug("after push");
+      for (final String pname : props.topNames()) {
+        utils.debug(pname);
+      }
+    }
     try {
       for (final String pname: props.topNames()) {
         final String toName = pname.substring("copy.".length());
@@ -104,6 +117,38 @@ public class War extends DeployableResource implements Updateable {
         utils.info("Copy " + inPath + " to " + outPath);
 
         utils.copy(inPath, outPath, false);
+      }
+    } finally {
+      props.pop();
+    }
+  }
+
+  private void processWsdls() throws Throwable {
+    if (utils.debug()) {
+      utils.debug("About to do wsdl");
+    }
+    props.pushFiltered("app.wsdl.", "wsdl.");
+
+    try {
+      for (final String pname: props.topNames()) {
+        utils.info("About to do wsdsl - pname " + pname);
+        // Get name of folder containing wsdl
+        final String folderName = pname.substring("wsdl.".length());
+
+        final File folder = utils.subDirectory(this.theFile,
+                                               folderName,
+                                               true);
+
+        // Value is name of wsdl
+        final String wsdlName = props.get(pname);
+
+        final Wsdl wsdl = new Wsdl(utils, folder, wsdlName, props);
+
+        wsdl.update();
+
+        if (wsdl.getUpdated()) {
+          wsdl.output();
+        }
       }
     } finally {
       props.pop();

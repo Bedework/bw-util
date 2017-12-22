@@ -607,7 +607,6 @@ public class Process extends AbstractMojo {
     if (names == null) {
       utils.info("No names found. Exiting");
       return null;
-      
     }
 
     final List<SplitName> splitNames = new ArrayList<>();

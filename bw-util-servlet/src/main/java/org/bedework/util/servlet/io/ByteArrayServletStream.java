@@ -24,7 +24,7 @@ import javax.servlet.ServletOutputStream;
 
 /** Useful I/O classes for filtering etc.
  *
- * @author Mike Douglass douglm@bedework.edu.
+ * @author Mike Douglass douglm@rpi.edu.
  */
 public class ByteArrayServletStream extends ServletOutputStream {
   PooledBufferedOutputStream pbos;

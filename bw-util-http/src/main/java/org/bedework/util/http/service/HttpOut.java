@@ -18,8 +18,8 @@
 */
 package org.bedework.util.http.service;
 
-import org.bedework.util.jmx.ConfBase;
 import org.bedework.util.http.BasicHttpClient;
+import org.bedework.util.jmx.ConfBase;
 
 import org.apache.http.pool.PoolStats;
 
@@ -65,6 +65,15 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
   @Override
   public int getDefaultMaxPerRoute() {
     return BasicHttpClient.getDefaultMaxPerRoute();
+  }
+
+  @Override
+  public void disableSSL() {
+    try {
+      new BasicHttpClient(0).disableSSL();
+    } catch (Throwable t) {
+      error(t);
+    }
   }
 
   /*

@@ -92,7 +92,7 @@ public class EntityBuilderBase extends Logged {
     fieldStack.pop();
   }
 
-  protected List getFieldValues(final String name) {
+  protected List<Object> getFieldValues(final String name) {
     final Object val = fieldStack.peek().get(name);
 
     if (val == null) {
@@ -100,7 +100,7 @@ public class EntityBuilderBase extends Logged {
     }
 
     if (val instanceof List) {
-      return (List)val;
+      return (List<Object>)val;
     }
 
     if (val instanceof GetField) {

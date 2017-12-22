@@ -27,7 +27,7 @@ import java.util.Locale;
 /** Class to help in formatting of time and date strings. Allows callers to set
  *  the current date/time format.
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@rpi.edu
  * @version 1.0
  */
 

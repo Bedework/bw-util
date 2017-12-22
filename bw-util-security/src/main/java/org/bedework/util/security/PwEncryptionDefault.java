@@ -92,7 +92,7 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
     int pos = encrypted.indexOf("{");
 
     if ((pos < 0) || (encrypted.lastIndexOf("}") != (encrypted.length() - 1))) {
-      throw new Exception(PwEncryptionIntf.badPwFormat);
+      throw new Exception(badPwFormat);
     }
 
     int keyNum = Integer.valueOf(encrypted.substring(0, pos));

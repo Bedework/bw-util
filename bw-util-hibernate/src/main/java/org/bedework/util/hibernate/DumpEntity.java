@@ -18,8 +18,9 @@
 */
 package org.bedework.util.hibernate;
 
-import org.bedework.util.misc.Logged;
 import org.bedework.util.xml.XmlEmit;
+
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,7 +36,9 @@ import javax.xml.namespace.QName;
  *
  * @param <T>
  */
-public class DumpEntity<T> extends Logged {
+public class DumpEntity<T> {
+  private transient Logger log;
+
   /** We're dumping the entire object */
   public enum DumpType {
     /** We're dumping the entire object */
@@ -423,5 +426,17 @@ public class DumpEntity<T> extends Logged {
     }
 
     return val.substring(3, 4).toLowerCase() + val.substring(4);
+  }
+
+  protected Logger getLog() {
+    if (log == null) {
+      log = Logger.getLogger(this.getClass());
+    }
+
+    return log;
+  }
+
+  protected void error(final String msg) {
+    getLog().error(msg);
   }
 }

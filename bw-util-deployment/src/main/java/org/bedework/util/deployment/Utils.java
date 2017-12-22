@@ -436,6 +436,10 @@ public class Utils {
     logger.error(msg);
   }
 
+  boolean debug() {
+    return debug;
+  }
+
   void debug(final String msg) {
     if (debug) {
       logger.debug(msg);

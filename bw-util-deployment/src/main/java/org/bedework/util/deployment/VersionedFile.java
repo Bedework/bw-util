@@ -20,7 +20,20 @@ public class VersionedFile extends BaseClass {
     super(utils);
     this.sn = sn;
     this.props = props.copy();
+
+    if (utils.debug()) {
+      utils.debug("before push");
+      for (final String pname : props.topNames()) {
+        utils.debug(pname);
+      }
+    }
     this.props.pushFiltered(propFilterVal, "app.");
+    if (utils.debug()) {
+      utils.debug("after push with filter " + propFilterVal);
+      for (final String pname : props.topNames()) {
+        utils.debug(pname);
+      }
+    }
 
     theFile = utils.subDirectory(path, sn.name);
   }

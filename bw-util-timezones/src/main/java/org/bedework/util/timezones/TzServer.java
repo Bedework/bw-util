@@ -1,47 +1,47 @@
 package org.bedework.util.timezones;
 
-import org.bedework.util.http.BasicHttpClient;
-import org.bedework.util.timezones.Timezones.TaggedTimeZone;
+import org.bedework.util.http.HttpUtil;
+import org.bedework.util.misc.Logged;
 import org.bedework.util.timezones.model.CapabilitiesType;
 import org.bedework.util.timezones.model.TimezoneListType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.Header;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
 /** CLass to allow us to call the server
  */
-public class TzServer {
-  private transient Logger log;
-
-  protected boolean debug;
-
+public class TzServer extends Logged implements AutoCloseable {
   private static String tzserverUri;
 
   private CapabilitiesType capabilities;
 
   private final ObjectMapper om;
 
-  private BasicHttpClient client;
+  private CloseableHttpClient client;
   private int status;
 
   /**
    * @param uri the uri
-   * @throws TimezonesException on error
+   * @throws TimezonesException on discovery failure
    */
   public TzServer(final String uri) throws TimezonesException {
-    debug = getLogger().isDebugEnabled();
     om = new ObjectMapper();
 
     /* Don't use dates in json - still issues with timezones ironically */
@@ -59,29 +59,28 @@ public class TzServer {
    * @return fetch timezone if etag is old
    * @throws TimezonesException on error
    */
-  public TaggedTimeZone getTz(final String id,
-                              final String etag) throws TimezonesException {
-    try {
-      doCall("action=get&tzid=" +
-        URLEncoder.encode(id, "UTF-8"), etag);
-//        doCall("action=get&tzid=" + id, etag);
-
+  public Timezones.TaggedTimeZone getTz(final String id,
+                                        final String etag) throws TimezonesException {
+    try (CloseableHttpResponse hresp =
+      doCall(etag,
+             new BasicNameValuePair("action", "get"),
+             new BasicNameValuePair("tzid", id))) {
       if (status == HttpServletResponse.SC_NO_CONTENT) {
-        return new TaggedTimeZone(etag);
+        return new Timezones.TaggedTimeZone(etag);
       }
 
       if (status != HttpServletResponse.SC_OK) {
         return null;
       }
 
-      final String respEtag = client.getFirstHeaderValue("Etag");
+      final String respEtag = HttpUtil.getFirstHeaderValue(hresp, "Etag");
       if (respEtag == null) {
         // Not valid but keep calm and carry on
-        return new TaggedTimeZone("--No etag--",
-                                  EntityUtils.toString(client.getResponseEntity()));
+        return new Timezones.TaggedTimeZone("--No etag--",
+                                            EntityUtils.toString(hresp.getEntity()));
       }
-      return new TaggedTimeZone(respEtag,
-                                EntityUtils.toString(client.getResponseEntity()));
+      return new Timezones.TaggedTimeZone(respEtag,
+                                          EntityUtils.toString(hresp.getEntity()));
     } catch (final TimezonesException cfe) {
       throw cfe;
     } catch (final Throwable t) {
@@ -97,24 +96,60 @@ public class TzServer {
   /**
    * @param changedSince datestamp
    * @return List of timezone information
-   * @throws TimezonesException on error unmarshalling
+   * @throws TimezonesException on error
    */
   public TimezoneListType getList(final String changedSince) throws TimezonesException {
-    String req = "action=list";
+    final List<NameValuePair> pars = new ArrayList<>();
+
+    pars.add(new BasicNameValuePair("action", "list"));
 
     if (changedSince != null) {
-      req = req + "&changedsince=" + changedSince;
+      pars.add(new BasicNameValuePair("changedsince", changedSince));
     }
 
-    return getJson(req, TimezoneListType.class);
+    final NameValuePair[] parsArray = pars.toArray(new NameValuePair[0]);
+
+    try (CloseableHttpResponse hresp =
+                 doCall(null,
+                        parsArray)) {
+      if (status != HttpServletResponse.SC_OK) {
+        return null;
+      }
+
+      final InputStream is = hresp.getEntity().getContent();
+
+      return om.readValue(is,  TimezoneListType.class);
+    } catch (final Throwable t) {
+      error("getList error: " + t.getMessage());
+      t.printStackTrace();
+      return null;
+    }
   }
 
   /**
-   * @return Input stream of alias data
+   * @return populated Properties object with alias data
    * @throws TimezonesException on error
    */
-  public InputStream getAliases() throws TimezonesException {
-    return callForStream("aliases");
+  public Properties getAliases() throws TimezonesException {
+    try (CloseableHttpResponse hresp =
+                 doCall(null,
+                        new BasicNameValuePair("aliases", null))) {
+      if (status != HttpServletResponse.SC_OK) {
+        return null;
+      }
+
+      final Properties a = new Properties();
+
+      final InputStream is = hresp.getEntity().getContent();
+
+      a.load(is);
+
+      return a;
+    } catch (final Throwable t) {
+      error("getAliases error: " + t.getMessage());
+      t.printStackTrace();
+      return null;
+    }
   }
 
   /**
@@ -125,69 +160,8 @@ public class TzServer {
   }
 
   /**
-   * @throws TimezonesException on error
    */
-  public void close() throws TimezonesException {
-    try {
-      if (client == null) {
-        return;
-      }
-
-      client.release();
-    } catch (final Throwable t) {
-      throw new TimezonesException(t);
-    }
-  }
-
-  /* ====================================================================
-   *                   protected methods
-   * ==================================================================== */
-
-  protected <T> T getJson(final String req,
-                       final Class<T> valueType) throws TimezonesException {
-    InputStream is = null;
-    try {
-      is = callForStream(req);
-
-      if ((is == null) || (status != HttpServletResponse.SC_OK)) {
-        return null;
-      }
-
-      synchronized (this) {
-        return om.readValue(is, valueType);
-      }
-    } catch (final TimezonesException cfe) {
-      throw cfe;
-    } catch (final Throwable t) {
-      throw new TimezonesException(t);
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (final Throwable ignored) {}
-      }
-    }
-  }
-
-  /**
-   * @param req request
-   * @return input stream from response
-   * @throws TimezonesException on error
-   */
-  protected InputStream callForStream(final String req) throws TimezonesException {
-    try {
-      doCall(req, null);
-
-      if (status != HttpServletResponse.SC_OK) {
-        return null;
-      }
-
-      return client.getResponseBodyAsStream();
-    } catch (final TimezonesException cfe) {
-      throw cfe;
-    } catch (final Throwable t) {
-      throw new TimezonesException(t);
-    }
+  public void close() {
   }
 
   /* ====================================================================
@@ -202,9 +176,9 @@ public class TzServer {
    * <p>Otherwise we will assume it's a host attempt to discover it through
    * /.well-known
    *
-   * @param url the servicen url
+   * @param url the service url
    * @return discovered url
-   * @throws TimezonesException
+   * @throws TimezonesException on error
    */
   private String discover(final String url) throws TimezonesException {
     /* For the moment we'll try to find it via .well-known. We may have to
@@ -229,27 +203,25 @@ public class TzServer {
       realUrl = "https://" + url + "/.well-known/timezone";
     }
 
-    try {
-      client = new BasicHttpClient(30 * 1000,
-                                   false);  // followRedirects
-      for (int redirects = 0; redirects < 10; redirects++) {
-        status = client.sendRequest("GET",
-                                    realUrl + "?action=capabilities",
-                                    null,
-                                    "application/json",
-                                    0,
-                                    null);
+    for (int redirects = 0; redirects < 10; redirects++) {
+      try (CloseableHttpResponse hresp =
+                   doCall(realUrl,
+                          (String)null,
+                          new BasicNameValuePair("action",
+                                                 "capabilities"))) {
 
         if ((status == HttpServletResponse.SC_MOVED_PERMANENTLY) ||
-            (status == HttpServletResponse.SC_MOVED_TEMPORARILY) ||
-            (status == HttpServletResponse.SC_TEMPORARY_REDIRECT)) {
+                (status == HttpServletResponse.SC_MOVED_TEMPORARILY) ||
+                (status == HttpServletResponse.SC_TEMPORARY_REDIRECT)) {
           //boolean permanent = rcode == HttpServletResponse.SC_MOVED_PERMANENTLY;
 
-          final String newLoc = client.getFirstHeaderValue("location");
+          final String newLoc =
+                  HttpUtil.getFirstHeaderValue(hresp,
+                                               "location");
           if (newLoc != null) {
             if (debug) {
               debug("Got redirected to " + newLoc +
-                    " from " + url);
+                            " from " + url);
             }
 
             final int qpos = newLoc.indexOf("?");
@@ -260,29 +232,27 @@ public class TzServer {
               realUrl = newLoc.substring(0, qpos);
             }
 
-            client.release();
-
             // Try again
             continue;
           }
         }
 
         if (status != HttpServletResponse.SC_OK) {
-            // The response is invalid and did not provide the new location for
-            // the resource.  Report an error or possibly handle the response
-            // like a 404 Not Found error.
+          // The response is invalid and did not provide the new location for
+          // the resource.  Report an error or possibly handle the response
+          // like a 404 Not Found error.
           if (debug) {
             error("Got response " + status +
-                  ", from " + realUrl);
+                          ", from " + realUrl);
           }
 
           throw new TimezonesException("Got response " + status +
-                                       ", from " + realUrl);
+                                               ", from " + realUrl);
         }
 
         /* Should have a capabilities record. */
         try {
-          capabilities = om.readValue(client.getResponseEntity().getContent(),
+          capabilities = om.readValue(hresp.getEntity().getContent(),
                                       CapabilitiesType.class);
         } catch (final Throwable t) {
           // Bad data - we'll just go with the url for the moment?
@@ -290,78 +260,71 @@ public class TzServer {
         }
 
         return realUrl;
-      }
-
-      if (debug) {
-        error("Too many redirects: Got response " + status +
-              ", from " + realUrl);
-      }
-
-      throw new TimezonesException("Too many redirects on " + realUrl);
-    } catch (final TimezonesException tze) {
-      throw tze;
-    } catch (final Throwable t) {
-      if (debug) {
-        error(t);
-      }
-
-      throw new TimezonesException(t);
-    } finally {
-      try {
-        if (client != null) {
-          client.release();
+      } catch (final TimezonesException tze) {
+        throw tze;
+      } catch (final Throwable t) {
+        if (debug) {
+          error(t);
         }
-      } catch (final Throwable ignored) {
+
+        throw new TimezonesException(t);
       }
     }
+
+    if (debug) {
+      error("Too many redirects: Got response " + status +
+                    ", from " + realUrl);
+    }
+
+    throw new TimezonesException("Too many redirects on " + realUrl);
   }
 
-  private void doCall(final String req,
-                      final String etag) throws TimezonesException {
+  private CloseableHttpResponse doCall(final String etag,
+                                       final NameValuePair... params) throws TimezonesException {
+    if (tzserverUri == null) {
+      throw new TimezonesException("No timezones server URI defined");
+    }
+
+    return doCall(tzserverUri, etag, params);
+  }
+
+  private CloseableHttpResponse doCall(final String serverUrl,
+                                       final String etag,
+                                       final NameValuePair... params) throws TimezonesException {
     try {
-      if (tzserverUri == null) {
-        throw new TimezonesException("No timezones server URI defined");
+      final URI tzUri = new URI(serverUrl);
+      final URI uri = new URIBuilder()
+              .setScheme(tzUri.getScheme())
+              .setHost(tzUri.getHost())
+              .setPort(tzUri.getPort())
+              .setPath(tzUri.getPath())
+              .setParameters(params)
+              .build();
+
+      final HttpGet httpGet = new HttpGet(uri);
+
+      if (etag != null) {
+        httpGet.addHeader(new BasicHeader("If-None-Match", etag));
+        httpGet.addHeader(new BasicHeader("Accept", "application/json"));
       }
 
-      if (client == null) {
-        client = new BasicHttpClient(30 * 1000, false);
-      }
+      final CloseableHttpResponse resp = getClient().execute(httpGet);
 
-      final List<Header> hdrs = new ArrayList<>();
-      hdrs.add( new BasicHeader("If-None-Match", etag));
+      status = HttpUtil.getStatus(resp);
 
-      status = client.sendRequest("GET",
-                                  tzserverUri + "?" + req,
-                                  hdrs,
-                                  "application/json",
-                                  0,
-                                  null);
-    } catch (final TimezonesException cfe) {
-      throw cfe;
+      return resp;
     } catch (final Throwable t) {
       throw new TimezonesException(t);
     }
   }
 
-  /* Get a logger for messages
-   */
-  private Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
+  private CloseableHttpClient getClient() {
+    if (client != null) {
+      return client;
     }
 
-    return log;
-  }
+    client = HttpUtil.getClient(true);
 
-  private void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  private void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  private void debug(final String msg) {
-    getLogger().debug(msg);
+    return client;
   }
 }

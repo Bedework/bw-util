@@ -1410,6 +1410,58 @@ public class PropertyIndex implements Serializable {
     SUBADDRESS(BedeworkServerTags.xprop,
           null,
           IS_SINGLE, allComponents),
+
+    ADDRESS_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    ROOM_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    SUB1_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    SUB2_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    ACCESSIBLE_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    GEOURI_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    STREET_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    CITY_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    STATE_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    ZIP_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    ALTADDRESS_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    CODEIDX_FLD(BedeworkServerTags.xprop,
+                null,
+                IS_SINGLE, allComponents),
+
+    LOC_KEYS_FLD(BedeworkServerTags.xprop,
+                 null,
+                 IS_SINGLE, allComponents),
     ;
 
     private final QName qname;
