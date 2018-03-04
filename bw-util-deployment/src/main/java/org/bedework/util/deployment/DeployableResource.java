@@ -39,7 +39,7 @@ public class DeployableResource extends VersionedFile {
     utils.copy(fromLib, Paths.get(lib.getAbsolutePath()), true);
   }
 
-  /** Do the depenncies on other ears, exclusions and dependencies on
+  /** Do the dependencies on other ears, exclusions and dependencies on
    * modules.
    *
    */
