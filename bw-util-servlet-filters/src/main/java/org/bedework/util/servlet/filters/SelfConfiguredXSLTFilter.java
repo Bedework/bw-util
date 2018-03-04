@@ -64,7 +64,7 @@ import javax.servlet.http.HttpServletRequest;
  * with the required information. This will be the more normal way of
  * supplying that information.
  *
- * @author Mike Douglass douglm@bedework.edu
+ * @author Mike Douglass douglm@rpi.edu
  * @version June 18th 2003
  */
 public class SelfConfiguredXSLTFilter extends ConfiguredXSLTFilter {
@@ -99,9 +99,6 @@ public class SelfConfiguredXSLTFilter extends ConfiguredXSLTFilter {
     debug = !("0".equals(temp));
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.servlet.filters.ConfiguredXSLTFilter#updateConfigInfo(javax.servlet.http.HttpServletRequest, org.bedework.util.servlet.filters.ConfiguredXSLTFilter.XSLTConfig)
-   */
   public void updateConfigInfo(HttpServletRequest request,
                                ConfiguredXSLTFilter.XSLTConfig xcfg)
                                      throws ServletException {

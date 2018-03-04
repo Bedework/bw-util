@@ -48,6 +48,10 @@ public class JbossWebXml extends XmlFile {
     updated = true;
   }
 
+  public void setContext() throws Throwable {
+    propsReplaceContent(root, "context-root", props);
+  }
+
   public void setSecurityDomain() throws Throwable {
     propsReplaceContent(root, "security-domain", props);
   }

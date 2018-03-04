@@ -21,16 +21,17 @@ public class VersionedFile extends BaseClass {
     this.sn = sn;
     this.props = props.copy();
 
+    /*
     if (utils.debug()) {
       utils.debug("before push");
       for (final String pname : props.topNames()) {
         utils.debug(pname);
       }
-    }
+    }*/
     this.props.pushFiltered(propFilterVal, "app.");
     if (utils.debug()) {
       utils.debug("after push with filter " + propFilterVal);
-      for (final String pname : props.topNames()) {
+      for (final String pname : this.props.topNames()) {
         utils.debug(pname);
       }
     }

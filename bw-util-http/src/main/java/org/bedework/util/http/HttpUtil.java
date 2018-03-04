@@ -24,8 +24,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -117,6 +124,85 @@ public class HttpUtil implements Serializable {
     }
 
     return h.getValue();
+  }
+
+  /** Specify the next method by name.
+   *
+   * @param name of the method
+   * @param uri target
+   * @return method object
+   * @throws HttpException
+   */
+  public static HttpRequestBase findMethod(final String name,
+                                           final URI uri) {
+    final String nm = name.toUpperCase();
+
+    if ("PUT".equals(nm)) {
+      return new HttpPut(uri);
+    }
+
+    if ("GET".equals(nm)) {
+      return new HttpGet(uri);
+    }
+
+    if ("DELETE".equals(nm)) {
+      return new HttpDelete(uri);
+    }
+
+    if ("POST".equals(nm)) {
+      return new HttpPost(uri);
+    }
+
+    if ("PROPFIND".equals(nm)) {
+      return new HttpPropfind(uri);
+    }
+
+    if ("MKCALENDAR".equals(nm)) {
+      return new HttpMkcalendar(uri);
+    }
+
+    if ("MKCOL".equals(nm)) {
+      return new HttpMkcol(uri);
+    }
+
+    if ("OPTIONS".equals(nm)) {
+      return new HttpOptions(uri);
+    }
+
+    if ("REPORT".equals(nm)) {
+      return new HttpReport(uri);
+    }
+
+    if ("HEAD".equals(nm)) {
+      return new HttpHead(uri);
+    }
+
+    return null;
+  }
+
+  /** Send content
+   *
+   * @param content the content as bytes
+   * @param contentType its type
+   * @throws HttpException if not entity enclosing request
+   */
+  public static void setContent(final HttpRequestBase req,
+                                final byte[] content,
+                                final String contentType) throws HttpException {
+    if (content == null) {
+      return;
+    }
+
+    if (!(req instanceof HttpEntityEnclosingRequestBase)) {
+      throw new HttpException("Invalid operation for method " +
+                                      req.getMethod());
+    }
+
+    final HttpEntityEnclosingRequestBase eem = (HttpEntityEnclosingRequestBase)req;
+
+    final ByteArrayEntity entity = new ByteArrayEntity(content);
+    entity.setContentType(contentType);
+    eem.setEntity(entity);
   }
 
   public static int getStatus(final HttpResponse resp) {

@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -65,9 +67,12 @@ public class DavUtil extends Logged implements Serializable {
   /** Added to each request */
   private List<Header> extraHeaders;
 
+  private Set<String> nameSpaces = new TreeSet<>();
+
   /**
    */
   public DavUtil() {
+    addNs(WebdavTags.namespace);
   }
 
   /**
@@ -78,6 +83,10 @@ public class DavUtil extends Logged implements Serializable {
     if (!Util.isEmpty(extraHeaders)) {
       this.extraHeaders = new ArrayList<>(extraHeaders);
     }
+  }
+
+  public void addNs(final String val) {
+    nameSpaces.add(val);
   }
 
   /** Represents the child of a collection
@@ -312,7 +321,7 @@ public class DavUtil extends Logged implements Serializable {
                                          final String syncToken,
                                          final Collection<QName> props) throws Throwable {
     final StringWriter sw = new StringWriter();
-    final XmlEmit xml = new XmlEmit();
+    final XmlEmit xml = getXml();
 
     addNs(xml, WebdavTags.namespace);
 
@@ -423,15 +432,15 @@ public class DavUtil extends Logged implements Serializable {
    * @param path to resource
    * @param props   null for a default set
    * @param depthHeader to set depth of operation
-   * @return Collection<Element> from multi-status response
+   * @return List<Element> from multi-status response
    * @throws Throwable
    */
-  public Collection<Element> propfind(final BasicHttpClient cl,
+  public List<Element> propfind(final BasicHttpClient cl,
                                       final String path,
                                       final Collection<QName> props,
                                       final Header depthHeader) throws Throwable {
     final StringWriter sw = new StringWriter();
-    final XmlEmit xml = new XmlEmit();
+    final XmlEmit xml = getXml();
 
     addNs(xml, WebdavTags.namespace);
 
@@ -542,6 +551,17 @@ public class DavUtil extends Logged implements Serializable {
    *                   XmlUtil wrappers
    * ==================================================================== */
 
+  private XmlEmit getXml() throws Throwable {
+    final XmlEmit xml = new XmlEmit();
+
+    for (final String ns: nameSpaces) {
+      addNs(xml, ns);
+    }
+
+    return xml;
+  }
+
+
   /** Add a namespace
    *
    * @param val
@@ -571,13 +591,13 @@ public class DavUtil extends Logged implements Serializable {
 
   /**
    * @param nd
-   * @return Collection<Element>
+   * @return List<Element>
    * @throws Throwable
    */
-  public static Collection<Element> getChildren(final Node nd) throws Throwable {
+  public static List<Element> getChildren(final Node nd) throws Throwable {
     try {
       return XmlUtil.getElements(nd);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       //if (debug) {
       //  getLogger().error(this, t);
       //}

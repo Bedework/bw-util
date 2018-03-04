@@ -18,6 +18,8 @@
 */
 package org.bedework.util.servlet.filters;
 
+import org.bedework.util.misc.Logged;
+
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -42,14 +44,11 @@ import javax.servlet.http.HttpSession;
  *  called by the doFilter method at entry.
  *  </p>
  *
- * @author  Mike Douglass douglm@bedework.edu
+ * @author  Mike Douglass douglm@rpi.edu
  */
-public abstract class AbstractFilter implements Filter {
+public abstract class AbstractFilter extends Logged implements Filter {
   protected ServletContext ctx;
 
-  protected boolean debug = false;
-
-  private transient Logger log;
   /** One per session
    */
   public static class FilterGlobals implements Serializable {
@@ -190,18 +189,6 @@ public abstract class AbstractFilter implements Filter {
    */
   public boolean getDebug() {
     return debug;
-  }
-
-  /** Get a logger for messages
-   *
-   * @return Logger
-   */
-  public Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 
   /** A debugging dump routine

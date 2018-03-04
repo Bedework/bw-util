@@ -95,9 +95,6 @@ public class XSLTFilter extends AbstractFilter {
     return (XsltGlobals)getGlobals(req);
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.servlet.filters.AbstractFilter#newFilterGlobals()
-   */
   @Override
   public AbstractFilter.FilterGlobals newFilterGlobals() {
     return new XsltGlobals();
@@ -166,7 +163,7 @@ public class XSLTFilter extends AbstractFilter {
       throws TransformerException, ServletException, FileNotFoundException {
     String url = lookupPath(ideal);
     if (debug) {
-      getLogger().debug("getXmlTransformer: ideal = " + ideal +
+      debug("getXmlTransformer: ideal = " + ideal +
                         " actual = " + url);
     }
     Transformer trans = transformers.get(url);
@@ -191,8 +188,9 @@ public class XSLTFilter extends AbstractFilter {
       }
 
       throw (FileNotFoundException)cause;
-    } catch (Exception e) {
-      getLogger().error("Could not initialize transform for " + url, e);
+    } catch (final Exception e) {
+      error("Could not initialize transform for " + url);
+      error(e);
       throw new ServletException("Could not initialize transform for " + url, e);
     } finally {
   /*    if (is != null) {
@@ -226,7 +224,7 @@ public class XSLTFilter extends AbstractFilter {
     configUrl = filterConfig.getInitParameter("xslt");
 
     if ((configUrl != null) && debug) {
-      getLogger().debug("Filter " + filterConfig.getFilterName() +
+      debug("Filter " + filterConfig.getFilterName() +
                                         " using xslt " + configUrl);
     }
 
@@ -255,11 +253,11 @@ public class XSLTFilter extends AbstractFilter {
     glob.reason = null;
 
     if (debug) {
-      getLogger().debug("XSLTFilter: Accessing filter for " +
+      debug("XSLTFilter: Accessing filter for " +
                                 HttpServletUtils.getReqLine(hreq) + " " +
                                 hreq.getMethod() +
                                 " response class: " + resp.getClass().getName());
-      getLogger().debug("XSLTFilter: response: " + resp);
+      debug("XSLTFilter: response: " + resp);
     }
 
     /* We don't get a session till we've been through to the servlet.
@@ -275,7 +273,7 @@ public class XSLTFilter extends AbstractFilter {
     logTime("PRETRANSFORM", sessId,
             System.currentTimeMillis() - startTime);
 
-    /** Ensure we're all set up to handle content
+    /* Ensure we're all set up to handle content
      */
     doPreFilter(hreq);
 
@@ -283,7 +281,7 @@ public class XSLTFilter extends AbstractFilter {
 
     if (wrappedResp.size() == 0) {
       if (debug) {
-        getLogger().debug("No content");
+        debug("No content");
       }
 
 //      xformNeeded[0] = false;
@@ -294,10 +292,10 @@ public class XSLTFilter extends AbstractFilter {
     try {
       if ((!glob.dontFilter) && (wrappedResp.getTransformNeeded())) {
         if (debug) {
-          getLogger().debug("+*+*+*+*+*+*+*+*+*+*+* about to transform: len=" +
+          debug("+*+*+*+*+*+*+*+*+*+*+* about to transform: len=" +
               wrappedResp.size());
         }
-        //getLogger().debug(new String(bytes));
+        //debug(new String(bytes));
 
         TransformerException te = null;
         Transformer xmlt = null;
@@ -326,7 +324,7 @@ public class XSLTFilter extends AbstractFilter {
           /** We seem to be getting invalid bytes occasionally
           for (int i = 0; i < bytes.length; i++) {
             if ((bytes[i] & 0x0ff) > 128) {
-              getLogger().warn("Found byte > 128 at " + i +
+              warn("Found byte > 128 at " + i +
                              " bytes = " + (bytes[i] & 0x0ff));
               bytes[i] = (int)('?');
             }
@@ -360,7 +358,7 @@ public class XSLTFilter extends AbstractFilter {
               Enumeration en = pr.propertyNames();
               while (en.hasMoreElements()) {
                 String key = (String)en.nextElement();
-                getLogger().debug("--------- xslt-output property " +
+                debug("--------- xslt-output property " +
                                 key + "=" + pr.getProperty(key));
               }
             }
@@ -384,7 +382,7 @@ public class XSLTFilter extends AbstractFilter {
 
             if (mtype != null) {
               if (debug) {
-                getLogger().debug("Stylesheet set media-type to " + mtype);
+                debug("Stylesheet set media-type to " + mtype);
               }
               if (encoding != null) {
                 resp.setContentType(mtype + ";charset=" + encoding);
@@ -399,7 +397,7 @@ public class XSLTFilter extends AbstractFilter {
         pbos.writeTo(resp.getOutputStream());
 
         if (debug) {
-          getLogger().debug("XML -> HTML conversion completed");
+          debug("XML -> HTML conversion completed");
         }
       } else {
         if (debug) {
@@ -411,40 +409,36 @@ public class XSLTFilter extends AbstractFilter {
             glob.reason = "Unknown";
           }
 
-          getLogger().debug("+*+*+*+*+*+*+*+*+*+*+* transform suppressed" +
+          debug("+*+*+*+*+*+*+*+*+*+*+* transform suppressed" +
                           " reason = " + glob.reason);
         }
         resp.setContentLength(wrappedResp.size());
         wrappedResp.writeTo(resp.getOutputStream());
         if (glob.contentType != null) {
-          /** Set explicitly by caller.
+          /* Set explicitly by caller.
            */
           resp.setContentType(glob.contentType);
         }
       }
-    } catch (Throwable t) {
-      /** We're seeing tomcat specific exceptions here when the client aborts.
+    } catch (final Throwable t) {
+      /* We're seeing tomcat specific exceptions here when the client aborts.
           Try to detect these without making this code tomcat specific.
        */
       if ("org.apache.catalina.connector.ClientAbortException".equals(t.getClass().getName())) {
-        getLogger().warn("ClientAbortException: dropping response");
+        warn("ClientAbortException: dropping response");
+      } else if ("Connection reset by peer".equals(t.getMessage())) {
+        warn("Connection reset by peer: dropping response");
       } else {
-        getLogger().error("Unable to transform document", t);
-        throw new ServletException("Unable to transform document", t);
+        error("Unable to transform document");
+        error(t);
       }
     } finally {
-      if (wrappedResp != null) {
-        wrappedResp.release();
-        wrappedResp.close();
-      }
-      wrappedResp = null;
-      if (pbos != null) {
-        try {
-          pbos.release();
-        } catch (Exception bae) {}
-      }
+      wrappedResp.release();
+      wrappedResp.close();
 
-      pbos = null;
+      try {
+        pbos.release();
+      } catch (final Exception ignored) {}
     }
 
     logTime("POSTTRANSFORM", sessId,
@@ -491,7 +485,7 @@ public class XSLTFilter extends AbstractFilter {
       } else if ((type.startsWith("text/xml")) ||
                  (type.startsWith("application/xml"))) {
         if (debug) {
-          getLogger().debug("XSLTFilter: Converting xml to html");
+          debug("XSLTFilter: Converting xml to html");
         }
         transformNeeded = true;
       } else {
@@ -600,7 +594,7 @@ public class XSLTFilter extends AbstractFilter {
     sb.append(":");
     sb.append(timeVal);
 
-    getLogger().info(sb.toString());
+    info(sb.toString());
   }
 }
 

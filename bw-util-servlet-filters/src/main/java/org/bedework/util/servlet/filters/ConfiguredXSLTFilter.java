@@ -120,9 +120,6 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
     return (XSLTConfig)getGlobals(req);
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.servlet.filters.AbstractFilter#newFilterGlobals()
-   */
   public AbstractFilter.FilterGlobals newFilterGlobals() {
     return new XSLTConfig();
   }
@@ -306,15 +303,12 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
     PresentationState ps = (PresentationState)o;
 
     if (debug) {
-      ps.debugDump("ConfiguredXSLTFilter", getLogger());
+      ps.debugDump("ConfiguredXSLTFilter");
     }
 
     return ps;
   }
 
-  /* (non-Javadoc)
-   * @see org.bedework.util.servlet.filters.AbstractFilter#doPreFilter(javax.servlet.http.HttpServletRequest)
-   */
   public void doPreFilter(HttpServletRequest request)
     throws ServletException {
     XSLTConfig xcfg = getConfig(request);
@@ -333,7 +327,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
           early in the session (login etc)
        */
       if (debug) {
-        getLogger().debug("No app root");
+        debug("No app root");
       }
 
       setDontFilter(request, true);
@@ -345,7 +339,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
     xcfg.cfg.setForceDefaultSkinName(false);
 
     if (debug) {
-      getLogger().debug("About to try with forceDefaultBrowserType=" +
+      debug("About to try with forceDefaultBrowserType=" +
             xcfg.cfg.getForceDefaultBrowserType() +
             ", forceDefaultSkinName=" +
             xcfg.cfg.getForceDefaultSkinName() +
@@ -367,7 +361,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
       /* We're not searching for a path and it's not changed. We should be
          OK * /
       if (getDebug()) {
-        getLogger().debug("Path did not change from " + getUrl(request));
+        debug("Path did not change from " + getUrl(request));
       }
 
       return;
@@ -446,7 +440,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
        */
       getXmlTransformer(getUrl(request));
       if (getDebug()) {
-        getLogger().debug("Got Transformer OK");
+        debug("Got Transformer OK");
       }
 
       /** Make any forced defaults stick
@@ -468,7 +462,8 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
 //      xcfg.cfg.updateFrom(xcfg.nextCfg);
 //      updatedConfigInfo(xcfg.cfg);
     } catch (Throwable t) {
-      getLogger().error("Unable to transform document", t);
+      error("Unable to transform document");
+      error(t);
       throw new ServletException("Could not initialize transform for " +
                                  getUrl(request), t);
     }
@@ -549,7 +544,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
     }
 
     if (debug) {
-      getLogger().debug("trypath: " + path);
+      debug("trypath: " + path);
     }
 
     try {
@@ -571,9 +566,10 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
       prefix.append(el);
 
       return true;
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       if (debug) {
-        getLogger().debug("trypath exception: ", t);
+        debug("trypath exception: ");
+        error(t);
       }
     }
 

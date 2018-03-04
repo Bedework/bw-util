@@ -109,9 +109,8 @@ public class ReqUtil implements Serializable {
    *
    * @param name    name of parameter
    * @return  boolean true for present
-   * @throws Throwable
    */
-  public boolean present(final String name) throws Throwable {
+  public boolean present(final String name) {
     return request.getParameter(name) != null;
   }
 

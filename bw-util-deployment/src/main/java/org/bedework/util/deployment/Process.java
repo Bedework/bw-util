@@ -18,9 +18,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -105,6 +108,8 @@ public class Process extends AbstractMojo {
 
     props.load(fr);
 
+    props.setProperty(propWarsOnly, String.valueOf(warsonly));
+
     props.setProperty(propBaseDir, baseDirPath);
     props.setProperty(propPropertiesFile, propsPath);
     props.setProperty(propPropertiesDir, f.getParent());
@@ -144,7 +149,6 @@ public class Process extends AbstractMojo {
 
   public void setWarsOnly(final boolean val) {
     warsonly = val;
-    props.setProperty(propWarsOnly, String.valueOf(val));
   }
 
   public void setNoversion(final boolean val) {
@@ -305,7 +309,8 @@ public class Process extends AbstractMojo {
     for (final PathAndName pan: toProcess) {
       toUpdate.add(new War(utils,
                            pan.getPath(),
-                           pan.getSplitName(), null, pc));
+                           pan.getSplitName(), null, pc,
+                           "org.bedework.app."));
     }
 
     if (checkonly) {
@@ -319,9 +324,15 @@ public class Process extends AbstractMojo {
     deployFiles("war");
   }
 
-  private List<PathAndName> buildUpdateableList(final String specificName,
+  private List<PathAndName> buildUpdateableList(final String specificNames,
                                                 final List<String> allowedNames,
                                                 final String suffix) throws Throwable {
+    utils.info("Specific names = " + specificNames);
+    final Set<String> names = new TreeSet<>(
+            Arrays.asList(specificNames.split(",")));
+
+    utils.info("List of names = " + String.join(",", names));
+
     final List<SplitName> splitNames = getInFiles(inDirPath,
                                                   allowedNames,
                                                   suffix);
@@ -340,8 +351,11 @@ public class Process extends AbstractMojo {
     final List<PathAndName> files = new ArrayList<>();
 
     for (final SplitName sn: splitNames) {
-      if ((specificName != null) && !specificName.equals(sn.prefix)) {
+      if (!names.contains(sn.prefix)) {
         // We were given a specific name and this isn't it
+        utils.warn("Prefix " + sn.prefix +
+                           " for file " + sn.name +
+                           " not in properties as deployable file. Skipping");
         continue;
       }
 
@@ -603,7 +617,7 @@ public class Process extends AbstractMojo {
     final File inDir = utils.directory(dirPath);
 
     final String[] names = inDir.list();
-    
+
     if (names == null) {
       utils.info("No names found. Exiting");
       return null;
@@ -617,8 +631,8 @@ public class Process extends AbstractMojo {
 
       // Allow for a generated ear without a suffix (maven plugin)
       utils.debug("Split name: " + sn);
-      
-      if ((sn == null) || 
+
+      if ((sn == null) ||
               ((sn.suffix != null) && (!suffix.equals(sn.suffix)))) {
         continue;
       }
@@ -626,7 +640,8 @@ public class Process extends AbstractMojo {
       splitNames.add(sn);
     }
 
-    utils.info("Found " + splitNames.size() + " ears");
+    utils.info("Found " + splitNames.size() + " " + suffix +
+                       "s");
 
     return splitNames;
   }

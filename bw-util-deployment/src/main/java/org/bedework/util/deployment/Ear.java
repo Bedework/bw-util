@@ -1,14 +1,10 @@
 package org.bedework.util.deployment;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 /** Represent a ear for deployment.
  *
@@ -39,65 +35,7 @@ public class Ear extends DeployableResource implements Updateable {
       }
     }
 
-    final String earDependencies = this.props.get("app.ear.dependencies");
-    if (earDependencies != null) {
-      // Generate a jboss-all.xml
-      JbossAllXml.generate(earMeta);
-      
-      // Now update it
-      final JbossAllXml jbossAll = new JbossAllXml(utils, 
-                                                   earMeta, 
-                                                   sn.version, 
-                                                   this.props);
-      jbossAll.update();
-      jbossAll.output();
-    }
-
-    final String earExclusions = this.props.get("app.ear.exclusions");
-    if (earExclusions != null) {
-      // Generate a jboss-deployment-structure.xml
-      JbossDeploymentStructureXml.generate(earMeta);
-
-      // Now update it
-      final JbossDeploymentStructureXml jbossDsx = 
-              new JbossDeploymentStructureXml(utils,
-                                              earMeta,
-                                              this.props);
-      jbossDsx.update();
-      jbossDsx.output();
-    }
-
-    final String dependencies = this.props.get("app.dependencies");
-
-    if (dependencies != null) {
-      final File manifest = new File(earMeta.getAbsolutePath(),
-                                     "MANIFEST.MF");
-
-      final Manifest mf;
-      final Attributes mainAttrs;
-
-      if (!manifest.exists()) {
-        utils.warn("No MANIFEST.MF");
-        mf = new Manifest();
-        mainAttrs = mf.getMainAttributes();
-        mainAttrs.putValue("Manifest-Version", "1.0");
-      } else {
-        mf = new Manifest(new FileInputStream(manifest));
-        mainAttrs = mf.getMainAttributes();
-      }
-
-      final String dep = mainAttrs.getValue("Dependencies");
-
-      if (dep != null) {
-        mainAttrs.putValue("Dependencies", dep + "," + dependencies);
-      } else {
-        mainAttrs.putValue("Dependencies", dependencies);
-      }
-
-      final FileOutputStream fos = new FileOutputStream(manifest, false);
-      mf.write(fos);
-      fos.close();
-    }
+    doDependecies(earMeta);
 
     appXml = new ApplicationXml(utils, earMeta);
 
@@ -115,7 +53,8 @@ public class Ear extends DeployableResource implements Updateable {
 
       final War war = new War(utils,
                               theFile.getAbsolutePath(),
-                              wsn, appXml, this.props);
+                              wsn, appXml, this.props,
+                              "app.");
 
       wars.put(wsn.name, war);
     }
@@ -191,7 +130,7 @@ public class Ear extends DeployableResource implements Updateable {
 
     final War newWar = new War(utils,
                                theFile.getAbsolutePath(),
-                               toSn, appXml, props);
+                               toSn, appXml, props, "app.");
 
     wars.put(toSn.name, newWar);
 

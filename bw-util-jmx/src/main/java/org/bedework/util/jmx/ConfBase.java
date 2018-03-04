@@ -22,6 +22,7 @@ import org.bedework.util.config.ConfigBase;
 import org.bedework.util.config.ConfigException;
 import org.bedework.util.config.ConfigurationFileStore;
 import org.bedework.util.config.ConfigurationStore;
+import org.bedework.util.misc.Logged;
 import org.bedework.util.misc.Util;
 
 import org.apache.log4j.Logger;
@@ -104,7 +105,8 @@ import javax.management.ObjectName;
  * @param <T>
  *
  */
-public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
+public abstract class ConfBase<T extends ConfigBase> extends Logged
+        implements ConfBaseMBean {
   public static final String statusDone = "Done";
   public static final String statusFailed = "Failed";
   public static final String statusRunning = "Running";
@@ -112,10 +114,6 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
   public static final String statusTimedout = "Timedout";
   public static final String statusInterrupted = "Interrupted";
   public static final String statusUnknown = "Unknown";
-
-  private transient Logger log;
-
-  protected boolean debug;
 
   protected T cfg;
 
@@ -167,12 +165,10 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
    *
    */
   protected ConfBase() {
-    debug = getLogger().isDebugEnabled();
   }
 
   protected ConfBase(final String serviceName) {
     this.serviceName = serviceName;
-    debug = getLogger().isDebugEnabled();
   }
 
   /**
@@ -648,7 +644,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
       getRegisteredMBeans().add(key);
     } catch (Throwable e) {
       warn("Failed to register MBean: " + key + ": " + e.getLocalizedMessage());
-      if (getLogger().isDebugEnabled()) {
+      if (debug) {
         error(e);
       }
     }
@@ -664,7 +660,7 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
         getManagementContext().unregisterMBean(key);
       } catch (Throwable e) {
         warn("Failed to unregister MBean: " + key);
-        if (getLogger().isDebugEnabled()) {
+        if (debug) {
           error(e);
         }
       }
@@ -711,35 +707,5 @@ public abstract class ConfBase<T extends ConfigBase> implements ConfBaseMBean {
       Logger.getLogger(ConfBase.class).error("Unable to make object ", t);
       return null;
     }
-  }
-
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  protected void debug(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  /* Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 }

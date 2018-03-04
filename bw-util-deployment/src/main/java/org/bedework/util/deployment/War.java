@@ -21,11 +21,21 @@ public class War extends DeployableResource implements Updateable {
              final String path,
              final SplitName sn,
              final ApplicationXml appXml,
-             final PropertiesChain props) throws Throwable {
-    super(utils, path, sn, props, "app." + sn.prefix + ".");
+             final PropertiesChain props,
+             final String filterPrefix) throws Throwable {
+    super(utils, path, sn, props, filterPrefix + sn.prefix + ".");
 
     warsonly = Boolean.valueOf(props.get(Process.propWarsOnly));
     this.appXml = appXml;
+
+    final File meta = utils.subDirectory(theFile, "META-INF", false);
+    if (!meta.exists()) {
+      utils.debug("Create " + meta);
+      meta.mkdir();
+    }
+
+    final File webMeta = utils.subDirectory(theFile, "META-INF", true);
+    doDependecies(webMeta);
 
     final File webInf = utils.subDirectory(theFile, "WEB-INF", true);
 
@@ -41,7 +51,9 @@ public class War extends DeployableResource implements Updateable {
     copyResources();
     processWsdls();
 
-    if (appXml != null) {
+    if (warsonly) {
+      jbwXml.setContext();
+    } else {
       appXml.setContext(sn.name, props);
     }
 
@@ -77,20 +89,24 @@ public class War extends DeployableResource implements Updateable {
   }
 
   private void copyResources() throws Throwable {
+    /*
     if (utils.debug()) {
       utils.debug("before push");
       for (final String pname : props.topNames()) {
         utils.debug(pname);
       }
     }
+    */
     props.pushFiltered("app.copy.resource.", "copy.");
 
+    /*
     if (utils.debug()) {
       utils.debug("after push");
       for (final String pname : props.topNames()) {
         utils.debug(pname);
       }
     }
+    */
     try {
       for (final String pname: props.topNames()) {
         final String toName = pname.substring("copy.".length());

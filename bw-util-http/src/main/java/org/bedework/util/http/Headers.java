@@ -20,6 +20,6 @@ public class Headers extends ArrayList<Header> {
   }
 
   public Header[] asArray() {
-    return (Header[])toArray();
+    return toArray(new Header[size()]);
   }
 }

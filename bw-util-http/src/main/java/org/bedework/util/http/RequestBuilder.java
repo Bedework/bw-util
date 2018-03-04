@@ -60,14 +60,7 @@ public class RequestBuilder {
     req.append(delim);
     req.append(name);
     req.append("=");
-
-    String listDelim = "";
-
-    for (final String s: value) {
-      req.append(listDelim);
-      req.append(s);
-      listDelim = ",";
-    }
+    req.append(String.join(",", value));
   }
 
   public String toString() {
