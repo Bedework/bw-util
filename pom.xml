@@ -15,7 +15,7 @@
     <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
 
     <!-- Bedework Versions -->
-    <bw-ws.version>4.0.4</bw-ws.version>
+    <bw-ws.version>4.0.5-SNAPSHOT</bw-ws.version>
     <ical4j.groupId>org.bedework.ical4j</ical4j.groupId>
     <ical4j.artifactId>ical4j</ical4j.artifactId>
     <ical4j.version>2.0.3</ical4j.version>
@@ -77,11 +77,13 @@
     <module>bw-util-args</module>
     <module>bw-util-caching</module>
     <module>bw-util-calendar</module>
+    <module>bw-util-cli</module>
     <module>bw-util-config</module>
     <module>bw-util-config-http</module>
     <module>bw-util-dav</module>
     <module>bw-util-deployment</module>
     <module>bw-util-directory</module>
+    <module>bw-util-elasticsearch</module>
     <module>bw-util-hibernate</module>
     <module>bw-util-http</module>
     <module>bw-util-indexing</module>
@@ -89,6 +91,7 @@
     <module>bw-util-jms</module>
     <module>bw-util-jolokia</module>
     <module>bw-util-json</module>
+    <module>bw-util-maven-deploy</module>
     <module>bw-util-misc</module>
     <module>bw-util-options</module>
     <module>bw-util-security</module>
@@ -98,9 +101,6 @@
     <module>bw-util-timezones</module>
     <module>bw-util-vcard</module>
     <module>bw-util-xml</module>
-    <module>bw-util-maven-deploy</module>
-    <module>bw-util-elasticsearch</module>
-    <module>bw-util-cli</module>
   </modules>
 
   <developers>
