@@ -16,8 +16,8 @@
     <!-- Bedework -->
     <dependency>
       <groupId>org.bedework</groupId>
-      <artifactId>bw-ws-icalendar</artifactId>
-      <version>${bw-ws.version}</version>
+      <artifactId>bw-xml-icalendar</artifactId>
+      <version>${bw-xml.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bedework</groupId>
