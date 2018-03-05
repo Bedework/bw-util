@@ -19,7 +19,6 @@
 package org.bedework.util.servlet;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.upload.MultipartRequestWrapper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -145,11 +144,7 @@ public class HttpServletUtils {
    */
   public static String getUrl(final HttpServletRequest request) {
     try {
-      if (request instanceof MultipartRequestWrapper) {
-        return ((MultipartRequestWrapper)request).getRequestURL().toString();
-      }
-
-      StringBuffer sb = request.getRequestURL();
+      final StringBuffer sb = request.getRequestURL();
       if (sb != null) {
         return sb.toString();
       }

@@ -18,7 +18,6 @@
     <orderEntry type="module" module-name="bw-util-xml" />
     <orderEntry type="module" module-name="bw-xml-tzsvr" />
     <orderEntry type="module" module-name="bw-xml-calws-soap" />
-    <orderEntry type="library" name="Maven: jtidy:jtidy:4aug2000r7-dev" level="project" />
     <orderEntry type="module" module-name="bw-util-misc" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient-osgi:4.5.3" level="project" />

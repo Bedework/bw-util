@@ -28,10 +28,5 @@
       <artifactId>bw-util-misc</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>jtidy</groupId>
-      <artifactId>jtidy</artifactId>
-    </dependency>
   </dependencies>
 </project>
