@@ -242,9 +242,11 @@ public class Process extends AbstractMojo {
         }
 
         // Add version to properties for dependencies
-        utils.info("adding org.bedework.global.versions." +
-                           sn.prefix + "=" +
-                           sn.version);
+        if (utils.debug()) {
+          utils.debug("adding org.bedework.global.versions." +
+                             sn.prefix + "=" +
+                             sn.version);
+        }
         utils.setVersionsProp("org.bedework.global.versions." + sn.prefix,
                               sn.version);
       }
