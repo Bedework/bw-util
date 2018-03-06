@@ -50,10 +50,20 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class Utils {
   private final boolean debug;
   private final Log logger;
+  private final Properties versions = new Properties();
 
   public Utils(final Log logger) {
     this.logger = logger;
     debug = logger.isDebugEnabled();
+  }
+
+  public void setVersionsProp(final String name,
+                              final String val) {
+    versions.setProperty(name, val);
+  }
+
+  public String getVersionsProp(final String name) {
+    return versions.getProperty(name);
   }
 
   public Path createFile(final String path) throws Throwable {

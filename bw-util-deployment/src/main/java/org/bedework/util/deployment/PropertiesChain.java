@@ -149,4 +149,12 @@ public class PropertiesChain implements Util.PropertyFetcher {
                            final String newPrefix) {
     push(Utils.filter(pstack.peek(), prefix, newPrefix));
   }
+
+  public void debugList(final Utils utils,
+                        final String title) {
+    utils.debug(title);
+    for (final String pname : topNames()) {
+      utils.debug(pname);
+    }
+  }
 }

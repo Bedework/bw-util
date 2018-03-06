@@ -34,8 +34,11 @@ public class War extends DeployableResource implements Updateable {
       meta.mkdir();
     }
 
-    final File webMeta = utils.subDirectory(theFile, "META-INF", true);
-    doDependecies(webMeta);
+    if (warsonly) {
+      final File webMeta =
+              utils.subDirectory(theFile, "META-INF", true);
+      doDependecies(webMeta);
+    }
 
     final File webInf = utils.subDirectory(theFile, "WEB-INF", true);
 

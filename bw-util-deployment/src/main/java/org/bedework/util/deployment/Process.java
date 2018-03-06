@@ -235,6 +235,20 @@ public class Process extends AbstractMojo {
 
       cleanOut(outDirPath);
 
+      for (final SplitName sn: getDeployedNames(deployDirPath,
+                                                null)) {
+        if (!"war".equals(sn.suffix) && !"ear".equals(sn.suffix)) {
+          continue;
+        }
+
+        // Add version to properties for dependencies
+        utils.info("adding org.bedework.global.versions." +
+                           sn.prefix + "=" +
+                           sn.version);
+        utils.setVersionsProp("org.bedework.global.versions." + sn.prefix,
+                              sn.version);
+      }
+
       if (!warsonly) {
         processEars();
       } else {
@@ -657,8 +671,12 @@ public class Process extends AbstractMojo {
     for (final String nm: deployedNames) {
       final SplitName sn = SplitName.testName(nm);
 
-      if ((sn == null) || (!suffix.equals(sn.suffix))) {
+      if (sn == null) {
         //utils.warn("Unable to process " + nm);
+        continue;
+      }
+
+      if ((suffix != null) && !suffix.equals(sn.suffix)) {
         continue;
       }
 

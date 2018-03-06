@@ -58,12 +58,27 @@ public class JbossAllXml extends XmlFile {
       utils.error("Cannot locate jboss-deployment-dependencies");
       return;
     }
-    
+
+    props.debugList(utils, "Setting dependency version");
+
     final Element depNode = doc.createElement("dependency");
-    depNode.setAttribute("name", dep + "-" + version + ".ear");
+    depNode.setAttribute("name",
+                         dep + "-" +
+                                 getVersion(dep, version) +
+                                 ".ear");
 
     el.appendChild(depNode);
 
     updated = true;
+  }
+
+  private String getVersion(final String name,
+                            final String def) {
+    final String version = utils.getVersionsProp("org.bedework.global.versions." + name);
+    if (version != null) {
+      return version;
+    }
+
+    return def;
   }
 }
