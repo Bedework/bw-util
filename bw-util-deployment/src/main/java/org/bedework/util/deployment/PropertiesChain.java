@@ -104,7 +104,9 @@ public class PropertiesChain implements Util.PropertyFetcher {
       level--;
     }
 
-    return null;
+    // Try for a system property
+
+    return System.getProperty(name);
   }
 
   @SuppressWarnings("unused")
