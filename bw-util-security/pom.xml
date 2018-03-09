@@ -19,9 +19,15 @@
       <artifactId>bw-util-jmx</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+
+     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
     </dependency>
   </dependencies>
 </project>

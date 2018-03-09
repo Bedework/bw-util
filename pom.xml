@@ -15,7 +15,6 @@
     <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
 
     <!-- Bedework Versions -->
-    <bw-xml.version>4.0.5-SNAPSHOT</bw-xml.version>
     <ical4j.groupId>org.bedework.ical4j</ical4j.groupId>
     <ical4j.artifactId>ical4j</ical4j.artifactId>
     <ical4j.version>2.0.3</ical4j.version>
@@ -76,7 +75,6 @@
   <modules>
     <module>bw-util-args</module>
     <module>bw-util-caching</module>
-    <module>bw-util-calendar</module>
     <module>bw-util-cli</module>
     <module>bw-util-config</module>
     <module>bw-util-config-http</module>
@@ -99,7 +97,6 @@
     <module>bw-util-servlet-filters</module>
     <module>bw-util-struts</module>
     <module>bw-util-timezones</module>
-    <module>bw-util-vcard</module>
     <module>bw-util-xml</module>
     <module>bw-util-bw-deploy</module>
   </modules>
@@ -135,21 +132,6 @@
   <dependencyManagement>
     <dependencies>
       <!-- Bedework: Web Services -->
-      <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-xml-tzsvr</artifactId>
-        <version>${bw-xml.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-xml-calws-soap</artifactId>
-        <version>${bw-xml.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-xml-icalendar</artifactId>
-        <version>${bw-xml.version}</version>
-      </dependency>
       <dependency>
         <groupId>${ical4j.groupId}</groupId>
         <artifactId>${ical4j.artifactId}</artifactId>
