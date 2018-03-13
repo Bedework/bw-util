@@ -81,6 +81,24 @@ public class HttpUtil implements Serializable {
     return cl.execute(httpGet);
   }
 
+  public static CloseableHttpResponse doHead(final CloseableHttpClient cl,
+                                             final URI uri,
+                                             final Headers hdrs,
+                                             final String acceptContentType)
+          throws IOException {
+    final Headers headers = ensureHeaders(hdrs);
+
+    if (acceptContentType != null) {
+      headers.add("Accept", acceptContentType);
+    }
+
+    final HttpHead httphead = new HttpHead(uri);
+
+    httphead.setHeaders(headers.asArray());
+
+    return cl.execute(httphead);
+  }
+
   public static CloseableHttpResponse doPost(final CloseableHttpClient cl,
                                              final URI uri,
                                              final Headers hdrs,
