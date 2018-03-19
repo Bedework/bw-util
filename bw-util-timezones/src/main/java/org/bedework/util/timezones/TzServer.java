@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 public class TzServer extends Logged implements AutoCloseable {
   private static String tzserverUri;
 
+  final boolean oldVersion = false;
+
   private CapabilitiesType capabilities;
 
   private final ObjectMapper om;
@@ -61,10 +63,14 @@ public class TzServer extends Logged implements AutoCloseable {
    */
   public Timezones.TaggedTimeZone getTz(final String id,
                                         final String etag) throws TimezonesException {
+    if (id == null) {
+      return null;
+    }
+
     try (CloseableHttpResponse hresp =
-      doCall(etag,
-             new BasicNameValuePair("action", "get"),
-             new BasicNameValuePair("tzid", id))) {
+      doCall("zones/" + id.replace("/", "%2F"),
+             etag,
+             null)) {
       if (status == HttpServletResponse.SC_NO_CONTENT) {
         return new Timezones.TaggedTimeZone(etag);
       }
@@ -101,8 +107,6 @@ public class TzServer extends Logged implements AutoCloseable {
   public TimezoneListType getList(final String changedSince) throws TimezonesException {
     final List<NameValuePair> pars = new ArrayList<>();
 
-    pars.add(new BasicNameValuePair("action", "list"));
-
     if (changedSince != null) {
       pars.add(new BasicNameValuePair("changedsince", changedSince));
     }
@@ -110,7 +114,8 @@ public class TzServer extends Logged implements AutoCloseable {
     final NameValuePair[] parsArray = pars.toArray(new NameValuePair[0]);
 
     try (CloseableHttpResponse hresp =
-                 doCall(null,
+                 doCall("zones",
+                        null,
                         parsArray)) {
       if (status != HttpServletResponse.SC_OK) {
         return null;
@@ -132,8 +137,9 @@ public class TzServer extends Logged implements AutoCloseable {
    */
   public Properties getAliases() throws TimezonesException {
     try (CloseableHttpResponse hresp =
-                 doCall(null,
-                        new BasicNameValuePair("aliases", null))) {
+                 doCall("aliases",
+                        null,
+                        null)) {
       if (status != HttpServletResponse.SC_OK) {
         return null;
       }
@@ -206,9 +212,9 @@ public class TzServer extends Logged implements AutoCloseable {
     for (int redirects = 0; redirects < 10; redirects++) {
       try (CloseableHttpResponse hresp =
                    doCall(realUrl,
-                          (String)null,
-                          new BasicNameValuePair("action",
-                                                 "capabilities"))) {
+                          "capabilities",
+                          null,
+                          null)) {
 
         if ((status == HttpServletResponse.SC_MOVED_PERMANENTLY) ||
                 (status == HttpServletResponse.SC_MOVED_TEMPORARILY) ||
@@ -241,12 +247,17 @@ public class TzServer extends Logged implements AutoCloseable {
           // The response is invalid and did not provide the new location for
           // the resource.  Report an error or possibly handle the response
           // like a 404 Not Found error.
-          if (debug) {
-            error("Got response " + status +
-                          ", from " + realUrl);
-          }
+          error("================================================");
+          error("================================================");
+          error("================================================");
+          error("Got response " + status +
+                        ", from " + realUrl);
+          error("================================================");
+          error("================================================");
+          error("================================================");
 
-          throw new TimezonesException("Got response " + status +
+          throw new TimezonesException(TimezonesException.noPrimary,
+                                       "Got response " + status +
                                                ", from " + realUrl);
         }
 
@@ -279,28 +290,39 @@ public class TzServer extends Logged implements AutoCloseable {
     throw new TimezonesException("Too many redirects on " + realUrl);
   }
 
-  private CloseableHttpResponse doCall(final String etag,
+  private CloseableHttpResponse doCall(final String action,
+                                       final String etag,
                                        final NameValuePair... params) throws TimezonesException {
     if (tzserverUri == null) {
       throw new TimezonesException("No timezones server URI defined");
     }
 
-    return doCall(tzserverUri, etag, params);
+    return doCall(tzserverUri, action, etag, params);
   }
 
   private CloseableHttpResponse doCall(final String serverUrl,
+                                       final String action,
                                        final String etag,
                                        final NameValuePair... params) throws TimezonesException {
     try {
-      final URI tzUri = new URI(serverUrl);
-      final URI uri = new URIBuilder()
+      String url = serverUrl;
+      if (!url.endsWith("/")) {
+        url += "/";
+      }
+      url+= action;
+
+      final URI tzUri = new URI(url);
+      final URIBuilder urib = new URIBuilder()
               .setScheme(tzUri.getScheme())
               .setHost(tzUri.getHost())
               .setPort(tzUri.getPort())
-              .setPath(tzUri.getPath())
-              .setParameters(params)
-              .build();
+              .setPath(tzUri.getPath());
 
+      if (params!= null) {
+        urib.setParameters(params);
+      }
+
+      final URI uri = urib.build();
       final HttpGet httpGet = new HttpGet(uri);
 
       if (etag != null) {

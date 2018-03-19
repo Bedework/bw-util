@@ -32,6 +32,9 @@ public class TimezonesException extends Throwable {
   /** */
   public static String badDate = "org.bedework.timezones.exc.baddate";
 
+  /** */
+  public static String noPrimary = "org.bedework.timezones.exc.no.primary";
+
   private String extra;
 
   /**
