@@ -1,0 +1,429 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+  
+   http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.  
+*/
+
+body {
+  font-family : Arial, Helvetica, sans-serif;
+  background-color : white;
+  color : black;
+  padding: 0.75em 1em 0em 1em;
+  margin: 0in;
+  font-size: 10pt;
+}
+tr {
+  page-break-inside: avoid;
+}
+td {
+  page-break-inside: avoid;
+}
+#titleBar {
+  background-color: #eee;
+  color: black;
+  display: block;
+  text-align: center;
+  font-size: 0.7em;
+  margin: 0em;
+  padding: 0em;
+  letter-spacing : 0.1em;
+}
+#dateBarTable td {
+  background-color: #eee;
+  color : black;
+  padding-top: 2px;
+  padding-bottom: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  border-bottom: 1px solid #333;
+  margin: 0em;
+  font-weight : bold;
+  text-align : center;
+  white-space: nowrap;
+}
+#dateBarTable td.imgCell {
+  display: none;
+}
+#searchBarTable {
+  display: none;
+}
+#tabsTable {
+  display: none;
+}
+#navigationBarTable {
+  display: none;
+}
+#eventTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #333;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#eventTable td {
+  margin: 0em;
+  vertical-align: top;
+  padding: 0.5em 0.5em 0.2em 0.5em;
+}
+#eventTable td.icalIcon {
+  display: none;
+}
+#eventTable th {
+  text-align: left;
+  padding: 1em 0.5em 1em 0.5em;
+  background-color: #666;
+  color: #eee;
+}
+#eventTable th.fieldval {
+  width: 100%;
+}
+#calPageTable {
+  width: 100%;
+  font-size: 100%;
+  margin: 0px;
+  padding: 0px;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#calPageTable td {
+  width: 50%;
+  vertical-align: top;
+  padding: 0.5em 2em 1em 3em;
+}
+#calPageTable th {
+  font-size: 1.2em;
+  background-color: #ccc;
+  color: black;
+  font-weight: bold;
+}
+#calPageTable td.leftCell {
+  border-right : thin dashed #999;
+}
+#calPageTable h2 {
+  font-size: 1.2em;
+}
+#calPageTable td.infoCell {
+  background-color: #eee;
+  color: black;
+  text-align: center;
+}
+#dayCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#dayCalendarTable td {
+  padding: 0.4em;
+  margin: 0em;
+}
+#dayCalendarTable .dateRange {
+  text-align: left;
+  background-color: #fee;
+  color: black;
+  white-space: nowrap;
+}
+#dayCalendarTable .description {
+  text-align: left;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#dayCalendarTable .more {
+  text-align: center;
+  background-color: #eee;
+  color: black;
+  font-size: 0.8em;
+}
+#weekCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#weekCalendarTable td {
+  padding: 0.4em;
+  margin: 0em;
+}
+#weekCalendarTable .dateRange {
+  text-align: left;
+  background-color: #fdd;
+  color: black;
+  white-space: nowrap;
+}
+#weekCalendarTable .description {
+  text-align: left;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#weekCalendarTable .more {
+  text-align: center;
+  background-color: #eee;
+  color: black;
+  font-size: 0.8em;
+}
+#monthCalendarTable {
+  width: 100%;
+  font-size: 0.8em;
+  margin: 0px;
+  padding: 0px;
+  /*border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;*/
+}
+#monthCalendarTable th.dayHeading {
+  width: 14%;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #666;
+  color: #eee;
+  border: 1px solid black;
+}
+#monthCalendarTable td {
+  width: 14%;
+  height: 60px;
+  vertical-align: top;
+  text-align: left;
+  padding: 0em;
+  border: 1px solid #333;
+  background-color: white;
+  color: black;
+}
+#monthCalendarTable td.filler {
+  border: none;
+  background-color: #eee;
+  color: black;
+  /*border: 1px solid #aaa;*/
+}
+#monthCalendarTable ul {
+  font-size: 0.8em;
+  list-style : none;
+  margin: 0em;
+  padding: 0.3em 0em 0em 0em;
+}
+#monthCalendarTable ul li {
+  margin: 0em;
+  padding: 0em;
+  display: block;
+  border-top: 1px solid #666;
+}
+#monthCalendarTable ul  li:first-child {
+  border-top: none;
+}
+
+#monthCalendarTable span.eventLinkA  {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  background-color: #fcc;
+  color: black;
+  border-bottom: 1px solid #666;
+}
+#monthCalendarTable span.eventLinkB  {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  background-color: #fee;
+  color: black;
+}
+#monthCalendarTable td.today,
+#yearCalendarTable td.today {
+  background-color: #ffb;
+  color: black;
+}
+#yearCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0em;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#yearCalendarTable td {
+  padding: 1em 0em 0em 0em;
+  margin: 0em;
+  vertical-align: top;
+  text-align: center;
+  width: 33%;
+}
+#yearCalendarTable table.yearViewMonthTable {
+  margin: 0em  1em 0.5em 1em;
+  border: 1px solid #666;
+}
+#yearCalendarTable table.yearViewMonthTable td {
+  text-align: center;
+  padding: 0.2em;
+  width: 12.5%;
+}
+#yearCalendarTable table.yearViewMonthTable th {
+  font-weight: bold;
+  background-color: #f5f5f5;
+  color: black;
+  padding: 0.2em;
+}
+#yearCalendarTable table.yearViewMonthTable td.monthName {
+  font-weight: bold;
+  text-align: center;
+  background-color: #666;
+  color: #eee;
+  white-space: nowrap;
+  border-bottom: 1px solid #999;
+}
+#yearCalendarTable table.yearViewMonthTable td.weekCell {
+  font-weight: bold;
+  font-size: 0.8em;
+  background-color: #f5f5f5;
+  color: black;
+}
+#listTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#listTable td {
+  padding: 0.5em;
+  margin: 0em;
+  border-bottom: 1px solid #bbb;
+}
+#listTable td.dateRangeCrossDay {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #ddd;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeEarlyMorning {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #dcc3c3;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeMorning {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #fee;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeAfternoon {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #fdd;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeEvening {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #fcc;
+  color: black;
+  white-space: nowrap;
+}
+#listTable span.littleArrow {
+  font-size: 1.4em;
+}
+#listTable td.description {
+  text-align: left;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#listTable td.dateRow {
+  text-align: left;
+  background-color: #888;
+  color: #eee;
+  font-size: 0.8em;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  margin: 0em;
+}
+#listTable td.icons {
+  display: none;
+}
+.noEventsCell {
+  padding: 1em;
+}
+#footer {
+  font-size: 0.8em;
+  text-align : center;
+  margin-top: 0em;
+  padding: 1em;
+  color: #333;
+  background-color: #eee;
+  border-bottom: 2px solid #333;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#skinSelectorTable {
+  display: none;
+  width: 100%;
+  padding-top: 0.5em;
+  font-size: 0.7em;
+  color: #333;
+  background-color: inherit;
+}
+#skinSelectorTable td {
+  vertical-align: top;
+}
+#skinSelectorTable td.rightCell {
+  text-align: right;
+}
+#skinSelectorTable td.leftCell {
+  text-align: left;
+  color: #999;
+  background-color: inherit;
+}
+#skinSelectorTable td.rightCell form {
+  display: inline;
+  margin: 0em;
+  padding: 0em;
+}
+#skinSelectorTable td.rightCell select {
+  font-size: 0.9em;
+  color: #333;
+  background-color: #eee;
+}
+a.submitPublicEvent {
+  display: none;
+}
+.bwEventImage {
+  float: right;
+  margin: 0 0.5em 1em 1em;
+}
+.indent {
+  margin-left: 1em;
+}

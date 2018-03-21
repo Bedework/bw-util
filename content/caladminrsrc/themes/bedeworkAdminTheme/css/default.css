@@ -1,0 +1,1813 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.
+*/
+
+body {
+  background-color: white;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  min-width: 680px;
+}
+#bedework {
+  min-width: 800px;
+}
+#header {
+  color: #eee;
+  background-color : #333;
+  margin: 0;
+  padding: 0.5em 1em 0.75em 1em;
+}
+#header a {
+  color: #dde;
+  background-color : transparent;
+}
+#header h1 {
+  font-size: 1.4em;
+  margin: 0.5em 0.5em 0 0;
+}
+#header img {
+  float: right;
+  border: 0;
+}
+#messages, #errors {
+  background: none repeat scroll 0 0 #f8f7a3;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+  color: black;
+  font-size: 0.9em;
+  margin: 2em 2em 0;
+  padding: 0.5em 1em;
+}
+#errors {
+  border: 2px solid red;
+}
+#errors li,
+#messages li {
+  list-style: none;
+}
+#messages p,
+#errors p {
+  margin: 0;
+  padding: 2px 0;
+}
+#messages .ui-icon,
+#errors .ui-icon {
+  float: left;
+}
+#statusBar {
+  clear: both;
+  margin: 0;
+  color: #eee;
+  background-color: #5c7486;
+  font-size: 0.9em;
+  border-bottom: 1px solid #999;
+  padding: 0.5em 1em;
+  white-space: nowrap;
+}
+#statusBar #userInfo {
+  float: right;
+  text-align: right;
+}
+#statusBar span.status {
+  font-weight: bold;
+}
+#statusBar a:link,
+#statusBar a:active,
+#statusBar a:visited,
+#statusBar a:hover {
+  margin-right: 1em;
+  text-decoration : none;
+  color: #eee;
+  background-color: transparent;
+}
+#statusBar a:hover {
+  text-decoration: underline;
+}
+#statusBar #bwLogoutButton {
+  margin: 0 0 0 4px;
+}
+#statusBar #groupDisplay {
+  padding-right: 1.5em;
+}
+
+/* Notifications */
+#notificationMenu {
+  display: inline-block;
+  position: relative;
+  margin-left: 1em;
+  background-color: #eee;
+  color: black;
+  padding: 0 6px 0 4px;
+  border-radius: 3px;
+}
+#notificationMenu .ui-icon {
+  float: left;
+}
+#notificationMenu .notificationCount {
+  font-size: 0.9em;
+}
+#notificationMessages {
+  display: none;
+  position: absolute;
+  background-color: #eee;
+  color: #222;
+  margin: -1px 0 0 -4px;
+  padding: 1em;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  z-index: 10;
+}
+#notificationMessages li {
+  list-style: none;
+  margin: 0;
+  padding: 0.5em 4em 0.75em 0.5em;
+  background-color: #e5e5e5;
+  height: 1em;
+}
+#notificationMessages li:nth-child(odd) {
+  background-color: #ddd;
+}
+#notificationMessages a {
+  font-weight: normal;
+  color: #174581 !important;
+  margin: 0 !important;
+}
+#notificationMessages a.notificationClear {
+  position: relative;
+  float: right;
+  left: 3.5em;
+}
+#notificationMessages a.notificationClear .ui-icon {
+  float: none;
+  margin-right: 0;
+}
+#notificationMessages .ui-icon {
+  margin-right: 4px;
+}
+#notificationMessages a.approvalResponse.true,
+#notificationMessages a.suggestReply.true,
+#notificationMessages span.approvalResponse.true,
+#notificationMessages span.suggestReply.true {
+  color: green !important;
+}
+#notificationMessages a.approvalResponse.false,
+#notificationMessages a.suggestReply.false,
+#notificationMessages span.approvalResponse.false,
+#notificationMessages span.suggestReply.false {
+  color: red !important;
+}
+#notificationMessages a.awaitingApproval {
+  color: purple !important;
+}
+/* Tabs */
+#bwAdminMenu {
+  margin: 0;
+  padding: 0;
+  color: #eee;
+  background-color: #ddd;
+  font-size: 0.8em;
+  border-bottom: 1px solid #ccc;
+  height: 28px;
+}
+#bwAdminMenu li {
+  display: inline;
+  margin: 0;
+  padding: 8px 0;
+  color: #777;
+  background-color: #eee;
+  border-right: 1px solid #999;
+}
+#bwAdminMenu li.selected {
+  color: #333;
+  background: white url("../images/menuBgGray.gif") repeat-x top;
+  border-bottom: 2px solid white;
+}
+#bwAdminMenu a:link,
+#bwAdminMenu a:active,
+#bwAdminMenu a:hover,
+#bwAdminMenu a:visited {
+  display: inline-block;
+  color: #777;
+  background-color: transparent;
+  text-decoration: none;
+  padding-top: 8px;
+  padding-bottom: 6px;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin: 0;
+  white-space: nowrap;
+}
+#bwAdminMenu li.selected a:link,
+#bwAdminMenu li.selected a:active,
+#bwAdminMenu li.selected a:hover,
+#bwAdminMenu li.selected a:visited {
+  color: black;
+  background-color: transparent;
+  text-decoration: none;
+}
+#titleBar {
+  font-size: 0.7em;
+  font-weight: bold;
+  letter-spacing: 3px;
+  background-color: #ddd;
+  color: #666;
+  border-top: 1px solid black;
+  border-bottom: 2px solid black;
+  text-align: center;
+}
+#content {
+  margin: 0;
+  padding: 1em 2em;
+}
+#content h2 {
+  margin: 0 0 1em 0;
+  padding: 1em 0 0 0;
+  font-size: 1.3em;
+}
+#content h2.leftTitle {
+  float: left;
+  margin: 0;
+}
+#content .mgmtHeading h2 {
+  float: left;
+}
+#content .mgmtHeading input {
+  margin: 2em 0 0 1em;
+}
+#content .mgmtHeading p {
+  clear: both;
+}
+#content h3 {
+  margin: 0;
+  padding: 1em 0.2em 0 0.2em;
+  font-size: 1.1em;
+}
+#content h4 {
+  margin: 0;
+  padding: 1em 0.2em 0 0.2em;
+  font-size: 1em;
+}
+#content .menuTitle {
+  margin: 0;
+  padding: 1em 0.5em 0 0.2em;
+}
+#content ol li {
+  padding-bottom: 1em;
+}
+th {
+  text-align: left;
+  font-size: 0.9em;
+}
+/* mainMenu = manage events tab icons and links */
+#mainMenu {
+  width: 100%;
+  margin: 0;
+  font-size: 0.9em;
+}
+#mainMenu.mainMenuMost {
+  width: 550px;
+  margin: 2em auto 6em auto;
+}
+#mainMenu.mainMenuMost #mainMenuRow2 {
+  margin-left: 1em;
+}
+#mainMenu.mainMenuFull {
+  width: 750px;
+  margin: 0 auto;
+}
+#mainMenu.mainMenuFull #mainMenuRow2 {
+  padding-left: 5em;
+}
+#mainMenu.mainMenuInline {
+  /* for approver, when workflow is enabled */
+  position: relative;
+  height: 200px;
+}
+#mainMenu.mainMenuInline ul {
+  position: absolute;
+  bottom: 0;
+}
+#mainMenu.mainMenuInline ul + ul {
+   left: 180px;
+}
+#mainMenu.mainMenuMost ul,
+#mainMenu.mainMenuFull ul {
+  clear: both;
+}
+#mainMenu li {
+  text-align: center;
+  vertical-align: middle;
+  padding: 1em 0.5em;
+  list-style: none;
+  display: inline-block;
+}
+#mainMenu img {
+  text-align: center;
+  border: 0;
+}
+#mainMenu a {
+  display: block;
+  padding: 0.2em 1em 0.2em 1em;
+  text-decoration: none;
+  color: #483D8B;
+  background-color: transparent;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  background-color: #DFEAFF !important;
+  color: inherit;
+}
+textarea:required {
+  border-color: #ccc !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+select:focus option {
+  background-color: white;
+  color: inherit;
+}
+#mainMenuEventSearch {
+  clear: left;
+  padding-top: 1em;
+}
+#searchForm {
+  font-size: 0.8em;
+  margin: 0 0 0 3px;
+}
+#searchForm label.bwSearchTitle {
+  display: block;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#searchForm legend {
+  float: left;
+  margin: 2px 0 0 0;
+  padding: 0;
+}
+#searchForm input {
+  font-size: 0.7em;
+}
+#bwSearchWidgetToday {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+/*#searchPageForm {
+  display: inline;
+  margin: 0px 0px 1px 0px;
+  padding: 0;
+  white-space: nowrap;
+  float: right;
+}*/
+#searchFilter {
+  float: right;
+  text-align: right;
+  font-size: 11px;
+  margin-top: 3px;
+  margin-right: 1em;
+}
+#searchFilter input {
+  font-size: 11px;
+}
+#searchFilter input[type="text"] {
+  width: 165px;
+  height: 11px;
+}
+#searchFilter input[type="submit"] {
+  padding: 0 8px 1px;
+}
+#searchFilter .searchLimitBlock {
+  margin: 8px 4px 0 0;
+}
+#searchFilter .searchLimitBlock input {
+  vertical-align: top;
+  margin: 0 0 0 8px;
+}
+#searchFilter .searchLimitBlockToggle {
+  visibility: hidden;
+}
+#searchFilter:hover .searchLimitBlockToggle {
+  visibility: visible;
+}
+#searchScope {
+  margin: 4px 25px 0 0;
+}
+.searchResultNav {
+  float: right;
+}
+.searchArrowLeft {
+  margin-right: 0.5em;
+}
+.searchArrowRight {
+  margin-left: 0.5em;
+}
+#searchResultSize {
+  margin: 0.5em 0 1em 0;
+}
+#searchTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0 0 1em 0;
+  padding: 0;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+#searchTable th,
+#searchTable td {
+  padding: 0.5em;
+  vertical-align: top;
+}
+#searchTable th {
+  text-align: left;
+  font-weight: normal;
+  background: #ddd;
+  color: #000;
+  border-bottom: 1px solid #ccc;
+}
+#searchTable tr:nth-child(odd) td {
+  background-color: #eee;
+}
+#searchTable td.relevance {
+  white-space: nowrap;
+}
+#searchTable .searchRelevance {
+  background-color: #2c5f89;
+  color: black;
+}
+#calSuiteTitle {
+  border: 1px solid #666;
+  color: black;
+  background-color: #ffe;
+  padding: 0.5em;
+  margin: 1em 0;
+
+}
+.adminMenu {
+}
+ul.adminMenu {
+}
+ul.adminMenu li {
+  padding: 0.25em 0 0 0;
+}
+#bwSubmittedEventCommentBlock {
+  font-size: 0.9em;
+  padding: 1em;
+  border: 1px solid #ccc;
+  background-color: #ffe;
+  color: black;
+}
+#bwSubmittedBy {
+  float: right;
+}
+#bwSubmittedBy a.submitter {
+  font-weight: bold;
+}
+#bwSubmittedEventCommentBlock h4 {
+  display: inline;
+  font-size: 1.1em;
+  padding: 1em 0;
+}
+#bwSubmittedEventCommentBlock table {
+  float: left;
+  margin: 1em 1em 0 0;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+}
+#bwSubmittedEventCommentBlock td {
+  padding: 0 3em 0 1em;
+}
+#bwSubmittedEventCommentBlock th {
+  padding: 0 3em 0 0;
+}
+#bwSubmittedEventCommentBlock p {
+  margin: 0;
+  padding: 1em 0 0 0;
+  clear: both;
+}
+#bwSubmittedEventCommentBlock a.toggle {
+  padding-left: 1em;
+  font-size: 0.9em;
+}
+#commonListTable {
+  width: 100%;
+  margin-bottom: 0;
+  border-spacing: 0;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+#commonListTable th {
+  padding: 0.5em 1em 0.5em 0.5em;
+  background-color : #ddd;
+  color: black;
+  white-space: nowrap;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+#commonListTable td {
+  vertical-align: top;
+  font-size: 0.9em;
+  padding: 0.5em;
+  color: black;
+  background-color: white;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+#commonListTable td.date {
+  white-space: nowrap;
+}
+#commonListTable td.calcat {
+  font-size: 0.8em;
+  /*padding: 0;*/
+}
+#commonListTable td.calcat ul {
+  margin: 0;
+  padding: 0;
+}
+#commonListTable td.calcat li {
+  list-style: none;
+  margin: 0;
+  padding: 4px 6px;
+}
+/*#commonListTable td.calcat li:nth-child(even) {
+  background-color: #f5f5f5;
+}
+#commonListTable td.calcat li:nth-child(odd) {
+  background-color: #fff;
+}*/
+.bwEventListOtherGroupTags {
+  font-size: 0.8em;
+  margin: 1em 0 0 0;
+  padding: 0 6px;
+}
+.otherTagsControls {
+  white-space: nowrap;
+}
+#commonListTable tr.even td {
+  background-color: #f5f5f5;
+  color: black;
+}
+#commonListTable tr.highlight td {
+  background-color: #fee;
+  color: black;
+}
+#commonListTable tr.cancelled td {
+  background: #fff url("../images/cancelledLines.gif") repeat top left;;
+  color: black;
+}
+#commonListTable tr.tentative td {
+  background: #fff url("../images/tentativeLines.gif") repeat top left;
+  color: black;
+}
+#commonListTable td.unclaimed {
+  background-color: #eee;
+  color: #900 !important;
+  font-style: italic;
+}
+#commonListTable td.memberList {
+  white-space: nowrap;
+}
+.recurrenceEditLinks {
+  font-style: italic;
+  font-size: 0.9em;
+  margin-top: 0.5em;
+}
+.created-modified {
+  margin-top: 1em;
+  font-size: 0.9em;
+  line-height: 1.4em;
+  text-align: right;
+}
+#commonListTable tr.suggestion-accepted td {
+  background-color: #dfd;
+}
+#commonListTable tr.suggestion-rejected td {
+  background-color: #fee;
+}
+#commonListTable tr.suggestion-rejected td a {
+  text-decoration: line-through;
+}
+.suggestionStatus {
+  font-size: 1em;
+  margin: 1em 0;
+}
+.suggestionStatus span {
+  padding: 2px 8px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+.suggestionStatus .suggestion-accepted {
+  background-color: #8d8;
+  color: white;
+}
+.suggestionStatus .suggestion-rejected {
+  background-color: #f33;
+  color: white;
+}
+.suggestionStatus .suggestion-suggested {
+  background-color: #ff9;
+}
+#bwSuggestions li {
+  margin-right: 1em;
+}
+#bwSuggestions span.suggestion-accepted {
+  background-color: #6c6;
+  color: white;
+  margin-left: 0.5em;
+  padding: 0 4px;
+}
+#bwSuggestions span.suggestion-rejected {
+  background-color: #e33;
+  color: white;
+  margin-left: 0.5em;
+  padding: 0 4px;
+}
+#eventListMetaData {
+  margin-bottom: 1em;
+  padding: 0.5em;
+  font-size: 0.9em;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  border-top: none;
+  font-weight: bold;
+}
+.bwPublicLink {
+  float: right;
+}
+#bwPublicEventLinkInput {
+  width: 100%;
+}
+table.eventFormTable,
+table.commonFormTable {
+  margin: 1em 0;
+}
+table.eventFormTable td,
+table.commonFormTable td {
+  vertical-align: top;
+  font-size: 0.9em;
+  padding: 0.5em;
+}
+table.commonFormTable td {
+  vertical-align: middle;
+}
+table.eventFormTable th,
+table.eventFormTable td.fieldName,
+table.commonFormTable th,
+table.commonFormTable td.fieldName {
+  white-space: nowrap;
+  font-weight: bold;
+  background-color : #eee;
+  color: black;
+  padding: 0.2em 0.5em;
+  font-size: 0.9em;
+}
+table.eventFormTable td.fieldName,
+table.commonFormTable td.fieldName {
+  width: 7em;
+  vertical-align: middle;
+}
+table.eventFormTable td.fieldName.top,
+table.commonFormTable td.fieldName.top {
+  vertical-align: top;
+  padding-top: 1em;
+}
+table.eventFormTable tr.validationError td.fieldName,
+table.commonFormTable tr.validationError td.fieldName {
+  color: black;
+  background-color: #ee0 !important;
+}
+table.eventFormTable tr.optional td,
+table.commonFormTable tr.optional td {
+  white-space: nowrap;
+  font-style: italic;
+}
+table.eventFormTable tr.optional textarea,
+table.commonFormTable tr.optional textarea {
+  white-space: wrap;
+}
+table.eventFormTable tr.optional td.fieldName,
+table.commonFormTable tr.optional td.fieldName {
+  font-weight: normal;
+  font-style: normal;
+}
+table.eventFormTable tr.optional input {
+}
+table.eventFormTable td.allField {
+  white-space: nowrap;
+  text-align: right;
+  font-style: italic;
+  background-color : white;
+  color: black;
+  padding: 0.2em;
+}
+.dateFields {
+  display: inline;
+}
+.timeFields {
+  display: inline;
+  margin-left: 1em;
+}
+.topmargin {
+  margin-top: 1em;
+}
+.note {
+  font-size: 0.9em;
+  font-style: italic;
+}
+#bw-location-address label {
+  display: inline-block;
+  width: 3.2em;
+}
+#bw-location-address label.inline {
+  width: auto;
+  margin-left: 1em;
+}
+#xbwCustomFieldCollectionsHolder,
+#xbwCustomFieldCurrentFormHolder {
+  display: inline-block;
+}
+#customFieldsContainer .interiorLabel {
+  margin-top: 0.5em;
+}
+#xbwCustomFieldCollections option.unpublished {
+  display: none;
+  background-color: #fee;
+  font-style: italic;
+}
+.customFields {
+  display: inline-block;
+  margin-top: 2px;
+}
+.customFields a {
+  display: inline-block !important;
+}
+.customFields .ui-icon {
+  float: left;
+}
+.fieldInfo {
+  font-size: 0.9em;
+  font-style: italic;
+  color: #777;
+  background-color: transparent;
+}
+.fieldInfoAlone {
+	margin: 0 0 12px 140px;
+  font-size: 0.9em;
+  font-style: italic;
+  color: #777;
+  background-color: transparent;
+}
+.fieldInfoAlone button {
+	float: right;
+	margin: 0.5em 2em 1em 0;
+}
+.dim {
+  color: #aaa;
+}
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+#bwEventUrls fieldset {
+  margin-bottom: 1em;
+}
+label {
+	cursor: pointer;
+}
+label.interiorLabel {
+  display: block;
+  float: left;
+  min-width: 110px;
+}
+.ui-datepicker-trigger {
+  position: relative;
+  top: 4px;
+  left: 4px;
+}
+#bwLocationsCell label {
+  display: block;
+}
+#bwLocationsPrimaryContainer {
+  margin: 0 0.25em 0.25em 0;
+}
+#bwLocationsSecondaryContainer {
+  margin: 0;
+}
+#bwPrefContactContainer,
+#bwAllContactContainer {
+  float: left;
+}
+.container {
+  margin-top: 0.5em;
+  clear: both;
+}
+.container-nowrap {
+  margin: 0 0 0.5em 0;
+  white-space: nowrap;
+}
+.popup {
+  position: relative;
+  background-color: white;
+  margin: auto;
+  padding: 0.5em 2em 2.5em;
+  max-width: 500px;
+}
+a.disabled {
+  color: #bbb;
+  font-style: italic;
+}
+#bwAddRoom h2 {
+  font-size: 1.4em;
+  margin-bottom: 0;
+}
+#bwAddRoomFields {
+  margin-top: 1em;
+}
+#bwAddRoomFields input,
+#bwAddRoomFields button {
+  font-size: 1em;
+}
+#bwAddRoomAddress {
+  font-style: italic;
+}
+#bwSuggestions .bwPrefAllControls {
+  clear: both;
+}
+.bwColumn {
+  float: left;
+  margin-right: 2em;
+}
+#bwTopicalAreas .bwColumn {
+  width: 50%;
+}
+#bwTopicalAreas li.checkedByOtherGroup {
+  color: #777;
+  font-style: italic;
+}
+#bwTopicalAreas input[type='checkbox'] {
+  opacity: 0; /* hide the actual checkbox, but make sure it is clickable */
+}
+#bwTopicalAreas input[type='checkbox'] + label {
+  margin: 0 0 0 -20px;
+  padding: 5px 4px 4px 20px;
+  cursor: pointer;
+  background: url("../images/checkbox-off.png") left center no-repeat;
+}
+#bwTopicalAreas li.checkedByOtherGroup input[type='checkbox'] + label {
+  background-image: url("../images/checkbox-others.png");
+}
+#bwTopicalAreas input[type='checkbox']:checked + label {
+  background-image: url("../images/checkbox-on.png") !important;
+}
+#remainingChars {
+	margin-left: 2em;
+}
+#eventFormImage {
+  margin-bottom: 0.5em;
+}
+#eventFormImage img {
+	margin-right: 4px;
+}
+#eventFormImage img.fullImage {
+  max-width: 500px;  /* max width in event form display */
+}
+#eventFormImage img.thumbImage {
+  max-width: 80px; /* max width in event form display */
+}
+#eventImageUseExisting {
+	margin-bottom: 0;
+}
+table.eventFormTable .fieldInfo {
+  width: 400px;
+  margin-bottom: 0.5em;
+}
+.dateStartEndBox {
+  border: 1px solid #ccb;
+  margin: 4px;
+  padding: 4px;
+  white-space: nowrap;
+}
+.dateStartEndBox strong {
+  display: block;
+}
+table.eventFormTable .startDateLabel {
+  margin-left: 26px;
+}
+table.eventFormTable select.timezones {
+  margin-left: 1em;
+  width: 160px;
+}
+#bwRegistrationFields {
+	margin: 1em;
+}
+.shown {
+  display: inline;
+}
+.invisible {
+  display: none !important;
+}
+.hidden {
+  visibility: hidden;
+}
+.bwHighlightBox {
+  margin: -0.2em;
+  padding: 1em;
+  color: black;
+  background-color: #ffe;
+  border: 1px solid #eee;
+}
+table.eventFormTable .durationBox {
+  border: 1px solid #ccb;
+  display: inline;
+  margin: 4px;
+  padding: 6px 4px;
+}
+table.eventFormTable .durationSpacerText {
+  font-weight: bold;
+  margin: 0 1em;
+}
+table.params {
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+table.params th {
+  white-space: normal !important;
+  width: 150px;
+  font-weight: normal;
+  padding: 0.5em;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+table.params td {
+  font-weight: bold;
+  padding: 0.5em;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+table.params td input {
+  width: 200px;
+}
+table.params td input.wide {
+  width: 400px;
+}
+table.params .desc {
+  font-weight: normal;
+  font-size: 0.8em;
+  font-style: italic;
+  color: #666;
+  background-color: transparent;
+}
+table.common2 {
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+table.common2 th,
+table.common2 td {
+  padding: 0.5em;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+  font-weight: normal;
+}
+table.common2 th {
+  color: black;
+  background-color: #eee;
+}
+#confirmButtons {
+  margin: 1em 0 !important;
+}
+#bwEmailBox {
+  margin: 1em 1em 1em 0;
+  padding: 0 1em 1em 1em;
+  background-color: #ffe;
+  width: 600px;
+  border: 1px solid #ccc;
+}
+#calDescriptionsLink {
+  font-size: 0.8em;
+}
+#flatCalendarDescriptions {
+  font-size: 0.9em;
+  padding: 0.2em;
+}
+#flatCalendarDescriptions td {
+  padding: 0.2em;
+}
+.autoCompleteMatched {
+  color: black;
+  background-color: white;
+}
+.autoCompleteHover {
+  background-color: #3366cc;
+  color: white;
+}
+.autoCompleteNormal {
+  background-color: white;
+  color: black;
+}
+.autoCompleteCell {
+  color: #3366cc;
+}
+.autoCompleteTable {
+  width: 386px;
+  border-collapse: collapse;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+  border-bottom: 1px solid gray;
+}
+.autoCompleteTable td {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 0.8em;
+}
+.edit {
+  /*top: -4px;
+  background: #F8F8F8;
+  border: 1px solid #ccc;*/
+}
+.highlite {
+  /*background: #FFF;
+  border: 1px dashed #ccc;*/
+}
+#clock {
+  position: absolute;
+  top: 160px;
+  margin: auto;
+}
+#bedework #startTimeFields img,
+#bedework #endTimeFields img,
+#bedework #rdateTimeFields img{
+  vertical-align: middle;
+}
+#bedework #calWidgetStartTimeHider,
+#bedework #calWidgetEndTimeHider,
+#bedework #rdateTimeFields {
+  width: 350px;
+}
+#tztable {
+  margin-top: 1em;
+}
+#tztable td {
+  padding: 2px 4px;
+}
+#recurringSwitch {
+  margin: 0;
+}
+#recurrenceInfo {
+  margin: 0;
+  padding: 1em;
+  border: 1px solid #ddd;
+  font-size: 0.9em;
+}
+#rrulesSwitch,
+#rrulesUiSwitch {
+  font-size: 0.8em;
+}
+#rrulesFields {
+  margin: 0;
+  padding: 0;
+}
+#rrulesTable {
+  border: 1px solid #ddd;
+  margin: 0;
+  padding: 0;
+}
+#rrulesTable strong {
+  display: inline;
+}
+#rrulesTable td#recurrenceFrequency {
+  padding: 0.5em 1em;
+  border-right: 1px solid #ddd;
+  white-space: nowrap;
+}
+#rrulesTable td#advancedRrules {
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: 1px solid #ddd;
+}
+#rrulesTable td#recurrenceUntil {
+  width: 100%;
+  padding: 0.5em 0 0 1em;
+}
+.chkBoxListItem {
+  display: block;
+  float: left;
+  width: 3em;
+}
+#rrulesTable br {
+  clear: both;
+}
+#rrulesTable p {
+  margin: 0 0 0.5em 0;
+}
+#rrulesTable p.weekRecurLinks {
+  margin: 1em 0 1em 0;
+}
+#rrulesTable .extraByMonthPosFields {
+  margin: 0 0 1em 2em;
+  padding: 0;
+}
+#rrulesTable #monthRecurFields div,
+#rrulesTable #yearRecurFields div {
+  display: block;
+  margin: 0 0 0.5em 0;
+}
+#rrulesTable #dayMonthCheckBoxList,
+#rrulesTable #monthDaysCheckBoxList,
+#rrulesTable #yearWeeksCheckBoxList,
+#rrulesTable #yearMonthCheckBoxList,
+#rrulesTable #yearMonthDaysCheckBoxList,
+#rrulesTable #yearDaysCheckBoxList {
+  margin: 0.5em 0 0.5em 2em;
+  display: block;
+  clear: both;
+  white-space: nowrap !important;
+}
+#recurrenceDatesButton input {
+  margin: 0;
+  font-size: 0.8em;
+}
+#rdatesFormFields {
+  font-size: 0.9em;
+  padding: 0.5em;
+}
+#rdatesFormFields p {
+  clear: both;
+  margin-top: 1em;
+}
+.rdatesTable {
+  font-size: 0.9em;
+  border: 1px solid #ddd;
+}
+.rdatesTable td {
+  padding: 0.5em 1em;
+}
+.rdatesTable td.trash {
+  text-align: right;
+}
+.rdatesTable td.note {
+  text-align: center;
+  font-size: 0.9em;
+}
+#bwCurrentRdates,
+#bwCurrentExdates,
+#bwCurrentRdatesNone,
+#bwCurrentExdatesNone {
+  float: left;
+  margin: 1em 2em 1em 0;
+}
+#bwCurrentRdates th,
+#bwCurrentRdates td,
+#bwCurrentExdates th,
+#bwCurrentExdates td {
+  text-align: left;
+  padding: 0 0.5em 0 0;
+}
+#bwDialogBox {
+  margin: 1em;
+  background: white;
+  color: black;
+}
+#bwDialogBox h4 {
+  padding: 4px;
+  margin: 0;
+  text-align: center;
+  color: #eee;
+  background: #233979 url(../images/glassFill-02.gif) repeat-x bottom;
+  border: 2px solid #233979;
+}
+#bwDialogBox #errors,
+#bwDialogBox #messages {
+  margin: 0;
+}
+#bwDialogBox table {
+  width: 100%;
+  margin: 1em 0;
+}
+#bwDialogBox table th {
+  padding: 2px;
+  text-align: center;
+  color: black;
+  background: #eee;
+}
+#contactEmailAlert {
+  display: none;
+  background: transparent url('../images/email.gif') no-repeat top left;
+  /*position: relative;
+  top: -20px;
+  left: 250px;*/
+  float: left;
+  width: 150px;
+  height: 20px;
+}
+.submitBox {
+  position: relative; /* allows for absolute positioning within the table, e.g. #pubishBox */
+  margin-top: 1em;
+}
+.claimButtons {
+  padding-left: 2em;
+}
+#publishBox {
+  position: absolute;
+  padding: 1em;
+  background-color: #ffa;
+  color: black;
+  border: 1px solid #333;
+  width: 420px;
+  height: 60px;
+}
+#publishBoxCloseButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+}
+#sharingBox {
+  margin: 1em 0;
+  padding: 1em 1em 2em 1em;
+}
+#bwEventTab-Access #sharingBox {
+  border-top: none;
+}
+#sharingBox h3,
+#sharingBox h5 {
+  padding: 0 0 0.5em 0;
+}
+#sharingBox ul {
+  font-size: 0.8em;
+  margin: 0 1em;
+}
+#sharingBox p {
+  font-size: 0.9em;
+}
+#shareForm {
+  margin: 1em 0;
+  padding: 0;
+}
+#shareFormTable td {
+  border: 1px solid #666;
+  padding: 0 0 0.5em 0;
+  vertical-align: top;
+}
+#shareFormTable h5 {
+  background: #e5e5e5;
+  color: black;
+  margin: 0;
+  padding: 4px;
+}
+#shareFormTable #accessRightsToggle {
+  float: right;
+  font-weight: normal;
+  font-size: 0.8em;
+}
+#shareFormTable .whoTypes {
+  margin: 1em;
+}
+#howTable {
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.8em;
+  width: 100%;
+}
+#howTable th {
+  color: white;
+  background-color: #999;
+  font-weight: normal;
+}
+#howTable td {
+  white-space: nowrap;
+  border-top: 1px dotted #ccc;
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+  text-align: center;
+}
+#howTable td.level1 {
+  text-align: left;
+  font-weight: bold;
+}
+#howTable td.level2 {
+  padding-left: 2em;
+  text-align: left;
+  font-weight: bold;
+}
+#howTable td.level3 {
+  padding-left: 4em;
+  text-align: left;
+}
+#howTable td.level4 {
+  padding-left: 6em;
+  text-align: left;
+}
+#howTable td.level5 {
+  padding-left: 8em;
+  text-align: left;
+}
+#howList {
+  margin: 0;
+  padding: 0 0 1em 0;
+}
+#howList ul {
+  margin: 0 0 0 2em;
+  padding: 0 0 0.5em 0;
+}
+#howList li {
+  list-style-type: none;
+  margin-left: 0;
+  font-size: 11px;
+}
+table td {
+  vertical-align: top;
+}
+table.common {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+}
+table.common th {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em;
+  background-color: #ddd;
+  color: black;
+  white-space: nowrap;
+}
+table.common th.thin {
+  width: 80px;
+}
+#bedework table.common th.icon {
+  margin: 0;
+  vertical-align: middle;
+  padding: 0.5em 1em 0.2em 0;
+  font-size: 0.7em;
+  background-color: #fff;
+  color: black;
+}
+#bedework table.common th.commonHeader {
+  vertical-align: middle;
+  background-color: #666;
+  color: #eee;
+  padding: 0.2em 0.5em;
+  text-align: left;
+  font-weight: normal;
+}
+#bedework table.common td.scheduleActions {
+  color: black;
+  background: #ddc;
+}
+#bedework table.common td.scheduleActions ul {
+  margin: 0;
+  padding: 0 0 0 20px;
+}
+.submitButtons {
+  margin-top: 1em;
+}
+#deleteListTable {
+  margin: 1em 0 2em 1em;
+}
+#deleteListTable th {
+  text-align: left;
+  padding: 0.2em 1em 0.2em 0.5em;
+}
+#deleteListTable td {
+  vertical-align: top;
+  font-size: 0.9em;
+  padding: 0.2em 1em 0.2em 0.5em;
+}
+#deleteListTable .summary {
+  font-style: italic;
+}
+#calendarTable {
+}
+#calendarTable td,
+#subsTable td {
+  padding: 0 0.5em;
+  vertical-align: top;
+}
+#calendarTable td.cals,
+#subsTable td.cals {
+  border-right: 1px solid #aaa;
+  font-size: 0.9em;
+}
+#calendarTable td.cals {
+  width: 300px;
+}
+
+#calendarTable td.bwCalsForMove {
+  padding-top: 1em;
+  font-size: 0.8em;
+}
+#subsTable td.cals {
+  width: 200px;
+}
+#viewsTable {
+  width: 100%;
+  border: 1px solid #eee;
+}
+#viewsTable td {
+  padding: 0 0.5em;
+  vertical-align: top;
+  font-size: 0.9em;
+}
+#content h3.viewName {
+  color: black;
+  background-color: #eee;
+  font-size: 1.1em;
+  padding: 0.25em;
+  margin: 1em 0 0 0;
+}
+#viewsTable td.subs {
+  border-right: 1px solid #aaa;
+  width: 200px;
+}
+#viewsTable h3 {
+  margin-bottom: 1em;
+}
+#viewsTable ul {
+  margin: 0 0 1em 0;
+  padding: 0 0 0 1em;
+}
+#viewsTable li {
+  white-space: nowrap;
+  list-style: none;
+  line-height: 1.2em;
+}
+#viewsTable .arrow {
+  width: 15px;
+  margin-right: 0.5em;
+}
+#viewsTable li.activeSub {
+  font-style: italic;
+  color: #c00;
+}
+#viewsTable a {
+  color: #333;
+}
+.addResourceForm label,
+.resFormLabel {
+	width: 145px;
+	display: inline-block;
+}
+.resFormLabel {
+  font-weight: bold;
+}
+#authUserInputForms {
+  margin: 1em 0;
+}
+#adminGroupFormTable td,
+#adminGroupFormTable th {
+  vertical-align: top;
+}
+#adminGroupFormTable td.fieldName {
+  color: black;
+  background-color: #eee;
+}
+p.note {
+  margin: 0;
+  padding: 0;
+  font-size: 0.8em;
+  font-style: italic;
+}
+ul.note {
+  font-size: 0.8em;
+  font-style: italic;
+}
+.notes {
+  padding: 1em 0;
+}
+.disabledNote {
+  display: block;
+  font-style: italic;
+}
+#calTreeBlock {
+  font-size: 0.9em;
+  padding: 2em;
+}
+#content h4.calendarTreeTitle {
+  margin-bottom: -1em;
+}
+ul.calendarTree {
+  margin-top: 1em;
+  white-space: nowrap;
+}
+.calendarTree ul {
+  padding-left: 10px;
+  margin-left: 10px;
+}
+.calendarTree li {
+  padding-top: 0.25em;
+}
+li.folder {
+  list-style-image: url("../images/catIcon.gif");
+}
+li.calendar {
+  list-style-image: url("../images/calIcon-sm.gif");
+}
+li.categories {
+  list-style-image: url("../images/categoryIcon.gif");
+}
+li.calsuites {
+  list-style-image: url("../images/calsuitesIcon.gif");
+}
+li.upload {
+  list-style-image: url("../images/uploadIcon.gif");
+}
+li.prefs {
+  list-style-image: url("../images/prefsIcon.gif");
+}
+li.timezones {
+  list-style-image: url("../images/clockIcon-sm.gif");
+}
+li.groups {
+  list-style-image: url("../images/groupIcon.gif");
+}
+li.user {
+  list-style-image: url("../images/userIcon.gif");
+}
+li.changeGroup {
+  list-style-image: url("../images/changeGroup.gif");
+}
+.calendarTree  li.trash {
+  list-style-image: url("../images/trashIcon.gif");
+}
+.calendarTree  li.inbox {
+  list-style-image: url("../images/inboxIcon.gif");
+}
+.calendarTree  li.outbox {
+  list-style-image: url("../images/outboxIcon.gif");
+}
+#bedework  li.unknown,
+#bedework  li.deleted {
+  list-style-image: url(../images/calIconDeleted-sm.gif);
+  font-style: italic;
+}
+.calendarTree  li.selected {
+  list-style-image: url("../images/glassFill-icon-view.gif");
+  font-weight: bold;
+}
+.calendarTree  li.alias {
+  list-style-image: url("../images/calIconAlias-sm.gif");
+  font-style: italic;
+  margin-left: 0;
+  padding-left: 0;
+}
+.calendarTree  li.aliasFolder {
+  list-style-image: url("../images/catIconAlias.gif");
+  font-style: italic;
+  margin-left: 0;
+  padding-left: 0;
+}
+.calendarTree  li.subscription li {
+  font-style: normal;
+}
+.calendarTree img.bwPlusMinusIcon {
+  /* the arrangement below is required for cross-browser compatibility;
+     be cautious changing it (works IE7, FF2, Safari 3) */
+  position: relative;
+  top: -2px;
+  margin: 0 25px 0 -35px;
+}
+.aliasTree {
+  margin: 1em 0;
+  padding: 0;
+}
+.aliasTree li {
+  list-style: none !important;
+  margin: 0 0 2px 0;
+  padding: 0;
+}
+.aliasTree li ul {
+  margin: 0 0 0.5em 0.75em;
+  padding-left: 10px;
+}
+.aliasTree em {
+  color: #f00;
+  background-color: transparent;
+}
+.aliasTree input {
+  margin-left: 6px;
+  cursor: pointer;
+}
+img.folderForAliasTree {
+  padding: 0.5em 0.2em 0 0.5em;
+}
+.catlist {
+  margin: 0;
+  padding: 0;
+}
+.catlist li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.defaultCategory {
+  color: #999;
+  background-color: transparent;
+}
+#bwGetCollectionForm {
+  margin-top: 1em;
+  white-space: nowrap;
+}
+#bwPublicCalDisplay {
+  margin: 1em 0 -1em 1em;
+}
+#bwEventListAddEventButton {
+  margin: 2em 0 0 1em;
+}
+#bwEventListControls {
+  margin: 1em 0 0 0;
+}
+#bwEventListControls .container-nowrap {
+  float: left;
+  padding-right: 1.5em;
+}
+#bwEventListControls select {
+  max-width: 200px;
+  font-size: 0.8em;
+  padding: 2px;
+}
+#bwListWidgetToday {
+  margin-left: 1em;
+}
+.bwEventListNav {
+  float: right;
+  clear: right;
+}
+.bwEventListNav button.disabled {
+  cursor: default;
+}
+.bwEventListNav button.prev {
+  padding: 2px 8px 2px 0;
+}
+.bwEventListNav button.prev .ui-icon {
+  float: left;
+}
+.bwEventListNav button.next {
+  padding: 2px 0 2px 8px;
+}
+.bwEventListNav button.next .ui-icon {
+  float: right;
+}
+.bwListNavBottom {
+  /*margin: -2.6em 0.5em 0 0;*/
+}
+#daysSetterBox {
+	margin-left: 1em;
+}
+.bwEventListOtherGroupTags {
+  font-size: 0.8em;
+  margin: 1em 0 0 0;
+}
+.bwOtherTags {
+  margin: 0.5em 0;
+  padding: 4px;
+  background-color: #eee;
+  color: black;
+}
+#filterTable {
+  font-size: 0.9em;
+}
+#filterTable th {
+  vertical-align: top;
+  border: 1px solid #ddd;
+  color: black;
+  background-color: #ddd;
+}
+#filterTable td {
+  vertical-align: top;
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
+#filterTable .filterdef {
+  white-space: pre;
+  padding: 1em;
+  color: #8B4513;
+  background-color: transparent;
+}
+#statsTable {
+  margin: 1em 0 0 4em;
+  width: 300px;
+}
+#statsTable th {
+  padding: 0.5em;
+  background-color: #eee;
+  color: black;
+}
+#statsTable td.label {
+  text-align: right;
+  padding-right: 2em;
+}
+#superUserMenu {
+  padding: 1em;
+  border: 1px solid #ccc;
+  font-size: 0.9em;
+}
+.suTitle {
+  padding: 4px 8px;
+  color: black;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+#superUserMenu h4 {
+  margin: 0;
+  padding: 0;
+}
+#superUserMenu ul {
+  margin-top: 0.5em;
+}
+#logoutButton  {
+  display: inline;
+}
+#logoutButton form {
+  display: inline;
+  margin-right: 0.5em;
+}
+/* GENERAL */
+.center {
+  text-align: center;
+}
+.strong {
+  font-weight: bold;
+}
+.smaller {
+  font-size: 0.8em;
+}
+/* even and odd -- for coloring table rows and the like */
+.even {
+  background-color: #eee;
+  color: black;
+}
+.odd {
+  background-color: transparent;
+  color: black;
+}
+.right {
+  float: right;
+}
+.padTop {
+  padding-top: 1em;
+}
+.viewsTable {
+  width: 60%;
+}
+button {
+  margin-bottom: 1em;
+}
+button,
+input[type="submit"],
+input[type="button"] {
+  -moz-appearance: none;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+a {
+  color: #00c;
+  background-color: inherit;
+  text-decoration: none;
+}
+a:hover {
+  color: #483D8B;
+  background-color: #ff3;
+}
+/* FOOTER */
+#footer {
+  clear: both;
+  padding: 1em;
+  margin-top: 2em;
+  border-top: 1px solid #999;
+  font-size: 0.7em;
+  background-color: transparent;
+  color: #999;
+}
+#footer a {
+  color: #999;
+  background-color: inherit;
+}
+#footer a:hover {
+ color: #444;
+ background-color: transparent;
+}

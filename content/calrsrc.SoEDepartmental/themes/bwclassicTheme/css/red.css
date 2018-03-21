@@ -1,0 +1,1147 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+  
+   http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.  
+*/
+
+body {
+  font-family : Arial, Helvetica, sans-serif;
+  font-size: 100%; /* needed for IE */
+  background-color : white;
+  color : black;
+  padding: 0.75em 1em 0em 1em;
+  min-width: 700px;
+}
+/* Generic selector (overides to common.css) */
+h2 {
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+/* end generic selectors */
+#logoTable {
+  padding: 0em;
+  margin: 0em;
+}
+#logoTable img {
+  display: inline;
+  padding: 0 0 1px 5px;
+}
+#logoTable #logoCell {
+  white-space: nowrap;
+  font-weight: bold;
+  font-size: 2em;
+}
+#logoTable #schoolLinksCell {
+  vertical-align: bottom;
+  text-align: right;
+  font-size: 0.8em;
+  white-space : nowrap;
+  padding: 0 2px 2px 0;
+  color: #999;
+  background-color: transparent;
+}
+#logoTable #schoolLinksCell h2 {
+  margin: 0 0 2px 0;
+  padding: 0;
+  font-size: 2em;
+  color: #444;
+  background-color: transparent;
+  border: none;
+}
+#logoTable #schoolLinksCell a:link,
+#logoTable #schoolLinksCell a:visited,
+#logoTable #schoolLinksCell a:active {
+  background-color: transparent;
+  color: #999;
+  text-decoration: none;
+}
+#logoTable #schoolLinksCell a:hover {
+  background-color: #eee;
+  color: #333;
+  text-decoration: none;
+}
+#titleBar {
+  display: none;
+}
+#curDateRangeTable {
+  width: 100%;
+  height: 26px;
+  background: #7E0000 url("../images/curDateRangeRed.gif") repeat-x bottom;
+  color : #eee;
+  margin: 0em;
+  font-weight : bold;
+  text-align : center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+#curDateRangeTable td {
+  padding-top: 5px;
+  padding-bottom: 1px;
+  padding-left: 13px;
+  padding-right: 13px;
+}
+#curDateRangeTable td.sideBarOpenCloseIcon {
+  background: url("../images/curDateRangeRed-left.gif") no-repeat top left;
+  color: inherit;
+  width: 200px;
+}
+#curDateRangeTable td.date {
+  font-weight : bold;
+  text-align : center;
+  white-space: nowrap;
+}
+#curDateRangeTable td.rssPrint {
+  background-image: url("../images/curDateRangeRed-right.gif") no-repeat top right;
+  color: inherit;
+  width: 200px;
+  font-weight : bold;
+  text-align : right;
+  white-space: nowrap;
+}
+#curDateRangeTable td.rssPrint img {
+  position: relative;
+  top: 3px;
+}
+#curDateRangeTable td.rssPrint a:link,
+#curDateRangeTable td.rssPrint a:active,
+#curDateRangeTable td.rssPrint a:visited {
+  font-size: 10px;
+  color: #eee;
+  background-color: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+  text-decoration: none;
+  margin-right: 0.5em;
+  position: relative;
+  top: -3px;
+}
+#curDateRangeTable td.rssPrint a:hover {
+  color: #663;
+  background-color: #fff;
+}
+#curDateRangeTable td.rssPrint a.rss:link,
+#curDateRangeTable td.rssPrint a.rss:active,
+#curDateRangeTable td.rssPrint a.rss:visited {
+  font-size: 10px;
+  font-weight: bold;
+  color: #444;
+  background-color: #ddd;
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+  padding: 0px 1px 0px 1px;
+  text-decoration: none;
+  margin-right: 0.5em;
+  margin-left: 2px;
+  position: relative;
+  top: -3px;
+  border: solid 1px #666;
+}
+#curDateRangeTable td.rssPrint a.rss:hover {
+  color: #900;
+  background-color: #fff;
+}
+#searchBarTable {
+  margin: 0px;
+  padding: 0em;
+  vertical-align: middle;
+  background-color : #eee;
+  color: black;
+  font-size: 0.9em;
+}
+#searchBarTable td {
+  border-bottom: 1px solid #ccc;
+}
+#searchBarTable .leftCell {
+  margin: 0px;
+  padding: 0em;
+  border-left: 2px solid #333;
+  padding: 0.1em 0 0 0.5em;
+  white-space: nowrap;
+}
+#searchBarTable .leftCell .link {
+  font-size: 0.8em;
+  padding-left: 0.5em;
+  color: #999;
+  background-color: transparent;
+}
+#searchBarTable .leftCell a {
+  color: #888;
+  background-color: transparent;
+}
+#searchBarTable .leftCell a:hover {
+  color: #b00;
+  background-color: transparent;
+}
+#searchBarTable .rightCell {
+  margin: 0px;
+  padding: 0em;
+  text-align: right;
+  border-right: 2px solid #333;
+  padding: 2px;
+  white-space: nowrap;
+}
+#searchBarTable form,
+#searchPageForm {
+  display: inline;
+  margin: 0px 0px 1px 0px;
+  padding: 0 1em 0 0;
+  white-space: nowrap;
+}
+#searchPageForm {
+  float: right;
+}
+#searchBarTable form input {
+  font-size: 0.7em;
+}
+#searchBarTable img {
+  vertical-align: middle;
+}
+#searchBarTable a.utilButton,
+#searchBarTable .utilButtonOff {
+  vertical-align: middle;
+  margin: 0 2px 0 4px;
+  padding: 2px 4px;
+  font-size: 0.7em;
+  border: 1px solid #bbb;
+  background-color: #ccc;
+  color: black;
+  text-decoration: none;
+}
+#searchBarTable .utilButtonOff {
+  background-color: #ddd;
+  color: #888;
+}
+#searchBarTable a.utilButton:hover {
+  background-color: #ddd;
+  color: black;
+}
+#searchFilter {
+  float: right;
+  font-size: 10pt;
+  font-weight: normal;
+  margin-top: 5px;
+}
+#searchFilter form {
+  display: inline;
+}
+#bwTabs {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+  color: #eee;
+}
+#bwTabs ul {
+  height: 20px;
+  margin: 0 2px;
+  padding: 4px 0 0 0;
+}
+#bwTabs li {
+  float: left;
+  width: 80px;
+  height: 20px;
+  text-align: center;
+  line-height: 23px;
+  letter-spacing: 1px;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  list-style-image: none;
+  color: black;
+  background: #eee url("../images/std-tab-off-80x20.gif") no-repeat bottom;
+}
+#bwTabs li.selected {
+  color: black;
+  background: #eee url("../images/std-tab-on-80x20.gif") no-repeat top;
+}
+#bwTabs a {
+  text-decoration: none;
+  color: black;
+  background-color: transparent;
+}
+#bwTabs a:hover {
+  color: #c00;
+  background-color: transparent;
+}
+#tabsTable {
+  margin: 0em;
+  padding: 4px 0px 0px 0px;
+  text-align: center;
+  background-color: #333;
+  color: #eee;
+}
+#tabsTable .centerCell  a {
+  text-decoration: none;
+  color: #eee;
+}
+#tabsTable .centerCell  img {
+  margin-right: 1px;
+}
+#tabsTable .rightCell {
+  background : url("../images/std-tab-space.gif");
+  padding-right: 0.5em;
+}
+#navigationBarTable {
+  font-size: 0.8em;
+  margin: 0em;
+  padding: 0em;
+  vertical-align: top;
+  border-left : 2px solid #333;
+  border-right : 2px solid #333;
+  border-bottom: 1px solid Gray;
+}
+#navigationBarTable a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+#navigationBarTable td {
+  vertical-align: middle;
+}
+#navigationBarTable form {
+  display: inline;
+  margin-bottom: 0em;
+}
+#navigationBarTable table {
+  display: inline;
+  margin-bottom: 0em;
+}
+#navigationBarTable td.todayButton {
+  padding: 0 1em;
+}
+#navigationBarTable td.gotoForm {
+  padding: 0 0.5em 0 0;
+}
+#navigationBarTable button {
+  padding: 0 4px 2px 4px;
+}
+#navigationBarTable td.leftCell {
+    text-align: left;
+  white-space: nowrap;
+  padding-left: 0.5em;
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 0.75em 0em 0.75em 1em;
+  width: 100%;
+  vertical-align: middle;
+}
+#navigationBarTable td.leftCell .prevImg {
+  margin: 0 0.2em 0 0;
+  vertical-align: middle;
+}
+#navigationBarTable td.leftCell .nextImg {
+  margin: 0 0.75em 0 0;
+  vertical-align: middle;
+}
+#navigationBarTable td.rightCell select {
+  padding-right: 0em;
+  margin: 0em;
+  width: 10em;
+}
+#eventTable,
+#searchTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#eventTable td.fieldval {
+  margin: 0em;
+  vertical-align: top;
+  padding: 0.5em 0.5em 0.2em 1em;
+}
+#eventTable td.fieldname {
+  margin: 0em;
+  vertical-align: top;
+  padding: 0.5em 0.5em 0.2em 0.5em;
+  color: black;
+  background-color: #eee;
+}
+#eventTable th.fieldval {
+  text-align: left;
+  padding: 1em 0.5em 0.5em 1em;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#eventTable th.fieldname {
+  text-align: left;
+  padding: 1em 0.5em 0.5em 0.5em;
+  background-color: #eee;
+  color: black;
+}
+#eventTable th.icalIcon {
+  margin: 0em;
+  vertical-align: middle;
+  text-align: right;
+  padding: 0.5em 1em 0.2em 0.5em;
+  white-space: nowrap;
+  font-size: 0.9em;
+  font-weight: normal;
+}
+#eventTable th.icalIcon a {
+  text-decoration: none;
+}
+#eventTable th.icalIcon img {
+  vertical-align: middle;
+  padding-left: 1em;
+}
+#searchTable th {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-align: left;
+  background: #e5e5e5;
+  color: #000;
+  font-weight: normal;
+}
+#searchTable td {
+  padding: 4px;
+  vertical-align: top;
+}
+#searchTable tr.fieldNames td {
+  background: #eee;
+  border-bottom: 1px solid #ccc;
+}
+#searchTable td.relevance {
+  white-space: nowrap;
+}
+#searchTable .searchRelevance {
+  background-color: #900;
+  color: black;
+}
+#calPageTable {
+  width: 100%;
+  font-size: 100%;
+  margin: 0px;
+  padding: 0px;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#calPageTable td {
+  width: 50%;
+  vertical-align: top;
+  padding: 0.5em 2em 1em 3em;
+}
+#calPageTable th {
+  font-size: 1.2em;
+  background-color: #ccc;
+  color: black;
+  font-weight: bold;
+}
+#calPageTable td.leftCell {
+  border-right : thin dashed #999;
+}
+#calPageTable h2 {
+  font-size: 1.2em;
+}
+#calPageTable td.infoCell {
+  background-color: #eee;
+  color: black;
+  text-align: center;
+}
+#calPageTable td.infoCell p.info {
+  margin: 0;
+  padding: 0;
+}
+#calPageTable .exportCalLink {
+  font-size: 0.6em;
+  padding-left: 1em;
+  color: #aaa;
+  background-color: transparent;
+}
+#calPageTable .exportCalLink a:link,
+#calPageTable .exportCalLink a:active,
+#calPageTable .exportCalLink a:visited {
+  color: #aaa;
+  background-color: transparent;
+  text-decoration: none;
+}
+#calPageTable .exportCalLink a:hover {
+  color: #333;
+  background-color: transparent;
+  text-decoration: none;
+}
+#calPageTable a:link,
+#calPageTable a:active,
+#calPageTable a:visited {
+  text-decoration: none;
+}
+#calPageTable a:hover {
+  text-decoration: underline;
+}
+#dayCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#dayCalendarTable td {
+  padding: 0.4em;
+  margin: 0em;
+}
+#dayCalendarTable .dateRange {
+  text-align: left;
+  background-color: #fee;
+  color: black;
+  white-space: nowrap;
+}
+#dayCalendarTable .description {
+  text-align: left;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#dayCalendarTable .more {
+  text-align: center;
+  background-color: #eee;
+  color: black;
+  font-size: 0.8em;
+}
+#weekCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#weekCalendarTable td {
+  padding: 0.4em;
+  margin: 0em;
+}
+#weekCalendarTable .dateRange {
+  text-align: left;
+  background-color: #fdd;
+  color: black;
+  white-space: nowrap;
+}
+#weekCalendarTable .description {
+  text-align: left;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#weekCalendarTable .more {
+  text-align: center;
+  background-color: #eee;
+  color: black;
+  font-size: 0.8em;
+}
+#monthCalendarTable {
+  width: 100%;
+  font-size: 0.8em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#monthCalendarTable th.dayHeading {
+  width: 14%;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #900;
+  color: #eee;
+  border: 1px solid black;
+}
+#monthCalendarTable td {
+  width: 14%;
+  height: 60px;
+  vertical-align: top;
+  text-align: left;
+  padding: 0em;
+  border: 1px solid #aaa;
+  background-color: white;
+  color: black;
+}
+#monthCalendarTable td.filler {
+  border: none;
+  background-color: #eee;
+  color: black;
+}
+#monthCalendarTable ul {
+  font-size: 0.8em;
+  list-style : none;
+  margin: 0em;
+  padding: 0.3em 0em 0em 0em;
+}
+#monthCalendarTable ul li {
+  margin: 0em;
+  padding: 0em;
+  display: inline;
+}
+#monthCalendarTable a.eventLinkA:link,
+#monthCalendarTable a.eventLinkA:visited,
+#monthCalendarTable a.eventLinkA:active  {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  background-color: #fcc;
+  color: black;
+}
+#monthCalendarTable a.eventLinkB:link,
+#monthCalendarTable a.eventLinkB:visited,
+#monthCalendarTable a.eventLinkB:active  {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  background-color: #fee;
+  color: black;
+}
+#monthCalendarTable a.eventCancelled:link,
+#monthCalendarTable a.eventCancelled:visited,
+#monthCalendarTable a.eventCancelled:active  {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  background-color: #ccc;
+  border-bottom: 1px solid #bbb;
+  color: black;
+}
+#monthCalendarTable a.eventTentative:link,
+#monthCalendarTable a.eventTentative:visited,
+#monthCalendarTable a.eventTentative:active  {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  background: #eee url('../../images/tentativeLines.gif') top;
+  color: black;
+}
+#monthCalendarTable a.holiday:link,
+#monthCalendarTable a.holiday:visited,
+#monthCalendarTable a.holiday:active  {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  background-color: #fff;
+  color: black;
+  /*border-top: 1px solid black;
+  border-bottom: 1px solid black;*/
+}
+#monthCalendarTable a.eventLinkA:hover,
+#monthCalendarTable a.eventLinkB:hover,
+#monthCalendarTable a.eventCancelled:hover,
+#monthCalendarTable a.eventTentative:hover,
+#monthCalendarTable a.holiday:hover   {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  color: black;
+  background-color: #ffe;
+}
+#monthCalendarTable a.dayLink {
+  text-decoration: none;
+  color: black;
+  background-color: transparent;
+}
+#monthCalendarTable a:hover.dayLink {
+  text-decoration: none;
+  color: #eee;
+  background-color: black;
+}
+#monthCalendarTable a:hover {
+  /* required for eventTip to hover correctly;
+     apply only to the hover pseudo class, or
+     the other anchors nearby will cover the eventTip in IE */
+  position: relative;
+}
+#monthCalendarTable a span.eventTip,
+#monthCalendarTable a span.eventTipReverse {
+  display: none;
+}
+#monthCalendarTable a:hover span.eventTip {
+  display: block;
+  position: absolute;
+  width: 20em;
+  top: 1em;
+  left: 12em;
+  background-color: #ffe;
+  color: black;
+  padding: 4px;
+  border: 1px solid #333;
+  /*opacity: .80;
+  filter: alpha(opacity=80);*/
+}
+#monthCalendarTable a:hover span.eventTipReverse {
+  display: block;
+  position: absolute;
+  width: 20em;
+  top: 1em;
+  left: -21em;
+  background-color: #ffe;
+  color: black;
+  padding: 4px;
+  border: 1px solid #333;
+  /*opacity: .80;
+  filter: alpha(opacity=80);*/
+}
+
+#monthCalendarTable a:hover span.eventTipStatusCancelled {
+  display: block;
+  color: white;
+  background-color: #333;
+  padding: 2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+#monthCalendarTable a:hover span.eventTipStatusTentative {
+  display: block;
+  color: black;
+  background: #eee url('../../images/tentativeLines.gif') top;
+  padding: 2px;
+  margin-bottom: 6px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+a.gridAdd {
+  display: block;
+  float: right;
+  font-size: 0.8em;
+  text-decoration: none;
+  margin-right: 2px;
+}
+#monthCalendarTable td.today,
+#yearCalendarTable td.today {
+  background-color: #ffb;
+  color: black;
+}
+#yearCalendarTable td.today {
+  border: 1px solid #666;
+}
+#yearCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0em;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#yearCalendarTable td {
+  padding: 1em 0em 0em 0em;
+  margin: 0em;
+  vertical-align: top;
+  text-align: center;
+  width: 33%;
+}
+#yearCalendarTable table.yearViewMonthTable {
+  margin: 0em  1em 0.5em 1em;
+  border: 1px solid #666;
+}
+#yearCalendarTable table.yearViewMonthTable td {
+  text-align: center;
+  padding: 0.2em;
+  width: 12.5%;
+}
+#yearCalendarTable table.yearViewMonthTable th {
+  font-weight: bold;
+  background-color: #f5f5f5;
+  color: black;
+  padding: 0.2em;
+}
+#yearCalendarTable table.yearViewMonthTable td.monthName {
+  font-weight: bold;
+  text-align: center;
+  background-color: #666;
+  color: #eee;
+  white-space: nowrap;
+  border-bottom: 1px solid #999;
+}
+#yearCalendarTable table.yearViewMonthTable td.weekCell {
+  font-weight: bold;
+  font-size: 0.8em;
+  background-color: #f5f5f5;
+  color: black;
+}
+#yearCalendarTable  table.yearViewMonthTable td  a  {
+  text-decoration: none;
+  background-color: inherit;
+  padding: 1px;
+  color: black;
+}
+#yearCalendarTable  table.yearViewMonthTable td.weekCell a  {
+  text-decoration: none;
+  background-color: inherit;
+  padding: 1px;
+  color: black;
+}
+#yearCalendarTable  table.yearViewMonthTable td.monthName a  {
+  text-decoration: none;
+  background-color: inherit;
+  padding: 1px;
+  color: #eee;
+}
+#yearCalendarTable  table.yearViewMonthTable td a:hover  {
+  text-decoration: none;
+  background-color: #FFC;
+  color: black;
+  border: 1px solid black;
+  padding: 0;
+}
+#listTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#listTable td {
+  padding: 0.5em;
+  margin: 0em;
+  border-bottom: 1px solid #bbb;
+}
+#listTable td a {
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+}
+#listTable td.dateRangeCrossDay {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #ddd;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeEarlyMorning {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #dcc3c3;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeMorning {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #fee;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeAfternoon {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #fdd;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeEvening {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #fcc;
+  color: black;
+  white-space: nowrap;
+}
+#listTable span.littleArrow {
+  font-size: 1.4em;
+}
+#listTable td.description {
+  text-align: left;
+  background-color: white;
+  color: black;
+  width: 100%;
+}
+#listTable td.bwStatusCancelled {
+  background-color: #ddd;
+  color: black;
+}
+#listTable td.bwStatusTentative {
+  background: white url('../../images/tentativeLines.gif') top;
+  color: black;
+}
+#listTable td.description a {
+  display: block;
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+}
+#listTable td.description a.moreLink {
+  display: inline;
+  background-color: transparent;
+  color: #900;
+  text-decoration: underline;
+}
+#listTable td.description:hover {
+  background-color: #eee;
+  color: black;
+  text-decoration: none;
+}
+#listTable td.dateRow {
+  text-align: left;
+  background-color: #888;
+  color: #eee;
+  font-size: 0.8em;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  margin: 0em;
+}
+#listTable td.dateRow a {
+  display: block;
+  color: #fff;
+  background-color: transparent;
+  font-weight: bold;
+  text-decoration : none;
+}
+#listTable td.icons {
+  color: black;
+  background-color: #ddd;
+  white-space: nowrap;
+}
+#listTable td.icons img.addref {
+  margin-right: 0.5em;
+}
+#calPageTable ul.calendarTree li {
+  font-weight: bold;
+}
+#calPageTable ul.calendarTree li ul li {
+  font-weight: normal;
+}
+#calPageTable ul.calendarTree li.folder {
+  list-style-image: url("../images/catIcon.gif");
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
+#calPageTable ul.calendarTree li.calendar {
+  list-style-image: url("../images/calIcon-sm.gif");
+}
+.noEventsCell {
+  padding: 1em;
+}
+#listEvents {
+  margin: 0px;
+  padding: 0px;
+  font-size: 0.9em;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #666;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#listEvents ul {
+  margin: 2em 1em 2em 0.5em;
+}
+#listEvents li {
+  margin-bottom: 1em;
+}
+#listEvents a.title {
+  font-size: 1.2em;
+  font-weight: bold;
+  text-decoration: none;
+}
+#listEvents li.bwStatusTentative a.title,
+#listEvents li.bwStatusCancelled a.title {
+  color: #999;
+  background-color: transparent;
+}
+#footer {
+  font-size: 0.75em;
+  text-align : center;
+  margin-top: 0em;
+  padding: 1em;
+  color: #333;
+  background-color: #eee;
+  border-bottom: 2px solid #333;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+  white-space: nowrap;
+}
+#footer a {
+  color: #333;
+  background-color: transparent;
+  text-decoration: underline;
+}
+#skinSelectorTable {
+  width: 100%;
+  padding-top: 0.5em;
+  font-size: 0.7em;
+  color: #333;
+  background-color: inherit;
+}
+#skinSelectorTable td {
+  vertical-align: top;
+}
+#skinSelectorTable td.rightCell {
+  text-align: right;
+}
+#skinSelectorTable td.leftCell {
+  text-align: left;
+  color: #999;
+  background-color: inherit;
+}
+#skinSelectorTable td.leftCell  a {
+  color: #999;
+  background-color: inherit;
+}
+#skinSelectorTable td.rightCell form {
+  display: inline;
+  margin: 0em;
+  padding: 0em;
+}
+#skinSelectorTable td.rightCell select {
+  font-size: 0.9em;
+  color: #333;
+  background-color: #eee;
+}
+/*   LINKS    */
+a:link, a:active {
+  color: #900;
+  background-color: transparent;
+}
+a:visited {
+  color: #600;
+  background-color: transparent;
+}
+a:hover {
+  color: #b33;
+  background-color: transparent;
+}
+span.time {
+  text-transform : lowercase;
+}
+#featureHighlight {
+  color: #dd0;
+  font-style: italic;
+}
+.center {
+  text-align: center;
+}
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+
+/* Generic selectors*/
+h2 {
+  margin: 0em;
+  padding: 0.2em 0.2em 0.2em 0.5em;
+  font-size: 1.3em;
+  border-bottom: 1px solid #999;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+h2 a:link,
+h2 a:active,
+h2 a:visited,
+h2 a:hover {
+  color: black;
+  background-color: inherit;
+  text-decoration: none;
+}
+h2.bwStatusConfirmed {
+  background-color: #eee;
+  color: black;
+}
+h2.bwStatusCancelled {
+  background-color: #eee;
+  color: black;
+}
+h2.bwStatusTentative {
+  background: #eee url('../../images/tentativeLines.gif') top;
+  color: black;
+}
+h2 a:link#linkToEvent,
+h2 a:active#linkToEvent,
+h2 a:visited#linkToEvent,
+h2 a:hover#linkToEvent {
+  float: right;
+  font-size: 12px;
+  font-weight: normal;
+  color: #552;
+  background-color: transparent;
+  padding-top: 5px;
+}
+h2 a:hover#linkToEvent {
+  color: red;
+  background-color: transparent;
+}
+/* Header IDs and classes */
+#errors {
+  margin: 0;
+  padding: 1em;
+  background-color: #333;
+  color: #ff9;
+  font-weight: bold;
+}
+#tabsTable .centerCell {
+  text-align: left;
+  background : url("../images/std-tab-space.gif");
+  font-size: 0.8em;
+  white-space: nowrap;
+  width: 100%;
+  padding: 0 1em;
+}
+#stats,
+#export {
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 1em;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #aaa;
+  border-right: 2px solid #aaa;
+}
+#stats h2 {
+  border: none;
+  padding-left: 0;
+}
+#statsTable {
+  margin: 1em 0 0 4em;
+  width: 300px;
+}
+#statsTable th {
+  padding: 0.5em;
+  background-color: #eee;
+  color: black;
+}
+#statsTable td.label {
+  text-align: right;
+  padding-right: 2em;
+}
+.bwEventImage {
+  float: right;
+  margin: 0 0.5em 1em 1em;
+}
+.indent {
+  margin-left: 1em;
+}
+.hidden {
+  visibility: hidden;
+}
+.invisible {
+  display: none;
+}
+#exportDateRange #bwExportEndField {
+  padding-left: 1em;
+}
+#listTable td.eventListDateTime {
+  white-space: nowrap;
+}

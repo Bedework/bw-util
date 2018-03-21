@@ -1,0 +1,102 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+  
+   http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.  
+*/
+#featuredEventsForm {
+	width: 800px;
+	margin: 0 0 1em 0;
+}
+#featuredEventsForm .controlBox {
+  float: left;
+  margin: 0 1em 1em 0;
+}
+#featuredEventsForm fieldset {
+  clear: both;
+  margin: 0;
+  padding-top: 1em; 
+  border: none;
+}
+#featuredEventsForm .field {
+  width: 120px;
+  margin: 0 0.5em 0.5em 0;
+  float: left;
+  clear: left;
+  text-align: right;
+}
+#featuredEventsForm .value {
+  margin: 0 0 0.5em 0;
+}
+#featuredEventsForm .fieldGroup {
+  margin-bottom: 2em;
+  clear: both;
+}
+#featuredEventsForm textarea {
+  width: 384px; 
+  background-color: #eee;
+  color: black;
+}
+#featuredEventsForm input {
+  background-color: #eee;
+  color: black;
+}
+#featuredEventsForm input:focus,
+#featuredEventsForm textarea:focus {
+  background-color: #eed;
+  color: black;
+}
+#featuredEventsForm input[type="submit"], button {
+  color: white;
+  background-color: #060;
+  border-top: 2px solid #080;
+  border-left: 2px solid #080;
+  border-right: 2px solid #030;
+  border-bottom: 2px solid #030;
+}
+#featuredEventsForm h3 {
+  margin: 1em 0;
+  background-color: #555;
+  color: #eee;
+  padding: 2px 4px;
+  clear: left;
+}
+#featuredEventsForm h3.active {
+  color: white;
+  background-color: #060;
+}
+#featuredEventsForm #activeLabel {
+  float: right;
+}
+#featuredEventsForm h4 {
+  margin: 0;
+  padding: 0;
+}
+#featuredEventsForm table {
+  margin: 0;
+}
+#featuredEventsForm th {
+  text-align: left;
+  padding-right: 1em;
+}
+#featuredEventsForm td {
+  padding-right: 1em;
+}
+#featuredEventsForm img {
+  float: right;
+  border: none;
+  background-color: #ccc;
+  margin: 0 0 1em 0;
+}
