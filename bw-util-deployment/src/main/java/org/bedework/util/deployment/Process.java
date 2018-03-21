@@ -173,7 +173,7 @@ public class Process extends AbstractMojo {
 
   public void setWarName(final String val) {
     warName = val;
-    setWarsOnly(true);
+    setWarsOnly(warName != null);
   }
 
   public void setResourcesBase(final String val) {
