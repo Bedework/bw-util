@@ -25,6 +25,12 @@
               <classpathPrefix>lib/</classpathPrefix>
             </manifest>
           </archive>
+          <webResources>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>content</directory>
+            </resource>
+          </webResources>
         </configuration>
       </plugin>
 

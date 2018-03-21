@@ -1,0 +1,2208 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.
+*/
+body {
+  color: black;
+  background-color: white;
+}
+
+#bedework {
+  /* this is the main wrapper div used to encapsulate all Bedework CSS; we
+     will prepend each selector below with this ID - this helps encapsulate
+     the css for use in portal environments (though it does imply that only
+     one instance should be running on a portal page") */
+  font-family : Arial, Helvetica, sans-serif;
+  font-size: 100%; /* to make IE behave */
+  background-color : white;
+  color : black;
+  padding: 0.75em 1em 0em 1em;
+  margin: 0;
+  min-width: 828px;
+}
+/* Generic selectors*/
+h2 {
+  margin: 0em;
+  padding: 0.2em 0.2em 0.2em 0.5em;
+  font-size: 1.3em;
+  border-bottom: 1px solid #ccc;
+  /*border-top: 1px solid #ccc;*/
+}
+#bodyBlock h2 {
+  color: black;
+  background: #f5f5f5;
+}
+h2 a:link,
+h2 a:active,
+h2 a:visited,
+h2 a:hover {
+  color: black;
+  background-color: transparent;
+  text-decoration: none;
+}
+h2.bwStatusConfirmed,
+h2.common {
+  background-color: #eee;
+  color: black;
+}
+h2.bwStatusCancelled {
+  background-color: #eee;
+  color: black;
+}
+h2.bwStatusTentative {
+  background: #eee url("../images/tentativeLines.gif") top !important;
+  color: black;
+}
+.formButtons {
+  float: right;
+  font-size: 0.8em;
+}
+div.eventSubmitButtons,
+div.submitButtons {
+  clear: both;
+  text-align: right;
+  margin: 1em 0.5em;
+}
+input[type=text]:focus,
+textarea:focus,
+select:focus {
+	background-color: #DFEAFF !important;
+	color: inherit;
+}
+::-webkit-input-placeholder {
+  color: #777 !important;
+}
+:-moz-placeholder {
+  color: #777 !important;
+}
+:-ms-input-placeholder {
+  color: #777 !important;
+}
+select:focus option {
+  background-color: white;
+  color: inherit;
+}
+.eventSubmitButtons input,
+.formButtons input {
+  margin: 0;
+  font-size: 0.8em;
+}
+h3 {
+  margin: 0em;
+  padding: 1em 0.2em 0em 0.2em;
+  font-size: 1.1em;
+}
+h4 {
+  margin: 0em;
+  padding: 1em 0.2em 0em 0.2em;
+  font-size: 1em;
+}
+td {
+  vertical-align: top;
+}
+.center {
+  text-align: center;
+}
+.small {
+  font-size: 0.8em;
+}
+/* Header IDs and classes */
+#logoTable {
+  padding: 0em;
+  margin: 0em;
+}
+#logoTable #logoCell {
+  white-space: nowrap;
+  font-weight: bold;
+  font-size: 2em;
+}
+#logoTable img {
+  padding: 0 0 2px 5px;
+  margin: 0;
+}
+#logoTable #schoolLinksCell {
+  vertical-align: bottom;
+  text-align: right;
+  font-size: 0.8em;
+  white-space : nowrap;
+  padding: 0 2px 2px 0;
+}
+#logoTable #schoolLinksCell h2 {
+  margin: 0 0 2px 0;
+  padding: 0;
+  font-size: 2em;
+  color: #444;
+  background-color: transparent;
+  border: none;
+}
+#logoTable #schoolLinksCell a:link,
+#logoTable #schoolLinksCell a:visited,
+#logoTable #schoolLinksCell a:active {
+  background-color: transparent;
+  color: #999;
+  text-decoration: none;
+}
+#logoTable #schoolLinksCell a:hover {
+  background-color: #eee;
+  color: #333;
+  text-decoration: none;
+}
+#curDateRangeTable {
+  width: 100%;
+  height: 26px;
+  background: #233979 url("../images/glassFill-02.gif") repeat-x bottom;
+  color : #eee;
+  margin: 0em;
+  text-align : center;
+  white-space: nowrap;
+}
+#curDateRangeTable td {
+  padding-top: 5px;
+  padding-bottom: 1px;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  vertical-align: middle;
+}
+#curDateRangeTable td.sideBarOpenCloseIcon {
+  background: url("../images/glassFill-02-leftBorder.gif") no-repeat top left;
+  color: inherit;
+  width: 200px;
+}
+#curDateRangeTable td.date {
+  text-align : center;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  font-size: 0.9em;
+}
+#curDateRangeTable td.rssPrint {
+  background: url("../images/glassFill-02-rightBorder.gif") no-repeat top right;
+  color: inherit;
+  width: 200px;
+  font-weight : bold;
+  text-align : right;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+#curDateRangeTable td.rssPrint img {
+  position: relative;
+  top: 3px;
+}
+#curDateRangeTable td.rssPrint a:link,
+#curDateRangeTable td.rssPrint a:active,
+#curDateRangeTable td.rssPrint a:visited {
+  font-size: 10px;
+  color: #eee;
+  background-color: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+  text-decoration: none;
+  margin-right: 0.5em;
+  position: relative;
+  top: -3px;
+}
+#curDateRangeTable td.rssPrint a:hover {
+  color: #663;
+  background-color: #fff;
+}
+#curDateRangeTable td.rssPrint a.rss:link,
+#curDateRangeTable td.rssPrint a.rss:active,
+#curDateRangeTable td.rssPrint a.rss:visited {
+  font-size: 10px;
+  font-weight: bold;
+  color: #444;
+  background-color: #ddd;
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+  padding: 0px 1px 0px 1px;
+  text-decoration: none;
+  margin-right: 0.5em;
+  margin-left: 2px;
+  position: relative;
+  top: -3px;
+  border: solid 1px #666;
+}
+#curDateRangeTable td.rssPrint a.rss:hover {
+  color: #900;
+  background-color: #fff;
+}
+#pageBlock {
+  margin: 0;
+  padding: 1em 0;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#pageBlockContainer {
+  margin: 0 1em;
+}
+#bodyBlock {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+#bodyBlock td#sideBar {
+  width: 200px;
+  font-size: 0.8em;
+  color: black;
+  background-color: white;
+  /*background: white url("../images/sideBarGrayGrad.gif") repeat-y right;*/
+  border-left: 2px solid #333;
+  border-right: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  /*border-top: 24px solid #333;*/
+  vertical-align: top;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+}
+#bodyBlock td#msgTaskBar {
+	width: 220px;
+  min-width: 150px;
+  font-size: 0.7em;
+  color: black;
+  background: white url("../images/sideBarGrayGradRight.gif") repeat-y left;
+  border-right: 2px solid #333;
+  border-bottom: 2px solid #aaa;
+  vertical-align: top;
+  margin: 0;
+  padding: 0;
+}
+#bodyBlock td#msgTaskBar ul {
+  margin-left: 2.25em;
+  padding-left: 0;
+}
+#bodyBlock td#msgTaskBar li.bwSchMsg {
+  list-style-image: url("../images/calIconSchedule-sm.gif");
+  margin: 0 4px 8px 4px;
+}
+#bodyBlock td#msgTaskBar li.bwPollMsg {
+  list-style-image: url("../images/calIconPoll-sm.gif");
+  margin: 0 4px 8px 4px;
+}
+#bodyBlock td#sideBar h3 {
+  color: #eee;
+  background-color: #4164AE;
+  /*background: #4164AE url("../images/sideBarBlueGrad.gif") repeat-y right;*/
+  font-weight: normal;
+  margin: 0;
+  padding: 2px 4px;
+}
+#bodyBlock td#msgTaskBar h3 {
+  color: #eee;
+  background-color: #4164AE;
+  /*background: #4164AE url("../images/sideBarBlueGradRight.gif") repeat-y left;*/
+  font-weight: normal;
+  margin: 0;
+  padding: 2px 4px 2px 8px;
+}
+#bodyBlock td#msgTaskBar li.shareNotification {
+	cursor: pointer;
+}
+.accepted strong {
+	color: #0a0;
+}
+.declined strong {
+  color: #b00;
+}
+#bodyBlock td.sideMenus h3 a:link,
+#bodyBlock td.sideMenush3 a:active,
+#bodyBlock td.sideMenus h3 a:visited {
+  float: right;
+  font-size: 0.8em;
+  color: #eee;
+  background: transparent;
+  text-decoration: none;
+}
+#bodyBlock td.sideMenus h3 a:hover {
+  color: #ff3;
+  background: transparent;
+  text-decoration: none;
+}
+#bodyBlock td.sideMenus h3 a.calManageLink {
+  padding-right: 4px;
+  margin-right: 4px;
+  /*border-right: 1px solid #aaa;*/
+}
+#bodyBlock td#sideBarClosed {
+  width: 1px;
+  border-left: 1px solid #333;
+  border-bottom: 2px solid #aaa;
+  padding: 0;
+  color: black;
+  background-color: #333;
+}
+#bodyBlock td.sideMenus a:link,
+#bodyBlock td.sideMenus a:active,
+#bodyBlock td.sideMenus a:visited {
+  text-decoration: none;
+}
+#bodyBlock td.sideMenus a:hover {
+  color: black;
+  background-color: #ff3;
+}
+#sideBarOpenCloseIcon {
+  float: left;
+  margin: 3px 0;
+  vertical-align: middle;
+}
+#sideBarMenu {
+  margin: 1em;
+  padding: 0;
+}
+#sideBarMenu li {
+  list-style: none;
+  padding: 0 0 0.5em 0;
+  margin: 0;
+}
+#myViews li {
+  list-style: none;
+}
+#myViews li.selected {
+  list-style-image: url("../images/glassFill-icon-view.gif");
+  font-weight: bold;
+}
+#bodyBlock td#bodyContent {
+  position: relative;
+  border-bottom: 2px solid #aaa;
+  border-right: 2px solid #333;
+  vertical-align: top;
+  padding: 0;
+  margin: 0;
+}
+#bodyBlock td#bodyContent.withNotices {
+  border-right: none;
+}
+#bodyBlock td#bodyContent h3#bwEventColTitle {
+  display: none;
+  background-color: #4164ae;
+  color: #eee;
+  font-weight: normal;
+  margin: 0;
+  padding: 2px 4px;
+  font-size: 14px;
+}
+#utilBarTable {
+  margin: 0;
+  padding: 0;
+  background-color : #eee;
+  color: black;
+  font-size: 0.9em;
+  border-bottom: 1px solid #999;
+}
+#utilBarTable .leftCell {
+  margin: 0;
+  padding: 0;
+  padding: 0.2em 0 0.2em 0.2em;
+  white-space: nowrap;
+}
+#utilBarTable .leftCell img {
+  display: inline;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+#utilBarTable .rightCell {
+  margin: 0;
+  padding: 0.1em 0.2em 0 0;
+  text-align: right;
+  white-space: nowrap;
+}
+#utilBarTable form,
+#searchPageForm {
+  display: inline;
+  margin: 0px 0px 1px 0px;
+  padding: 0em;
+  white-space: nowrap;
+}
+#searchPageForm {
+  float: right;
+}
+#utilBarTable input {
+  font-size: 0.7em;
+}
+#utilBarTable img {
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+}
+#utilBarTable a.utilButton,
+#utilBarTable .utilButtonOff {
+  vertical-align: middle;
+  margin: 0 0 0 4px;
+  padding: 2px 4px;
+  font-size: 0.7em;
+  border: 1px solid #bbb;
+  background-color: #ccc;
+  color: black;
+  text-decoration: none;
+}
+#utilBarTable .utilButtonOff {
+  background-color: #ddd;
+  color: #888;
+}
+#utilBarTable a.utilButton:hover {
+  background-color: #ddd;
+  color: black;
+}
+.bwActionIcons {
+  position: fixed;
+  display: none;
+  white-space: nowrap;
+  border: 1px solid #333;
+  background-color: #eee;
+  color: black;
+  padding: 0.5em;
+  margin: 0;
+}
+.listAdd .bwActionIcons {
+  margin-left: -80px;
+}
+.bwActionIcons a:link,
+.bwActionIcons a:active,
+.bwActionIcons a:visited {
+  display: block;
+  margin: 0 0 2px 0;
+  color: #666 !important; /* set important to override other more specific selectors */
+  background-color: transparent;
+  font-size: 0.75em;
+  text-decoration: none;
+}
+.bwActionIcons a:hover {
+  color: black !important; /* set important to override other more specific selectors */
+  background-color: transparent;
+}
+#searchTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #aaa;
+  border-right: 2px solid #aaa;
+}
+#searchTable th {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-align: left;
+  background: #e5e5e5;
+  color: #000;
+  font-weight: normal;
+}
+#searchTable td {
+  vertical-align: top;
+  padding: 4px;
+}
+#searchTable tr.fieldNames td {
+  background: #eee;
+  border-bottom: 1px solid #ccc;
+}
+#searchTable td.relevance {
+  white-space: nowrap;
+}
+#searchTable .searchRelevance {
+  background-color: #2c5f89;
+  color: black;
+}
+#searchFilter {
+  float: right;
+  font-size: 10pt;
+  font-weight: normal;
+  margin-top: 5px;
+}
+#bwTabs {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+  color: #eee;
+  border-bottom: 1px solid #333;
+}
+#bwTabs ul {
+  height: 20px;
+  /*margin: 0 0 0 203px;*/
+  margin: 0 0 0 2px;
+  padding: 4px 0 0 0;
+}
+#bwTabs li {
+  float: left;
+  /*width: 80px;*/
+  height: 20px;
+  text-align: center;
+  line-height: 23px;
+  letter-spacing: 1px;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  list-style-image: none;
+  color: black;
+  background-color: #eee;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-right: 2px solid #333;
+  /*background: #eee url("../images/std-tab-off-80x20.gif") no-repeat bottom;*/
+}
+#bwTabs li.selected {
+  color: black;
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  /*background: #eee url("../images/std-tab-on-80x20.gif") no-repeat top;*/
+}
+#bwTabs a {
+  text-decoration: none;
+  color: black;
+  background-color: transparent;
+  padding: 0 2em;
+}
+#bwTabs a:hover {
+  color: #375ABE;
+  background-color: transparent;
+}
+#bwUserInfo {
+  float: right;
+  padding-right: 0.5em;
+  margin: 4px 0 0 0;
+  font-size: 0.8em;
+  vertical-align: bottom;
+}
+#bwUserInfo a {
+  background-color: inherit;
+  color: #ccc;
+}
+#bwUserInfo .logout {
+  padding-left: 0.5em;
+  font-size: 0.8em;
+}
+#navigationBarTable {
+  font-size: 0.8em;
+  margin: 0em;
+  padding: 0em;
+  vertical-align: top;
+  border-bottom: 1px solid Gray;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#navigationBarTable a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+#navigationBarTable td {
+  vertical-align: middle;
+}
+#navigationBarTable form {
+  display: inline;
+  margin-bottom: 0em;
+}
+#navigationBarTable table {
+  display: inline;
+  margin-bottom: 0em;
+}
+#navigationBarTable td.todayButton {
+  padding: 0 1em;
+}
+#navigationBarTable td.gotoForm {
+  padding: 0 0.5em 0 0;
+}
+#navigationBarTable button {
+  padding: 0 4px 2px 4px;
+}
+#navigationBarTable td.leftCell {
+  text-align: left;
+  white-space: nowrap;
+  padding-left: 0.5em;
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 0.75em 0em 0.75em 1em;
+  width: 100%;
+  vertical-align: middle;
+}
+#navigationBarTable td.leftCell .prevImg {
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+}
+#navigationBarTable td.leftCell .nextImg {
+  margin: 0 0.5em 0 0.2em;
+  padding: 0;
+  vertical-align: middle;
+}
+#navigationBarTable td.rightCell {
+  text-align: right;
+  padding: 1em 0.5em 0em 0em;
+}
+#navigationBarTable td.rightCell select {
+  padding-right: 0em;
+  margin: 0em;
+  width: 10em;
+}
+#navigationBarTable .calLinks {
+  white-space: nowrap;
+}
+#timezoneDisplay {
+  float: right;
+  font-weight: normal;
+  font-size: 0.8em;
+}
+#messages,
+#errors {
+  font-size: 0.8em;
+  margin: 0em;
+  padding: 0.3em 0 0.3em 1em;
+  border-left : 2px solid #333;
+  border-right : 2px solid #333;
+  border-bottom: 1px solid Gray;
+  color: black;
+  background: #ff0 url("../images/glassFill-message.gif") repeat-x top;
+}
+#errors {
+  border-top: 2px solid red;
+  border-bottom: 2px solid red;
+}
+#errors li,
+#messages li {
+  list-style: none;
+}
+#messages p,
+#errors p {
+  margin: 0;
+  padding: 2px 0;
+}
+ul.submenu {
+  margin: 0 0 1em 0;
+  padding: 0;
+  font-size: 0.8em;
+  color: black;
+  background-color: #eee;
+  border-bottom: 1px solid #666;
+  border-top: 1px solid #999;
+}
+ul.submenu li {
+  display: inline;
+  margin: 0;
+  padding: 0 1em 0 1em;
+  border-right: 1px solid #999;
+  color: black;
+  background-color: #ddd;
+}
+ul.submenu li.selected {
+  color: black;
+  background-color: white;
+  border-bottom: 1px solid white;
+}
+ul.submenu li a:link,
+ul.submenu li a:active,
+ul.submenu li a:visited {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+ul.submenu li a:hover,
+ul.submenu li:hover {
+  color: black;
+  background-color: #ffe;
+  text-decoration: none;
+}
+ul.submenu li.selected:hover {
+  color: black;
+  background-color: white;
+}
+#standardForm {
+  margin: 0;
+  padding: 0;
+}
+form {
+  margin: 0;
+}
+#eventAccessLink {
+  float: right;
+  font-size: 0.8em;
+  margin: 0 1em;
+}
+#calSelectWidget {
+  position: absolute;
+  z-index: 10;
+  margin: 0;
+  padding: 0 2em 1em 0;
+  border: 1px solid #666;
+  background-color: white;
+  color: black;
+}
+#calSelectWidget h2 {
+  font-size: 1em;
+  font-weight: normal;
+  margin: 0 -2em 0 0;
+  padding: 4px 0 4px 12px;
+  background: #233979 url("../images/glassFill-02.gif") repeat-x bottom;
+  color : #eee;
+}
+#calSelectWidget #calSelectWidgetCloser {
+  position: absolute;
+  right: 2px;
+  top:  2px;
+  display: block;
+  font-weight: bold;
+  background-color: #ddd;
+  color: #333;
+  border-top: 1px solid #999;
+  border-left: 1px solid #999;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+  margin: 0;
+  padding: 0 2px;
+  text-decoration: none;
+}
+/* table below is used for almost all forms  */
+table.common {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+}
+table.dottedBorder {
+  border: 1px dotted #ccc;
+}
+table.common th {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em;
+  background-color: #ddd;
+  color: black;
+  white-space: nowrap;
+}
+table.common th.thin {
+  width: 80px;
+}
+table.common th.icon {
+  margin: 0em;
+  vertical-align: middle;
+  padding: 0.5em 1em 0.2em 0;
+  font-size: 0.7em;
+  background-color: #fff;
+  color: black;
+}
+table.common th.commonHeader {
+  vertical-align: middle;
+  background-color: #666;
+  color: #eee;
+  padding: 0.2em 0.5em;
+  text-align: left;
+  font-weight: normal;
+}
+table.common th.commonHeader a:link,
+table.common th.commonHeader a:active,
+table.common th.commonHeader a:visited {
+  background-color: inherit;
+  color: #eee;
+  padding: 0.2em;
+  text-align: left;
+}
+table.common th.commonHeader a:hover {
+  background-color: inherit;
+  color: #ff9;
+  padding: 0.2em;
+  text-align: left;
+}
+table.common td {
+  padding: 0;
+}
+table.common td.highlight {
+  padding: 0.5em;
+  color: black;
+  background-color: #ee0;
+}
+table.common td.filler {
+  height: 250px;
+}
+table.common td.fill {
+  background-color: #ddd;
+  color: black;
+  font-weight: bold;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+}
+table.common th.leftBorder,
+table.common td.leftBorder {
+  border-left: 1px solid #999;
+  border-top: 1px solid #999;
+  padding-left: 1em;
+}
+table.common td.fieldval {
+  margin: 0em;
+  vertical-align: top;
+  padding: 0.5em 0.5em 0.2em 1em;
+}
+table.common td.fieldname {
+  width: 100px;
+  margin: 0em;
+  vertical-align: top;
+  padding: 0.5em 0.5em 0.2em 0.5em;
+  color: black;
+  background-color: #eee;
+  white-space: nowrap;
+}
+table.dottedBorder td.fieldname {
+  text-align: right;
+}
+table.common tr.subField {
+  font-size: 0.8em;
+}
+table.common tr.subField td.fieldname {
+  padding-left: 2em;
+  color: black;
+  background-color: #fff;
+}
+table.common td.comments p {
+  margin: 0;
+  padding: 0.5em 0 1em 0;
+  border-top: 1px dashed #ddd;
+}
+table.common td.submit {
+  padding: 0.5em 0.5em 0.2em 0.5em;
+  color: black;
+  background: white;
+  text-align: right;
+  border-top: 1px solid #ccc;
+}
+table.common td.eventLinks {
+  background-color: #ddd;
+  color: #eee;
+  padding: 6px 0;
+  text-align: center;
+}
+table.common tr.httpStatusMsg td,
+table.common tr.httpStatusMsg th  {
+  padding: 0.5em;
+  background-color: #ffa;
+  color: black;
+}
+table.common #eventActions {
+  float: right;
+  clear: none;
+  font-size: 0.8em;
+}
+table.common #eventActions img,
+#refreshEventAction img {
+display: inline;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+#eventActions .bwMenuButton {
+  position: relative;
+  float: right;
+  margin: 0 0.5em 0 0;
+}
+#eventActions .bwMenuWidget {
+  position: absolute;
+  background-color: #444;
+  color: #eee;
+  display: none;  /* hide until shown */
+}
+#eventActions .bwMenuWidget ul {
+  margin: 6px 6px 6px 14px;
+  padding: 0;
+}
+#eventActions .bwMenuWidget li {
+  margin: 0.25em 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+.eventActionsInGrid {
+  margin: 1em !important;
+}
+.eventActionsInGrid li {
+  display: block !important;
+}
+#refreshEventAction {
+  padding-left: 1em;
+}
+table.common td.allField {
+  white-space: nowrap;
+  text-align: right;
+  font-style: italic;
+  background-color : white;
+  color: black;
+  padding: 0.2em;
+}
+table.common .borderRight {
+  border-right: 1px solid #999;
+}
+table.common tr#exportDateRange td.dates {
+  border-bottom: 1px solid #999;
+  padding: 0.5em;
+}
+table.common .padMeTop {
+  padding-top: 1em !important;
+}
+table.common .padMeTopMore {
+  padding-top: 2em !important;
+}
+table.common .padMe {
+  padding: 1em !important;
+}
+#bwToggleAdvDateTimeSettings {
+  float: right;
+  font-size: 0.8em;
+  font-style: italic;
+  cursor: pointer !important;
+}
+label {
+  cursor: pointer;
+}
+.dateFields {
+  display: inline;
+}
+.timeFields {
+  display: inline;
+  margin-left: 1em;
+}
+.dateStartEndBox {
+  border: 1px solid #ccb;
+  margin: 4px;
+  padding: 4px;
+  line-height: 1.8em;
+  white-space: nowrap;
+}
+.dateStartEndBox strong {
+  display: block;
+}
+.startDateLabel {
+  margin-left: 26px;
+}
+select.timezones {
+  margin-left: 1em;
+  width: 160px;
+}
+div.durationBox {
+  border: 1px solid #ccb;
+  display: inline;
+  margin: 4px;
+  padding: 4px;
+}
+.durationSpacerText {
+  font-weight: bold;
+  margin: 0 1em;
+}
+table#manage td {
+  padding: 0.2em 0 0 0.5em;
+}
+#bwEventTab-Recurrence {
+  margin: 0 1em;
+  font-size: 0.9em;
+}
+#bwEventCalDisplay strong {
+  margin-right: 1em;
+}
+#clock {
+  position: absolute;
+  top: 160px;
+  margin: auto;
+}
+#startTimeFields img,
+#endTimeFields img,
+#rdateTimeFields img,
+#schedTime img {
+  vertical-align: middle;
+}
+#calWidgetStartTimeHider,
+#calWidgetEndTimeHider,
+#rdateTimeFields,
+#schedTime {
+	width: 350px;
+}
+#tztable {
+  margin-top: 1em;
+}
+#tztable td {
+  padding: 2px 4px;
+}
+#scheduling {
+  margin: 1em;
+  font-size: 0.9em;
+}
+#scheduling .editAttendees {
+  padding-top: 1em;
+  clear: both;
+}
+#recurringSwitch {
+  margin: 0 0 1em 0;
+}
+#recurrenceInfo {
+  margin: 0;
+  padding: 1em;
+  border: 1px solid #ddd;
+  font-size: 0.9em;
+}
+#rrulesSwitch,
+#rrulesUiSwitch {
+  font-size: 0.8em;
+}
+#rrulesFields {
+  margin: 0;
+  padding: 0;
+}
+#rrulesTable {
+  border: 1px solid #ddd;
+  margin: 0;
+  padding: 0;
+}
+#rrulesTable strong {
+  display: inline;
+}
+#rrulesTable td#recurrenceFrequency {
+  padding: 0.5em 1em;
+  border-right: 1px solid #ddd;
+  white-space: nowrap;
+}
+#rrulesTable td#advancedRrules {
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: 1px solid #ddd;
+}
+#rrulesTable td#recurrenceUntil {
+  width: 100%;
+  padding: 0.5em 0 0 1em;
+}
+.chkBoxListItem {
+  display: block;
+  float: left;
+  width: 3em;
+}
+#rrulesTable br {
+  clear: both;
+}
+#rrulesTable p {
+  margin: 0 0 0.5em 0;
+}
+#rrulesTable p.weekRecurLinks {
+  margin: 1em 0 1em 0;
+}
+#rrulesTable .extraByMonthPosFields {
+  margin: 0 0 1em 2em;
+  padding: 0;
+}
+#rrulesTable #monthRecurFields div,
+#rrulesTable #yearRecurFields div {
+  display: block;
+  margin: 0 0 0.5em 0;
+}
+#rrulesTable #dayMonthCheckBoxList,
+#rrulesTable #monthDaysCheckBoxList,
+#rrulesTable #yearWeeksCheckBoxList,
+#rrulesTable #yearMonthCheckBoxList,
+#rrulesTable #yearMonthDaysCheckBoxList,
+#rrulesTable #yearDaysCheckBoxList {
+  margin: 0.5em 0 0.5em 2em;
+  display: block;
+  clear: both;
+  white-space: nowrap !important;
+}
+#recurrenceDatesButton input {
+  margin: 2em 0 0 0;
+  font-size: 0.8em;
+}
+#rdatesFormFields {
+  font-size: 0.9em;
+  padding: 0.5em;
+}
+#rdatesFormFields p {
+  clear: both;
+  margin-top: 1em;
+}
+.rdatesTable {
+  font-size: 0.9em;
+  border: 1px solid #ddd;
+}
+.rdatesTable td {
+  padding: 0.5em 1em;
+}
+.rdatesTable td.trash {
+  text-align: right;
+}
+.rdatesTable td.note {
+  text-align: center;
+  font-size: 0.9em;
+}
+#bwCurrentRdates,
+#bwCurrentExdates,
+#bwCurrentRdatesNone,
+#bwCurrentExdatesNone {
+  float: left;
+  margin: 1em 2em 1em 0;
+}
+#bwCurrentRdates th,
+#bwCurrentRdates td,
+#bwCurrentExdates th,
+#bwCurrentExdates td {
+  text-align: left;
+  padding: 0 0.5em 0 0;
+}
+.shown {
+  display: inline;
+}
+.visible {
+  /* like shown, but apply no styles to this class */
+}
+.invisible {
+  display: none !important;
+}
+.hidden {
+  visibility: hidden;
+}
+.clear  {
+  clear: both;
+}
+.bwEventImage {
+  float: right;
+  margin: 0 0.5em 1em 1em;
+}
+.padMe {
+  padding: 1em 0 !important;
+}
+.strong {
+  font-weight: bold;
+}
+.posrelative {
+  /* this class is used primarily to lock absolutely positioned elements to
+     their parent.  Be careful removing this class from elements that
+     contain an absolutely positioned div. */
+  position: relative;
+}
+table#inoutbox td {
+  padding: 0.2em 0.5em;
+  border-bottom: 1px solid #ccc;
+  font-size: 0.75em;
+}
+table.common td.scheduleActions {
+  color: black;
+  background: #ddc;
+}
+table.common td.scheduleActions ul {
+  margin: 0;
+  padding: 0 0 0 20px;
+}
+#comments p {
+  margin: 0 0 1em 2em;
+}
+table#inoutbox tr.unprocessed {
+  background: #fcc;
+  color: black;
+}
+table#inoutbox tr.publish {
+  background: #ddf;
+  color: black;
+}
+table#inoutbox tr.request {
+  background: #ffd;
+  color: black;
+}
+table#inoutbox tr.cancel {
+  background: #ddd;
+  color: black;
+}
+table#inoutbox tr.counter {
+  background: #fcc;
+  color: black;
+}
+a.emailIcon {
+  margin: 0 0.5em;
+}
+form#subscriptions {
+  margin: 0;
+  padding: 0;
+}
+#bwColorPickerButton {
+  width: 28px;
+}
+#bwColorPicker {
+  white-space: nowrap;
+}
+table.widget {
+  margin: 1em 1em 0 0;
+  float: left;
+  clear: none;
+}
+table.widget th {
+  padding: 2px 0 2px 4px;
+  background-color: #ddd;
+  color: black;
+  border-bottom: 1px solid #ccc;
+  font-size: 0.9em;
+}
+table.widget tr.subHead td {
+  background-color: #eee;
+  color: black;
+}
+table.widget td {
+  padding: 0.1em 1em;
+  font-size: 0.8em;
+}
+table.widget td.role,
+table.widget td.status {
+  text-transform: lowercase;
+}
+table.widget {
+  border: 1px solid #999;
+}
+table.widget td,
+table.widget th {
+  text-align: left;
+}
+table.widget td.trash {
+  width: 15px;
+  padding: 4px 6px 4px 4px;
+}
+table.common table#attendees {
+}
+table.common #attendees th {
+  padding: 2px 20px 2px 6px;
+  font-size: 0.9em;
+}
+table.common #attendees td {
+  padding: 2px 20px 2px 6px;
+}
+table.common #attendees td.status {
+  font-weight: bold;
+}
+#recipientsAndAttendees {
+  margin: 0;
+  padding:  0 1em;
+}
+/* dialog box - popup, most likely deprectaed */
+#bwDialogBox {
+  margin: 0;
+  background: white;
+  color: black;
+}
+#bwDialogBox h4 {
+  padding: 4px;
+  margin: 0;
+  text-align: center;
+  color: #eee;
+  background: #233979 url("../images/glassFill-02.gif") repeat-x bottom;
+  border: 2px solid #233979;
+}
+#bwDialogBox #errors,
+#bwDialogBox #messages {
+  margin: 0;
+}
+#bwDialogBox table {
+  width: 100%;
+  margin: 1em 0;
+}
+#bwDialogBox table th {
+  padding: 2px;
+  text-align: center;
+  color: black;
+  background: #eee;
+}
+#weekCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+}
+#weekCalendarTable td {
+  padding: 0.4em;
+  margin: 0em;
+}
+#weekCalendarTable .dateRange {
+  text-align: left;
+  background-color: #e2decc;
+  color: black;
+  white-space: nowrap;
+}
+#weekCalendarTable .description {
+  text-align: left;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#weekCalendarTable .more {
+  text-align: center;
+  background-color: #eee;
+  color: black;
+  font-size: 0.8em;
+}
+#monthCalendarTable {
+  width: 100%;
+  font-size: 0.8em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+}
+#monthCalendarTable th.dayHeading {
+  width: 14%;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #2B4795;
+  color: #eee;
+  border: 1px solid #333;
+}
+#monthCalendarTable td {
+  width: 14%;
+  height: 60px;
+  vertical-align: top;
+  text-align: left;
+  padding: 0em;
+  border: 1px solid #aaa;
+  background-color: white;
+  color: black;
+}
+#monthCalendarTable td.filler {
+  border: none;
+  background-color: #eee;
+  color: black;
+}
+#monthCalendarTable ul {
+  font-size: 0.8em;
+  list-style : none;
+  margin: 0em;
+  padding: 0.3em 0em 0em 0em;
+}
+#monthCalendarTable ul li {
+  margin: 0em;
+  padding: 0em;
+  display: inline;
+}
+#monthCalendarTable a.event {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+  border-bottom: 1px solid #bbb;
+}
+#monthCalendarTable a.firstEvent {
+  border-top: 1px solid #bbb; /* first item in the grid needs a top border */
+}
+#monthCalendarTable a.eventLinkA:link,
+#monthCalendarTable a.eventLinkA:visited,
+#monthCalendarTable a.eventLinkA:active  {
+  background-color: #CCD7F5;
+  color: black;
+}
+#monthCalendarTable a.eventLinkB:link,
+#monthCalendarTable a.eventLinkB:visited,
+#monthCalendarTable a.eventLinkB:active  {
+  background-color: #EBF0FF;
+  color: black;
+}
+#monthCalendarTable a.eventCancelled:link,
+#monthCalendarTable a.eventCancelled:visited,
+#monthCalendarTable a.eventCancelled:active  {
+  background-color: #ccc;
+  color: black;
+}
+#monthCalendarTable a.eventTentative:link,
+#monthCalendarTable a.eventTentative:visited,
+#monthCalendarTable a.eventTentative:active  {
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  background: #eee url("../images/tentativeLines.gif") top;
+  color: black;
+}
+#monthCalendarTable a:hover {
+  color: black;
+  background-color: #ffa !important; /* must be important to override subscription colors */
+  /* required for eventTip to hover correctly;
+     apply only to the hover pseudo class, or
+     the other anchors nearby will cover the eventTip in IE */
+  position: relative;
+}
+#monthCalendarTable a.dayLink {
+  text-decoration: none;
+  color: black;
+  background-color: transparent;
+  padding-left: 2px;
+}
+#monthCalendarTable a:hover.dayLink {
+  text-decoration: none;
+  color: #eee !important; /* must be important to override a:hover selector above */
+  background-color: black !important; /* must be important to override a:hover selector above */
+}
+#monthCalendarTable .eventTip {
+  display: none;
+}
+#monthCalendarTable .eventTip {
+  position: absolute;
+  width: 20em;
+  background-color: #ffa;
+  color: black;
+  margin: -0.5em 0 0 4em;
+  padding: 1em;
+  border: 1px solid #333;
+}
+#monthCalendarTable .eventTipReverse {
+  margin: -0.5em 0 0 -4em;
+}
+#monthCalendarTable .eventTipDetails {
+  padding: 1em;
+  margin: 0;
+  background-color: #ffd;
+  color: black;
+  font-size: 125%;
+}
+#monthCalendarTable .eventTip strong {
+  font-weight: bold;
+  font-size: 110%;
+}
+#monthCalendarTable .eventTip ul {
+  margin-top: 1em;
+  font-size: 110%;
+}
+#monthCalendarTable .eventTipStatusCancelled {
+  display: block;
+  color: white;
+  background-color: #333;
+  padding: 2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+#monthCalendarTable .eventTipStatusTentative {
+  display: block;
+  color: black;
+  background: #eee url("../images/tentativeLines.gif") top;
+  padding: 2px;
+  margin-bottom: 6px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+div.gridAdd {
+  position: absolute;
+  margin: -1em 0 0 1em;
+  padding: 0;
+}
+a.calendarAdd img {
+  margin: 0 0 0 0.5em;
+  padding: 0;
+}
+#monthCalendarTable td.today,
+#yearCalendarTable td.today {
+  background-color: #ffb;
+  color: black;
+}
+#yearCalendarTable td.today {
+  border: 1px solid #666;
+}
+#yearCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0em;
+  border-top: 1px solid #666;
+  border-bottom: 2px solid #aaa;
+  border-left: 2px solid #aaa;
+  border-right: 2px solid #aaa;
+}
+#yearCalendarTable td {
+  padding: 1em 0em 0em 0em;
+  margin: 0em;
+  vertical-align: top;
+  text-align: center;
+  width: 33%;
+}
+#yearCalendarTable table.yearViewMonthTable {
+  margin: 0em  1em 0.5em 1em;
+  border: 1px solid #ddd;
+}
+#yearCalendarTable table.yearViewMonthTable td {
+  text-align: center;
+  padding: 0.2em;
+  width: 12.5%;
+}
+#yearCalendarTable table.yearViewMonthTable th {
+  font-weight: bold;
+  background-color: #eee;
+  color: black;
+  padding: 0.2em;
+}
+#yearCalendarTable table.yearViewMonthTable td.monthName {
+  font-weight: bold;
+  text-align: center;
+  background-color: #2B4795;
+  color: #eee;
+  white-space: nowrap;
+  border-bottom: 1px solid #999;
+}
+#yearCalendarTable table.yearViewMonthTable td.weekCell {
+  font-weight: bold;
+  font-size: 0.8em;
+  background-color: #eee;
+  color: black;
+}
+#yearCalendarTable  table.yearViewMonthTable td  a  {
+  text-decoration: none;
+  background-color: inherit;
+  padding: 1px;
+  color: black;
+}
+#yearCalendarTable  table.yearViewMonthTable td.weekCell a  {
+  text-decoration: none;
+  background-color: inherit;
+  padding: 1px;
+  color: black;
+}
+#yearCalendarTable  table.yearViewMonthTable td.monthName a  {
+  text-decoration: none;
+  background-color: inherit;
+  color: #eee;
+  padding: 1px;
+}
+#yearCalendarTable  table.yearViewMonthTable td a:hover  {
+  text-decoration: none;
+  background-color: #FFC;
+  color: black;
+  border: 1px solid black;
+  padding: 0;
+}
+#listTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+}
+#listTable td {
+  padding: 0.5em;
+  margin: 0em;
+  border-bottom: 1px solid #bbb;
+}
+#listTable td a {
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+}
+#listTable td.dateRangeCrossDay {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #eee;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeEarlyMorning {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #D0D5E1;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeMorning {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #DFE7FB;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeAfternoon {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #CCD7F5;
+  color: black;
+  white-space: nowrap;
+}
+#listTable td.dateRangeEvening {
+  font-size: 0.9em;
+  text-transform: lowercase;
+  background-color: #B3C0E6;
+  color: black;
+  white-space: nowrap;
+}
+#listTable span.littleArrow {
+  font-size: 1.4em;
+}
+#listTable td.description {
+  text-align: left;
+  background-color: #fff;
+  color: black;
+  width: 100%;
+}
+#listTable td.bwStatusCancelled {
+  background-color: #ddd;
+  color: black;
+}
+#listTable td.bwStatusTentative {
+  background: white url("../images/tentativeLines.gif") top;
+  color: black;
+}
+#listTable td.description a {
+  display: block;
+  background-color: transparent;
+  color: black;
+  text-decoration: none;
+}
+#listTable td.description a.moreLink {
+  display: inline;
+  background-color: transparent;
+  color: #663;
+  text-decoration: underline;
+}
+#listTable td.description:hover {
+  background-color: #eee !important;
+  color: black;
+  text-decoration: none;
+}
+#listTable td.dateRow {
+  text-align: left;
+  background-color: #444;
+  /*background-color: #2B4795;*/
+  color: #eee;
+  font-size: 0.8em;
+  margin: 0;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+}
+#listTable td.dateRow a {
+  color: #fff;
+  background-color: transparent;
+  font-weight: bold;
+  text-decoration : none;
+}
+#listTable td.dateRow .listAdd {
+  float:right;
+  text-decoration : none;
+  font-weight: normal;
+  padding-left: 1em;
+}
+#listTable td.dateRow .listAdd a:link,
+#listTable td.dateRow .listAdd a:active,
+#listTable td.dateRow .listAdd a:visited {
+  color: #eee;
+  background-color: transparent;
+}
+#listTable td.dateRow .listAdd a:hover {
+  color: #ffa;
+  background-color: transparent;
+}
+#listTable td.eventLinks {
+  color: black;
+  background-color: #ddd;
+  white-space : nowrap;
+  font-size : 0.7em;
+}
+#listTable td.eventLinks a {
+  text-decoration: underline;
+  padding-left: 0.5em;
+}
+#listTable td.eventLinks a:hover {
+  color: #eee;
+  background-color: #333;
+  text-decoration: none;
+}
+#listTable td.smallIcon {
+  color: black;
+  background-color: #ccc;
+}
+.noEventsCell {
+  padding: 1em;
+}
+#listEvents ul {
+  font-size: 0.9em;
+  margin: 0;
+  padding: 0;
+}
+#listEvents li {
+  padding: 1em;
+  list-style: none;
+}
+#listEvents li.even {
+  background-color: #f2f2f2;
+  color: black;
+}
+#listEvents .cost,
+#listEvents .contact {
+  font-style: italic;
+}
+#listEvents .title {
+  font-weight: bold;
+}
+#tasks {
+  margin: 0;
+  padding: 0;
+  font-size: 0.9em;
+}
+#tasks h3 {
+  margin: 0;
+  padding: 2px 4px;
+  font-size: 1em;
+  /*background-color: #5A6B93;*/
+  background-color: #747A8F;
+  color: #eee;
+  font-weight: normal;
+}
+#tasks .taskDate {
+  font-size: 0.8em;
+  font-style: italic;
+}
+/* Calendars and Subscriptions */
+#calendarTable td,
+#subsTable td {
+  padding: 0 0.5em;
+  vertical-align: top;
+}
+#calendarTable td.cals,
+#subsTable td.cals {
+  border-right: 1px solid #aaa;
+  font-size: 0.9em;
+}
+#calendarTable td.cals {
+  width: 300px;
+}
+#subsTable td.cals {
+  white-space: nowrap;
+}
+#addCalSubButtons {
+	padding-left: 10px;
+	margin: 2em 0;
+}
+#addCalSubButtons button {
+  font-size: 0.8em;
+  text-transform: lowercase;
+  padding-bottom: 2px;
+}
+
+#addSubText li {
+	list-style: none;
+	margin-top: 2em;
+}
+.calendarTree ul {
+  padding-left: 10px;
+  margin-left: 10px;
+}
+.calendarTree li {
+  padding: 0.25em 0 0 0;
+  margin: 0;
+}
+li.folder {
+  list-style-image: url("../images/catIcon.gif");
+}
+ li.calendar {
+  list-style-image: url("../images/calIcon-sm.gif");
+}
+ li.trash {
+  list-style-image: url("../images/trashIcon.gif");
+}
+ li.inbox {
+  list-style-image: url("../images/inboxIcon.gif");
+}
+ li.outbox {
+  list-style-image: url("../images/outboxIcon.gif");
+}
+ li.unknown,
+ li.deleted {
+  list-style-image: url("../images/calIconDeleted-sm.gif");
+  font-style: italic;
+}
+ li.unknown a,
+ li.deleted a {
+  color: #900;
+  background-color: transparent;
+}
+ li.selected {
+  list-style-image: url("../images/glassFill-icon-view.gif");
+  font-weight: bold;
+}
+ li.alias {
+  list-style-image: url("../images/calIconAlias-sm.gif");
+  font-style: italic;
+  margin-left: 0;
+  padding-left: 0;
+}
+ li.aliasFolder {
+  list-style-image: url("../images/catIconAlias.gif");
+  font-style: italic;
+  margin-left: 0;
+  padding-left: 0;
+}
+ li.subscription li {
+  font-style: normal;
+}
+.calendarTree a:link,
+.calendarTree a:active,
+.calendarTree a:visited {
+  text-decoration: none;
+  border: none;
+}
+.calendarTree a:hover {
+  color: black;
+  background-color: #ff3;
+}
+.addCalText {
+	font-size: 0.8em;
+	font-style: italic;
+}
+.inoutboxActive {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+img.bwCalendarColor {
+  padding: 0;
+  margin: 5px 0 0 5px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid #666 !important;
+}
+form.bwHideDisplayCal,
+form.bwHideDisplayCal input {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+form.bwHideDisplayCal input {
+  width: 10px;
+  height: 10px;
+}
+#submitTable {
+  width: 98%; /* less than 100% helps avoid IE weirdness */
+  margin: 1em 0;
+}
+#submitTable td {
+  white-space: nowrap;
+}
+#subsMenu li {
+  padding-bottom: 0.5em;
+}
+#content {
+  /* for genric content - no tables */
+  margin: 0;
+  padding: 1em;
+}
+.note {
+  margin: 0;
+  padding: 0 0 1em 0;
+  font-size: 0.8em;
+  font-style: italic;
+}
+.disabledNote {
+  display: block;
+  font-style: italic;
+}
+#freeBusyShareLink {
+  float: right;
+  font-size: 0.8em;
+  margin: 0.5em 0.5em 0 0;
+}
+.contextHelp {
+  position: relative;
+  margin-left: 0.5em;
+}
+.helpBox {
+  margin: 1em;
+  padding: 0.5em;
+  border: 1px solid #333;
+  color: black;
+  background-color: #fee;
+}
+#helpShareFreeBusy {
+  position: absolute;
+  right: 20px;
+  width: 300px;
+}
+#recipientsAndAttendeesForm {
+  white-space: nowrap;
+}
+#freeBusy {
+  clear: both;
+  margin: 1em 0 0 0;
+  padding: 1em 1em 1em 0;
+  border: 1px solid #ccc;
+}
+#freeBusyPage #freeBusy {
+  border: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+#freeBusyPage #viewFreeBusyForm {
+  float: right;
+  font-size: 0.9em;
+  margin: 1em 1em 0 0;
+}
+#freeBusy td {
+  vertical-align: middle;
+  text-align: center;
+  font-size: 0.8em;
+  padding: 0;
+  margin: 0;
+  width: 2em !important;
+  height: 10px;
+}
+#freeBusy th.left,
+#freeBusy td.left {
+  text-align: left;
+}
+#freeBusy td.morning {
+  color: black;
+  background: #ddf;
+}
+#freeBusy td.evening {
+  color: black;
+  background: #ccc;
+}
+#freeBusy td.timeLabels {
+  vertical-align: middle;
+  text-align: center;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+}
+#freeBusy td.dayDate {
+  white-space: nowrap;
+  text-align: right;
+  padding: 0;
+  width: 4em;
+}
+#freeBusy td.free,
+#freeBusyKey td.free {
+  /*color: #A3BAEA;
+  background-color: #A3BAEA;*/
+  color: white;
+  background-color: white;
+  border: 1px solid #ddd;
+}
+#freeBusy td.busy,
+#freeBusyKey td.busy {
+  color: #A3BAEA;
+  background-color: #A3BAEA;
+  border: 1px solid #ddd;
+}
+#freeBusy td.tentative,
+#freeBusyKey td.tentative {
+  color: #DFE7FB;
+  background: #DFE7FB url("../images/tentativeLines.gif") top;
+  border: 1px solid #ddd;
+}
+#freeBusyKey {
+  float: left;
+  margin: 0.5em 1em 0 0;
+}
+#freeBusyPage #freeBusyKey {
+  margin-left: 2em;
+}
+#freeBusyKey td {
+  padding: 2px 4px;
+}
+#freeBusy a {
+  display: block;
+  text-decoration: none;
+  width: 100%;
+}
+#freeBusy td.free a {
+  color: #A3BAEA;
+  background-color: transparent;
+}
+#freeBusy td.tentative a  {
+  color: #333;
+  background-color: transparent;
+}
+#freeBusy td.busy a {
+  color: #333;
+  background-color: transparent;
+}
+#freeBusy td.busy a:hover,
+#freeBusy td.free a:hover,
+#freeBusy td.tentative a:hover  {
+  color: black;
+  background-color: yellow;
+  text-decoration: none;
+}
+#freeBusy a:hover {
+  /* required for eventTip to hover correctly;
+     apply only to the hover pseudo class, or
+     the other anchors nearby will cover the eventTip in IE */
+  position: relative;
+}
+#freeBusy a span.eventTip {
+  display: none;
+}
+#freeBusy a:hover span.eventTip {
+  display: block;
+  position: absolute;
+  width: 8em;
+  top: 3em;
+  left: -4em;
+  background-color: #ffe;
+  color: black;
+  padding: 4px;
+  border: 1px solid #333;
+}
+#freeBusy #timezonesDropDown {
+  width: 14em;
+  font-size: 8pt;
+  margin: 0 0 0 2em;
+}
+#freeBusy #timezonesButton {
+  font-size: 8pt;
+}
+#modCalAdvancedSwitch,
+#modCalBasicSwitch {
+	display: block;
+	float: right;
+	font-style: italic;
+	margin-top: 1.5em;
+	font-size: 0.9em;
+}
+.modCalAdvanced {
+	display: none;
+}
+#calAccessBoxToggle {
+  cursor: pointer;
+  color: #00A;
+}
+#calAccessBoxHolder {
+	margin-top: 1em;
+}
+.sharingNote {
+	margin-top: 1em;
+}
+#calSharingForm {
+	margin: 0;
+	font-size: 0.9em;
+}
+#calSharingBox {
+  margin-bottom: 0.5em;
+}
+#calSharingBox table {
+	width: auto;
+	margin-top: 0.5em;
+}
+#calSharingBox td {
+  padding-left: 0.5em;
+}
+#calSharingBox .calShareField {
+	font-size: 0.9em;
+	color: #666;
+}
+#shareesTable {
+   margin-bottom: 2em;
+}
+#shareesTable tr:nth-child(odd) {
+   background-color: #eee;
+}
+#shareesTable.common td {
+	padding: 0 0.5em;
+}
+#shareesTable.common td.access,
+#shareesTable.common td.remove {
+   text-align: center;
+}
+#accessBox {
+	display: none;
+  margin: 0;
+  padding: 0;
+}
+#accessBox.show {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+#bwEventTab-Access #accessBox {
+  margin: 0;
+  padding: 1em;
+}
+#accessBox h3{
+  padding: 1em 0 0.5em 0;
+  border-top: 1px solid #ccc;
+}
+#accessBox h5 {
+  padding: 0 0 0.5em 0;
+}
+#accessBox ul {
+  font-size: 0.8em;
+  margin: 0 1em;
+}
+#accessBox p {
+  font-size: 0.9em;
+}
+#shareForm {
+  margin: 1em 0;
+  padding: 0;
+}
+/* Footer */
+#footer {
+  font-size: 0.7em;
+  text-align : center;
+  margin-top: 0em;
+  padding: 1em;
+  color: #777;
+  background-color: #eee;
+  border-bottom: 2px solid #333;
+  border-left: 2px solid #333;
+  border-right: 2px solid #333;
+}
+#footer a {
+  color: #333;
+  background-color: transparent;
+  text-decoration: underline;
+}
+#subfoot {
+  width: 100%;
+  padding-top: 0.5em;
+  font-size: 0.7em;
+  color: #333;
+  background-color: inherit;
+}
+#subfoot  a {
+  color: #999;
+  background-color: inherit;
+}
+#subscriptionTypes {
+  font-size: 0.9em;
+}
+#subscriptionTypeExternal td,
+#subscriptionTypeExternal th {
+	text-align: right;
+}
+a:link,
+a:active {
+  color: #00a;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:visited {
+  color: #008;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover {
+  color: red;
+  background-color: transparent;
+  text-decoration: underline;
+}
+span.time {
+  text-transform : lowercase;
+}
+.padTop {
+  padding-top: 1em;
+}
+.nowrap {
+  white-space: nowrap;
+}
+#featureHighlight {
+  color: #dd0;
+  font-style: italic;
+}
+.titleButton {
+  display: block;
+  margin: 1em;
+}
+.innerBlock {
+  margin: 0 1em 2em 1em;
+}
+.innerBlock a {
+  text-decoration: underline;
+}
+#bwPolls {
+  border: none;
+  width: 100%;
+  min-height: 600px;
+}
+

@@ -1,0 +1,175 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+  
+   http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.  
+*/
+
+.bwTimePicker {
+	position: absolute;
+	margin: 0;
+	padding: 10px;
+  color: black;
+	background-color: white;
+	border: 1px solid #ccb;
+	overflow: visible;
+}
+.bwTimePicker .bwTimePickerCloser {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 4px;
+	font-weight: bold;
+  cursor: pointer;
+  color: #666;
+  background-color: #f5f5f5;
+}
+.bwTimePicker .bwTimePickerCloser:hover {
+  color: #666;
+  background-color: #eee;
+}
+.bwTimePickerLink {
+	cursor: pointer;
+}
+.bwTimePicker h6 {
+	text-align: center;
+	margin: 0;
+	padding: 2px;
+	background-color: #eee;
+	color: black;
+	border-bottom: 1px solid #ddd;
+}
+.bwTimePicker ul {
+	float: left;
+	margin: 0;
+	padding: 4px 0;
+	background-color: #f5f5f5;
+	color: black;
+}
+.bwTimePicker li {
+  list-style: none;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  width: 40px;
+  cursor: pointer;
+}
+.bwTimePicker li:hover {
+  color: #666;
+  background-color: #eee;
+}
+.bwTimePicker .bwTimePickerColumn {
+	float: left;
+}
+.bwTimePicker .bwTimePickerColon {
+  font-weight: bold;
+  margin: 4em 0.5em 0 0.5em;
+}
+.bwTimePicker .bwTimePickerAmPm {
+  margin: 3em 0 0 0.5em;
+}
+.bwTimePicker li.bwTimePickerSelected {  
+	background-color: #DFEAFF;
+	color: black;
+}
+
+/* Old Clock Styles */
+#bwClock {
+  position: absolute;
+  z-index: +1000;
+}
+#bwClockClock {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  padding: 2px;
+  margin: 0 auto;
+}
+#bwClockCover {
+ /* special effect - used to cover the pixelated edge where the h2 below meets
+    the anti-aliased clock edge */
+  position: absolute;
+  top: 130px;
+  left: 350px;
+  height: 21px;
+  width: 12px;
+  color: white;
+  background-color: black;
+}
+#bwClockBox {
+  position: absolute;
+  top: 130px;
+  left: 340px;
+  z-index: -1;
+  width: 220px;
+  text-align: center;
+  color: black;
+  background-color: #ffe;
+  border: 2px solid black;
+}
+#bwClockBox h2 {
+  font-size: 12px;
+  text-align: center;
+  margin: 0;
+  padding: 2px 0;
+  color: #eee;
+  background-color: #000;
+}
+#bwClockDateTypeIndicator {
+  font-weight: bold;
+  font-style: italic;
+  display: block;
+  margin: 1em;
+  padding:0 ;
+}
+#bwClockTime {
+  display: block;
+  width: 100%;
+  font-size: 0.9em;
+  font-weight: bold;
+  margin: 0.5em 0 3em 0;
+  padding: 0;
+}
+#bwClockSwitch {
+  position: absolute;
+  bottom: 5px;
+  left: 25px;
+  margin: 0;
+}
+#bwClockCloseText {
+  position: absolute;
+  bottom: 5px;
+  right: 28px;
+  margin: 0;
+}
+#bwClockCloseButton a {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  border: 1px solid #333;
+  margin: 0;
+  padding:0 4px ;
+  text-decoration: none;
+  color: #333;
+  background-color: white;
+}
+#bwClockCloseButton a:hover {
+  color: #eee;
+  background-color: #333;
+}
