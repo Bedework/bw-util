@@ -31,6 +31,9 @@ public class DeployEars extends AbstractMojo {
   private String deployDirPath;
 
   @Parameter
+  private boolean debug;
+
+  @Parameter
   private boolean noversion;
 
   @Parameter
@@ -72,6 +75,7 @@ public class DeployEars extends AbstractMojo {
                                     "/",
                                     "modified"));
     pe.setDeployDirPath(deployDirPath);
+    pe.setArgDebug(debug);
     pe.setNoversion(noversion);
     pe.setCheckonly(checkonly);
     pe.setDelete(delete);

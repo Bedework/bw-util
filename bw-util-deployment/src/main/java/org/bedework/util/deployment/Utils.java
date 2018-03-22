@@ -48,7 +48,7 @@ import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Utils {
-  private final boolean debug;
+  private boolean debug;
   private final Log logger;
   private final Properties versions = new Properties();
 
@@ -444,6 +444,10 @@ public class Utils {
 
   void error(final String msg) {
     logger.error(msg);
+  }
+
+  void setDebug(final boolean val) {
+    debug = val;
   }
 
   boolean debug() {

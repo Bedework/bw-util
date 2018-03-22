@@ -73,6 +73,8 @@ public class Process extends AbstractMojo {
 
   private String deployDirPath;
 
+  private boolean argDebug;
+
   private boolean noversion;
 
   private boolean checkonly;
@@ -147,6 +149,10 @@ public class Process extends AbstractMojo {
     deployDirPath = val;
   }
 
+  public void setArgDebug(final boolean val) {
+    argDebug = val;
+  }
+
   public void setWarsOnly(final boolean val) {
     warsonly = val;
   }
@@ -190,6 +196,10 @@ public class Process extends AbstractMojo {
 
   public void execute() throws MojoFailureException {
     utils = new Utils(getLog());
+
+    if (argDebug) {
+      utils.setDebug(true);
+    }
 
     try {
       loadProperties();

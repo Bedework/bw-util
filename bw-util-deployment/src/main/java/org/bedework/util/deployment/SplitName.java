@@ -65,8 +65,15 @@ public class SplitName {
    * @return split name or null if unable to split.
    */
   public static SplitName testName(final String name) {
-      /* Try to figure out the prefix */
-    final int dashPos = name.indexOf("-", 3);
+    /* Try to figure out the prefix */
+    final int dashPos;
+    final int snapShotPos = name.indexOf("-SNAPSHOT");
+
+    if (snapShotPos < 0) {
+      dashPos = name.lastIndexOf("-");
+    } else {
+      dashPos = name.lastIndexOf("-", snapShotPos - 1);
+    }
 
     if (dashPos < 0) {
       return null;
