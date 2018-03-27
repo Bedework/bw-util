@@ -2750,7 +2750,13 @@
               </input>
               <label for="bwIsRegisterableEvent"><xsl:copy-of select="$bwStr-AEEF-UsersMayRegister"/></label>
 
-              <div id="bwRegistrationFields" class="invisible">
+              <div id="bwRegistrationFields">
+                <xsl:attribute name="class">
+                  <xsl:choose>
+                    <xsl:when test="form/xproperties/node()[name()='X-BEDEWORK-MAX-TICKETS']">visible</xsl:when>
+                    <xsl:otherwise>invisible</xsl:otherwise>
+                  </xsl:choose>
+                </xsl:attribute>
                 <xsl:if test="/bedework/registrationsExternal = 'true'">
                   <!-- Expose the internal/external checkboxes - internal defaults to true -->
                   <input type="checkbox" id="bwRegisterableInternal" checked="checked" />

@@ -89,18 +89,31 @@
           </td>
           -->
         </tr>
+        <!--
+      <tr>
+        <th><xsl:copy-of select="$bwStr-CalS-Group"/></th>
+        <td>
+          <xsl:value-of select="group"/>
+        </td>
+        < ! - -
+        <td>
+          <p class="note">
+            <xsl:copy-of select="$bwStr-CalS-NameOfAdminGroup"/>
+          </p>
+        </td>
+        - - >
+      </tr>
+      -->
         <tr>
           <th><xsl:copy-of select="$bwStr-CalS-Group"/></th>
           <td>
-            <xsl:value-of select="group"/>
+            <input type="text" name="groupName" size="20">
+              <xsl:attribute name="value"><xsl:value-of select="group"/></xsl:attribute>
+            </input>
           </td>
-          <!--
           <td>
-            <p class="note">
-              <xsl:copy-of select="$bwStr-CalS-NameOfAdminGroup"/>
-            </p>
+            <xsl:copy-of select="$bwStr-AdCS-NameAdminGroup"/>
           </td>
-          -->
         </tr>
         <tr>
           <th>Context:</th>
