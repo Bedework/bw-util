@@ -47,6 +47,12 @@
       </tr>
 
       <xsl:for-each select="/bedework/contacts/contact">
+        <xsl:variable name="statusVal">
+          <xsl:choose>
+            <xsl:when test="status='deleted'">archived</xsl:when>
+            <xsl:otherwise><xsl:value-of select="status"/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
         <tr>
           <xsl:if test="position() mod 2 = 0"><xsl:attribute name="class">even</xsl:attribute></xsl:if>
           <td>
@@ -73,7 +79,7 @@
           </td>
           <xsl:if test="/bedework/userInfo/superUser = 'true'">
             <td>
-              <xsl:value-of select="status"/>
+              <xsl:value-of select="$statusVal"/>
             </td>
           </xsl:if>
         </tr>
