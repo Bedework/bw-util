@@ -13,6 +13,31 @@
     <bw-util.version>4.0.18</bw-util.version>
   </properties>
 
+  <organization>
+    <name>Bedework</name>
+    <url>https://github.com/Bedework</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>Apache License Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:Bedework/bw-util.git</connection>
+    <developerConnection>scm:git:git@github.com:Bedework/bw-util.git</developerConnection>
+    <url>https://github.com/Bedework/bw-util</url>
+    <tag>bw-util-4.0.9</tag>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+
+    <url>https://github.com/Bedework/bw-util/issues</url>
+  </issueManagement>
+
   <build>
     <plugins>
       <plugin>
