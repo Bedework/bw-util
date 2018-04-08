@@ -94,6 +94,11 @@ public class BedeworkServerTags {
           new QName(bedeworkCaldavNamespace,
                     "org.bedework.synchXlocXcontacts");
 
+  /**   */
+  public static final QName synchDeleteSuppressed =
+          new QName(bedeworkCaldavNamespace,
+                    "org.bedework.synchDeleteSuppressed");
+
   /* used for property index */
 
   /**   */
