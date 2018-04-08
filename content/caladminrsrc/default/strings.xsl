@@ -646,6 +646,7 @@
   <xsl:variable name="bwStr-CuCa-SubscriptionCanCreateEprops">Allow Location etc create?</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SubscriptionXcategories">Process categories?</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SubscriptionXlocXcontact">Process Locations and Contacts?</xsl:variable>
+  <xsl:variable name="bwStr-CuCa-SubscriptionDeleteSuppressed">Suppress deletion of events?</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SubscriptionRefresh">Refresh rate: minutes?</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SubscriptionURL">Subscription URL</xsl:variable>
   <xsl:variable name="bwStr-CuCa-URLToCalendar">URL to calendar:</xsl:variable>

@@ -180,6 +180,12 @@
               </td>
             </tr>
             <tr>
+              <th><xsl:copy-of select="$bwStr-CuCa-SubscriptionDeleteSuppressed"/></th>
+              <td>
+                <input type="checkbox" name="deleteSuppressed"/>
+              </td>
+            </tr>
+            <tr>
               <th><xsl:copy-of select="$bwStr-CuCa-SubscriptionRefresh"/></th>
               <td>
                 <input type="text" name="refinterval" value="15" size="10"/>
