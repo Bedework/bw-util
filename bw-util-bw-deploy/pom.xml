@@ -31,6 +31,8 @@
     </dependency>
   </dependencies>
 
+  <!-- Cripple this for the moment - need to figure out how to
+       get the artifact signed
   <build>
     <plugins>
       <plugin>
@@ -47,19 +49,19 @@
           </execution>
         </executions>
         <configuration>
-          <!-- Set the target configuration directory to be used in the bin scripts -->
+          < ! - - Set the target configuration directory to be used in the bin scripts - - >
           <configurationDirectory>conf</configurationDirectory>
-          <!-- Copy the contents from "/src/main/config" to the target
-               configuration directory in the assembled application -->
+          < ! - - Copy the contents from "/src/main/config" to the target
+               configuration directory in the assembled application - - >
           <copyConfigurationDirectory>true</copyConfigurationDirectory>
-          <!-- Include the target configuration directory in the beginning of
-               the classpath declaration in the bin scripts -->
+          < ! - - Include the target configuration directory in the beginning of
+               the classpath declaration in the bin scripts - - >
           <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
-          <!-- set alternative assemble directory -->
+          < ! - - set alternative assemble directory - - >
           <assembleDirectory>${project.build.directory}/rundeploy</assembleDirectory>
-          <!-- Extra JVM arguments that will be included in the bin scripts
-          <extraJvmArguments>-Xms128m</extraJvmArguments> -->
-          <!-- Generate bin scripts for windows and unix pr default -->
+          < ! - - Extra JVM arguments that will be included in the bin scripts
+          <extraJvmArguments>-Xms128m</extraJvmArguments> - - >
+          < ! - - Generate bin scripts for windows and unix pr default - - >
           <repositoryLayout>flat</repositoryLayout>
           <platforms>
             <platform>windows</platform>
@@ -94,4 +96,5 @@
       </plugin>
     </plugins>
   </build>
+-->
 </project>
