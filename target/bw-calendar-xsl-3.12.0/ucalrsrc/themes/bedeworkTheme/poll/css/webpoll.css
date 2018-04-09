@@ -1,0 +1,457 @@
+@CHARSET "UTF-8";
+
+#bwPolls {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+}
+#bwPolls #loading {
+	position: absolute;
+	height: 20px;
+	width: 170px;
+	right: 0;
+	top: 30px;
+  font-style: italic;
+}
+#bwPolls #progressbar {
+	position: absolute;
+	width: 100px;
+	height: 20px;
+	top: 0px;
+	right: 0px;
+}
+#bwPolls #timezoneDisplay {
+  font-size: 0.9em;
+}
+/* Sidebar Panel */
+#bwPolls #sidepanel {
+	float: left;
+	width: 210px;
+}
+#sidebar-new-poll-count, #sidebar-vote-poll-count, #sidebar-completed-poll-count {
+	position: absolute;
+	background-color:#4164AE;
+	font-size: 10px;
+	color:#fff;
+	text-align: center;
+	border: 2px solid #fff;
+	border-radius: 30px;
+	right: 10px;
+	padding: 2px 5px;
+}
+#sidebar-new-poll {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1em;
+  background: none repeat scroll 0 0 #f4f7ff;
+}
+#sidebar-add-poll {
+   position: absolute;
+   background-color: #4164AE;
+   font-size: 10px;
+   color:#fff;
+   text-align: center;
+   right: 34px;
+   padding: 2px 5px;
+   border: 2px solid white;
+}
+#sidebar-add-poll:hover {
+  background-color:#36538E;
+}
+#bwPolls #sideBarMenu {
+  font-size: 0.8em;
+}
+/* Refresh Button */
+#bwPolls #refresh {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+/* Detail Panel */
+#bwPolls #detail {
+  margin-left: 225px;
+}
+#bwPolls #detail-messages {
+  font-size: 1.2em;
+  font-weight: bold;
+  font-style: italic;
+  margin: 1em 0;
+}
+#editpoll-description {
+	height: 48px;
+}
+#editpoll-title-edit {
+  width: 20em;
+}
+#editpoll-title-edit-panel {
+	float: left;
+  font-weight: bold;
+}
+#editpoll-title-panel {
+}
+#editpoll-organizer-panel {
+	position: relative;
+	float: left;
+}
+#editpoll-status-panel {
+	position: relative;
+	float: left;
+	left: 1em;
+}
+#editpoll-title, #editpoll-organizer, #editpoll-status {
+	font-weight: bold;
+}
+#editpoll-details {
+}
+#editpoll-choicelist .bwChoiceDisplay {
+  margin: 0 0 0.5em 0;
+  padding: 1em;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+}
+#editpoll-choicelist .bwChoiceDisplay:nth-child(even),
+#bwPolls .voter:nth-child(even),
+#choice-widget .attendee:nth-child(even) {
+  background-color: #e5e5e5;
+}
+#editpoll-choicelist .bwChoiceSummary {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+#editpoll-choicelist .bwChoiceType {
+  font-weight: normal;
+  font-style: italic;
+  margin-right: 2em;
+  display: inline;
+}
+#editpoll-choicelist .bwChoiceContent {
+  font-size: 0.9em;
+}
+#editpoll-choicelist .bwChoiceButtons {
+  float: right;
+  font-size: 0.9em;
+}
+#bwPolls #sidebar-owned-polls, #editpoll-tabs {
+	margin-bottom: 4px;
+}
+#bwPolls #sidebar-completed-polls, #editpoll-tabs {
+    margin-bottom: 4px;
+}
+#editpoll-choice {
+  margin-bottom: 0.5em;
+}
+#editpoll-choiceType {
+  padding: 12px 0 0 0;
+}
+#editpoll-addchoice {
+  margin: 0.5em 0.5em 1em 0;
+  float: left;
+}
+#editpoll-delete {
+	position: relative;
+	left: 10px;
+}
+#editpoll-syncAttendees {
+  float: right;
+  font-size: 0.8em;
+  margin: 0.5em 0;
+}
+#editchoice-syncAttendees {
+  float: right;
+}
+#editchoicce-syncAttendeesStatus {
+  color: #666;
+  font-style: italic;
+}
+#editpoll-autofill {
+	position: relative;
+	left: 50px;
+}
+#bwComp-voterlist,
+#bwComp-attendeelist{
+  margin: 0;
+  padding: 0;
+}
+#bwPolls .voter,
+#choice-widget .attendee {
+	position: relative;
+	background-color:#eee;
+  margin: 0 0 0.5em 0;
+  padding: 0.5em;
+}
+#bwPolls #edit-votertype label,
+#choice-widget #edit-attendeetype label {
+  width: auto;
+}
+#bwPolls .edit-datetime {
+	margin: 4px;
+}
+#bwPolls .edit-datetime label,
+#bwPolls .edit-voter label{
+	display: inline-block;
+	width: 40px;
+}
+#choice-widget .edit-attendee label {
+  display: inline-block;
+  width: 70px;
+}
+#bwPolls .voter-address,
+#choice-widget .attendee-address {
+	width: 250px;
+}
+#bwPolls .input-remove,
+#choice-widget .input-remove {
+	position: absolute;
+	right: 4px;
+	bottom: 4px;
+}
+#editpoll-tabs {
+  overflow: scroll;
+}
+#bwPolls .active-voter {
+	font-weight:bold;
+}
+#bwPolls .active-attendee {
+    font-weight:bold;
+}
+#editpoll-resulttable {
+	border-collapse:collapse;
+  overflow: scroll;
+  font-size: 0.9em;
+}
+#editpoll-resulttable .when-td {
+	text-align: right;
+}
+#editpoll-resulttable .tz {
+  font-size: 0.9em;
+  font-style: italic;
+}
+#editpoll-resulttable .bwChoiceDatesLocale {
+  margin-top: 1em;
+}
+#editpoll-resulttable td {
+	border: 1px solid #ccc;
+	padding: 4px;
+}
+#editpoll-resulttable tbody td,
+#editpoll-resulttable tfoot td {
+  border-right: 2px solid #ccc;
+}
+#editpoll-resulttable .noborder {
+  border: none;
+}
+#editpoll-resulttable thead {
+}
+#editpoll-resulttable tbody {
+  border-bottom: 3px solid #aaa;
+}
+#bwPolls .response-btns {
+  white-space: nowrap;
+}
+#bwPolls .response-btns,
+#bwPolls .response-btns label {
+	height: 24px;
+}
+#bwPolls #winner-text {
+	position: relative;
+}
+#bwPolls #winner-icon-left {
+	position: absolute;
+	left: 0px;
+	top: 50%;
+	margin-top: -8px;
+}
+#bwPolls #winner-icon-right {
+	position: absolute;
+	right: 0px;
+	top: 50%;
+	margin-top: -8px;
+}
+#bwPolls .summary-td {
+  font-weight: bold;
+  cursor: pointer;
+}
+#bwPolls .start-td,
+#bwPolls .end-td {
+  white-space: nowrap;
+  cursor: pointer;
+}
+#bwPolls .center-td {
+	text-align:center;
+  border-left: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+}
+#bwPolls .desc-td {
+  text-align:left;
+  width: 135px;
+  font-style: italic;
+  cursor: pointer;
+}
+#bwPolls .recur-td {
+  cursor: pointer;
+}
+#bwPolls .poll-winner-td {
+  border-left: 4px solid black;
+  border-right: 4px solid black;
+  background-color: #ffd;
+}
+#bwPolls thead .poll-winner-td {
+  border-top: 4px solid black;
+  background-color: #ffb;
+  font-weight: bold;
+  letter-spacing: 0.4px;
+}
+#bwPolls tfoot tr:last-child .poll-winner-td {
+  border-bottom: 4px solid black;
+}
+#bwPolls label.disabled {
+  color: #999;
+}
+/* use background, not background-color, to override button background images:  */
+/* These are the Overall cells: */
+#bwPolls .respBestOverall,
+#bwPolls .response-btns label.ui-state-active.bestButton {
+  background: #8d8;
+}
+#bwPolls .respOkOverall,
+#bwPolls .response-btns label.ui-state-active.okButton {
+  background: #def;
+}
+#bwPolls .respMaybeOverall,
+#bwPolls .response-btns label.ui-state-active.maybeButton {
+	background: #fff;
+}
+#bwPolls .RespNoOverall,
+#bwPolls .response-btns label.ui-state-active.noButton {
+	background: #fbb;
+}
+#bwPolls .respNoResponseOverall {
+  background-color: #eee;
+}
+/* These are the voter detail cells: */
+/* XXX Not so great, as these are determined by display strings.  Should
+   be determined by something abstract. */
+
+#bwPolls .respBest {
+  background: #CCE6CC;
+}
+#bwPolls .respOk {
+  background: #def;
+}
+#bwPolls .respMaybe {
+  background: #fff; /* don't color maybes */
+}
+#bwPolls .respNo {
+  background: #fdd;
+}
+#bwPolls .respNoResponse {
+  background: #f5f5f5;
+}
+#bwPolls .no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+#bwPolls #hover-grid {
+	position: relative;
+	width: 100%;
+    height: 30px;
+	margin: 10px;
+	border-collapse:collapse;
+	border: 1px solid #ccc;
+}
+#bwPolls #hover-grid tr {
+	position: relative;
+	height: 30px;
+}
+#bwPolls #hover-grid td {
+	border: 1px solid #ccc;
+	padding: 4px;
+}
+#bwPolls #hover-grid .hover-grid-td-time {
+	width: 70px;
+	text-align: right;
+}
+#bwPolls #hover-grid .hover-grid-td-slot {
+    text-align: left;
+}
+#bwPolls .hover-event {
+	position: absolute;
+	font: 8pt "Trebuchet MS", sans-serif;
+	left: 81px;
+	width: 250px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+#bwPolls #response-key {
+	position: relative;
+	width: 100px;
+	top: 20px;
+}
+/* choice popup */
+#choice-widget {
+  position: relative;
+  background: #fff;
+  padding: 2em;
+  width: auto;
+  max-width: 80%;
+  min-width: 720px;
+  min-height: 400px;
+  margin: 20px auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+#choice-widget h2 {
+  border-bottom: none;
+}
+#choice-widget #bwTabContent {
+  margin: 0.5em 0;
+}
+#choice-widget #choiceFormFields {
+  border: 1px solid #ccc;
+}
+#choice-widget ul.submenu {
+  height: 30px;
+  margin: 0;
+  border-bottom: 1px solid #ccc;
+  border-top: none;
+}
+#choice-widget ul.submenu li {
+  display: inline-block;
+  height: 24px;
+  padding: 0.5em 1em 0 1em;
+}
+#pollsFooter {
+  clear: both;
+}
+/* jquery overrides */
+.ui-widget {
+  font-family: Arial,sans-serif;
+  font-size: 0.9em;
+}
+#sidebar-completed-polls.ui-widget-content,
+#sidebar-owned-polls.ui-widget-content,
+#sidebar-voter.ui-widget-content {
+  border: none;
+  background: none;
+}
+.ui-accordion .ui-accordion-content {
+  padding: 1em;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+  font-weight: normal;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  font-weight: normal;
+}
+#editpoll-tabs ul.ui-tabs-nav {
+  height: 35px;
+}
+.ui-datepicker-trigger {
+  left: 4px;
+  position: relative;
+  top: 3px;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
+  background-color: white;
+  border-bottom: 1px solid white;
+}

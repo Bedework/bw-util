@@ -1,0 +1,161 @@
+/*
+* Licensed to Jasig under one or more contributor license
+*  agreements. See the NOTICE file distributed with this work
+*  for additional information regarding copyright ownership.
+*  Jasig licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file
+*  except in compliance with the License. You may obtain a
+*  copy of the License at:
+*
+*  http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on
+*  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied. See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*/
+
+/* EXPORT / SUBSCRIBE FORM */
+#exportSubscribePopup {
+  position: relative;
+  background: #FFF;
+  padding: 0;
+  width:auto;
+  max-width: 80%;
+  margin: 40px auto;
+}
+#exportSubscribeTitle {
+  margin: 0;
+  background-color: #596F9E;
+  color: white;
+  padding: 0.5em;
+  font-size: 2em;
+}
+#exportSubscribeFiltersBox {
+  margin: 20px;
+  border: 1px solid #ccc;
+  background-color: #f4f8ff;
+}
+#exportSubscribeFilters {
+  margin: 1em 1em 1em 2em;
+}
+.bwExpFilterItems {
+  font-style: italic;
+}
+#exportSubscribeFiltersBox h3 {
+   background-color: #ced8ed;
+   border-bottom: 1px solid #ddd;
+   color: #333;
+   font-size: 1em;
+   margin: 0;
+   padding: 4px 4px 4px 8px;
+ }
+#exportSubscribeForm {
+  color: black;
+  background-color: white;
+  margin: 20px;
+}
+#exportSubscribeForm h2,
+#exportSubscribeForm h3,
+#exportSubscribeForm h4 {
+  font-size: 1em;
+  font-weight: normal;
+  background-color: #eee;
+  color: black;
+  padding: 4px 4px 4px 8px;
+}
+#exportSubscribeForm fieldset {
+  margin: 1em 0;
+}
+#exportSubscribeForm ul {
+  list-style-type: none;
+  margin: 0 0 0 2em;
+  padding: 0;
+}
+#exportSubscribeForm #bwExpCountWidget {
+  margin: 0 0 1em 2em;
+}
+#exportSubscribeForm #bwExpUrlBox {
+  font-family: monospace;
+}
+#exportSubscribeForm #bwExpJsWidgetOptions h2 {
+  margin: -2em -2em 1em -2em;
+}
+#exportSubscribeForm #bwExpJsWidgetOptions ul {
+  list-style-type: disc;
+}
+#exportSubscribeForm #bwExpJsWidgetOptions li {
+  margin-bottom: 1em;
+}
+#exportSubscribeForm #bwExpJsWidgetOptions li ul {
+  margin: 1em 0 0 2em;
+}
+#exportSubscribeForm #bwExpJsWidgetOptions li ul li {
+  list-style-type: circle;
+}
+#exportSubscribeForm #bwExpJsWidgetOptions em {
+  font-style: normal;
+  font-size: 0.8em;
+}
+#bwExpURL {
+  padding: 2em 0 1em 0;
+}
+#exportSubscribeForm p.bwExpOutput {
+  background-color: #ffd;
+  color: black;
+  padding: 4px 4px 4px 8px;
+  border: 1px solid #ccc;
+}
+#exportSubscribeForm td {
+  vertical-align: top;
+  white-space: nowrap;
+}
+#exportSubscribeForm th {
+  font-weight: bold;
+  padding: 1em 0 0.5em 0;
+  text-align: left;
+  vertical-align: top;
+}
+#exportSubscribeForm label {
+  margin: 0;
+  font-weight: normal;
+}
+.mfp-close-btn-in .mfp-close {
+  color: white;
+}
+#exportSubscribeForm .bwExpOptionName {
+  float: left;
+  clear: left;
+  margin-right: 1em;
+  width: 200px;
+}
+#bwExpTimeFrameWidgets .bwExpSubField {
+  margin: 0.5em 0 1em 1.5em;
+}
+#exportSubscribeForm .bwSlider {
+  width: 300px;
+}
+#bwExpCountWidget {
+  margin-left: 2em;
+}
+#exportSubscribeForm #bwExpCodeBox {
+  margin-top: 2em;
+}
+#exportSubscribeForm #bwExpFunctions {
+  background-color: #eee;
+  margin: 0 0 2em 0;
+  width: 100%;
+}
+#exportSubscribeForm ul#bwHtmlListOptions {
+  margin-top: 0;
+}
+#exportSubscribeForm ul#bwHtmlListOptions .bwExpOptionName {
+  width: 150px;
+}
+#exportSubscribeForm .bwExpNote {
+  margin-left: 1em;
+  font-style: italic;
+}

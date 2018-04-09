@@ -1,0 +1,910 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.
+*/
+
+/* BEDEWORK 3.10 GLOBAL STYLESHEET
+   This file is loaded after Bootstrap and jQuery CSS files
+   and before bwThemeResponsive-??.css (where responsive overrides
+   can be placed).
+
+   This theme is not quite mobile first: this file holds global
+   styles, bwThemeResponsive-00-Tiny.css file is used to hold
+   very mobile specific overrides, and so forth. See the comments
+   in the bwThemeResponsive-??.css files.  */
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  color: #555;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow: scroll;
+}
+
+/* GENERAL SELECTORS */
+a {
+  color: #335080;
+  text-decoration: none;
+}
+a:hover {
+  color: #2828a0;
+  text-decoration: underline;
+}
+.clear {
+  display: block;
+  clear: both;
+  height: 0px;
+}
+h1,h2,h3,h4,h5,h6 { /* overrides Bootstrap */
+  font-family: Arial, Helvetica, sans-serif;
+  color: #555;
+}
+h1 {
+  font-size: 2em;
+}
+h1 span.date {
+  margin: 0 .6em;
+  color: #ddb500;
+  font-weight: normal;
+}
+h3 {
+  letter-spacing: 1px;
+  font-size: 22px;
+}
+h4 {
+  font-size: 1em;
+  margin: 0;
+  line-height: 1.5em;
+}
+em {
+  font-style: italic;
+}
+strong {
+  font-weight: bold;
+}
+label {
+  cursor: pointer;
+  display: inline; /* override bootstrap */
+}
+.invisible {
+  display: none;
+}
+.form-group {
+  margin-bottom: 0;
+}
+
+/* HEADER, LOGO, and TOP LINKS */
+#header {
+  position: relative;
+  margin: 0 0 16px 0;
+}
+#masthead {
+  margin: 0;
+  padding: 20px 0;
+  background-color: #596F9E;
+}
+#masthead #siteTitleAndNav {
+  float: right;
+  text-align: right;
+  margin: 0 1em 0 0;
+}
+#masthead h1 {
+  margin: 0;
+  color: #eee;
+}
+#masthead a {
+  color: #ddd;
+}
+#masthead a:hover {
+  color: #eee;
+  text-decoration: underline;
+}
+#masthead ul {
+  margin: 0.5em 0 0 0;
+  padding: 0;
+}
+#masthead li {
+  display: inline;
+  padding: 0 0.5em;
+  border-right: 1px solid #bbb;
+}
+#masthead li.last {
+  padding: 0 0 0 0.5em;
+  border-right: none;
+}
+/* Three-line menu icon */
+#mobileMenu {
+  float: right;
+  margin-right: 0;
+  padding: 6px;
+}
+.navbar-toggle .icon-bar {
+  background-color: #333;
+}
+/* ERRORS */
+#errors {
+  margin: 0.5em 0;
+  padding: 0.5em;
+}
+#errors p {
+  margin: 5px 0;
+}
+#errors .ui-icon-alert {
+  float: left;
+  margin-right: .3em;
+}
+
+/* FEATURED EVENTS TRIPTYCH */
+#feature {
+  white-space: nowrap;
+  overflow: hidden;
+}
+#feature img.img-responsive {
+  width: 33.3%;
+  float: left;
+}
+#feature img.singleFeatureMode {
+  width: 100%;
+}
+
+/* COLUMNS */
+/* Blocks within these columns are represented in sections below.
+   These are provided here for global overrides. */
+#leftColumn {
+  background-color: #f5f5f5;
+  padding-bottom: 2em;
+}
+#leftColumn label {
+  display: block;
+}
+#rightFullColumn {
+}
+#centerColumn {
+  padding: 0;
+}
+
+/* DATE PICKER */
+#bwDatePicker {
+  margin-top: 1em;
+}
+#bwDatePickerTodayLink {
+  float: right;
+  margin: 0;
+  padding: 0;
+}
+#bwDatePickerTodayLink li {
+  float: left;
+  list-style: none outside none;
+  margin: 0 0 0 4px;
+  padding: 0 4px 0 0;
+  border-right: 1px solid #888;
+}
+#bwDatePickerTodayLink li.last {
+  padding: 0;
+  border-right: none;
+}
+#bwDatePickerRangeLinks {
+  float: right;
+}
+#bwDatePickerLinks {
+  margin-bottom: 3em;
+}
+#bwDatePickerLinks ul {
+  margin: 4px 2px 0 0;
+  padding: 0;
+}
+#bwDatePickerLinks li {
+  float: left;
+  list-style: none outside none;
+  margin: 0 0 0 4px;
+  padding: 0 4px 0 0;
+  border-right: 1px solid #888;
+  line-height: 0.9em;
+}
+#bwDatePickerLinks li.last {
+  padding: 0;
+  border-right: none;
+}
+
+/* SEARCH BOX */
+#bwBasicSearch {
+  margin-top: 4px;
+}
+#bwBasicSearch .form-control {
+  display: inline-block;
+}
+#bwSearchButtons {
+  text-align: right;
+}
+#searchSubmit {
+  position: relative;
+  top: 0;
+  right: 35px;
+  display: inline-block;
+  width: 0.5em;
+  height: 1.4em;
+  z-index: 1;
+}
+#searchSubmit.btn {
+  background-color: white;
+  border: none;
+}
+#searchSubmit .glyphicon {
+  top: -6px;
+  opacity: 0.4;
+}
+.bwa-label {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+}
+
+/* Date Picker and Search Box Form Control styles
+   (Bootstrap overrides) */
+.form-control {
+  display: inline-block;
+  height: 30px;
+}
+.btn-default {
+  background-color: #eee;
+  border-color: #ddd;
+  color: #666;
+}
+.btn:hover, .btn:focus {
+  background-color: #ddd;
+  border-color: #ccc;
+  color: #555;
+}
+.bwInputs {
+  white-space: nowrap;
+}
+
+/* MENU EXPLORER */
+.bwMenuTitle {
+  cursor: pointer;
+  margin-top: 1em;
+  text-transform: uppercase;
+}
+.bwMenuTree {
+  margin: 0.5em 0 0 1em;
+  font-size: 1.2em;
+}
+.bwMenuTree ul {
+  margin: 0;
+  padding: 0;
+}
+.bwMenuTree li {
+  list-style: none;
+  margin-left: 14px;
+  margin-bottom: 4px;
+  line-height: 16px;
+}
+.bwMenuTree li.hasChildren {
+}
+.bwMenuTree li ul {
+  margin-top: 4px;
+}
+.bwMenuTree li.selected {
+  font-weight: bold;
+}
+.bwMenuTree li.selected li {
+  font-weight: normal;
+}
+.bwMenuTree li.closed ul {
+  display: none;
+}
+.bwMenuTree a {
+  color: #335080;
+}
+.bwMenuTree a:hover {
+  color: #2828a0;
+}
+.bwMenuTree .menuTreeToggle {
+  display: block;
+  float: left;
+  margin-right: 2px;
+  margin-left: -14px;
+  width: 10px;
+  height: 10px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.caret {
+  border-left: 4px solid rgba(0, 0, 0, 0);
+  border-right: 4px solid rgba(0, 0, 0, 0);
+  border-top: 4px solid;
+  height: 0;
+  width: 0;
+  display: inline-block;
+  margin-left: 2px;
+  vertical-align: middle;
+}
+.caret-right {
+  border-top: 4px solid rgba(0, 0, 0, 0);
+  border-bottom: 4px solid rgba(0, 0, 0, 0);
+  border-left: 4px solid;
+}
+
+/* VIEWS LISTING */
+ul.viewList {
+  margin: 0 1em;
+  border-top: 1px solid #fff;
+}
+ul.viewList li {
+  border-bottom: 1px solid #fff;
+}
+ul.viewList li a {
+  font: bold 1.2em/2 Arial, sans-serif;
+  color: #335080;
+}
+ul.viewList li a.current {
+  color: #84c03c;
+}
+ul.viewList li a:hover {
+  color: #ddb500;
+}
+ul.viewList li span {
+  font-weight: bold;
+  margin-left: 10px;
+  padding: 4px;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+/* LOWER LEFT MENU CONTENT */
+.sideBarContainer .leftMenuTitle {
+  font-weight: bold;
+  font-size: .8em;
+  margin: 1.7em 0 .4em 0;
+}
+.sideLinks {
+  padding-left: 2em;
+}
+
+/* EVENT LIST, DATE TITLE and NAVIGATION */
+.secondaryColHeader h2 {
+  font-size: 2em;
+}
+#bwNavLinks {
+  padding: 16px 0 50px 4px;
+  margin: 0;
+}
+#bwNavLinks h3 {
+  float: left;
+  margin: 4px 0 0 8px;
+}
+a#prevViewPeriod,
+a#nextViewPeriod {
+  float: left;
+  font-size: 18px;
+  padding: 0 8px 4px 8px;
+  margin: 0 1px 0 0;
+}
+#expSubLinksList {
+  margin: -3em 0 0 0;
+  cursor: pointer;
+  float: right;
+}
+ul#calDisplayOptions {
+  float: right;
+  cursor: pointer;
+  margin: 0;
+}
+ul#calDisplayOptions li {
+  float: left;
+  list-style: none;
+  margin: 0 0.5em 0 0;
+}
+#calDisplayOptions li:first-child {
+   border-right: 1px solid #bbb;
+   padding-right: 0.5em;
+ }
+ul#calDisplayOptions li a {
+  margin: 0;
+  text-decoration: none;
+}
+
+/* UPCOMING EVENTS LIST */
+#listEvents {
+  margin: 0.5em 0 0 0;
+}
+#listEvents ul {
+  padding: 0;
+  list-style: none;
+}
+#listEvents li {
+  clear: both;
+  display: block;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  background-color: #f5f5f5;
+}
+#listEvents li.even {
+  /* don't use nth-child(2n) here - an option date row can be included
+     in the listing */
+  background-color: #fff;
+}
+#listEvents li.bwDateRow {
+  background-color: #E6EDF7;
+  margin: 0;
+}
+#listEvents .eventListContent {
+  margin-left: 0;
+  cursor: pointer;
+}
+.clickedEvent {
+  /* briefly displayed when an listed event is clicked or touched.
+     both eventList and eventListRange (day/week/month) */
+  background-color: #E8F0FF !important;
+}
+#listEvents .bwSummary {
+  font-weight: bold;
+}
+#listEvents .withImage,
+#listEvents .withBlank {
+  margin-left: 96px;
+}
+#listEvents .eventThumbLink {
+  max-height: 70px;
+  overflow: hidden;
+  display: block;
+  float: left;
+}
+#listEvents img.eventThumb {
+  margin: 0.5em;
+}
+#bwStartDateContainer {
+  margin: -4px 0 14px 0;
+}
+.calFilterContainer {
+  margin: 0;
+  padding: 0;
+  display: none; /* default */
+}
+#centerColumn .eventFilterInfo {
+  background-color: #eee;
+  border-bottom: 2px solid #FFF;
+  padding: 1em;
+}
+.bwfilter {
+  background-color: #FFDE8C;
+  border: 1px solid #DDDDDD;
+  color: #000000;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+#bwResultSize {
+  background-color: #f5f5f5;
+  padding: 0.5em 1em;
+  margin: 0;
+  border-bottom: 2px solid #FFF;
+}
+#loadMoreEventsLink {
+  clear: left;
+  margin: 2em 0;
+}
+#noEventsToDisplayText {
+  clear: left;
+  margin: 2em 0;
+  padding: 0.5em;
+  background-color: #f5f5f5;
+}
+#continueFrom {
+  font-size: 1.2em;
+  margin: 1em 0;
+}
+
+/* DAY, WEEK, MONTH EVENTS LIST */
+table.eventList {
+  border-collapse: collapse;
+  width: 100%;
+  margin-left: 2px;
+}
+table.eventList tr td {
+  padding: .7em .5em;
+  font-size: .9em;
+  border-bottom: 1px solid #c5c5c5;
+}
+table.eventList tr td.dateRow a {
+  color: #335080;
+  font-weight: bold;
+}
+table.eventList tr td.time {
+  text-align: center;
+  background: #ececec;
+  width: 8em;
+  white-space: nowrap;
+}
+table.eventList tr td.description a {
+  color: #333;
+}
+table.eventList tr td.icons {
+  width: 5em;
+}
+.icons {
+  float: right;
+  z-index: 20;
+}
+.icons a {
+  padding: 2px;
+  display: inline;
+}
+.icons img {
+  vertical-align: inherit;
+}
+table.eventList tr td.fillrow {
+  border-bottom: none;
+  height: 1px;
+}
+table.eventList tr td.eventFilterInfo {
+  background-color: #eee;
+  font-size: 1em;
+  border-bottom: 1px solid #fff;
+}
+table.eventList tr td.noEventsCell {
+  border-bottom: none;
+  padding-top: 2em;
+}
+table.eventList tr td span.displayGroupName,
+table.eventList tr td span.displayFilterName {
+  font-weight: bold;
+}
+table.eventList ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+table.eventList li {
+  padding: 1px 0;
+}
+table.event-list {
+  border-collapse: collapse;
+  width: 100%;
+  background: #ececec;
+}
+a#allView:visited, a#allView {
+  color: #273e6d;
+}
+/*
+div.double_center_column {
+ float: left;
+ width: 725px;
+ margin-left: 1px;
+}*/
+div.groupDesc {
+  display: block;
+  padding: .3em 0 .1em 5em;
+}
+
+/* CALENDAR GRID */
+#gridCalendarTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+}
+#gridCalendarTable th.dayHeading {
+  width: 14%;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #596F9E;
+  color: #eee;
+  border: 1px solid #aaa;
+}
+#gridCalendarTable td {
+  width: 14%;
+  height: 60px;
+  vertical-align: top;
+  text-align: left;
+  padding: 0em;
+  border: 1px solid #aaa;
+  background-color: white;
+  color: black;
+}
+#gridCalendarTable td.filler {
+  border: none;
+  background-color: #eee;
+  color: black;
+}
+#gridCalendarTable ul {
+  font-size: 0.8em;
+  list-style : none;
+  margin: 0em;
+  padding: 0.3em 0em 0em 0em;
+}
+#gridCalendarTable ul li {
+  margin: 0em;
+  padding: 0em;
+  display: inline;
+}
+#gridCalendarTable a {
+  display: block;
+  padding: 0.1em 0.2em 0.1em 0.2em;
+  text-decoration: none;
+}
+#gridCalendarTable a.eventLinkA:link,
+#gridCalendarTable a.eventLinkA:visited  {
+  background-color: #CCD7F5;
+  color: black;
+}
+#gridCalendarTable a.eventLinkB:link,
+#gridCalendarTable a.eventLinkB:visited {
+  background-color: #EBF0FF;
+  color: black;
+}
+#gridCalendarTable a.eventCancelled:link,
+#gridCalendarTable a.eventCancelled:visited {
+  background-color: #ccc;
+  border-bottom: 1px solid #bbb;
+  color: black;
+}
+#gridCalendarTable a.eventTentative:link,
+#gridCalendarTable a.eventTentative:visited  {
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  background: #eee url("../images/tentativeLines.gif") top;
+  color: black;
+}
+/* example of specialized coloring: */
+#gridCalendarTable a.holiday:link,
+#gridCalendarTable a.holiday:visited  {
+  background-color: #fff;
+  color: black;
+}
+#gridCalendarTable a:hover,
+#gridCalendarTable a:active  {
+  color: black !important;
+  background-color: #ddd !important;
+}
+#gridCalendarTable a.dayLink {
+  text-decoration: none;
+  color: black;
+  background-color: transparent;
+}
+#gridCalendarTable a:hover.dayLink {
+  text-decoration: none;
+  color: #eee;
+  background-color: black;
+}
+#gridCalendarTable a:hover {
+  /* required for eventTip to hover correctly;
+     apply only to the hover pseudo class, or
+     the other anchors nearby will cover the eventTip in IE */
+  position: relative;
+}
+#gridCalendarTable a span.eventTip,
+#gridCalendarTable a span.eventTipReverse {
+  display: none;
+}
+#gridCalendarTable a:hover span.eventTip {
+  display: block;
+  position: absolute;
+  width: 20em;
+  top: 1em;
+  left: 12em;
+  background-color: #ffe;
+  color: black;
+  padding: 4px;
+  border: 1px solid #333;
+}
+#gridCalendarTable a:hover span.eventTipReverse {
+  display: block;
+  position: absolute;
+  width: 20em;
+  top: 1em;
+  left: -21em;
+  background-color: #ffe;
+  color: black;
+  padding: 4px;
+  border: 1px solid #333;
+}
+#gridCalendarTable a:hover span.eventTipStatusCancelled {
+  display: block;
+  color: white;
+  background-color: #333;
+  padding: 2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+#gridCalendarTable a:hover span.eventTipStatusTentative {
+  display: block;
+  color: black;
+  background: #eee url('../../images/tentativeLines.gif') top;
+  padding: 2px;
+  margin-bottom: 6px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+#gridCalendarTable td.today,
+#yearCalendarTable td.today {
+  background-color: #ffb;
+  color: black;
+}
+
+/* ONGOING EVENTS */
+#ongoing {
+  float: right;
+}
+#ongoing.ongoingForGrid {
+  display: none; /* just hide for now */
+}
+#ongoing h3.bwEventsTitle {
+  text-transform: uppercase;
+  font-size: 1.2em;
+  letter-spacing: normal;
+}
+#ongoing .bwEventList {
+  display: block;
+}
+#ongoing .caret {
+  display: none;
+}
+#ongoing ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#ongoing li {
+  margin: .7em 0;
+  padding: 0;
+  font-size: .9em;
+}
+.bwEventsCount {
+  font-size: 0.8em;
+}
+
+/* SINGLE EVENT */
+.singleEvent {
+  width: 100%;
+}
+.singleEvent #eventIcons {
+  float: right;
+}
+.singleEvent #eventIcons img {
+  vertical-align: inherit;
+}
+.singleEvent .infoTitle {
+   font-weight: bold;
+}
+.singleEvent .sub-info {
+  margin-left: 1em;
+}
+.bwStatusCancelled {
+}
+.bwStatusTentative {
+}
+.bwStatusConfirmed {
+}
+.eventTitle {
+}
+.eventListingCal {
+}
+.singleEvent .eventLink {
+  margin: 0;
+}
+.eventWhen {
+}
+.eventWhere {
+}
+.time-container {
+  display: inline;
+}
+.bwEventImage {
+  float: right;
+  clear: right;
+  margin: 0 0 1em 1em;
+}
+.singleEvent .eventDescription {
+  margin: 1em 1.5em 1em 0;
+}
+.eventStatus {
+}
+.eventCost {
+}
+.eventLink {
+}
+.singleEvent .eventContact {
+  margin: 1em 0;
+}
+.singleEvent .eventCategories {
+  margin-right: 1em;
+}
+.singleEvent .eventAliases {
+  margin-right: 1em;
+}
+.eventComments {
+}
+.dateRangeCrossDay {
+  background-color: red;
+}
+.dateRangeEarlyMorning {
+  background-color: green;
+}
+.dateRangeMorning {
+  background-color: yellow;
+}
+.dateRangeAfternoon {
+  background-color: gray;
+}
+.dateRangeEvening {
+  background-color: orange;
+}
+table.yearViewMonthTable {
+  width: 168px;
+  padding: 0;
+  margin: 0 0 0 1em;
+  font-size: .9em;
+  border-top: 1px solid #CCC;
+  border-collapse: collapse;
+  float: left;
+}
+table.yearViewMonthTable th {
+  width: 24px;
+}
+table.yearViewMonthTable tr td {
+  height: 2em;
+}
+div.yearMonthRow {
+  clear: both;
+  padding: 1.5em 0;
+}
+#bwRegistrationBox iframe {
+  border: none;
+  margin-top: 1em;
+}
+
+/* FOOTER */
+#footer {
+  clear: both;
+  padding: 5px 10px;
+  margin-bottom: 2em;
+  color: #a1a1a1;
+  font-size: .8em;
+  border-top: 1px solid #ddd;
+}
+#footer a {
+  color: #a1a1a1;
+}
+#footer a:hover {
+  color: #666;
+}
+#footForms {
+  float: right;
+}
+#footForms form {
+  display: inline;
+}
+.stButton {
+  width: 16px;
+  height: 16px;
+  background: url("../images/share-icon-16x16.png") no-repeat transparent;
+}
+
+/* All Calendars */
+.calendarList {
+  float: left;
+  width: 50%;
+}

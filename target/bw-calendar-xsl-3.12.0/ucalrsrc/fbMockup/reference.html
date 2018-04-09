@@ -1,0 +1,3283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Scheduling Mockup</title>
+    <meta name="Author" content="Arlen Johnson"/>
+    <meta name="Keywords" content=""/>
+    <meta name="Description" content=""/>
+    <link rel="stylesheet" href="schedule.css" type="text/css"/>
+    <script type="text/javascript" src="../../../../../resources/javascript/jquery/jquery-1.3.2.min.js">&#160;</script>
+    <script type="text/javascript" src="../../../../../resources/javascript/jquery/jquery-ui-1.7.1.custom.min.js">&#160;</script>
+    <script type="text/javascript" src="bedeworkFb.js">&#160;</script>
+    <link rel="stylesheet" href="../../../../../resources/javascript/jquery/css/custom-theme/jquery-ui-1.7.1.custom.css"/>
+    <link rel="stylesheet" href="../../../../../resources/javascript/jquery/css/custom-theme/bedeworkJquery.css"/>
+    <script type="text/javascript">
+    
+      $.datepicker.setDefaults({
+        constrainInput: true,
+        dateFormat: "yy-mm-dd",
+        showOn: "both",
+        buttonImage: "calIcon.gif",
+        buttonImageOnly: true,
+        gotoCurrent: true,
+        duration: ""
+      });
+      
+
+      $(document).ready(function() {
+
+        // startdate
+        $("#bwEventWidgetStartDate").datepicker({
+          defaultDate: new Date()
+        }).attr("readonly", "readonly");
+
+        // enddate
+        $("#bwEventWidgetEndDate").datepicker({
+          defaultDate: new Date()
+        }).attr("readonly", "readonly");
+    
+        
+      });
+    </script>
+  </head>
+  <body>
+    <div id="bwSchedule">
+      <table id="bwScheduleTable">
+        <!-- insert zoom, date, and time rows -->
+        <tr>
+          <td rowspan="2" colspan="3" class="corner">
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <td class="date" colspan="36">
+            Wednesday, April 7, 2010
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="date" colspan="36">
+            Thursday, April 8, 2010
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="date" colspan="36">
+            Friday, April 9, 2010
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        <tr>
+          <td class="fbBoundry">
+          </td>
+          <!-- rows -->
+          <td class="">
+            8:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            9:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            10:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            11:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            12:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            1:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            2:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            3:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            4:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+            8:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            9:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            10:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            11:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            12:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            1:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            2:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            3:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            4:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+            8:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            9:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            10:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            11:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            12:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            1:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            2:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            3:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+            4:00
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        <!-- All Attendees Row -->
+        <tr class="allAttendees">
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            All Attendees
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        <!-- Normal Attendee Row -->
+        <tr>
+          <td class="status checkmark">
+            &#10004;
+          </td>
+          <td class="role">
+            &#9997;
+          </td>
+          <td class="name">
+            Arlen Johnson
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry tentative">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        <!-- Normal Attendee Row -->
+        <tr>
+          <td class="status questionmark">
+            ?
+          </td>
+          <td class="role">
+            &#10137;
+          </td>
+          <td class="name">
+            Gary Schwartz
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry busy">
+          </td>
+          <td class="busy">
+          </td>
+          <td class="busy">
+          </td>
+          <td class="busy">
+          </td>
+          <td class="hourBoundry busy">
+          </td>
+          <td class="busy">
+          </td>
+          <td class="busy">
+          </td>
+          <td class="busy">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status checkmark">
+            &#10004;
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            Mimi Mugler
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            <input type="text" value="add attendee..." name="attendee" class="addAttendee"/>
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+        
+        
+        <!-- Waiting Attendee Row -->
+        <tr>
+          <td class="status">
+          </td>
+          <td class="role">
+          </td>
+          <td class="name">
+            
+          </td>
+          <td class="fbBoundry">
+          </td>
+          <!-- free busy grid for attendee -->
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class=" hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="hourBoundry">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="">
+          </td>
+          <td class="dayBoundry">
+          </td>
+        </tr>
+      </table>
+      
+      <table id="bwScheduleControls">
+        <tr>
+        
+          <td>
+            <button>&laquo; Pick Previous</button>
+          </td>
+          <td>
+            <button>Pick Next &raquo;</button>
+          </td>
+          <td class="dateLabel">
+            Start:
+          </td>
+          <td>
+            <input type="text" name="bwEventWidgetStartDate" id="bwEventWidgetStartDate" size="10"/>
+          </td>
+          <td class="time">
+            <select name="eventStartDate.hour"><option value="1" selected="selected">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="0">12</option>
+            </select>
+            <select name="eventStartDate.minute">
+              <option value="0" selected="selected">00</option>
+              <option value="5">05</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="30">30</option>
+              <option value="35">35</option>
+              <option value="40">40</option>
+              <option value="45">45</option>
+              <option value="50">50</option>
+              <option value="55">55</option>
+            </select>
+            <select name="eventStartDate.ampm">
+              <option value="am" selected="selected">am</option>
+              <option value="pm">pm</option>
+            </select> 
+            <img alt="bwClock" border="0" height="15" width="16" src="clockIcon.gif" />
+          </td>
+        </tr>
+        <tr>
+          <td class="zoom">
+            <span class="zoomControl">-</span>
+            <select name="zoom">
+              <option>300%</option>
+              <option>200%</option>
+              <option>150%</option>
+              <option selected="selected">100%</option>
+              <option>75%</option>
+              <option>50%</option>
+            </select>
+            <span class="zoomControl">+</span>
+          </td>
+          <td>
+            <button>Options &#x25BC;</button>
+          </td>
+          <td class="dateLabel">
+            End:
+          </td>
+          <td>
+            <input type="text" name="bwEventWidgetEndDate" id="bwEventWidgetEndDate" size="10"/>
+          </td>
+          <td class="time">
+            <select name="eventStartDate.hour"><option value="1" selected="selected">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="0">12</option>
+            </select>
+            <select name="eventStartDate.minute">
+              <option value="0" selected="selected">00</option>
+              <option value="5">05</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="30">30</option>
+              <option value="35">35</option>
+              <option value="40">40</option>
+              <option value="45">45</option>
+              <option value="50">50</option>
+              <option value="55">55</option>
+            </select>
+            <select name="eventStartDate.ampm">
+              <option value="am" selected="selected">am</option>
+              <option value="pm">pm</option>
+            </select> 
+            <img alt="bwClock" border="0" height="15" width="16" src="clockIcon.gif" />
+            <span class="allDay">
+              <input type="checkbox" class="alldayFlag"/>all day
+            </span>
+          </td>
+        </tr>  
+      </table>
+    </div>
+  </body>
+</html>

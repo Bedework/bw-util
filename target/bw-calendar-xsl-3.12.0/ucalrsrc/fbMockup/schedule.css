@@ -1,0 +1,176 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+s#bwSchedule {
+}
+#bwFreeBusyDisplay {
+  margin: 2em 2em 0 2em;
+  width: 90%;
+  overflow: scroll;  
+}
+#bwScheduleTable {
+  border-collapse: collapse; 
+  border: 1px solid #ccc;
+}
+#bwScheduleTable td {
+  border-bottom: 1px solid #e5e5e5;
+  white-space: nowrap;
+  padding: 2px 2px 2px 4px;
+  width: 50px !important;
+  height: 25px;
+}
+#bwScheduleTable td.date {
+  padding: 0 2px;
+  background-color: #f6f6f6;
+  border: none;
+}
+#bwScheduleTable td.corner {
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  text-align: right;
+  padding-right: 16px;
+}
+#bwScheduleTable tr.deselected {
+  background-color: #f8f8f8;
+  color: #aaa;
+}
+
+#bwScheduleTable .icon,
+#bwScheduleTable .activeCell {
+  cursor: default !important; 
+}
+#bwScheduleTable .tip {
+  /* this is the default rollover for most icons */
+  position: absolute;
+  margin: -8px 0 0 0;
+  padding: 4px;
+  font-size: 10px;
+  background-color: #ffe;
+  color: black;
+  border: 1px solid #eee;
+  font-family: Arial, Helvetica, sans-serif;
+  display: none; 
+}
+#bwScheduleTable td.status,
+#bwScheduleTable td.role {
+  color: #333;
+  background-color: transparent;
+  font-weight: bold;
+}
+#bwScheduleTable td.status {
+  font-size: 1.4em;
+}
+#bwScheduleTable td.role {
+  font-size: 1.6em;
+}
+#bwScheduleTable td.name {
+  padding-right: 1em;
+}
+#bwScheduleTable td.accepted {
+  color: #5a0;
+  background-color: transparent;
+  font-size: 1.8em;
+}
+#bwScheduleTable td.needsaction {
+  font-family: Paladino, Times, serif;
+}
+#bwScheduleTable #addAttendee {
+  cursor: pointer;
+  padding: 4px 0;
+}
+#bwScheduleTable #addAttendee.pending {
+  color: #bbb;
+  background-color: transparent;
+  border: none;
+}
+#bwScheduleTable #addAttendee.active {
+  color: black;
+  background-color: transparent;
+  border: none;
+}
+#bwScheduleTable .addAttendeeAdvanced {
+  color: #bbb;
+  background-color: transparent;
+  font-size: 0.8em;
+}
+#bwScheduleTable #addAttendeeFields,
+#bwScheduleTable #attType {
+  display: none;
+  font-size: 0.8em;
+}
+#bwScheduleTable input.selectAllToggle {
+}
+#bwScheduleTable td.fbcell {
+  /*cursor: crosshair;*/
+}
+#bwScheduleTable td.busy {
+  background-color: #b1cbfa;
+  color: black;
+}
+#bwScheduleTable tr.deselected td.busy {
+  background-color: #D8E4FA;
+  color: black;
+} 
+#bwScheduleTable td.tentative {
+  background: #eef url("tentativeLines.gif");
+  color: black;
+}
+#bwScheduleTable td.highlight {
+  background-color: #ffa;
+  color: black;
+}
+#bwScheduleTable td.fbBoundry {
+  padding: 0 2px;
+  background-color: #e5e5e5 !important;
+  border: none;
+}
+#bwScheduleTable td.dayBoundry {
+  padding: 0 2px;
+  background-color: #e5e5e5 !important;
+  border: none;
+}
+#bwScheduleTable td.hourBoundry {
+  border-left: 1px dashed #ddd;
+}
+#bwScheduleTable tr.allAttendees td {
+  background-color: #eee;
+}
+#bwScheduleTable tr.allAttendees td.busy {
+  background-color: #93A9CF !important;
+  color: black;
+}
+#bwScheduleTable .removeAttendee {
+  cursor: pointer; 
+  font-weight: bold;
+  color: #999;
+  background-color: transparent;
+} 
+#bwScheduleTable .attendeeMenu {
+  position: absolute; 
+  margin: 0 0 0 1em;
+  background-color: #ffe;
+  color: black;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  display: none;
+}
+#bwScheduleControls {
+  margin: 1.5em 1em;
+}
+#bwScheduleControls td.zoom {
+  text-align: center;
+}
+.zoomControl {
+  font-size: 1.2em;
+}
+#bwScheduleControls td.dateLabel {
+  padding-left: 3em;
+}
+#bwScheduleControls td.time {
+  padding-left: 1em;
+}
+#bwScheduleControls input.alldayFlag {
+  margin-left: 1em;
+}
+

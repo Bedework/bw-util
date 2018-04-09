@@ -1,0 +1,832 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.
+*/
+
+body {
+  margin: 0;
+  background-color: #eee;
+  color: black;
+}
+#bedework {
+  /* this is the main wrapper div used to encapsulate all Bedework CSS; we
+     will prepend each selector below with this ID - this helps encapsulate
+     the css for use in portal environments (though it does imply that only
+     one instance should be running on a portal page) */
+  font-family : Arial, Helvetica, sans-serif;
+  font-size: 100%; /* to make IE behave */
+  background-color: white;
+  color: black;
+  padding: 0;
+  margin: 0;
+  min-width: 835px;
+}
+
+/* MASTHEAD */
+#bedework #header {
+  margin: 0;
+}
+#bedework #masthead {
+  position: relative;
+  margin: 0;
+  padding: 0.5em 1em;
+  background-color: #596F9E;
+}
+#bedework #masthead a {
+  color: #ddd;
+}
+#bedework #masthead h1 {
+  margin: 0;
+  padding: 0;
+  color: #eee;
+  font-size: 1.6em;
+}
+#bedework #masthead #siteTitleAndNav {
+  position: absolute;
+  right: 0.75em;
+  bottom: 0.5em;
+}
+
+/* STATUS BAR */
+#bedework #statusBar {
+  margin: 0em;
+  padding: 0.2em 1em;
+  color: #eee;
+  /*background-color: #edc;*/
+  background-color: #333;
+  font-size: 0.8em;
+}
+#bedework #statusBarTable td.leftCell {
+  color: #666;
+  background-color: #edc;
+  text-align: left;
+  padding: 0.3em 1em;
+}
+#statusBar #userInfo {
+    float: right;
+    text-align: right;
+}
+#bedework #statusBar span.status {
+  font-weight: bold;
+}
+#bedework #statusBar a:link,
+#bedework #statusBar a:active,
+#bedework #statusBar a:visited {
+  text-decoration : none;
+  color: #eee;
+  background-color: transparent;
+}
+#bedework #statusBar a:hover {
+  text-decoration: underline;
+  color: #eee;
+  background-color: transparent;
+}
+
+/* MESSAGES and ERRORS */
+#bedework #messages,
+#bedework #errors {
+  font-size: 0.8em;
+  margin: 0;
+  padding: 0.3em 0 0.3em 1em;
+  border-bottom: 1px solid Gray;
+  color: black;
+  background: #ff0 url(../images/glassFill-message.gif) repeat-x top;
+}
+#bedework #errors {
+  border-bottom: 2px solid red;
+}
+#bedework #errors li,
+#bedework #messages li {
+  list-style: none;
+}
+#bedework #messages p,
+#bedework #errors p {
+  margin: 0;
+  padding: 2px 0;
+}
+
+/* MENU */
+#bedework #menuTabs {
+  background-color: #ddd;
+  border-bottom: 1px solid #999;
+  color: #eee;
+  font-size: 0.9em;
+  margin: 0;
+  padding: 6px 0 4px 0;
+}
+/*
+#bedework #menuTabs {
+  margin: 0;
+  padding: 6px 0 4px 0;
+  color: #596F9E;
+  font-weight: lighter;
+  font-size: 0.9em;
+}*/
+#bedework #menuTabs li {
+  display: inline;
+  margin: 0;
+  background-color: #eee;
+  padding-top: 6px;
+  padding-bottom: 4px;
+  padding-left: 1em;
+  padding-right: 1em;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+}
+#bedework #menuTabs li.selected {
+  background: white url("../images/menuBgGray.gif") repeat-x top;
+  border-bottom: 2px solid white;
+  color: #333;
+}
+#bedework #menuTabs a:link,
+#bedework #menuTabs a:active,
+#bedework #menuTabs a:hover,
+#bedework #menuTabs a:visited {
+  background-color: transparent;
+  text-decoration: none;
+}
+#bedework #menuTabs li.selected a:link,
+#bedework #menuTabs li.selected a:active,
+#bedework #menuTabs li.selected a:hover,
+#bedework #menuTabs li.selected a:visited {
+  color: black;
+  background-color: transparent;
+  text-decoration: none;
+}
+/* CONTENT */
+#bedework #bodyContent {
+  position: relative;
+  margin: 0;
+  padding:  2em;
+  line-height: 1.5;
+}
+#bedework .bwActionIcons {
+  position: absolute;
+  white-space: nowrap;
+  border: 2px solid #999;
+  background-color: #eee;
+  color: black;
+  padding: 0.5em;
+  margin: 0;
+}
+#bedework .bwActionIconsInGrid {
+  margin-left: -100px;
+}
+#bedework .bwActionIconsInList {
+  right: 2em;
+}
+#bedework .bwActionIcons a:link,
+#bedework .bwActionIcons a:active,
+#bedework .bwActionIcons a:visited {
+  display: block;
+  margin: 0 0 2px 0;
+  color: #666 !important; /* set important to override other more specific selectors */
+  background-color: transparent;
+  font-size: 0.75em;
+  text-decoration: none;
+}
+#bedework .bwActionIcons a:hover {
+  color: black !important; /* set important to override other more specific selectors */
+  background-color: transparent;
+}
+#bedework #bodyContent h1 {
+  font-size: 1.2em;
+}
+#bedework #bodyContent h2 {
+  font-size: 1.1em;
+}
+#bedework #introduction li {
+  margin-bottom: 1em;
+}
+#bedework #introduction a:link,
+#bedework #introduction a:active,
+#bedework #introduction a:visited,
+#bedework #introduction a:hover {
+  text-decoration: underline;
+}
+#bedework #eventFormTabs {
+}
+#bedework #instructions {
+  padding: 0.5em;
+  margin: 0 0 1em 0;
+  border: 1px solid #ccc;
+  background-color: #ffe;
+  font-size: 0.9em;
+}
+#bedework .navButtons {
+  float: right;
+  text-align: right;
+}
+#bedework .navButtons img {
+  vertical-align: middle;
+}
+#bedework .navBox {
+  padding: 4px;
+  background-color: #ffe;
+  border: 1px solid #ccc;
+}
+#bedework #bwBottomNav {
+  padding: 0.5em;
+  margin: 0 0 1em 0;
+  font-size: 0.9em;
+  text-align: right;
+}
+#bedework ul.submenu {
+  margin: 0;
+  padding: 0;
+  font-size: 0.8em;
+  border-bottom: 1px solid #ccc;
+}
+#bedework ul.submenu li {
+  display: inline;
+  margin: 0 4px 0 0;
+  padding: 0 1em 0 1em;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  color: black;
+  background-color: #ddd;
+}
+#bedework ul.submenu li.selected {
+  color: black;
+  background-color: white;
+  border-bottom: 1px solid white;
+}
+#bedework ul.submenu li a:link,
+#bedework ul.submenu li a:active,
+#bedework ul.submenu li a:visited {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+#bedework ul.submenu li a:hover,
+#bedework ul.submenu li:hover {
+  color: black;
+  background-color: #ffe;
+  text-decoration: none;
+}
+#bedework ul.submenu li.selected:hover {
+  color: black;
+  background-color: white;
+}
+#bedework #eventFormContent {
+  margin: 0;
+  padding: 1em;
+  border: 1px solid #ccc;
+}
+#bedework #standardForm {
+  margin: 0;
+  padding: 0;
+}
+#bedework #calSelectWidget {
+  position: absolute;
+  margin: 0;
+  padding: 1em;
+  border: 1px solid #666;
+  background-color: white;
+  color: black;
+}
+#bedework #calSelectWidget h2 {
+  font-size: 1em;
+  font-weight: normal;
+  margin: -1em -1em 0 -1em;
+  padding: 4px 0;
+  background: #233979 url(../images/glassFill-02.gif) repeat-x bottom;
+  color : #eee;
+  text-align: center;
+}
+#bedework #calSelectWidget #calSelectWidgetCloser {
+  position: absolute;
+  right: 2px;
+  top:  2px;
+  display: block;
+  font-weight: bold;
+  background-color: #ddd;
+  color: #333;
+  border-top: 1px solid #999;
+  border-left: 1px solid #999;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+  margin: 0;
+  padding: 0 2px;
+  text-decoration: none;
+}
+#bedework h2 {
+  margin: 0em;
+  padding: 0.2em 0.2em 0.2em 0.5em;
+  font-size: 1.3em;
+}
+#bedework h2 a:link,
+#bedework h2 a:active,
+#bedework h2 a:visited,
+#bedework h2 a:hover {
+  color: black;
+  background-color: transparent;
+  text-decoration: none;
+}
+#bedework .formButtons {
+  float: right;
+  font-size: 0.8em;
+}
+#bedework #bwCommentNotes {
+  clear: both;
+  margin: 1em 0.5em;
+}
+#bedework div.eventSubmitButtons {
+  clear: both;
+  text-align: right;
+  margin: 1em 0.5em;
+}
+#bedework .eventSubmitButtons input,
+#bedework .formButtons input {
+  margin: 0;
+  font-size: 1.1em;
+}
+#bedework .eventSubmitButtons input.submit {
+  color: #060;
+}
+#bedework h3 {
+  margin: 0em;
+  padding: 1em 0.2em 0em 0.2em;
+  font-size: 1.1em;
+}
+#bedework h4 {
+  margin: 0em;
+  padding: 1em 0.2em 0em 0.2em;
+  font-size: 1em;
+}
+#bedework td {
+  vertical-align: top;
+}
+#bedework .center {
+  text-align: center;
+}
+#bedework .small {
+  font-size: 0.8em;
+}
+
+#bedework #adminLeftColumn {
+  float: left;
+}
+#bedework #adminRightColumn {
+  float: left;
+  margin: 1em 0 1em 3em;
+}
+#bedework .mainForm {
+  padding: 0;
+  margin: 0 0 1.5em 0;
+  font-weight: bold;
+  color: black;
+}
+#bedework .subForm {
+  font-size: 0.9em;
+  padding: 1em;
+  margin: 0;
+  background-color: #eee;
+  color: black;
+}
+#bedework label {
+  cursor: pointer;
+}
+#bedework .subForm label {
+  float: left;
+  text-align: right;
+  width: 150px;
+  padding: 0 1em 0 0;
+}
+#bedework p.subFormMessage {
+  font-size: 0.9em;
+  margin: 1em 0 0 0;
+  padding: 0;
+}
+#bedework .subForm p {
+  margin: 0 0 0.5em 0;
+  padding: 0;
+}
+#bedework .bigSelect {
+  font-size: 1.1em;
+}
+#bedework table.common {
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+}
+#bedework table.common th {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em;
+  background-color: #ddd;
+  color: black;
+  white-space: nowrap;
+}
+#bedework table.common th.thin {
+  width: 80px;
+}
+#bedework table.common th.icon {
+  margin: 0em;
+  vertical-align: middle;
+  padding: 0.5em 1em 0.2em 0;
+  font-size: 0.7em;
+  background-color: #fff;
+  color: black;
+}
+#bedework table.common th.commonHeader {
+  vertical-align: middle;
+  background-color: #666;
+  color: #eee;
+  padding: 0.2em 0.5em;
+  text-align: left;
+  font-weight: normal;
+}
+#bedework table.common th.commonHeader a:link,
+#bedework table.common th.commonHeader a:active,
+#bedework table.common th.commonHeader a:visited {
+  background-color: inherit;
+  color: #eee;
+  padding: 0.2em;
+  text-align: left;
+}
+#bedework table.common th.commonHeader a:hover {
+  background-color: inherit;
+  color: #ff9;
+  padding: 0.2em;
+  text-align: left;
+}
+#bedework table.common td {
+  padding: 0;
+}
+#bedework table.common td.filler {
+  height: 250px;
+}
+#bedework table.common td.fill {
+  background-color: #ddd;
+  color: black;
+  font-weight: bold;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+}
+#bedework table.common th.leftBorder,
+#bedework table.common td.leftBorder {
+  border-left: 1px solid #999;
+  border-top: 1px solid #999;
+  padding-left: 1em;
+}
+#bedework table.common td.fieldval {
+  margin: 0em;
+  vertical-align: top;
+  padding: 0.5em 0.5em 0.2em 1em;
+}
+#bedework table.common td.fieldname {
+  width: 100px;
+  margin: 0em;
+  vertical-align: top;
+  padding: 0.5em 0.5em 0.2em 0.5em;
+  white-space: nowrap;
+}
+#bedework table.dottedBorder td.fieldname {
+  text-align: right;
+}
+#bedework table.common td.comments p {
+  margin: 0;
+  padding: 0.5em 0 1em 0;
+  border-top: 1px dashed #ddd;
+}
+#bedework table.common td.submit {
+  padding: 0.5em 0.5em 0.2em 0.5em;
+  color: black;
+  background: white;
+  text-align: right;
+  border-top: 1px solid #ccc;
+}
+#bedework table.common td.eventLinks {
+  background-color: #ddd;
+  color: #eee;
+  padding: 6px 0;
+  text-align: center;
+}
+#bedework input:focus,
+#bedework textarea:focus,
+#bedework select:focus {
+  background-color: #ffe !important;
+  color: inherit;
+}
+#bedework select:focus option {
+  background-color: white;
+  color: inherit;
+}
+#bedework table.common #eventActions {
+  float: right;
+  clear: none;
+  font-size: 0.8em;
+}
+#bedework table.common #eventActions img,
+#bedework #refreshEventAction img {
+display: inline;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+#bedework #refreshEventAction {
+  padding-left: 1em;
+}
+#bedework table.common td.allField {
+  white-space: nowrap;
+  text-align: right;
+  font-style: italic;
+  background-color : white;
+  color: black;
+  padding: 0.2em;
+}
+#bedework table.common .borderRight {
+  border-right: 1px solid #999;
+}
+#bedework table.common tr#exportDateRange td.dates {
+  border-bottom: 1px solid #999;
+  padding: 0.5em;
+}
+#bedework table.common .padMeTop {
+  padding-top: 1em !important;
+}
+#bedework table.common .padMe {
+  padding: 1em !important;
+}
+#bedework .dateFields {
+  display: inline;
+}
+#bedework .timeFields {
+  display: inline;
+  margin-left: 1em;
+}
+#bedework .dateStartEndBox {
+  border: 1px solid #ccb;
+  margin: 4px;
+  padding: 4px;
+  white-space: nowrap;
+}
+#bedework .dateStartEndBox strong {
+  display: block;
+}
+#bedework .startDateLabel {
+  margin-left: 26px;
+}
+#bedework select.timezones {
+  margin-left: 1em;
+  width: 160px;
+}
+#bedework div.durationBox {
+  border: 1px solid #ccb;
+  display: inline;
+  margin: 4px;
+  padding: 4px;
+}
+#bedework .durationSpacerText {
+  font-weight: bold;
+  margin: 0 1em;
+}
+#bedework table#manage td {
+  padding: 0.2em 0 0 0.5em;
+}
+#bedework #bwEventTab-Recurrence {
+  margin: 0 1em;
+  font-size: 0.9em;
+}
+#bedework #bwEventCalDisplay {
+  font-weight: bold;
+  margin-right: 1em;
+}
+#bedework #startTimeFields img,
+#bedework #endTimeFields img {
+  vertical-align: middle;
+}
+#bedework #tztable {
+  margin-top: 1em;
+}
+#bedework #tztable td {
+  padding: 2px 4px;
+}
+#bedework .chkBoxListItem {
+  display: block;
+  float: left;
+  width: 3em;
+}
+#bedework .shown {
+  display: inline;
+}
+#bedework .visible {
+  /* like shown, but apply no styles to this class */
+}
+#bedework .invisible {
+  display: none !important;
+}
+#bedework .hidden {
+  visibility: hidden;
+}
+#bedework .padMe {
+  padding: 1em 0 !important;
+}
+#bedework .strong {
+  font-weight: bold;
+}
+#bedework .posrelative {
+  /* this class is used primarily to lock absolutely positioned elements to
+     their parent.  Be careful removing this class from elements that
+     contain an absolutely positioned div. */
+  position: relative;
+}
+#bedework #comments p {
+  margin: 0 0 1em 2em;
+}
+/* Calendars and Subscriptions */
+#calendarTable td,
+#bedework #subsTable td {
+  padding: 0 0.5em;
+  vertical-align: top;
+}
+#bedework #calendarTable td.cals,
+#bedework #subsTable td.cals {
+  border-right: 1px solid #aaa;
+  font-size: 0.9em;
+}
+#bedework #calendarTable td.cals {
+  width: 300px;
+}
+#bedework #subsTable td.cals {
+  width: 200px;
+}
+#bedework .calendarTree ul {
+  padding-left: 10px;
+  margin-left: 10px;
+}
+#bedework .calendarTree li {
+  padding-top: 0.25em;
+}
+#bedework li.folder {
+  list-style-image: url(../images/catIcon.gif);
+}
+#bedework  li.calendar {
+  list-style-image: url(../images/calIcon-sm.gif);
+}
+#bedework .calendarTree a:link,
+#bedework .calendarTree a:active,
+#bedework .calendarTree a:visited {
+  text-decoration: none;
+  border: none;
+}
+#bedework .calendarTree a:hover {
+  color: black;
+  background-color: #ff3;
+}
+#bedework .inoutboxActive {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+#bedework img.subStyle {
+  float: right;
+  clear: right;
+  padding: 0;
+  margin: 0 10px 0 2px;
+  width: 0.8em;
+  height: 0.5em;
+  border: 1px solid #666 !important;
+}
+#bedework .aliasTree {
+  margin: 1em 0;
+  padding: 0;
+}
+#bedework .aliasTree li {
+  list-style: none !important;
+  margin: 0;
+  padding: 0;
+}
+#bedework .aliasTree li ul {
+  margin: 0 0 0.5em 0.75em;
+  padding-left: 10px;
+}
+#bedework img.folderForAliasTree {
+  padding: 0.5em 0.2em 0 0.5em;
+}
+#bedework #submitTable {
+  width: 98%; /* less than 100% helps avoid IE weirdness */
+  margin: 1em 0;
+}
+#bedework #submitTable td {
+  white-space: nowrap;
+}
+#bedework .note {
+  margin: 0;
+  padding: 0 0 1em 0;
+  font-size: 0.8em;
+  font-style: italic;
+}
+#bedework .contextHelp {
+  position: relative;
+  margin-left: 0.5em;
+}
+#bedework .helpBox {
+  margin: 1em;
+  padding: 0.5em;
+  border: 2px solid #999;
+  color: black;
+  background-color: #fee;
+}
+#bedework a:link,
+#bedework a:active {
+  color: #00a;
+  background-color: transparent;
+  text-decoration: none;
+}
+#bedework a:visited {
+  color: #008;
+  background-color: transparent;
+  text-decoration: none;
+}
+#bedework a:hover {
+  color: red;
+  background-color: transparent;
+  text-decoration: none;
+}
+#bedework span.time {
+  text-transform : lowercase;
+}
+#bedework .padTop {
+  padding-top: 1em;
+}
+#bedework .nowrap {
+  white-space: nowrap;
+}
+#bedework #featureHighlight {
+  color: #dd0;
+  font-style: italic;
+}
+#bedework .highlight {
+  color: black;
+  background: #ffb;
+  border: 1px solid #333;
+}
+#bedework .notice {
+  font-weight: bold;
+  font-style: italic;
+}
+#bedework #commonListTable {
+  width: 100%;
+  font-size: 0.9em;
+  margin-bottom: 2em;
+}
+#bedework #commonListTable th {
+  padding: 0.2em 1em 0.2em 0.5em;
+  background-color : #ccc;
+  color: black;
+  white-space: nowrap;
+  text-align: left;
+}
+#bedework #commonListTable td {
+  vertical-align: top;
+  font-size: 0.9em;
+  padding: 0.2em 1em 0.2em 0.5em;
+  color: black;
+  background-color: #eee;
+}
+#commonListTable td.unclaimed {
+  background-color: #eee;
+  color: #900 !important;
+  font-style: italic;
+}
+.recurrenceEditLinks {
+  font-style: italic;
+  font-size: 0.9em;
+  margin-top: 0.5em;
+}
+
+.maxCharNotice, #remainingChars {
+  font-size: 0.9em;
+  font-style: italic;
+  color: #777;
+  background-color: transparent;
+}
+
+/* FOOTER */
+#bedework #footer {
+  clear: both;
+  padding: 5px 10px;
+  margin-bottom: 2em;
+  color: #a1a1a1;
+  background-color: #eee;
+  font-size: .8em;
+  border-top: 6px solid #ddd;
+}
+#bedework #footer a {
+  color: #a1a1a1;
+}

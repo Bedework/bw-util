@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!-- Global settings for featured events are set in themeSettings.xsl.
+     This file provides the data for featured events with some switches
+     for how they are used.-->
+<featuredEvents>
+  <featuresOn>true</featuresOn> <!-- true to use features, false to use generic placeholders -->
+  <singleMode>false</singleMode> <!-- true for a single pane (single), false for a triptych (group) -->
+  <features>
+    <group>
+      <image>
+        <name>bede.jpg</name>
+        <link>http://en.wikipedia.org/wiki/De_temporum_ratione</link>
+        <toolTip>De temporum ratione</toolTip>
+      </image>
+      <image>
+        <name>gettingstarted.jpg</name>
+        <link>https://wiki.jasig.org/display/BWK310/Getting+Started</link>
+        <toolTip>Bedework Getting Started Guide</toolTip>
+      </image>
+      <image>
+        <name>bedework.jpg</name>
+        <link>http://www.jasig.org/bedework/documentation</link>
+        <toolTip>Bedework Documentation</toolTip>
+      </image>
+    </group>
+    <single>
+      <image>
+        <name>bedework.jpg</name>
+        <link>http://www.jasig.org/bedework</link>
+        <toolTip>Bedework Website</toolTip>
+      </image>
+    </single>
+  </features>
+  <generics>
+    <group>
+      <image>
+	      <name>bede.jpg</name>
+	      <toolTip>De temporum ratione</toolTip>
+	    </image>
+	    <image>
+	      <name>gettingstarted.jpg</name>
+	      <toolTip>Bedework Documentation</toolTip>
+	    </image>
+	    <image>
+	      <name>bedework.jpg</name>
+	      <toolTip>Bedework Website</toolTip>
+	    </image>
+    </group>
+  </generics>
+</featuredEvents>
