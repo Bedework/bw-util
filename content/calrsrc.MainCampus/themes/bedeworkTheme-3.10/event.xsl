@@ -118,6 +118,9 @@
               <xsl:when test="xproperties/X-BEDEWORK-IMAGE/parameters/node()[name()='X-BEDEWORK-PARAM-ALT']">
                 <xsl:value-of select="xproperties/X-BEDEWORK-IMAGE/parameters/X-BEDEWORK-PARAM-ALT" />
               </xsl:when>
+              <xsl:when test="xproperties/X-BEDEWORK-IMAGE/parameters/node()[name()='ALTREP']">
+                <xsl:value-of select="xproperties/X-BEDEWORK-IMAGE/parameters/ALTREP" />
+              </xsl:when>
               <xsl:otherwise>
                 <xsl:call-template name="escapeJson"><xsl:with-param name="string" select="summary" /></xsl:call-template>
               </xsl:otherwise>
@@ -352,36 +355,51 @@
         </div>
       </xsl:if>
 
-      <xsl:if test="contact/name!='None'">
-        <div class="eventContact">
-          <span class="infoTitle"><xsl:copy-of select="$bwStr-SgEv-Contact"/><xsl:text> </xsl:text></span>
-          <div class="sub-info">
-            <xsl:choose>
-              <xsl:when test="contact/link=''">
-                <xsl:value-of select="contact/name" />
-              </xsl:when>
-              <xsl:otherwise>
-                <a>
-                  <xsl:attribute name="href"><xsl:value-of select="contact/link" /></xsl:attribute>
+      <xsl:choose>
+        <xsl:when test="contact/name!='None'">
+          <div class="eventContact">
+            <span class="infoTitle"><xsl:copy-of select="$bwStr-SgEv-Contact"/><xsl:text> </xsl:text></span>
+            <div class="sub-info">
+              <xsl:choose>
+                <xsl:when test="contact/link=''">
                   <xsl:value-of select="contact/name" />
+                </xsl:when>
+                <xsl:otherwise>
+                  <a>
+                    <xsl:attribute name="href"><xsl:value-of select="contact/link" /></xsl:attribute>
+                    <xsl:value-of select="contact/name" />
+                  </a>
+                </xsl:otherwise>
+              </xsl:choose>
+              <xsl:if test="contact/phone!=''">
+                <xsl:text> </xsl:text><br/>
+                <xsl:value-of select="contact/phone" />
+              </xsl:if>
+              <xsl:if test="contact/link!=''">
+                <xsl:text> </xsl:text><br/>
+                <xsl:variable name="contactLink"
+                  select="contact/link" />
+                <a href="{$contactLink}">
+                  <xsl:value-of select="$contactLink" />
                 </a>
-              </xsl:otherwise>
-            </xsl:choose>
-            <xsl:if test="contact/phone!=''">
-              <xsl:text> </xsl:text><br/>
-              <xsl:value-of select="contact/phone" />
-            </xsl:if>
-            <xsl:if test="contact/link!=''">
-              <xsl:text> </xsl:text><br/>
-              <xsl:variable name="contactLink"
-                select="contact/link" />
-              <a href="{$contactLink}">
-                <xsl:value-of select="$contactLink" />
-              </a>
-            </xsl:if>
+              </xsl:if>
+            </div>
           </div>
-        </div>
-      </xsl:if>
+        </xsl:when>
+        <xsl:when test="xproperties/node()[name()='X-BEDEWORK-CONTACT']/values/text!='None'">
+          <div class="eventContact">
+            <span class="infoTitle"><xsl:copy-of select="$bwStr-SgEv-Contact"/><xsl:text> </xsl:text></span>
+            <div class="sub-info">
+              <a>
+                <xsl:attribute name="href"><xsl:value-of select="xproperties/node()[name()='X-BEDEWORK-CONTACT']/values/text"/></xsl:attribute>
+                <xsl:if test="xproperties/X-BEDEWORK-CONTACT/parameters/node()[name()='CN']">
+                  <xsl:value-of select="xproperties/X-BEDEWORK-CONTACT/parameters/CN" />
+                </xsl:if>
+              </a>
+            </div>
+          </div>
+        </xsl:when>
+      </xsl:choose>
 
       <xsl:if test="xproperties/X-BEDEWORK-ALIAS">
         <div class="eventAliases">
