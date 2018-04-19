@@ -37,6 +37,23 @@ public class Schema {
                                 final String outFile,
                                 final boolean export,
                                 final Properties hibConfig) {
+    return execute(infoLines, outFile, export, hibConfig, null);
+  }
+
+  /**
+   *
+   * @param infoLines for output messages
+   * @param outFile wheer to write schema
+   * @param export true to export
+   * @param hibConfig properties
+   * @param resourcePath where our cfg.xml file is - null for default
+   * @return true if ok
+   */
+  public static boolean execute(final InfoLines infoLines,
+                                final String outFile,
+                                final boolean export,
+                                final Properties hibConfig,
+                                final String resourcePath) {
     try {
       infoLines.addLn("Started export of schema");
 
@@ -70,7 +87,11 @@ public class Schema {
       final StandardServiceRegistryBuilder ssrBuilder = 
               new StandardServiceRegistryBuilder(bsr);
 
-      ssrBuilder.configure();
+      if (resourcePath == null) {
+        ssrBuilder.configure();
+      } else {
+        ssrBuilder.configure(resourcePath);
+      }
       ssrBuilder.applySettings(hibConfig);
 
       final StandardServiceRegistry ssr = ssrBuilder.build();

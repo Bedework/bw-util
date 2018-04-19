@@ -25,14 +25,23 @@ public abstract class SchemaThread extends Thread {
   private final String outFile;
   private final boolean export;
   private final Properties hibConfig;
-  
+  private final String resourcepath;
+
   public SchemaThread(final String outFile,
                       final boolean export,
                       final Properties hibConfig) {
+    this(outFile, export, hibConfig, null);
+  }
+
+  public SchemaThread(final String outFile,
+                      final boolean export,
+                      final Properties hibConfig,
+                      final String resourcePath) {
     super("BuildSchema");
     this.outFile = outFile;
     this.export = export;
     this.hibConfig = hibConfig;
+    this.resourcepath = resourcePath;
   }
 
   /** Called at completion
@@ -44,7 +53,8 @@ public abstract class SchemaThread extends Thread {
   @Override
   public void run() {
     status = statusRunning;
-    if (!Schema.execute(infoLines, outFile, export, hibConfig)) {
+    if (!Schema.execute(infoLines, outFile, export,
+                        hibConfig, resourcepath)) {
       status = statusFailed;
     } else {
       status = statusDone;
