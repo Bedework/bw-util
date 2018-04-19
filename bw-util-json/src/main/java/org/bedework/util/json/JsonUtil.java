@@ -19,6 +19,9 @@
 
 package org.bedework.util.json;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author   Mike Douglass
@@ -107,27 +110,16 @@ public class JsonUtil {
     return sb.toString();
   }
 
-  /** Encode a json name
+  /** Encode a json name and value for output
    *
-   * @param name
+   * @param indent initial space
+   * @param name of field
+   * @param val and value
    * @return encoded String
    */
-  public static String jsonName(final String name) {
-    StringBuilder sb = new StringBuilder();
-
-    sb.append(name.toLowerCase());
-
-    return sb.toString();
-  }
-
-  /** Encode a json name and value
-   *
-   * @param indent
-   * @param name
-   * @param val
-   * @return encoded String
-   */
-  public static String jsonNameVal(final String indent, final String name, final String val) {
+  public static String jsonNameVal(final String indent, 
+                                   final String name, 
+                                   final String val) {
     StringBuilder sb = new StringBuilder();
 
     sb.append(indent);
@@ -140,5 +132,49 @@ public class JsonUtil {
     }
 
     return sb.toString();
+  }
+
+  public static String must(final String name,
+                            final Map theVals) throws Exception {
+    Object val = theVals.get(name);
+
+    if (val == null) {
+      throw new Exception("missing value: " + name);
+    }
+
+    return (String)val;
+  }
+
+  public static String may(final String name,
+                           final Map theVals) throws Exception {
+    Object val = theVals.get(name);
+
+    if (val == null) {
+      return null;
+    }
+
+    return (String)val;
+  }
+
+  public static List mustList(final String name,
+                              final Map theVals) throws Exception {
+    Object val = theVals.get(name);
+
+    if (val == null) {
+      throw new Exception("missing value: " + name);
+    }
+
+    return (List)val;
+  }
+
+  public static List mayList(final String name,
+                             final Map theVals) throws Exception {
+    Object val = theVals.get(name);
+
+    if (val == null) {
+      return null;
+    }
+
+    return (List)val;
   }
 }
