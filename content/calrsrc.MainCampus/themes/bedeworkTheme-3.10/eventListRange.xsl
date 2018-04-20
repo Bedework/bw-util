@@ -246,9 +246,8 @@
           </a>
         </li>
 
-        <xsl:if test="location/address != ''">
           <li>
-            <xsl:copy-of select="$bwStr-LsVw-Location"/><xsl:text> </xsl:text>
+            <span class="bwFieldName"><xsl:copy-of select="$bwStr-LsVw-Location"/><xsl:text> </xsl:text></span>
             <xsl:choose>
               <xsl:when test="location/address = ''">
                 <xsl:value-of select="xproperties/node()[name()='X-BEDEWORK-LOCATION']/values/text"/>
@@ -263,7 +262,6 @@
               </xsl:otherwise>
             </xsl:choose>
           </li>
-        </xsl:if>
 
         <!-- items to display only in detail mode -->
         <xsl:if test="/bedework/appvar[key='summaryMode']/value='details'">

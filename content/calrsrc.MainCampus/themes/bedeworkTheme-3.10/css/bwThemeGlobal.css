@@ -257,6 +257,9 @@ label {
   height: 1px;
 }
 
+.bwFieldName {
+}
+
 /* Date Picker and Search Box Form Control styles
    (Bootstrap overrides) */
 .form-control {
