@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.naming.NamingException;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
@@ -84,7 +85,7 @@ public class LdifRecord extends BasicDirRecord {
 
         @return String  null for eof or a null line so check the flag.
      */
-    public String readLine() throws Exception {
+    public String readLine() throws NamingException {
       String s = null;
 
       if (eof) return null;
@@ -101,9 +102,11 @@ public class LdifRecord extends BasicDirRecord {
           return null;
         }
         pos++;
-      } catch (EOFException e) {
+      } catch (final EOFException e) {
         eof = true;
         s = null;
+      } catch (final Throwable t) {
+        throw new NamingException(t.getMessage());
       }
 
       return s;
@@ -138,7 +141,7 @@ public class LdifRecord extends BasicDirRecord {
 
     /** Read and discard ldif data until a terminator is seen.
      */
-    public void skip() throws Exception {
+    public void skip() throws NamingException {
       while (!eof) {
         String s = readLine();
         if (s == null) return;
@@ -222,7 +225,7 @@ public class LdifRecord extends BasicDirRecord {
    *  @return  boolean  true if we read some ldif data.
    *                    false if there was no data
    */
-  public boolean read(Input in) throws Exception {
+  public boolean read(Input in) throws NamingException {
     clear();
 
     this.in = in;
@@ -280,7 +283,7 @@ public class LdifRecord extends BasicDirRecord {
         valStart = alen + 1;
 
         if (valStart == inLen) {
-          throw new Exception("Bad input value \"" + crec + "\"");
+          throw new NamingException("Bad input value \"" + crec + "\"");
         } else if ((alen < inLen) && (crec.charAt(valStart) == ':')) {
           valStart++;
           encoded = true;
@@ -317,7 +320,7 @@ public class LdifRecord extends BasicDirRecord {
     mods = val;
   }
 
-  public ModificationItem[] getMods() throws Exception {
+  public ModificationItem[] getMods() throws NamingException {
     if (changes == null) {
       return super.getMods();
     }
@@ -388,13 +391,13 @@ public class LdifRecord extends BasicDirRecord {
 
   // -------------------------- private methods --------------------------
 
-  private void throwmsg(String m) throws Exception {
+  private void throwmsg(String m) throws NamingException {
     String msg = m + " at line " + in.pos + " record=" + crec;
     in.skip();
-    throw new Exception(msg);
+    throw new NamingException(msg);
   }
 
-  private void invalid() throws Exception {
+  private void invalid() throws NamingException {
     throwmsg("Invalid LDIF data");
   }
 
@@ -405,7 +408,7 @@ public class LdifRecord extends BasicDirRecord {
                    by changes.
      */
   private void addAttrVal(String attr, String val, boolean encoded,
-       boolean url) throws Exception {
+       boolean url) throws NamingException {
 //  System.out.println("addAttr " + attr + " = " + val);
 
     if (state == stateNeedDn) {
@@ -503,7 +506,7 @@ public class LdifRecord extends BasicDirRecord {
 
   private String makeVal(String val,
                          boolean encoded,
-                         boolean url) throws Exception {
+                         boolean url) throws NamingException {
     /** ?????????????????????????????????????????
         Do we need to set locale?????
      */
@@ -518,7 +521,7 @@ public class LdifRecord extends BasicDirRecord {
     return val;
   }
 
-  private void doChangeType(String val) throws Exception {
+  private void doChangeType(String val) throws NamingException {
     if (val.equalsIgnoreCase("add")) {
       setChangeType(changeTypeAdd);
       state = stateNotModRec;

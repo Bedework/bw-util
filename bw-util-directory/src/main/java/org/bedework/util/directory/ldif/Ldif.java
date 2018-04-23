@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
@@ -29,7 +30,7 @@ public class Ldif extends Directory {
   /** LdifOut - out method is called to write ldif output
    */
   public static abstract class LdifOut {
-    public abstract void out(String s) throws Exception;
+    public abstract void out(String s) throws NamingException;
   }
 
   private InputStream in;
@@ -54,12 +55,12 @@ public class Ldif extends Directory {
     this.in = in;
   }
 
-  public void reInit() throws Exception {
+  public void reInit() throws NamingException {
     // Nothing to do here
   }
 
-  public void destroy(String dn) throws Exception {
-    throw new Exception("Cannot delete an ldif stream record");
+  public void destroy(String dn) throws NamingException {
+    throw new NamingException("Cannot delete an ldif stream record");
   }
 
   /** search
@@ -69,22 +70,26 @@ public class Ldif extends Directory {
    */
   public boolean search(final String dn,
                         final String filter,
-                        final int scope) throws Exception {
+                        final int scope) throws NamingException {
     if (debug) {
       debug("Ldif: About to open " + dn);
     }
 
     inp = null;
-    this.in = new FileInputStream(dn);
+    try {
+      this.in = new FileInputStream(dn);
+    } catch (final Throwable t) {
+      throw new NamingException(t.getMessage());
+    }
     return true;
   }
 
   /** Return the next record in the input stream.
    */
-  public DirRecord nextRecord() throws Exception {
+  public DirRecord nextRecord() throws NamingException {
     if (inp == null) {
       if (in == null) {
-        throw new Exception("No ldif input stream");
+        throw new NamingException("No ldif input stream");
       }
 
       inp = new LdifRecord.Input();
@@ -102,38 +107,38 @@ public class Ldif extends Directory {
     return ldr;
   }
 
-  public void create(DirRecord rec) throws Exception {
-    throw new Exception("ldif create not implemented");
+  public boolean create(DirRecord rec) throws NamingException {
+    throw new NamingException("ldif create not implemented");
   }
 
-  public void replace(String dn, String attrName, Object val) throws Exception {
-    throw new Exception("ldif replace not implemented");
+  public void replace(String dn, String attrName, Object val) throws NamingException {
+    throw new NamingException("ldif replace not implemented");
   }
 
   public void replace(String dn, String attrName, Object[] val)
-      throws Exception {
-    throw new Exception("ldif replace not implemented");
+      throws NamingException {
+    throw new NamingException("ldif replace not implemented");
   }
 
   public void replace(String dn, String attrName, Object oldval, Object newval)
-      throws Exception {
-    throw new Exception("ldif replace not implemented");
+      throws NamingException {
+    throw new NamingException("ldif replace not implemented");
   }
 
-  public void modify(String dn, ModificationItem[] mods) throws Exception {
-    throw new Exception("ldif modify not implemented");
+  public void modify(String dn, ModificationItem[] mods) throws NamingException {
+    throw new NamingException("ldif modify not implemented");
   }
 
   /** dumpLdif write the entire record as ldif.
    */
-  public static void dumpLdif(LdifOut lo, DirRecord rec) throws Exception {
+  public static void dumpLdif(LdifOut lo, DirRecord rec) throws NamingException {
     if (rec == null) {
-      throw new Exception("dumpLdif: No record supplied");
+      throw new NamingException("dumpLdif: No record supplied");
     }
 
     String dn = rec.getDn();
     if (dn == null) {
-      throw new Exception("Unable to get dn");
+      throw new NamingException("Unable to get dn");
     }
 
     lo.out("dn: " + dn);
@@ -148,7 +153,7 @@ public class Ldif extends Directory {
     if ((rec.getIsContent()) || (ctype == DirRecord.changeTypeAdd)) {
       Attributes as = rec.getAttributes();
 
-      if (as == null) throw new Exception("No attributes");
+      if (as == null) throw new NamingException("No attributes");
 
       Enumeration e = as.getAll();
 
@@ -190,7 +195,7 @@ public class Ldif extends Directory {
     lo.out(""); // null terminator
   }
 
-  public static void dumpAttr(LdifOut lo, Attribute a) throws Exception {
+  public static void dumpAttr(LdifOut lo, Attribute a) throws NamingException {
     String aid = a.getID();
 
     Enumeration av = a.getAll();

@@ -33,6 +33,9 @@ import javax.naming.directory.ModificationItem;
   */
 public abstract class DirRecord implements Serializable {
   /** @serial */
+  private String name;
+
+  /** @serial */
   private String dn;
 
   /** @serial */
@@ -41,16 +44,29 @@ public abstract class DirRecord implements Serializable {
   /** @serial */
   private int changeType = changeTypeInvalid;
 
+  /** */
   public static final int changeTypeInvalid = 0;
+  /** */
   public static final int changeTypeAdd = 1;
+  /** */
   public static final int changeTypeDelete = 2;
+  /** */
   public static final int changeTypeModify = 3;
+  /** */
   public static final int changeTypeModdn = 4;
 
+  /**
+   * @return Attributes
+   * @throws NamingException
+   */
   public abstract Attributes getAttributes() throws NamingException;
 
   /** Find the attribute for this record with the given name.
-      Return null if not defind.
+   *  Return null if not defind.
+   *
+   * @param attr
+   * @return  Attribute
+   * @throws NamingException
    */
   public Attribute findAttr(String attr) throws NamingException {
     return getAttributes().get(attr);
@@ -58,6 +74,10 @@ public abstract class DirRecord implements Serializable {
 
   /** Set the attribute value in the table. Replaces any existing value(s)
       This does not write back to the directory
+   *
+   * @param attr
+   * @param val
+   * @throws NamingException
    */
   public void setAttr(String attr, Object val) throws NamingException {
     getAttributes().put(attr, val);
@@ -71,21 +91,49 @@ public abstract class DirRecord implements Serializable {
     changeType = changeTypeInvalid;
   }
 
-  /** return the dn for this record.
+  /** Set the name for this record.
+   *
+   * @param val
+   * @throws NamingException
    */
-  public String getDn() throws Exception {
-    return dn;
+  public void setName(String val) throws NamingException {
+    name = val;
+  }
+
+  /** return the name for this record.
+   *
+   * @return String
+   * @throws Throwable
+   */
+  public String getName() throws Throwable {
+    return name;
   }
 
   /** Set the dn for this record.
+   *
+   * @param val
+   * @throws NamingException
    */
-  public void setDn(String dn) throws NamingException {
-    this.dn = dn;
+  public void setDn(String val) throws NamingException {
+    dn = val;
+  }
+
+  /** return the dn for this record.
+   *
+   * @return String
+   * @throws NamingException
+   */
+  public String getDn() throws NamingException {
+    return dn;
   }
 
   /** Compare this with that. Return true if they are equal.
+   *
+   * @param that
+   * @return boolean
+   * @throws NamingException
    */
-  public boolean equals(DirRecord that) throws Exception {
+  public boolean equals(DirRecord that) throws NamingException {
     if (!dnEquals(that)) {
       return false;
     }
@@ -116,15 +164,21 @@ public abstract class DirRecord implements Serializable {
       If there are no attributes in only one record they are unequal.
 
       Zero length attrID lists means only the dn is compared.
+   *
+   * @param that
+   * @param thisAttrIDs
+   * @param thatAttrIDs
+   * @return boolean
+   * @throws NamingException
    */
   public boolean equals(DirRecord that, String[] thisAttrIDs,
-     String[] thatAttrIDs) throws Exception {
+     String[] thatAttrIDs) throws NamingException {
     if ((thisAttrIDs == null) || (thatAttrIDs == null)) {
-      throw new Exception("DirectoryRecord: null attrID list");
+      throw new NamingException("DirectoryRecord: null attrID list");
     }
 
     if (thisAttrIDs.length != thatAttrIDs.length) {
-      throw new Exception("DirectoryRecord: unequal length attrID lists");
+      throw new NamingException("DirectoryRecord: unequal length attrID lists");
     }
 
     if (!dnEquals(that)) {
@@ -175,18 +229,28 @@ public abstract class DirRecord implements Serializable {
   }
 
   /** Simpler form of equals in which attributes have the same names in both
-      records.
+   *  records.
+   *
+   * @param that
+   * @param attrIDs
+   * @return boolean
+   * @throws NamingException
    */
-  public boolean equals(DirRecord that, String[] attrIDs) throws Exception {
+  public boolean equals(DirRecord that, String[] attrIDs) throws NamingException {
     return equals(that, attrIDs, attrIDs);
   }
 
   /** This compares all but the named attributes
       allbut true => All must be equal except those on the list
+   *
+   * @param that
+   * @param attrIDs
+   * @return boolean
+   * @throws NamingException
    */
-  public boolean equalsAllBut(DirRecord that, String[] attrIDs) throws Exception {
+  public boolean equalsAllBut(DirRecord that, String[] attrIDs) throws NamingException {
     if (attrIDs == null)
-      throw new Exception("DirectoryRecord: null attrID list");
+      throw new NamingException("DirectoryRecord: null attrID list");
 
     if (!dnEquals(that)) {
       return false;
@@ -257,7 +321,13 @@ public abstract class DirRecord implements Serializable {
     return (thatLeft == 0);
   }
 
-  public boolean attrEquals(Attribute thisA, Attribute that) throws Exception {
+  /**
+   * @param thisA
+   * @param that
+   * @return boolean
+   * @throws NamingException
+   */
+  public boolean attrEquals(Attribute thisA, Attribute that) throws NamingException {
     int sz = thisA.size();
 
     if (sz != that.size()) {
@@ -284,14 +354,19 @@ public abstract class DirRecord implements Serializable {
   }
 
   /** Compare the given single value with the attribute value(s).
+   *
+   * @param val
+   * @param that
+   * @param ignoreCase
    *  @return -2 for not equal or not present in multi-valued attribute
    *          -1 for val &lt; that
    *           0 for val = that
    *           1 for val &gt; that
    *           2 for val present in multi-valued attr
+   * @throws NamingException
    */
   public int attrValCompare(Object val, Attribute that,
-                            boolean ignoreCase) throws Exception {
+                            boolean ignoreCase) throws NamingException {
     if (that.size() != 1) {
       NamingEnumeration ne = that.getAll();
 
@@ -329,14 +404,19 @@ public abstract class DirRecord implements Serializable {
 
   /** Extract the target attribute from this record then
    *  compare the given single value with the attribute value(s).
+   *
+   * @param val
+   * @param attrName
+   * @param ignoreCase
    *  @return -2 for not equal or not present in multi-valued attribute
    *          -1 for val &lt; that
    *           0 for val = that
    *           1 for val &gt; that
    *           2 for val present in multi-valued attr
+   * @throws NamingException
    */
   public int attrValCompare(Object val, String attrName,
-                            boolean ignoreCase) throws Exception {
+                            boolean ignoreCase) throws NamingException {
     Attribute a = findAttr(attrName);
 
     if (a == null) {
@@ -366,20 +446,24 @@ public abstract class DirRecord implements Serializable {
   }
 
   /** Check dns for equality
+   *
+   * @param that
+   * @return boolean
+   * @throws NamingException
    */
-  public boolean dnEquals(DirRecord that) throws Exception {
+  public boolean dnEquals(DirRecord that) throws NamingException {
     if (that == null) {
-      throw new Exception("Null record for dnEquals");
+      throw new NamingException("Null record for dnEquals");
     }
 
     String thisDn = getDn();
     if (thisDn == null) {
-      throw new Exception("No dn for this record");
+      throw new NamingException("No dn for this record");
     }
 
     String thatDn = that.getDn();
     if (thatDn == null) {
-      throw new Exception("That record has no dn");
+      throw new NamingException("That record has no dn");
     }
 
     return (thisDn.equals(thatDn));
@@ -390,6 +474,7 @@ public abstract class DirRecord implements Serializable {
    *
    * @param   attr   String attribute name
    * @param   val    Object value
+   * @throws NamingException
    */
   public void addAttr(String attr, Object val) throws NamingException {
 //  System.out.println("addAttr " + attr);
@@ -408,8 +493,9 @@ public abstract class DirRecord implements Serializable {
    *
    * @param   attr   String attribute name
    * @return  Object attribute value
+   * @throws NamingException
    */
-  public Object getAttrVal(String attr) throws Exception {
+  public Object getAttrVal(String attr) throws NamingException {
     if (attr.equalsIgnoreCase("dn")) {
       return getDn();
     }
@@ -428,8 +514,9 @@ public abstract class DirRecord implements Serializable {
    *
    * @param   attr    Attribute we're looking for
    * @return  boolean true if we found it
+   * @throws NamingException
    */
-  public boolean contains(Attribute attr) throws Exception {
+  public boolean contains(Attribute attr) throws NamingException {
     if (attr == null) {
       return false; // protect
     }
@@ -452,23 +539,23 @@ public abstract class DirRecord implements Serializable {
   }
 
    /**
-     * Retrieve an enumeration of the named attribute's values.
-     * The behaviour of this enumeration is unspecified
-     * if the the attribute's values are added, changed,
-     * or removed while the enumeration is in progress.
-     * If the attribute values are ordered, the enumeration's items
-     * will be ordered.
-     *
-     * @return A non-null enumeration of the attribute's values.
-     * Each element of the enumeration is a possibly null Object. The object's
-     * class is the class of the attribute value. The element is null
-     * if the attribute's value is null.
-     * If the attribute has zero values, an empty enumeration
-     * is returned.
-     * @exception javax.naming.NamingException
-     *		If a naming exception was encountered while retrieving
-     *		the values.
-     */
+    * Retrieve an enumeration of the named attribute's values.
+    * The behaviour of this enumeration is unspecified
+    * if the the attribute's values are added, changed,
+    * or removed while the enumeration is in progress.
+    * If the attribute values are ordered, the enumeration's items
+    * will be ordered.
+    *
+    * Each element of the enumeration is a possibly null Object. The object's
+    * class is the class of the attribute value. The element is null
+    * if the attribute's value is null.
+    * If the attribute has zero values, an empty enumeration
+    * is returned.
+    * @return A non-null enumeration of the attribute's values.
+    * @exception javax.naming.NamingException
+    *		If a naming exception was encountered while retrieving
+    *		the values.
+    */
   public NamingEnumeration attrElements(String attr) throws NamingException {
     Attribute a = findAttr(attr);
 
@@ -483,8 +570,9 @@ public abstract class DirRecord implements Serializable {
    *
    * @param   attr   String attribute name
    * @return  String attribute value
+   * @throws NamingException
    */
-  public String getAttrStr(String attr) throws Exception {
+  public String getAttrStr(String attr) throws NamingException {
     Object o = getAttrVal(attr);
 
     if (o == null) {
@@ -498,22 +586,38 @@ public abstract class DirRecord implements Serializable {
     return o.toString();
   }
 
+  /**
+   * @return boolean
+   */
   public boolean getIsContent() {
     return isContentRec;
   }
 
+  /**
+   * @return int
+   */
   public int getChangeType() {
     return changeType;
   }
 
-  public ModificationItem[] getMods() throws Exception {
-    throw new Exception("Not a change record");
+  /**
+   * @return ModificationItem[]
+   * @throws Throwable
+   */
+  public ModificationItem[] getMods() throws NamingException {
+    throw new NamingException("Not a change record");
   }
 
+  /**
+   * @param val
+   */
   public void setIsContent(boolean val) {
     isContentRec = val;
   }
 
+  /**
+   * @param val
+   */
   public void setChangeType(int val) {
     changeType = val;
   }
