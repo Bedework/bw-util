@@ -551,7 +551,7 @@ public class DavUtil extends Logged implements Serializable {
    *                   XmlUtil wrappers
    * ==================================================================== */
 
-  private XmlEmit getXml() throws Throwable {
+  protected XmlEmit getXml() throws Throwable {
     final XmlEmit xml = new XmlEmit();
 
     for (final String ns: nameSpaces) {
@@ -567,8 +567,8 @@ public class DavUtil extends Logged implements Serializable {
    * @param val
    * @throws Throwable
    */
-  private void addNs(final XmlEmit xml,
-                     final String val) throws Throwable {
+  protected void addNs(final XmlEmit xml,
+                       final String val) throws Throwable {
     if (xml.getNameSpace(val) == null) {
       xml.addNs(new NameSpace(val, null), false);
     }
@@ -580,7 +580,7 @@ public class DavUtil extends Logged implements Serializable {
    * @return Document  Parsed body or null for no body
    * @exception Throwable Some error occurred.
    */
-  private Document parseContent(final InputStream in) throws Throwable {
+  protected Document parseContent(final InputStream in) throws Throwable {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
 
