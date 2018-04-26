@@ -198,8 +198,12 @@ public class BedeworkServerTags {
                                                 "aliasUri");
 
   /**   */
+  public static final QName refreshRate = new QName(bedeworkCaldavNamespace,
+                                                "refreshRate");
+
+  /**   */
   public static final QName remoteId = new QName(bedeworkCaldavNamespace,
-                                                "remoteId");
+                                                 "remoteId");
 
  /**   */
   public static final QName remotePw = new QName(bedeworkCaldavNamespace,
