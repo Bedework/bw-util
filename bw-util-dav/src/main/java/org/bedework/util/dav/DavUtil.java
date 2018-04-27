@@ -65,7 +65,7 @@ public class DavUtil extends Logged implements Serializable {
   public static final Header depthinf = new BasicHeader("depth", "infinity");
 
   /** Added to each request */
-  private List<Header> extraHeaders;
+  protected List<Header> extraHeaders;
 
   private Set<String> nameSpaces = new TreeSet<>();
 
