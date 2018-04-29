@@ -1,0 +1,102 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+  
+   http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.  
+*/
+
+/** Theme for the basic jQuery plug-in for building a time picker. 
+ *  With a little effort this could be generalized; 
+ *  at the moment, it is somewhat Bedework-centric.
+ *  
+ *  The plug-in is defined in bwClock.js
+ *  
+ *  Note that the containing block must be wide enough to accommodate the 
+ *  time picker or the time picker components will wrap (which is ugly).
+ *  The picker needs about 350px of width.
+ * 
+ * @author Arlen Johnson       johnsa - rpi.edu
+ */
+
+.bwTimePicker {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  padding: 10px;
+  color: black;
+  background-color: white;
+  border: 1px solid #ccb;
+  width: 280px;
+  line-height: 1.5em;
+}
+.bwTimePicker .bwTimePickerCloser {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+  background-color: #f5f5f5;
+}
+.bwTimePicker .bwTimePickerCloser:hover {
+  color: #666;
+  background-color: #eee;
+}
+.bwTimePickerLink {
+  cursor: pointer;
+}
+.bwTimePicker h6 {
+  text-align: center;
+  margin: 0;
+  padding: 2px;
+  background-color: #eee;
+  color: black;
+  border-bottom: 1px solid #ddd;
+}
+.bwTimePicker ul {
+  float: left;
+  margin: 0;
+  padding: 4px 0;
+  background-color: #f5f5f5;
+  color: black;
+}
+.bwTimePicker li {
+  list-style: none;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  width: 40px;
+  cursor: pointer;
+}
+.bwTimePicker li:hover {
+  color: #666;
+  background-color: #eee;
+}
+.bwTimePicker .bwTimePickerColumn {
+  float: left;
+}
+.bwTimePicker .bwTimePickerColon {
+  font-weight: bold;
+  margin: 4em 0.5em 0 0.5em;
+}
+.bwTimePicker .bwTimePickerAmPm {
+  margin: 3em 0 0 0.5em;
+}
+.bwTimePicker li.bwTimePickerSelected {  
+  background-color: #DFEAFF;
+  color: black;
+}

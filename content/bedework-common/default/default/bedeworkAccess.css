@@ -1,0 +1,106 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+  
+   http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.  
+*/
+
+#bedework table.scheduling td {
+  white-space: nowrap;
+}
+#bedework table.scheduling td.acls {
+  white-space: normal;
+}
+#bedework table.scheduling .grant {
+  color: #080;
+  background-color: inherit;
+}
+#bedework table.scheduling .deny {
+  color: #800;
+  background-color: inherit;
+}
+#bedework #accessFormTable td {
+  border: 1px solid #666;
+  padding: 0 0 0.5em 0;
+  vertical-align: top;
+}
+#bedework #accessFormTable h5 {
+  background: #e5e5e5;
+  color: black;
+  margin: 0;
+  padding: 4px;
+}
+#bedework #accessFormTable #accessRightsToggle {
+  float: right;
+  font-weight: normal;
+  font-size: 0.8em;
+}
+#bedework #accessFormTable .whoTypes {
+  margin: 1em;
+}
+#bedework #howTable {
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.8em;
+  width: 100%;
+}
+#bedework #howTable th {
+  color: white;
+  background-color: #999;
+  font-weight: normal;
+}
+#bedework #howTable td {
+  white-space: nowrap;
+  border-top: 1px dotted #ccc;
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+  text-align: center;
+}
+#bedework #howTable td.level1 {
+  text-align: left;
+  font-weight: bold;
+}
+#bedework #howTable td.level2 {
+  padding-left: 2em;
+  text-align: left;
+  font-weight: bold;
+}
+#bedework #howTable td.level3 {
+  padding-left: 4em;
+  text-align: left;
+}
+#bedework #howTable td.level4 {
+  padding-left: 6em;
+  text-align: left;
+}
+#bedework #howTable td.level5 {
+  padding-left: 8em;
+  text-align: left;
+}
+#bedework #howList {
+  margin: 0;
+  padding: 1em 0;
+}
+#bedework #howList ul {
+  margin: 0 0 0 2em;
+  padding: 0 0 0.5em 0;
+}
+#bedework #howList li {
+  list-style-type: none;
+  margin-left: 0;
+  font-size: 11px;
+}

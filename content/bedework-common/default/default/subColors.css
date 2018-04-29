@@ -1,0 +1,177 @@
+/*
+   Licensed to Jasig under one or more contributor license
+   agreements. See the NOTICE file distributed with this work
+   for additional information regarding copyright ownership.
+   Jasig licenses this file to you under the Apache License,
+   Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a
+   copy of the License at:
+  
+   http://www.apache.org/licenses/LICENSE-2.0
+  
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on
+   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied. See the License for the
+   specific language governing permissions and limitations
+   under the License.  
+*/
+
+/* Subscription colors for web clients.
+   These colors correspond to subColors.xml, which is used
+   to create the web forms. Background-color must be
+   "important" to override more specific selectors in
+   the default.css stylesheet. */
+
+.bwwhite {
+  background-color: #ffffff !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltpink {
+  background-color: #fddeee !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltpurple {
+  background-color: #ddd4e8 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltsteelblue {
+  background-color: #bfd5e8 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltblue {
+  background-color: #ccecef !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltaquamarine {
+  background-color: #b3e2dd !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltaquamarine {
+  background-color: #cfeccf !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltgreen {
+  background-color: #e0f3b0 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltyellow {
+  background-color: #ffffb0 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwltsalmon {
+  background-color: #feebc9 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+/* medium pastels */
+.bwgray {
+  background-color: #eeeeee !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwpink {
+  background-color: #fbb6d1 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwpurple {
+  background-color: #c1b3d7 !important;
+  color: black;
+  border-bottom: 1px solid #999 !important;
+}
+.bwsteelblue {
+  background-color: #94a8d0 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwblue {
+  background-color: #9acedf !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwaquamarine {
+  background-color: #86cfbe !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwseagreen {
+  background-color: #b5e1ae !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwgreen {
+  background-color: #bfe476 !important;
+  color: black;
+  border-bottom: 1px solid #999 !important;
+}
+.bwyellow {
+  background-color: #fffa81 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwsalmon {
+  background-color: #fdcaa2 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+/* dark pastels */
+.bwmdgray {
+  background-color: #dddddd !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdpink {
+  background-color: #f98cb6 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdpurple {
+  background-color: #a589c1 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdsteelblue {
+  background-color: #7589bf !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdblue {
+  background-color: #6fb7d6 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdaquamarine {
+  background-color: #48b5a3 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdseagreen {
+  background-color: #91d290 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdgreen {
+  background-color: #85ca5d !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdyellow {
+  background-color: #ffed62 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}
+.bwmdsalmon {
+  background-color: #fca985 !important;
+  color: black;
+  border-bottom: 1px solid #999;
+}

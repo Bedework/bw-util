@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+
+<!--
+
+  Bedework Calendar Colors
+
+  Parameters
+    name = value suitable for displaying in a UI
+    classname  = value suitable for using as a css class
+
+  Value
+    The value is the rrggbb value of the color
+
+ -->
+
+<subscriptionColors>
+  <!-- light pastels -->
+  <color name="white" classname="bwwhite">#ffffff</color>
+  <color name="lt pink" classname="bwltpink">#fddeee</color>
+  <color name="lt purple" classname="bwltpurple">#ddd4e8</color>
+  <color name="lt steelblue" classname="bwltsteelblue">#bfd5e8</color>
+  <color name="lt blue" classname="bwltblue">#ccecef</color>
+  <color name="lt aquamarine" classname="bwltaquamarine">#b3e2dd</color>
+  <color name="lt seagreen" classname="bwltaquamarine">#cfeccf</color>
+  <color name="lt green" classname="bwltgreen">#e0f3b0</color>
+  <color name="lt yellow" classname="bwltyellow">#ffffb0</color>
+  <color name="lt salmon" classname="bwltsalmon">#feebc9</color>
+
+  <!-- medium pastels -->
+  <color name="gray" classname="bwgray">#eeeeee</color>
+  <color name="pink" classname="bwpink">#fbb6d1</color>
+  <color name="purple" classname="bwpurple">#c1b3d7</color>
+  <color name="steelblue" classname="bwsteelblue">#94a8d0</color>
+  <color name="blue" classname="bwblue">#9acedf</color>
+  <color name="aquamarine" classname="bwaquamarine">#86cfbe</color>
+  <color name="seagreen" classname="bwseagreen">#b5e1ae</color>
+  <color name="green" classname="bwgreen">#bfe476</color>
+  <color name="yellow" classname="bwyellow">#fffa81</color>
+  <color name="salmon" classname="bwsalmon">#fdcaa2</color>
+
+  <!-- dark pastels -->
+  <color name="md gray" classname="bwmdgray">#dddddd</color>
+  <color name="md pink" classname="bwmdpink">#f98cb6</color>
+  <color name="md purple" classname="bwmdpurple">#a589c1</color>
+  <color name="md steelblue" classname="bwmdsteelblue">#7589bf</color>
+  <color name="md blue" classname="bwmdblue">#6fb7d6</color>
+  <color name="md aquamarine" classname="bwmdaquamarine">#48b5a3</color>
+  <color name="md seagreen" classname="bwmdseagreen">#91d290</color>
+  <color name="md green" classname="bwmdgreen">#85ca5d</color>
+  <color name="md yellow" classname="bwmdyellow">#ffed62</color>
+  <color name="md salmon" classname="bwmdsalmon">#fca985</color>
+</subscriptionColors>
