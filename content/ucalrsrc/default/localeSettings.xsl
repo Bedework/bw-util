@@ -32,7 +32,7 @@
     <!--  
       U.S. English is the default, so there is no string file for U.S. English. 
       This code is here for consistency and clarity across localeSettings files.
-    <script type="text/javascript" src="/bedework-common/javascript/jquery/lang-datepicker/jquery.ui.datepicker-en.js">&#160;</script>
+    <script type="text/javascript" src="/approots/bedework-common/javascript/jquery/lang-datepicker/jquery.ui.datepicker-en.js">&#160;</script>
     -->
 
     <!-- Bedework datepicker defaults.  You can include further overrides to regionalization here. -->

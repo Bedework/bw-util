@@ -29,7 +29,7 @@
   <xsl:template name="jqueryDatepickerDefaults">
     
     <!-- pull in the localization strings and defaults. -->
-    <script type="text/javascript" src="/bedework-common/javascript/jquery/lang-datepicker/jquery.ui.datepicker-es.js">&#160;</script>
+    <script type="text/javascript" src="/approots/bedework-common/javascript/jquery/lang-datepicker/jquery.ui.datepicker-es.js">&#160;</script>
 
     <!-- Bedework datepicker defaults.  You can include further overrides to regionalization here. -->
     <script type="text/javascript">
@@ -95,9 +95,9 @@
   <!-- Declare the access control strings. -->
   <xsl:template name="bedeworkAccessStrings">
     <!-- The default JavaScript strings are found in resources/javascript/bedework/bedeworkAccess.js which 
-       gets deployed to the /bedework-common/ libraries during the build.  Overrides are found in
+       gets deployed to /approots/bedework-common/ .  Overrides are found in
        resources/javascript/bedework/lang/ and are included here. -->
-    <script type="text/javascript" src="/bedework-common/javascript/bedework/lang/bwAccessStrings-es_ES.js">&#160;</script>
+    <script type="text/javascript" src="/approots/bedework-common/javascript/bedework/lang/bwAccessStrings-es_ES.js">&#160;</script>
     
     <!-- The XSL access strings are found in resources/xsl/lang and are referenced in default/globals.xsl -->
   </xsl:template>

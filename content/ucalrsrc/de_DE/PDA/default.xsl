@@ -36,6 +36,7 @@
   <xsl:variable name="resourcesRoot" select="'https://mywebserver.edu/myresourcesdir'"/>
     -->
   <xsl:variable name="resourcesRoot" select="/ucalendar/browserResourceRoot"/>
+  <xsl:variable name="bedeworkCommon">/approots/bedework-common</xsl:variable>
 
   <!-- URL of the XSL template directory -->
   <!-- The approot is an appropriate place to put

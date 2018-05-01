@@ -55,12 +55,12 @@
          losing the script closing tags (which avoids browser problems) -->
     <xsl:choose>
       <xsl:when test="/bedework/page='managePolls'">
-        <script src="/bedework-common/javascript/jquery/jquery-1.11.1.min.js">&#160;</script>
-        <script src="/bedework-common/javascript/jquery/jquery-ui-1.11.0.min.js">&#160;</script>
-        <link rel="stylesheet" href="/bedework-common/javascript/jquery/css/jquery-ui-1.11.0/jquery-ui.min.css"/>
-        <script src="/bedework-common/javascript/jquery/spin.min.js">&#160;</script>
-        <link href="/bedework-common/javascript/jquery/magnific/magnific-popup.css" rel="stylesheet"/>
-        <script src="/bedework-common/javascript/jquery/magnific/jquery.magnific-popup.min.js">&#160;</script>
+        <script src="/approots/bedework-common/javascript/jquery/jquery-1.11.1.min.js">&#160;</script>
+        <script src="/approots/bedework-common/javascript/jquery/jquery-ui-1.11.0.min.js">&#160;</script>
+        <link rel="stylesheet" href="/approots/bedework-common/javascript/jquery/css/jquery-ui-1.11.0/jquery-ui.min.css"/>
+        <script src="/approots/bedework-common/javascript/jquery/spin.min.js">&#160;</script>
+        <link href="/approots/bedework-common/javascript/jquery/magnific/magnific-popup.css" rel="stylesheet"/>
+        <script src="/approots/bedework-common/javascript/jquery/magnific/jquery.magnific-popup.min.js">&#160;</script>
         <link href="{$resourcesRoot}/poll/css/webpoll.css" rel="stylesheet"/>
         <script src="{$resourcesRoot}/poll/js/json2.js">&#160;</script>
         <script src="{$resourcesRoot}/poll/js/jsonTz.js">&#160;</script>
@@ -130,10 +130,10 @@
         </script>
       </xsl:when>
       <xsl:otherwise>
-        <script src="/bedework-common/javascript/jquery/jquery-1.4.2.min.js">&#160;</script>
-        <script src="/bedework-common/javascript/jquery/jquery-ui-1.8.2.custom.min.js">&#160;</script>
-        <link rel="stylesheet" href="/bedework-common/javascript/jquery/css/bw-theme-3p7/jquery-ui-1.8.2.custom.css"/>
-        <link rel="stylesheet" href="/bedework-common/javascript/jquery/css/bw-theme-3p7/bedeworkJquery.css"/>
+        <script src="/approots/bedework-common/javascript/jquery/jquery-1.4.2.min.js">&#160;</script>
+        <script src="/approots/bedework-common/javascript/jquery/jquery-ui-1.8.2.custom.min.js">&#160;</script>
+        <link rel="stylesheet" href="/approots/bedework-common/javascript/jquery/css/bw-theme-3p7/jquery-ui-1.8.2.custom.css"/>
+        <link rel="stylesheet" href="/approots/bedework-common/javascript/jquery/css/bw-theme-3p7/bedeworkJquery.css"/>
       </xsl:otherwise>
     </xsl:choose>
 
@@ -149,8 +149,8 @@
 
     <xsl:if test="/bedework/page='modCalendar' or
                   /bedework/page='modSchedulingPrefs'">
-      <link rel="stylesheet" href="/bedework-common/default/default/bedeworkAccess.css"/>
-      <script src="/bedework-common/javascript/bedework/bedeworkAccess.js">&#160;</script>
+      <link rel="stylesheet" href="/approots/bedework-common/default/default/bedeworkAccess.css"/>
+      <script src="/approots/bedework-common/javascript/bedework/bedeworkAccess.js">&#160;</script>
       <xsl:call-template name="bedeworkAccessStrings"/>
       <!-- initialize calendar acls, if present -->
       <xsl:if test="/bedework/currentCalendar/acl/ace">
@@ -162,17 +162,17 @@
 
     <xsl:if test="/bedework/page='modCalendar' or
                   /bedework/page='addCalendar'">
-      <link rel="stylesheet" href="/bedework-common/javascript/jquery/colorpicker/colorpicker.css"/>
-      <script src="/bedework-common/javascript/jquery/colorpicker/colorpicker.js">&#160;</script>
+      <link rel="stylesheet" href="/approots/bedework-common/javascript/jquery/colorpicker/colorpicker.css"/>
+      <script src="/approots/bedework-common/javascript/jquery/colorpicker/colorpicker.js">&#160;</script>
     </xsl:if>
 
     <xsl:if test="/bedework/page='attendees'">
       <!--  Note: this page is deprecated, but is still maintained for testing.
             The following files are included in the add/edit event pages now as well. -->
-      <script src="/bedework-common/javascript/jquery/autocomplete/bw-jquery.autocomplete.js">&#160;</script>
-      <script src="/bedework-common/javascript/jquery/autocomplete/jquery.bgiframe.min.js">&#160;</script>
+      <script src="/approots/bedework-common/javascript/jquery/autocomplete/bw-jquery.autocomplete.js">&#160;</script>
+      <script src="/approots/bedework-common/javascript/jquery/autocomplete/jquery.bgiframe.min.js">&#160;</script>
       <script src="{$resourcesRoot}/javascript/bedeworkAttendees.js">&#160;</script>
-      <link rel="stylesheet" type="text/css" href="/bedework-common/javascript/jquery/autocomplete/jquery.autocomplete.css" />
+      <link rel="stylesheet" type="text/css" href="/approots/bedework-common/javascript/jquery/autocomplete/jquery.autocomplete.css" />
     </xsl:if>
 
     <xsl:if test="/bedework/page='addEvent' or
@@ -299,12 +299,12 @@
       <!-- import the internationalized strings for the javascript widgets -->
       <xsl:call-template name="bedeworkEventJsStrings"/>
 
-      <script src="/bedework-common/javascript/bedework/bwClock.js">&#160;</script>
-      <link rel="stylesheet" href="/bedework-common/javascript/bedework/bwClock.css"/>
+      <script src="/approots/bedework-common/javascript/bedework/bwClock.js">&#160;</script>
+      <link rel="stylesheet" href="/approots/bedework-common/javascript/bedework/bwClock.css"/>
 
       <script src="{$resourcesRoot}/javascript/bedeworkEventForm.js">&#160;</script>
 
-      <script src="/bedework-common/javascript/bedework/bedeworkXProperties.js">&#160;</script>
+      <script src="/approots/bedework-common/javascript/bedework/bedeworkXProperties.js">&#160;</script>
 
     </xsl:if>
 
@@ -315,9 +315,9 @@
       <script src="{$resourcesRoot}/javascript/jcard.js">&#160;</script>
       <link rel="stylesheet" href="{$resourcesRoot}/css/bwScheduling.css"/>
 
-      <script src="/bedework-common/javascript/bedework/bedeworkAccess.js">&#160;</script>
+      <script src="/approots/bedework-common/javascript/bedework/bedeworkAccess.js">&#160;</script>
       <xsl:call-template name="bedeworkAccessStrings"/>
-      <link rel="stylesheet" href="/bedework-common/default/default/bedeworkAccess.css"/>
+      <link rel="stylesheet" href="/approots/bedework-common/default/default/bedeworkAccess.css"/>
 
       <!-- initialize event acls, if present -->
       <xsl:if test="/bedework/editableAccess/access/acl/ace">

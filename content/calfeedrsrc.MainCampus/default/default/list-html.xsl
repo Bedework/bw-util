@@ -49,11 +49,11 @@
         <link rel="stylesheet" href="{$resourcesRoot}/css/list-html.css"/>
         <!-- load javascript -->
         <xsl:if test="/bedework/page='event'">
-          <script type="text/javascript" src="/bedework-common/javascript/jquery/jquery-1.3.2.min.js">&#160;</script>
-          <script type="text/javascript" src="/bedework-common/javascript/jquery/jquery-ui-1.7.1.custom.min.js">&#160;</script>
-          <link rel="stylesheet" href="/bedework-common/javascript/jquery/css/custom-theme/jquery-ui-1.7.1.custom.css"/>
-          <link rel="stylesheet" href="/bedework-common/javascript/jquery/css/custom-theme/bedeworkJquery.css"/>
-          <script type="text/javascript" src="/bedework-common/javascript/bedework.js">&#160;</script>
+          <script type="text/javascript" src="/approots/bedework-common/javascript/jquery/jquery-1.3.2.min.js">&#160;</script>
+          <script type="text/javascript" src="/approots/bedework-common/javascript/jquery/jquery-ui-1.7.1.custom.min.js">&#160;</script>
+          <link rel="stylesheet" href="/approots/bedework-common/javascript/jquery/css/custom-theme/jquery-ui-1.7.1.custom.css"/>
+          <link rel="stylesheet" href="/approots/bedework-common/javascript/jquery/css/custom-theme/bedeworkJquery.css"/>
+          <script type="text/javascript" src="/approots/bedework-common/javascript/bedework.js">&#160;</script>
         </xsl:if>
         <!-- address bar icon -->
         <link rel="icon" type="image/ico" href="{$resourcesRoot}/images/bedework.ico" />

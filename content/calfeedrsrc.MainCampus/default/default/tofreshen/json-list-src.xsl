@@ -53,7 +53,7 @@
   <!-- DEFINE INCLUDES -->
   <!-- util.xsl belongs in bedework-common on your application server for use
        by all stylesheets: -->
-  <xsl:include href="/bedework-common/default/default/util.xsl"/>
+  <xsl:include href="/approots/bedework-common/default/default/util.xsl"/>
 
   <xsl:variable name="urlprefix" select="/bedework/urlprefix"/>
   <xsl:variable name="eventView" select="/bedework/urlPrefixes/event/eventView"/>

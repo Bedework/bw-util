@@ -25,13 +25,13 @@
 
 
   <!-- DEFINE GLOBAL INCLUDES -->
-  <xsl:include href="/bedework-common/default/default/util.xsl"/>
-  <xsl:include href="/bedework-common/default/default/bedeworkAccess.xsl"/>
+  <xsl:include href="/approots/bedework-common/default/default/util.xsl"/>
+  <xsl:include href="/approots/bedework-common/default/default/bedeworkAccess.xsl"/>
 
   <!-- include the common language string libraries -->
-  <xsl:include href="/bedework-common/default/default/errors.xsl" />
-  <xsl:include href="/bedework-common/default/default/messages.xsl" />
-  <xsl:include href="/bedework-common/default/default/bedeworkAccessStrings.xsl"/>
+  <xsl:include href="/approots/bedework-common/default/default/errors.xsl" />
+  <xsl:include href="/approots/bedework-common/default/default/messages.xsl" />
+  <xsl:include href="/approots/bedework-common/default/default/bedeworkAccessStrings.xsl"/>
 
 
   <!-- ======================= -->

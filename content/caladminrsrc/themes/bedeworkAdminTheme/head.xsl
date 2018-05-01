@@ -25,7 +25,7 @@
         <title><xsl:copy-of select="$bwStr-Root-PageTitle"/></title>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
         <link rel="stylesheet" href="{$resourcesRoot}/css/default.css"/>
-        <link rel="stylesheet" href="/bedework-common/default/default/subColors.css"/>
+        <link rel="stylesheet" href="{$bedeworkCommon}/default/default/subColors.css"/>
 
         <!-- set globals that must be passed in from the XSLT -->
         <script type="text/javascript">
@@ -37,13 +37,13 @@
         </script>
 
         <!-- load jQuery -->
-        <script type="text/javascript" src="/bedework-common/javascript/jquery/jquery-1.11.3.min.js">/* jQuery */</script>
-        <script type="text/javascript" src="/bedework-common/javascript/jquery/jquery-ui-1.11.4.min.js">/* jQuery UI */</script>
-        <link rel="stylesheet" href="/bedework-common/javascript/jquery/css/jquery-ui-1.11.0/jquery-ui.min.css"/>
-        <link rel="stylesheet" href="/bedework-common/javascript/jquery/css/jquery-ui-1.11.0/jquery-ui.theme.min.css"/>
+        <script type="text/javascript" src="{$bedeworkCommon}/javascript/jquery/jquery-1.11.3.min.js">/* jQuery */</script>
+        <script type="text/javascript" src="{$bedeworkCommon}/javascript/jquery/jquery-ui-1.11.4.min.js">/* jQuery UI */</script>
+        <link rel="stylesheet" href="{$bedeworkCommon}/javascript/jquery/css/jquery-ui-1.11.0/jquery-ui.min.css"/>
+        <link rel="stylesheet" href="{$bedeworkCommon}/javascript/jquery/css/jquery-ui-1.11.0/jquery-ui.theme.min.css"/>
 
         <!-- Global Javascript (every page): -->
-        <script type="text/javascript" src="/bedework-common/javascript/bedework/bedeworkUtil.js">/* Bedework Utilities */</script>
+        <script type="text/javascript" src="{$bedeworkCommon}/javascript/bedework/bedeworkUtil.js">/* Bedework Utilities */</script>
         <script type="text/javascript" src="{$resourcesRoot}/javascript/bedeworkNotifications.js">/* Bedework Notifications */</script>
 
         <!-- include the localized jQuery datepicker defaults -->
@@ -88,17 +88,17 @@
           <xsl:call-template name="bedeworkEventJsStrings"/>
 
           <!-- load libraries -->
-          <script type="text/javascript" src="/bedework-common/javascript/jquery/autocomplete/select2.min.js">/* Autocomplete combobox */</script>
-          <link rel="stylesheet" href="/bedework-common/javascript/jquery/autocomplete/select2.min.css"/>
-          <script type="text/javascript" src="/bedework-common/javascript/jquery/magnific/jquery.magnific-popup.min.js">/* for export/subscribe lightbox */</script>
-          <link rel="stylesheet" type="text/css" media="screen" href="/bedework-common/javascript/jquery/magnific/magnific-popup.css" />
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/jquery/autocomplete/select2.min.js">/* Autocomplete combobox */</script>
+          <link rel="stylesheet" href="{$bedeworkCommon}/javascript/jquery/autocomplete/select2.min.css"/>
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/jquery/magnific/jquery.magnific-popup.min.js">/* for export/subscribe lightbox */</script>
+          <link rel="stylesheet" type="text/css" media="screen" href="{$bedeworkCommon}/javascript/jquery/magnific/magnific-popup.css" />
 
           <!-- load the bedework event form scripts -->
           <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework.js">/* Bedework */</script>
           <script type="text/javascript" src="{$resourcesRoot}/javascript/bedeworkEventForm.js">/* Bedework Event Form Functions */</script>
-          <script type="text/javascript" src="/bedework-common/javascript/bedework/bedeworkXProperties.js">/* Bedework X-Property Handling */</script>
-          <script type="text/javascript" src="/bedework-common/javascript/bedework/bwClock.js">/* Bedework clock widget */</script>
-          <link rel="stylesheet" href="/bedework-common/javascript/bedework/bwClock.css"/>
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/bedework/bedeworkXProperties.js">/* Bedework X-Property Handling */</script>
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/bedework/bwClock.js">/* Bedework clock widget */</script>
+          <link rel="stylesheet" href="{$bedeworkCommon}/javascript/bedework/bwClock.css"/>
 
           <!-- include the localized jQuery datepicker defaults -->
           <xsl:call-template name="jqueryDatepickerDefaults"/>
@@ -384,8 +384,8 @@
                       /bedework/page='tabPendingEvents' or
                       /bedework/page='tabSuggestionQueueEvents' or
                       /bedework/page='tabApprovalQueueEvents'">
-          <script type="text/javascript" src="/bedework-common/javascript/jquery/magnific/jquery.magnific-popup.min.js">/* for export/subscribe lightbox */</script>
-          <link rel="stylesheet" type="text/css" media="screen" href="/bedework-common/javascript/jquery/magnific/magnific-popup.css" />
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/jquery/magnific/jquery.magnific-popup.min.js">/* for export/subscribe lightbox */</script>
+          <link rel="stylesheet" type="text/css" media="screen" href="{$bedeworkCommon}/javascript/jquery/magnific/magnific-popup.css" />
           <!-- now setup date and time pickers -->
           <script type="text/javascript">
             <xsl:comment>
@@ -464,8 +464,8 @@
                       /bedework/page='modCalSuite' or
                       /bedework/page='modSubscription'">
           <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework.js">/* Bedework */</script>
-          <link rel="stylesheet" href="/bedework-common/default/default/bedeworkAccess.css"/>
-          <script type="text/javascript" src="/bedework-common/javascript/bedework/bedeworkAccess.js">/* Bedework Access Control handling */</script>
+          <link rel="stylesheet" href="{$bedeworkCommon}/default/default/bedeworkAccess.css"/>
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/bedework/bedeworkAccess.js">/* Bedework Access Control handling */</script>
           <xsl:call-template name="localeAccessStringsJsInclude"></xsl:call-template>
 
           <!-- initialize calendar acls, if present -->
@@ -481,7 +481,7 @@
           </xsl:if>
         </xsl:if>
         <xsl:if test="/bedework/page='calSuitePrefs'">
-          <script type="text/javascript" src="/bedework-common/javascript/jquery/jquery-1.3.2.min.js">/* jQuery */</script>
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/jquery/jquery-1.3.2.min.js">/* jQuery */</script>
           <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework.js">/* Bedework */</script>
           <script type="text/javascript" src="{$resourcesRoot}/javascript/bedeworkPrefs.js">/* Bedework User/Calsuite Preferences */</script>
         </xsl:if>
@@ -496,7 +496,7 @@
                       /bedework/page='tabApprovalQueueEvents'">
           <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework.js">/* Bedework */</script>
           <script type="text/javascript" src="{$resourcesRoot}/javascript/bedeworkEventForm.js">/* Bedework Event Form Functions */</script>
-          <script type="text/javascript" src="/bedework-common/javascript/bedework/bedeworkUtil.js">/* Bedework Utilities */</script>
+          <script type="text/javascript" src="{$bedeworkCommon}/javascript/bedework/bedeworkUtil.js">/* Bedework Utilities */</script>
         </xsl:if>
         <xsl:if test="/bedework/page='calendarDescriptions' or /bedework/page='displayCalendar'">
           <link rel="stylesheet" href="{$resourcesRoot}/css/calendarDescriptions.css"/>

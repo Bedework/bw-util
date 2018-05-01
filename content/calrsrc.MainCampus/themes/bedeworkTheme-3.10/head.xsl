@@ -123,7 +123,7 @@
       <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework/bedework.js">/* bedework */</script>
       <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework/navigation.js">/* bedework navigation (menus, links) */</script>
       <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework/eventList.js">/* bedework list events object */</script>
-      <script type="text/javascript" src="/bedework-common/javascript/bedework/bedeworkUtil.js">/* bedework utilities */</script>
+      <script type="text/javascript" src="{$bedeworkCommon}/javascript/bedework/bedeworkUtil.js">/* bedework utilities */</script>
 
       <!-- load conditional javascript -->
       <xsl:if test="/bedework/page='eventList' or /bedework/page='eventscalendar'">
@@ -131,7 +131,7 @@
         <script type="text/javascript" src="{$resourcesRoot}/javascript/magnific/jquery.magnific-popup.min.js">/* for export/subscribe lightbox */</script>
         <link rel="stylesheet" type="text/css" media="screen" href="{$resourcesRoot}/css/bwExportSubscribe.css" />
         <script type="text/javascript" src="{$resourcesRoot}/javascript/bedework/exportSubscribe.js">/* bedework export/subscribe form */</script>
-        <script src="/bedework-common/javascript/jquery/spin.min.js">/* spinner for event load animations */</script>
+        <script src="{$bedeworkCommon}/javascript/jquery/spin.min.js">/* spinner for event load animations */</script>
       </xsl:if>
       <xsl:if test="/bedework/page='searchResult'">
         <script type="text/javascript" src="{$resourcesRoot}/javascript/catSearch.js">/* category search */</script> <!-- probably should be deprecated-->

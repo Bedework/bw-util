@@ -35,13 +35,13 @@
   <!-- ===================================================== -->
 
   <!-- DEFINE INCLUDES -->
-  <xsl:include href="/bedework-common/default/default/util.xsl"/>
-  <xsl:include href="/bedework-common/default/default/bedeworkAccess.xsl"/>
+  <xsl:include href="/approots/bedework-common/default/default/util.xsl"/>
+  <xsl:include href="/approots/bedework-common/default/default/bedeworkAccess.xsl"/>
 
   <!-- include the common language string libraries -->
-  <xsl:include href="/bedework-common/de_DE/default/errors.xsl"/>
-  <xsl:include href="/bedework-common/de_DE/default/messages.xsl"/>
-  <xsl:include href="/bedework-common/de_DE/default/bedeworkAccessStrings.xsl"/>
+  <xsl:include href="/approots/bedework-common/de_DE/default/errors.xsl"/>
+  <xsl:include href="/approots/bedework-common/de_DE/default/messages.xsl"/>
+  <xsl:include href="/approots/bedework-common/de_DE/default/bedeworkAccessStrings.xsl"/>
 
   <!-- ========================================= -->
   <!--         DEFINE GLOBAL CONSTANTS           -->
