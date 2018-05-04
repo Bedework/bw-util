@@ -99,6 +99,11 @@ public class BedeworkServerTags {
           new QName(bedeworkCaldavNamespace,
                     "org.bedework.synchDeleteSuppressed");
 
+  /** Smae as above but a better name  */
+  public static final QName deletionSuppressed =
+          new QName(bedeworkCaldavNamespace,
+                    "deletion-suppressed");
+
   /* used for property index */
 
   /**   */
