@@ -20,9 +20,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <!-- include the common language string libraries -->
-  <xsl:include href="/bedework-common/es_ES/default/errors.xsl" />
-  <xsl:include href="/bedework-common/es_ES/default/messages.xsl" />
-  <xsl:include href="/bedework-common/es_ES/default/bedeworkAccessStrings.xsl"/>
+  <xsl:include href="/approots/bedework-common/es_ES/default/errors.xsl" />
+  <xsl:include href="/approots/bedework-common/es_ES/default/messages.xsl" />
+  <xsl:include href="/approots/bedework-common/es_ES/default/bedeworkAccessStrings.xsl"/>
 
   <!--  xsl:template match="/" -->
   <xsl:variable name="bwStr-Root-PageTitle">Administración de calendario: Administración de eventos públicos</xsl:variable>
