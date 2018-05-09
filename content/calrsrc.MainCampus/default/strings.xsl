@@ -130,7 +130,6 @@
   <xsl:variable name="bwStr-LsVw-Today">Today</xsl:variable>
   <xsl:variable name="bwStr-LsVw-AddEventToMyCalendar">Add to MyCalendar</xsl:variable>
   <xsl:variable name="bwStr-LsVw-DownloadEvent">Download ical</xsl:variable>
-  <xsl:variable name="bwStr-LsVw-Description">description</xsl:variable>
   <xsl:variable name="bwStr-LsVw-Canceled">CANCELED:</xsl:variable>
   <xsl:variable name="bwStr-LsVw-NoTitle">no title</xsl:variable>
   <xsl:variable name="bwStr-LsVw-Contact">Contact:</xsl:variable>

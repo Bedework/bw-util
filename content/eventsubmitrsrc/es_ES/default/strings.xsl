@@ -79,7 +79,6 @@
   <xsl:variable name="bwStr-FoEl-DateAndTime">Fecha y hora:</xsl:variable>
   <xsl:variable name="bwStr-FoEl-AllDay">todo el día</xsl:variable>
   <xsl:variable name="bwStr-FoEl-Start">Comienzo:</xsl:variable>
-  <xsl:variable name="bwStr-FoEl-Date">Fecha</xsl:variable>
   <xsl:variable name="bwStr-FoEl-SelectTimezone">seleccione zona horaria</xsl:variable>
   <xsl:variable name="bwStr-FoEl-Due">Due:</xsl:variable>
   <xsl:variable name="bwStr-FoEl-End">Final:</xsl:variable>

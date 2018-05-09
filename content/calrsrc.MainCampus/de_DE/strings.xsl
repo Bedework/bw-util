@@ -212,7 +212,6 @@
   <xsl:variable name="bwStr-LsVw-Today">Heute</xsl:variable>
   <xsl:variable name="bwStr-LsVw-AddEventToMyCalendar">Eintragen in Pers&#246;nlicher Kalender</xsl:variable>
   <xsl:variable name="bwStr-LsVw-DownloadEvent">Herunterladen als ical</xsl:variable>
-  <xsl:variable name="bwStr-LsVw-Description">Beschreibung</xsl:variable>
   <xsl:variable name="bwStr-LsVw-Canceled">ABBRUCH:</xsl:variable>
   <xsl:variable name="bwStr-LsVw-NoTitle">kein Titel</xsl:variable>
   <xsl:variable name="bwStr-LsVw-Contact">Kontakt:</xsl:variable>
@@ -339,10 +338,8 @@
   <xsl:variable name="bwStr-Srch-Next">n&#228;chsten</xsl:variable>
   <xsl:variable name="bwStr-Srch-ResultReturnedFor">R&#252;ckgabe Ergebnis(se)</xsl:variable>
   <xsl:variable name="bwStr-Srch-Relevance">Relevanz</xsl:variable>
-  <xsl:variable name="bwStr-Srch-Summary">Kurzfassung</xsl:variable>
   <xsl:variable name="bwStr-Srch-DateAndTime">Datum &amp; Uhrzeit</xsl:variable>
   <xsl:variable name="bwStr-Srch-Calendar">Kalender</xsl:variable>
-  <xsl:variable name="bwStr-Srch-Location">Veranstaltungsort</xsl:variable>
   <xsl:variable name="bwStr-Srch-NoTitle">kein Titel</xsl:variable>
   <xsl:variable name="bwStr-Srch-NoQuery">keine Abfrage</xsl:variable>
   <xsl:variable name="bwStr-Srch-Result">Ergebnis</xsl:variable>
