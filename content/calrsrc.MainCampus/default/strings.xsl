@@ -106,6 +106,7 @@
   <xsl:variable name="bwStr-SgEv-DueBy">Due By</xsl:variable>
   <xsl:variable name="bwStr-SgEv-AddToMyCalendar">add to my calendar</xsl:variable>
   <xsl:variable name="bwStr-SgEv-AddEventToMyCalendar">Add to MyCalendar</xsl:variable>
+  <xsl:variable name="bwStr-SgEv-AddToFacebook">Add to Facebook</xsl:variable>
   <xsl:variable name="bwStr-SgEv-AddToGoogleCalendar">Add to Google Calendar</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Where">Where:</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Location-Accessible">(This venue is wheelchair accessible)</xsl:variable>
