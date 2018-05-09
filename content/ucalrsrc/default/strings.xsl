@@ -239,7 +239,6 @@
 
   <xsl:variable name="bwStr-SgEv-Task">Task</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Meeting">Meeting</xsl:variable>
-  <xsl:variable name="bwStr-SgEv-Event">Event</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Recurring">Recurring</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Public">Public</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Personal">Personal</xsl:variable>
@@ -637,12 +636,10 @@
   <xsl:variable name="bwStr-CuCa-DeleteCalendar">Delete Calendar</xsl:variable>
   <xsl:variable name="bwStr-CuCa-AdvancedOptions">advanced options</xsl:variable>
   <xsl:variable name="bwStr-CuCa-BasicOptions">basic options</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-Cancel">cancel</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Disabled">Disabled:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-DisabledLabel">disabled</xsl:variable>
   <xsl:variable name="bwStr-CuCa-EnabledLabel">enabled</xsl:variable>
   <xsl:variable name="bwStr-CuCa-ThisItemIsInaccessible">This item is inaccessible and has been disabled.  You may re-enable it to try again.</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-FilterExpression">Filter Expression:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Sharing">Calendar Sharing</xsl:variable>
   <xsl:variable name="bwStr-CuCa-ShareWith">Share calendar with:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SharePlaceholder">enter a user account</xsl:variable>
@@ -650,7 +647,6 @@
   <xsl:variable name="bwStr-CuCa-SuggestedName">Suggested name:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SharedBy">Shared by</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Status">Status</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-WriteAccess">Write access</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Remove">Remove</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Pending">pending</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Declined">declined</xsl:variable>
@@ -964,7 +960,6 @@
   <xsl:variable name="bwStr-AtRe-NotSpecified">not specified</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Attendees">Attendees:</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Role">role</xsl:variable>
-  <xsl:variable name="bwStr-AtRe-Status">status</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Attendee">attendee</xsl:variable>
   <xsl:variable name="bwStr-AtRe-See">See:</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Status">Status:</xsl:variable>
@@ -982,7 +977,6 @@
   <xsl:variable name="bwStr-AtRy-Calendar">Calendar:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-EventNoLongerExists">Event no longer exists.</xsl:variable>
   <xsl:variable name="bwStr-AtRy-From">From:</xsl:variable>
-  <xsl:variable name="bwStr-AtRy-Status">Status:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-Comments">Comments:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-Action">Action:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-Accept">accept</xsl:variable>

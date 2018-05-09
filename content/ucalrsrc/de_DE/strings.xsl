@@ -239,7 +239,6 @@
 
   <xsl:variable name="bwStr-SgEv-Task">Aufgabe</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Meeting">Sitzung</xsl:variable>
-  <xsl:variable name="bwStr-SgEv-Event">Veranstaltung</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Recurring">Wiederkehrend</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Public">&#214;ffentlich</xsl:variable>
   <xsl:variable name="bwStr-SgEv-Personal">Pers&#246;nlich</xsl:variable>
@@ -621,12 +620,6 @@
   <xsl:variable name="bwStr-CuCa-URLToCalendar">URL vom Kalender:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-ID">ID (sofern ben&#246;tigt):</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Password">Kennwort (sofern ben&#246;tigt):</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-Sharing">Calendar Sharing</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-ShareWith">Share calendar with:</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-SharePlaceholder">enter a user account</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-Share">share</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-DefaultSchedNotShared">This calendar is the default scheduling calendar; it may not be shared.</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-CurrentAccess">Aktuelle Zugriffsrechte:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SharingMayBeAdded">Anmerkung: Eine gemeinsame Benutzung kann erst hinzugef&#252;gt werden, nachdem der Kalender eingerichtet wurde.</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Add">Hinzuf&#252;gen</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Cancel">Abbrechen</xsl:variable>
@@ -643,12 +636,10 @@
   <xsl:variable name="bwStr-CuCa-DeleteCalendar">L&#246;schen Kalender</xsl:variable>
   <xsl:variable name="bwStr-CuCa-AdvancedOptions">advanced options</xsl:variable>
   <xsl:variable name="bwStr-CuCa-BasicOptions">basic options</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-Cancel">Abbrechen</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Disabled">Deaktiviert:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-DisabledLabel">deaktiviert</xsl:variable>
   <xsl:variable name="bwStr-CuCa-EnabledLabel">aktiviert</xsl:variable>
   <xsl:variable name="bwStr-CuCa-ThisItemIsInaccessible">Dieser Eintrag nicht zugreifbar und wurde gesperrt. Sie m&#252;ssen in reaktivieren und k&#246;nnen es dann erneut versuchen.</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-FilterExpression">Filterausdr&#252;cke:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Sharing">Calendar Sharing</xsl:variable>
   <xsl:variable name="bwStr-CuCa-ShareWith">Share calendar with:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SharePlaceholder">enter a user account</xsl:variable>
@@ -656,7 +647,6 @@
   <xsl:variable name="bwStr-CuCa-SuggestedName">Suggested name:</xsl:variable>
   <xsl:variable name="bwStr-CuCa-SharedBy">Shared by</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Status">Status</xsl:variable>
-  <xsl:variable name="bwStr-CuCa-WriteAccess">Write access</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Remove">Remove</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Pending">pending</xsl:variable>
   <xsl:variable name="bwStr-CuCa-Declined">declined</xsl:variable>
@@ -723,8 +713,8 @@
   <xsl:variable name="bwStr-Cals-Name">Name:</xsl:variable>
   <xsl:variable name="bwStr-Cals-Path">Pfad:</xsl:variable>
   <xsl:variable name="bwStr-Cals-EventDateLimits">Befristung:</xsl:variable>
-  <xsl:variable name="bwStr-Cals-TodayForward">ab Heute</xsl:variable>
-  <xsl:variable name="bwStr-Cals-AllDates">ganzt&#228;gig</xsl:variable>
+  <xsl:variable name="bwStr-Cals-TodayForward">ab heute</xsl:variable>
+  <xsl:variable name="bwStr-Cals-AllDates">alle Termine</xsl:variable>
   <xsl:variable name="bwStr-Cals-DateRange">Zeitraum</xsl:variable>
   <xsl:variable name="bwStr-Cals-Start"><strong>Start:</strong></xsl:variable>
   <xsl:variable name="bwStr-Cals-End"><strong>Ende:</strong></xsl:variable>
@@ -969,7 +959,6 @@
   <xsl:variable name="bwStr-AtRe-NotSpecified">nicht festgelegt</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Attendees">Teilnehmer:</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Role">Funktion</xsl:variable>
-  <xsl:variable name="bwStr-AtRe-Status">Status</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Attendee">Teilnehmer</xsl:variable>
   <xsl:variable name="bwStr-AtRe-See">Einsehen:</xsl:variable>
   <xsl:variable name="bwStr-AtRe-Status">Status:</xsl:variable>
@@ -987,7 +976,6 @@
   <xsl:variable name="bwStr-AtRy-Calendar">Kalender:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-EventNoLongerExists">Veranstaltung existiert nicht mehr.</xsl:variable>
   <xsl:variable name="bwStr-AtRy-From">Von:</xsl:variable>
-  <xsl:variable name="bwStr-AtRy-Status">Status:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-Comments">Kommentar:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-Action">Ablauf:</xsl:variable>
   <xsl:variable name="bwStr-AtRy-Accept">akzeptieren</xsl:variable>
@@ -1109,9 +1097,9 @@
   <xsl:variable name="bwStr-Srch-Search">Suchen:</xsl:variable>
   <xsl:variable name="bwStr-Srch-Go">weiter</xsl:variable>
   <xsl:variable name="bwStr-Srch-Limit">Limit:</xsl:variable>
-  <xsl:variable name="bwStr-Srch-TodayForward">ab Heute</xsl:variable>
-  <xsl:variable name="bwStr-Srch-PastDates">bis Heute</xsl:variable>
-  <xsl:variable name="bwStr-Srch-AllDates">alle tage</xsl:variable>
+  <xsl:variable name="bwStr-Srch-TodayForward">ab heute</xsl:variable>
+  <xsl:variable name="bwStr-Srch-PastDates">bis heute</xsl:variable>
+  <xsl:variable name="bwStr-Srch-AllDates">alle Termine</xsl:variable>
   <xsl:variable name="bwStr-Srch-SearchResult">Suchergebniss(e)</xsl:variable>
   <xsl:variable name="bwStr-Srch-Page">Seite:</xsl:variable>
   <xsl:variable name="bwStr-Srch-Prev">zur&#252;ck</xsl:variable>
