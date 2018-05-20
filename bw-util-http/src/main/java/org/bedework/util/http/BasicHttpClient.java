@@ -857,7 +857,7 @@ public class BasicHttpClient extends DefaultHttpClient {
     String content = String.valueOf(o);
     int respCode = sendRequest("PUT",
                                path,
-                               null,
+                               hdrs,
                                contentType,
                                content.length(),
                                content.getBytes());    //content
