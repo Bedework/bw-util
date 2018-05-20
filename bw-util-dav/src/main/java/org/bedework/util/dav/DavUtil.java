@@ -589,6 +589,31 @@ public class DavUtil extends Logged implements Serializable {
     return builder.parse(new InputSource(new InputStreamReader(in)));
   }
 
+  /** Parse a DAV error response
+   *
+   * @param in response
+   * @return a single error element or null
+   */
+  public Element parseError(final InputStream in) {
+    try {
+      final Document doc = parseContent(in);
+
+      final Element root = doc.getDocumentElement();
+
+      expect(root, WebdavTags.error);
+
+      final List<Element> els = getChildren(root);
+
+      if (els.size() != 1) {
+        return null;
+      }
+
+      return els.get(0);
+    } catch (final Throwable ignored) {
+      return null;
+    }
+  }
+
   /**
    * @param nd
    * @return List<Element>
