@@ -188,6 +188,20 @@ public class Utils {
    */
   public Document parseXml(final Reader rdr,
                            final boolean nameSpaced) throws Throwable {
+    return parseXml(rdr, nameSpaced, false);
+  }
+
+  /** Parse a reader and return the DOM representation.
+   *
+   * @param rdr        Reader
+   * @param nameSpaced true if this document has namespaces
+   * @param offline true if in offline mode
+   * @return Document  Parsed body or null for no body
+   * @exception Throwable Some error occurred.
+   */
+  public Document parseXml(final Reader rdr,
+                           final boolean nameSpaced,
+                           final boolean offline) throws Throwable {
     if (rdr == null) {
       // No content?
       return null;
@@ -195,6 +209,13 @@ public class Utils {
 
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(nameSpaced);
+
+    if (offline) {
+      factory.setValidating(false);
+      factory.setFeature(
+              "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+              false);
+    }
 
     final DocumentBuilder builder = factory.newDocumentBuilder();
 

@@ -31,7 +31,8 @@ public class XmlFile extends BaseClass {
     theXml = utils.file(dir, name, true);
 
     doc = utils.parseXml(new FileReader(theXml),
-                         nameSpaced);
+                         nameSpaced,
+                         true);  // pretend offline
 
     root = doc.getDocumentElement();
   }
@@ -43,7 +44,8 @@ public class XmlFile extends BaseClass {
     theXml = utils.file(path);
 
     doc = utils.parseXml(new FileReader(theXml),
-                         nameSpaced);
+                         nameSpaced,
+                         true);  // pretend offline
 
     root = doc.getDocumentElement();
   }
