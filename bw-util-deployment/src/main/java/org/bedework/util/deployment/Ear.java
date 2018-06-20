@@ -126,7 +126,7 @@ public class Ear extends DeployableResource implements Updateable {
     final Path inPath = Paths.get(war.theFile.getAbsolutePath());
     final Path outPath = Paths.get(newWarDir.getAbsolutePath());
 
-    utils.copy(inPath, outPath, true);
+    utils.copy(inPath, outPath, true, null);
 
     final War newWar = new War(utils,
                                theFile.getAbsolutePath(),

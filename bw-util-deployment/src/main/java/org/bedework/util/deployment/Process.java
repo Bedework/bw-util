@@ -227,9 +227,11 @@ public class Process extends AbstractMojo {
       deployDirPath = defaultVal(deployDirPath,
                                  "org.bedework.postdeploy.deploy");
 
+      /*
       resourcesBase = defaultVal(resourcesBase,
                                  "org.bedework.postdeploy.resource.base",
                                  "--resources");
+                                 */
 
       if (errorMsg != null) {
         throw new MojoFailureException(errorMsg);
@@ -241,7 +243,7 @@ public class Process extends AbstractMojo {
         utils.info("deploy: " + deployDirPath);
       }
 
-      utils.info("resources: " + resourcesBase);
+      //utils.info("resources: " + resourcesBase);
 
       cleanOut(outDirPath);
 
@@ -350,9 +352,10 @@ public class Process extends AbstractMojo {
     deployFiles("war");
   }
 
-  private List<PathAndName> buildUpdateableList(final String specificNames,
-                                                final List<String> allowedNames,
-                                                final String suffix) throws Throwable {
+  private List<PathAndName> buildUpdateableList(
+          final String specificNames,
+          final List<String> allowedNames,
+          final String suffix) throws Throwable {
     utils.info("Specific names = " + specificNames);
     final Set<String> names = new TreeSet<>(
             Arrays.asList(specificNames.split(",")));
@@ -420,7 +423,7 @@ public class Process extends AbstractMojo {
         // Need to unzip it
         unzip(inPath.toString(), outPath.toString());
       } else {
-        utils.copy(inPath, outPath, false);
+        utils.copy(inPath, outPath, false, pc);
       }
 
       files.add(new PathAndName(outDirPath, sn));
@@ -490,7 +493,7 @@ public class Process extends AbstractMojo {
       }
 
       final Path outPath = Paths.get(outDirPath, sn.name);
-      utils.copy(outPath, deployPath, false);
+      utils.copy(outPath, deployPath, false, null);
 
       if (wildfly) {
         final File doDeploy = Paths.get(deployDirPath,

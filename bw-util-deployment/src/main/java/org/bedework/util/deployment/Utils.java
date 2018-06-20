@@ -21,8 +21,11 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.CopyOption;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemLoopException;
@@ -47,6 +50,8 @@ import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+/**
+ */
 public class Utils {
   private boolean debug;
   private final Log logger;
@@ -271,13 +276,16 @@ public class Utils {
     private final Path in;
     private final Path out;
     private final boolean outExists;
+    private final PropertiesChain props;
 
     DirCopier(final Path in,
               final Path out,
-              final boolean outExists) {
+              final boolean outExists,
+              final PropertiesChain props) {
       this.in = in;
       this.out = out;
       this.outExists = outExists;
+      this.props = props;
     }
 
     @Override
@@ -316,7 +324,7 @@ public class Utils {
     public FileVisitResult visitFile(final Path file,
                                      final BasicFileAttributes attrs) {
       //Utils.debug("**** Copy file " + file);
-      copyFile(file, out.resolve(in.relativize(file)));
+      copyFile(file, out.resolve(in.relativize(file)), props);
       return CONTINUE;
     }
 
@@ -351,24 +359,68 @@ public class Utils {
 
   public void copy(final Path inPath,
                    final Path outPath,
-                   final boolean outExists) throws Throwable {
+                   final boolean outExists,
+                   final PropertiesChain props) throws Throwable {
     final EnumSet<FileVisitOption> opts = EnumSet.of(
             FileVisitOption.FOLLOW_LINKS);
-    final DirCopier tc = new DirCopier(inPath, outPath, outExists);
+    final DirCopier tc = new DirCopier(inPath, outPath,
+                                       outExists, props);
     Files.walkFileTree(inPath, opts, Integer.MAX_VALUE, tc);
   }
 
-  void copyFile(final Path in,
-                final Path out) {
+  class TokenResolver implements ITokenResolver {
+    protected final PropertiesChain props;
+
+    public TokenResolver(final PropertiesChain props) {
+      this.props = props;
+    }
+
+    public String resolveToken(final String tokenName) {
+      return props.get(tokenName);
+    }
+
+  }
+
+  private void copyFile(final Path in,
+                        final Path out,
+                        final PropertiesChain props) {
 //    if (Files.notExists(out)) {
-      try {
-        Files.copy(in, out, copyOptionAttributes);
-      } catch (final Throwable t) {
-        error("Unable to copy: " + in + " to " + out +
-                      ": " + t);
-      }
+        Reader ir = null;
+        Writer or = null;
+        try {
+          ir = new FileReader(in.toFile());
+
+          if (props != null) {
+            ir = new TokenReplacingReader(ir,
+                                          new TokenResolver(props));
+          }
+          or = new FileWriter(out.toFile());
+          int length;
+
+          int data = ir.read();
+          while(data != -1){
+            or.write(data);
+            data = ir.read();
+          }
+        } catch (final Throwable t) {
+          error(t);
+          error("Unable to copy: " + in + " to " + out +
+                        ": " + t);
+        } finally {
+          try {
+            ir.close();
+          } catch (final Throwable t) {
+            error("Exception closing " + in + " " + t.getMessage());
+          }
+          try {
+            or.close();
+          } catch (final Throwable t) {
+            error("Exception closing " + out + " " + t.getMessage());
+          }
+        }
   //  }
   }
+
 
   public class DeletingFileVisitor extends SimpleFileVisitor<Path> {
     @Override
@@ -465,6 +517,10 @@ public class Utils {
 
   void error(final String msg) {
     logger.error(msg);
+  }
+
+  void error(final Throwable t) {
+    logger.error(t);
   }
 
   void setDebug(final boolean val) {

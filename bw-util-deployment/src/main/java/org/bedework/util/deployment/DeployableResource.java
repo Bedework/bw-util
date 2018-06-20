@@ -36,7 +36,7 @@ public class DeployableResource extends VersionedFile {
     final File lib = utils.subDirectory(theFile, "lib", required);
     final Path fromLib = Paths.get(jarlib);
 
-    utils.copy(fromLib, Paths.get(lib.getAbsolutePath()), true);
+    utils.copy(fromLib, Paths.get(lib.getAbsolutePath()), true, null);
   }
 
   /** Do the dependencies on other ears, exclusions and dependencies on

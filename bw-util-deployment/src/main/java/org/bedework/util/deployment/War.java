@@ -88,7 +88,7 @@ public class War extends DeployableResource implements Updateable {
 
     utils.debug("Copy from " + inPath + " to " + outPath);
 
-    utils.copy(inPath, outPath, true);
+    utils.copy(inPath, outPath, true, props);
   }
 
   private void copyResources() throws Throwable {
@@ -135,7 +135,7 @@ public class War extends DeployableResource implements Updateable {
 
         utils.info("Copy " + inPath + " to " + outPath);
 
-        utils.copy(inPath, outPath, false);
+        utils.copy(inPath, outPath, false, props);
       }
     } finally {
       props.pop();
