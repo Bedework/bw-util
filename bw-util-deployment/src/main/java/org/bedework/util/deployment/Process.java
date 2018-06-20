@@ -423,7 +423,7 @@ public class Process extends AbstractMojo {
         // Need to unzip it
         unzip(inPath.toString(), outPath.toString());
       } else {
-        utils.copy(inPath, outPath, false, pc);
+        utils.copy(inPath, outPath, false, null);
       }
 
       files.add(new PathAndName(outDirPath, sn));
