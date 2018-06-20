@@ -384,41 +384,62 @@ public class Utils {
   private void copyFile(final Path in,
                         final Path out,
                         final PropertiesChain props) {
+    final boolean noReplacement;
+
+    if (props == null) {
+      noReplacement = true;
+    } else {
+      final String name = in.getFileName().toString();
+
+      if (name.endsWith(".jar") || name.endsWith(".zip")) {
+        warn("Can't process this " + in);
+        noReplacement = true;
+      } else {
+        noReplacement = false;
+      }
+    }
+
+    if (noReplacement) {
+      try {
+        Files.copy(in, out, copyOptionAttributes);
+      } catch (final Throwable t) {
+        error("Unable to copy: " + in + " to " + out +
+                      ": " + t);
+      }
+
+      return;
+    }
 //    if (Files.notExists(out)) {
-        Reader ir = null;
-        Writer or = null;
-        try {
-          ir = new FileReader(in.toFile());
+    Reader rdr = null;
+    Writer wtr = null;
+    try {
+      rdr = new TokenReplacingReader(new FileReader(in.toFile()),
+                                    new TokenResolver(props));
+      wtr = new FileWriter(out.toFile());
+      int length;
 
-          if (props != null) {
-            ir = new TokenReplacingReader(ir,
-                                          new TokenResolver(props));
-          }
-          or = new FileWriter(out.toFile());
-          int length;
-
-          int data = ir.read();
-          while(data != -1){
-            or.write(data);
-            data = ir.read();
-          }
-        } catch (final Throwable t) {
-          error(t);
-          error("Unable to copy: " + in + " to " + out +
-                        ": " + t);
-        } finally {
-          try {
-            ir.close();
-          } catch (final Throwable t) {
-            error("Exception closing " + in + " " + t.getMessage());
-          }
-          try {
-            or.close();
-          } catch (final Throwable t) {
-            error("Exception closing " + out + " " + t.getMessage());
-          }
-        }
-  //  }
+      int data = rdr.read();
+      while(data != -1){
+        wtr.write(data);
+        data = rdr.read();
+      }
+    } catch (final Throwable t) {
+      error(t);
+      error("Unable to copy: " + in + " to " + out +
+                    ": " + t);
+    } finally {
+      try {
+        rdr.close();
+      } catch (final Throwable t) {
+        error("Exception closing " + in + " " + t.getMessage());
+      }
+      try {
+        wtr.close();
+      } catch (final Throwable t) {
+        error("Exception closing " + out + " " + t.getMessage());
+      }
+    }
+    //  }
   }
 
 
