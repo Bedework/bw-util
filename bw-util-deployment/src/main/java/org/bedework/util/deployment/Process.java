@@ -102,6 +102,8 @@ public class Process extends AbstractMojo {
   private final List<Path> tempDirs = new ArrayList<>();
 
   private void loadProperties() throws Throwable {
+    utils.info("*********************************************" +
+                       "Loading properties from " + propsPath);
     final File f = utils.file(propsPath);
 
     final FileReader fr = new FileReader(f);
