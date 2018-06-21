@@ -141,6 +141,9 @@ public class WebXml extends XmlFile {
     final String fltr = props.get("app.filter");
 
     if (fltr == null) {
+      if (utils.debug()) {
+        utils.debug("No filters - returning");
+      }
       return;
     }
 
@@ -163,6 +166,9 @@ public class WebXml extends XmlFile {
       for (final Element el: XmlUtil.getElements(fltrDefs.root)) {
         root.insertBefore(doc.importNode(el, true), insertAt);
       }
+      if (utils.debug()) {
+        utils.debug("Added filters");
+      }
     } catch (final Throwable t) {
       utils.error("Unable to open/process file " + fltr);
       throw t;
@@ -173,6 +179,9 @@ public class WebXml extends XmlFile {
     final String fltr = props.get("app.filter-mapping");
 
     if (fltr == null) {
+      if (utils.debug()) {
+        utils.debug("No filter mappings - returning");
+      }
       return;
     }
 
@@ -194,6 +203,9 @@ public class WebXml extends XmlFile {
 
       for (final Element el: XmlUtil.getElements(fltrDefs.root)) {
         root.insertBefore(doc.importNode(el, true), insertAt);
+      }
+      if (utils.debug()) {
+        utils.debug("Added filter mappings");
       }
     } catch (final Throwable t) {
       utils.error("Unable to open/process file " + fltr);
