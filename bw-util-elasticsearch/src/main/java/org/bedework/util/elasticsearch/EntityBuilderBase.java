@@ -227,7 +227,7 @@ public class EntityBuilderBase extends Logged {
     }
 
     if (o instanceof Integer) {
-      return (long)o;
+      return ((Integer)o).longValue();
     }
 
     if (o instanceof Long) {
@@ -260,13 +260,13 @@ public class EntityBuilderBase extends Logged {
   }
 
   protected int getInt(final String id) {
-    final String s = (String)getFirstValue(id);
+    final Integer i = (Integer)getFirstValue(id);
 
-    if (s == null) {
+    if (i == null) {
       return 0;
     }
 
-    return Integer.parseInt(s);
+    return i;
   }
 
   protected String getString(final String id) {

@@ -215,6 +215,20 @@ public class DocBuilderBase extends Logged {
     }
   }
 
+  protected void indexStrings(final String name,
+                              final Collection<String> vals) throws IndexException {
+    if (Util.isEmpty(vals)) {
+      return;
+    }
+
+    startArray(name);
+    for (final String val: vals) {
+      value(val);
+    }
+
+    endArray();
+  }
+
   protected void value(final Object val) throws IndexException {
     if (val == null) {
       return;
