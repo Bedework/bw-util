@@ -403,7 +403,10 @@ public abstract class Cli {
   }
 
   public void info(final String msg) {
-    System.out.println(msg);
+    if ((msg == null) | !msg.endsWith("\n")) {
+      System.out.println(msg);
+    }
+    System.out.print(msg);
   }
 
   public void debugMsg(final String msg) {
