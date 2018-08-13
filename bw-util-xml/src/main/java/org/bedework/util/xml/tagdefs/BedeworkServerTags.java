@@ -178,6 +178,10 @@ public class BedeworkServerTags {
   public static final QName suggesteeHref = new QName(bedeworkSystemNamespace,
                                                       "suggesteeHref");
 
+  /** */
+  public static final QName tombstoned = new QName(bedeworkCaldavNamespace,
+                                                "tombstoned");
+
   /** Apple notification extension for public events */
   public static final QName comment = new QName(bedeworkSystemNamespace,
                                                       "comment");
