@@ -189,7 +189,7 @@ public abstract class UtilAbstractAction extends Action
       err = getErrorObj(request, messages);
       msg = getMessageObj(request, messages);
 
-      /** Log the request - virtual domains can make it difficult to
+      /* Log the request - virtual domains can make it difficult to
        *  distinguish applications.
        */
       logRequest(request);
@@ -484,13 +484,23 @@ public abstract class UtilAbstractAction extends Action
    * ==================================================================== */
 
   class LogEntryImpl extends LogEntry {
+    final HttpServletRequest request;
     StringBuffer sb;
     HttpAppLogger logger;
 
-    LogEntryImpl(final StringBuffer sb,
+    LogEntryImpl(final HttpServletRequest request,
+                 final StringBuffer sb,
                  final HttpAppLogger logger){
+      this.request = request;
       this.sb = sb;
       this.logger = logger;
+
+      sb.append(":");
+      sb.append(getSessionId(request));
+      sb.append(":");
+      sb.append(getLogPrefix(request));
+      sb.append(":charset=");
+      sb.append(request.getCharacterEncoding());
     }
 
     /** Append to a log entry. Value should not contain colons or should be
@@ -513,6 +523,19 @@ public abstract class UtilAbstractAction extends Action
       sb.append(val);
     }
 
+    @Override
+    public void header(final String name) {
+      String val = request.getHeader(name);
+      if (val == null) {
+        val = "NONE";
+      }
+
+      sb.append(" - ");
+      sb.append(name);
+      sb.append(":");
+      sb.append(val);
+    }
+
     /** Emit the log entry
      */
     @Override
@@ -530,14 +553,7 @@ public abstract class UtilAbstractAction extends Action
   @Override
   public LogEntry getLogEntry(final HttpServletRequest request,
                               final String logname) {
-    StringBuffer sb = new StringBuffer(logname);
-
-    sb.append(":");
-    sb.append(getSessionId(request));
-    sb.append(":");
-    sb.append(getLogPrefix(request));
-
-    return new LogEntryImpl(sb, this);
+    return new LogEntryImpl(request, new StringBuffer(logname), this);
   }
 
   /** Log some information.
@@ -571,14 +587,10 @@ public abstract class UtilAbstractAction extends Action
       le.concat(q);
     }
 
+    le.header("Referer");
+    le.header("X-Forwarded-For");
+
     le.emit();
-
-    String referrer = request.getHeader("Referer");
-    if (referrer == null) {
-      referrer = "NONE";
-    }
-
-    logInfo(request, "REFERRER", referrer);
   }
 
   /** Log the session counters for applications that maintain them.

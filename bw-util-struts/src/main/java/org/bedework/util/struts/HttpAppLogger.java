@@ -46,6 +46,12 @@ public interface HttpAppLogger extends AppLogger {
      */
     public abstract void concat(String val);
 
+    /**
+     *
+     * @param name of header to log
+     */
+    public abstract void header(String name);
+
     /** Emit the log entry
      */
     public abstract void emit();
