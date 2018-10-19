@@ -32,7 +32,7 @@
     <commons-codec.version>1.5</commons-codec.version>
     <commons-lang.version>2.3</commons-lang.version>
     <elasticsearch.version>1.5.2</elasticsearch.version>
-    <jackson.version>2.3.1</jackson.version>
+    <jackson.version>2.9.6</jackson.version>
     <jms.version>2.0</jms.version>
     <jolokia.version>1.3.1</jolokia.version>
     <jtidy.version>4aug2000r7-dev</jtidy.version>
