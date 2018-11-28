@@ -62,3 +62,14 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 #### 4.0.14
   * Fix UTC timestamp format
   * Add error, audit and metrics log streams
+
+#### 4.0.19
+  * Add command to get system monitor figures.
+  * Many logging changes
+  * Factor out hibernate classes
+  * Update jackson libraries to avoid security warnings. Not vulnerable.
+  * Fixes to maven deployment code
+  * BasicHttpClient wasn't sending headers
+  * Move SerializableProperties into util class
+  * Tidy up directory classes
+  
