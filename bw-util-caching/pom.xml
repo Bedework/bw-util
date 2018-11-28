@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.bedework</groupId>
     <artifactId>bw-util</artifactId>
-    <version>4.0.19-SNAPSHOT</version>
+    <version>4.0.19</version>
   </parent>
 
   <artifactId>bw-util-caching</artifactId>
@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.bedework</groupId>
       <artifactId>bw-util-misc</artifactId>
-      <version>4.0.19-SNAPSHOT</version>
+      <version>4.0.19</version>
     </dependency>
   </dependencies>
 </project>
