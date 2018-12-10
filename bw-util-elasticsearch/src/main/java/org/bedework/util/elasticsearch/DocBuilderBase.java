@@ -79,9 +79,6 @@ public class DocBuilderBase extends Logged {
     private String dtstamp;
     private Long count = 0L;
 
-    /* Set this true if we write something to the index */
-    private boolean update;
-
     public UpdateInfo() {
     }
 
@@ -103,20 +100,6 @@ public class DocBuilderBase extends Logged {
      */
     public Long getCount() {
       return count;
-    }
-
-    /**
-     * @param update true to indicate update occurred
-     */
-    public void setUpdate(final boolean update) {
-      this.update = update;
-    }
-
-    /**
-     * @return true to indicate update occurred
-     */
-    public boolean isUpdate() {
-      return update;
     }
 
     /**
