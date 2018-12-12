@@ -18,7 +18,7 @@
 */
 package org.bedework.util.xml;
 
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,7 +40,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  *
  * @author Mike Douglass
  */
-public class FromXml extends Logged {
+public class FromXml implements Logged {
   private FromXmlCallback cb;
   
   /**
@@ -57,12 +57,12 @@ public class FromXml extends Logged {
       
       return (T)fromXml(doc.getDocumentElement(), cl, cb);
     } catch (final SAXException se) {
-      if (debug) {
+      if (debug()) {
         error(se);
       }
       throw se;
     } catch (final Throwable t) {
-      if (debug) {
+      if (debug()) {
         error(t);
       }
       throw new SAXException(t.getMessage());
@@ -92,12 +92,12 @@ public class FromXml extends Logged {
 
       return (T)o;
     } catch (final SAXException se) {
-      if (debug) {
+      if (debug()) {
         error(se);
       }
       throw se;
     } catch (final Throwable t) {
-      if (debug) {
+      if (debug()) {
         error(t);
       }
       throw new SAXException(t.getMessage());

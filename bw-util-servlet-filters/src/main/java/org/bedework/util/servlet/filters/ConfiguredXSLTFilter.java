@@ -302,7 +302,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
 
     PresentationState ps = (PresentationState)o;
 
-    if (debug) {
+    if (debug()) {
       ps.debugDump("ConfiguredXSLTFilter");
     }
 
@@ -326,7 +326,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
       /** Either it hasn't been set - so we can't transform or it's too
           early in the session (login etc)
        */
-      if (debug) {
+      if (debug()) {
         debug("No app root");
       }
 
@@ -338,7 +338,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
     xcfg.cfg.setForceDefaultBrowserType(false);
     xcfg.cfg.setForceDefaultSkinName(false);
 
-    if (debug) {
+    if (debug()) {
       debug("About to try with forceDefaultBrowserType=" +
             xcfg.cfg.getForceDefaultBrowserType() +
             ", forceDefaultSkinName=" +
@@ -439,7 +439,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
       /** To get a transformer and see if everything seems OK
        */
       getXmlTransformer(getUrl(request));
-      if (getDebug()) {
+      if (debug()) {
         debug("Got Transformer OK");
       }
 
@@ -543,7 +543,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
       path += "/" + xsltdirMarkerName;
     }
 
-    if (debug) {
+    if (debug()) {
       debug("trypath: " + path);
     }
 
@@ -567,7 +567,7 @@ public class ConfiguredXSLTFilter extends XSLTFilter {
 
       return true;
     } catch (final Throwable t) {
-      if (debug) {
+      if (debug()) {
         debug("trypath exception: ");
         error(t);
       }

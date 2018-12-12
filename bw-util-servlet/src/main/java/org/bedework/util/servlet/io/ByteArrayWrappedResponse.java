@@ -18,8 +18,6 @@
 */
 package org.bedework.util.servlet.io;
 
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,20 +33,10 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
 
   /** Constructor
    *
-   * @param response
+   * @param response http response
    */
   public ByteArrayWrappedResponse(final HttpServletResponse response) {
     super(response);
-  }
-
-  /** Constructor
-   *
-   * @param response
-   * @param log
-   */
-  public ByteArrayWrappedResponse(final HttpServletResponse response,
-                                  final Logger log) {
-    super(response, log);
   }
 
   /* (non-Javadoc)
@@ -56,8 +44,8 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
    */
   @Override
   public PrintWriter getWriter() {
-    if (debug) {
-      getLogger().debug("getWriter called");
+    if (debug()) {
+      debug("getWriter called");
     }
 
     return pw.getWriter();
@@ -68,8 +56,8 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
    */
   @Override
   public ServletOutputStream getOutputStream() {
-    if (debug) {
-      getLogger().debug("getOutputStream called");
+    if (debug()) {
+      debug("getOutputStream called");
     }
 
     return pw.getStream();
@@ -90,7 +78,7 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
    * take place after this is called.
    *
    * @return InputStream
-   * @throws IOException
+   * @throws IOException on fatal error
    */
   public synchronized InputStream getInputStream() throws IOException {
     return pw.getInputStream();
@@ -111,6 +99,7 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
   /**
    * @return resulting byte array
    */
+  @SuppressWarnings("unused")
   public byte[] toByteArray() {
     if (pw == null) {
       return null;
@@ -121,13 +110,13 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
 
   /** Release the resources
   *
-  * @throws IOException
+   * @throws IOException on fatal error
   */
   public void release() throws IOException {
     if (pw != null) {
       try {
         pw.release();
-      } catch (Exception bae) {}
+      } catch (Exception ignored) {}
     }
   }
 
@@ -139,7 +128,7 @@ public class ByteArrayWrappedResponse extends WrappedResponse {
     if (pw != null) {
       try {
         pw.close();
-      } catch (Exception bae) {}
+      } catch (Exception ignored) {}
     }
     pw = null;
     super.close();

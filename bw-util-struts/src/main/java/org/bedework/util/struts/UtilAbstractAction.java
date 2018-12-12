@@ -18,11 +18,11 @@
 */
 package org.bedework.util.struts;
 
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.servlet.HttpServletUtils;
 import org.bedework.util.servlet.filters.PresentationState;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -132,12 +132,7 @@ import javax.servlet.http.HttpSession;
  * <br /><em>contentType=text/text&amp;noxslt=yes</em>
  */
 public abstract class UtilAbstractAction extends Action
-         implements HttpAppLogger {
-  /** true for debugging on */
-  public boolean debug;
-
-  protected transient Logger log;
-
+         implements HttpAppLogger, Logged {
   transient MessageResources messages;
 
   private transient String logPrefix;
@@ -178,8 +173,6 @@ public abstract class UtilAbstractAction extends Action
     try {
       messages = getResources(request);
 
-      debug = getLogger().isDebugEnabled();
-
       isPortlet = isPortletRequest(request);
 
       noActionErrors = StrutsUtil.getProperty(messages,
@@ -194,17 +187,17 @@ public abstract class UtilAbstractAction extends Action
        */
       logRequest(request);
 
-      if (debug) {
-        debugOut("entry");
-        debugOut("================================");
-        debugOut("isPortlet=" + isPortlet);
+      if (debug()) {
+        debug("entry");
+        debug("================================");
+        debug("isPortlet=" + isPortlet);
 
         Enumeration en = servlet.getInitParameterNames();
 
         while (en.hasMoreElements()) {
-          debugOut("attr name=" + en.nextElement());
+          debug("attr name=" + en.nextElement());
         }
-        debugOut("================================");
+        debug("================================");
 
         dumpRequest(request);
       }
@@ -219,8 +212,6 @@ public abstract class UtilAbstractAction extends Action
         form.setInitialised(true);
       }
 
-      form.setLog(getLogger());
-      form.setDebug(debug);
       form.setMres(messages);
       form.setBrowserType(StrutsUtil.getBrowserType(request));
       form.assignCurrentUser(request.getRemoteUser());
@@ -257,7 +248,7 @@ public abstract class UtilAbstractAction extends Action
       }
 
       // Debugging action to test session serialization
-      if (debug) {
+      if (debug()) {
         checkSerialize(request);
       }
 
@@ -290,7 +281,7 @@ public abstract class UtilAbstractAction extends Action
       }
 
       if (forward == null) {
-        getLogger().warn("Forward = null");
+        warn("Forward = null");
         err.emit("edu.rpi.sss.util.nullforward");
         forward = "error";
       } else if (forward.equals("FORWARD-NULL")) {
@@ -298,7 +289,7 @@ public abstract class UtilAbstractAction extends Action
       }
 
       if (err == null) {
-        getLogger().warn("No errors object");
+        warn("No errors object");
       } else if (err.messagesEmitted()) {
         if (noActionErrors) {
         } else {
@@ -306,32 +297,32 @@ public abstract class UtilAbstractAction extends Action
           saveErrors(request, aes);
         }
 
-        if (debug) {
-          getLogger().debug(err.getMsgList().size() + " errors emitted");
+        if (debug()) {
+          debug(err.getMsgList().size() + " errors emitted");
         }
-      } else if (debug) {
-        getLogger().debug("No errors emitted");
+      } else if (debug()) {
+        debug("No errors emitted");
       }
 
       if (msg == null) {
-        getLogger().warn("No messages object");
+        warn("No messages object");
       } else if (msg.messagesEmitted()) {
         ActionMessages ams = msg.getMessages();
         saveMessages(request, ams);
 
-        if (debug) {
-          getLogger().debug(ams.size() + " messages emitted");
+        if (debug()) {
+          debug(ams.size() + " messages emitted");
         }
-      } else if (debug) {
-        getLogger().debug("No messages emitted");
+      } else if (debug()) {
+        debug("No messages emitted");
       }
 
-      if (debug) {
-        getLogger().debug("exit to " + forward);
+      if (debug()) {
+        debug("exit to " + forward);
       }
     } catch (Throwable t) {
-      if (debug) {
-        getLogger().debug("Action exception: ", t);
+      if (debug()) {
+        error("Action exception: ", t);
       }
 
       err.emit(t);
@@ -345,19 +336,14 @@ public abstract class UtilAbstractAction extends Action
     return (mapping.findForward(forward));
   }
 
-  private static Logger confLog =
-      Logger.getLogger(UtilAbstractAction.class.getName() + ".traceConfig");
-
   protected void traceConfig(final Request req) {
-
-
-    if (!confLog.isDebugEnabled()) {
+    if (!debug()) {
       return;
     }
 
     ActionConfig[] actions = req.getMapping().getModuleConfig().findActionConfigs();
 
-    confLog.debug("========== Action configs ===========");
+    debug("========== Action configs ===========");
 
     for (ActionConfig aconfig: actions) {
       StringBuilder sb = new StringBuilder();
@@ -374,10 +360,10 @@ public abstract class UtilAbstractAction extends Action
       traceConfigParam(req, sb, Request.refreshIntervalKey, param);
       traceConfigParam(req, sb, Request.refreshActionKey, param);
 
-      confLog.debug(sb.toString());
+      debug(sb.toString());
 
       if (noActionType) {
-        confLog.debug("***** Warning: no action type specified ****");
+        debug("***** Warning: no action type specified ****");
       }
     }
   }
@@ -540,7 +526,7 @@ public abstract class UtilAbstractAction extends Action
      */
     @Override
     public void emit() {
-      logger.logIt(sb.toString());
+      info(sb.toString());
     }
   }
 
@@ -617,16 +603,6 @@ public abstract class UtilAbstractAction extends Action
     le.append(String.valueOf(sessions));
 
     le.emit();
-  }
-
-  @Override
-  public void debugOut(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  @Override
-  public void logIt(final String msg) {
-    getLogger().info(msg);
   }
 
   /** Get a prefix for the loggers.
@@ -784,7 +760,7 @@ public abstract class UtilAbstractAction extends Action
       String attrname = (String)en.nextElement();
       ObjectOutputStream oo = null;
 
-      logIt("Attempt to serialize attr " + attrname);
+      info("Attempt to serialize attr " + attrname);
       Object o = sess.getAttribute(attrname);
 
       try {
@@ -793,7 +769,7 @@ public abstract class UtilAbstractAction extends Action
         oo.writeObject(o);
         oo.flush();
 
-        logIt("Serialized object " + attrname + " has size: " + bo.size());
+        info("Serialized object " + attrname + " has size: " + bo.size());
       } catch (Throwable t) {
         t.printStackTrace();
       } finally {
@@ -1024,14 +1000,14 @@ public abstract class UtilAbstractAction extends Action
     PresentationState ps = getPresentationState(request);
 
     if (ps == null) {
-      if (debug) {
-        debugOut("No presentation state");
+      if (debug()) {
+        debug("No presentation state");
       }
       return;
     }
 
-    if (debug) {
-      debugOut("Set presentation state");
+    if (debug()) {
+      debug("Set presentation state");
     }
 
     HttpServletRequest req = request.getRequest();
@@ -1045,7 +1021,7 @@ public abstract class UtilAbstractAction extends Action
 
     request.setRequestAttr(getPresentationAttrName(), ps);
 
-    if (debug) {
+    if (debug()) {
       ps.debugDump("action");
     }
   }
@@ -1393,75 +1369,32 @@ public abstract class UtilAbstractAction extends Action
    * @param req
    */
   public void dumpRequest(final HttpServletRequest req) {
-    Logger log = getLogger();
-
     try {
       Enumeration names = req.getParameterNames();
 
       String title = "Request parameters";
 
-      log.debug(title + " - global info and uris");
-      log.debug("getRequestURI = " + req.getRequestURI());
-      log.debug("getRemoteUser = " + req.getRemoteUser());
-      log.debug("getRequestedSessionId = " + req.getRequestedSessionId());
-      log.debug("HttpUtils.getRequestURL(req) = " + req.getRequestURL());
-      log.debug("query=" + req.getQueryString());
-      log.debug("contentlen=" + req.getContentLength());
-      log.debug("request=" + req);
-      log.debug("host=" + req.getHeader("host"));
-      log.debug("parameters:");
+      debug(title + " - global info and uris");
+      debug("getRequestURI = " + req.getRequestURI());
+      debug("getRemoteUser = " + req.getRemoteUser());
+      debug("getRequestedSessionId = " + req.getRequestedSessionId());
+      debug("HttpUtils.getRequestURL(req) = " + req.getRequestURL());
+      debug("query=" + req.getQueryString());
+      debug("contentlen=" + req.getContentLength());
+      debug("request=" + req);
+      debug("host=" + req.getHeader("host"));
+      debug("parameters:");
 
-      log.debug(title);
+      debug(title);
 
       while (names.hasMoreElements()) {
         String key = (String)names.nextElement();
         String[] vals = req.getParameterValues(key);
         for (String val: vals) {
-          log.debug("  " + key + " = \"" + val + "\"");
+          debug("  " + key + " = \"" + val + "\"");
         }
       }
     } catch (final Throwable ignored) {
     }
-  }
-
-  /**
-   * @return Logger
-   */
-  public Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  /** Info message
-   *
-   * @param msg
-   */
-  public void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  /** Warning message
-   *
-   * @param msg
-   */
-  public void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  /**
-   * @param msg
-   */
-  public void debugMsg(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  /**
-   * @param t
-   */
-  public void error(final Throwable t) {
-    getLogger().error(this, t);
   }
 }

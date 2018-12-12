@@ -18,32 +18,26 @@
 */
 package org.bedework.util.security;
 
+import org.bedework.util.logging.Logged;
 import org.bedework.util.security.pki.PKITools;
-
-import org.apache.log4j.Logger;
 
 import java.security.PrivateKey;
 
 /**
  * @author Mike Douglass
  */
-public class PwEncryptionDefault implements PwEncryptionIntf {
-  private boolean debug;
-
+public class PwEncryptionDefault implements PwEncryptionIntf, Logged {
   private String privKeys;
 
   private String pubKeys;
 
   private PKITools pki;
 
-  private transient Logger log;
-
   /**
    * @throws Throwable
    */
   public PwEncryptionDefault() throws Throwable {
-    debug = getLog().isDebugEnabled();
-    pki = new PKITools(false);
+    pki = new PKITools();
   }
 
   /**
@@ -62,8 +56,8 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
   public String encrypt(final String val) throws Throwable {
     int numKeys = pki.countKeys(privKeys);
 
-    if (debug) {
-      debugMsg("Number of keys: " + numKeys);
+    if (debug()) {
+      debug("Number of keys: " + numKeys);
     }
 
     int keyNum = numKeys - 1;
@@ -109,17 +103,5 @@ public class PwEncryptionDefault implements PwEncryptionIntf {
   @Override
   public PrivateKey getPrivateKey() throws Throwable {
     return pki.getPrivateKey(privKeys);
-  }
-
-  private Logger getLog() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  private void debugMsg(final String msg) {
-    getLog().debug(msg);
   }
 }

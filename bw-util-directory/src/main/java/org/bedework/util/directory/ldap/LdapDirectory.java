@@ -123,13 +123,13 @@ public class LdapDirectory extends Directory {
       // Make simple authentication the default
       checkProp(pr, Context.SECURITY_AUTHENTICATION, "simple");
 
-      if (debug) {
+      if (debug()) {
         debug("Directory: get new context for " +
             pr.get(Context.PROVIDER_URL));
       }
       ctx = new InitialDirContext(pr);
       constraints = new SearchControls();
-      if (debug) {
+      if (debug()) {
         debug("Directory: init OK " + pr.get(Context.PROVIDER_URL));
       }
     } catch (Throwable t) {
@@ -149,7 +149,7 @@ public class LdapDirectory extends Directory {
   @Override
   public boolean search(final String base, String filter,
                         final int scope) throws NamingException {
-    if (debug) {
+    if (debug()) {
       debug("About to search: base=" + base + " filter=" + filter +
                " scope=" + scope);
     }
@@ -171,7 +171,7 @@ public class LdapDirectory extends Directory {
       }
     } catch (final NameNotFoundException e) {
       // Allow that one.
-      if (debug) {
+      if (debug()) {
         debug("NameNotFoundException: return with null");
       }
       recs = null;

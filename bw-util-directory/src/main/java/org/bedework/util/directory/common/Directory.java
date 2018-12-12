@@ -18,7 +18,7 @@
 */
 package org.bedework.util.directory.common;
 
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 
 import javax.naming.NamingException;
 import javax.naming.directory.ModificationItem;
@@ -41,7 +41,7 @@ import javax.naming.directory.SearchControls;
  directory, even a sequential input stream of records.
  *************************************************************************/
 
-public abstract class Directory extends Logged {
+public abstract class Directory implements Logged {
   /** All other constructors just call init
    */
   public Directory() throws NamingException {

@@ -19,7 +19,7 @@
 package org.bedework.util.jolokia;
 
 import org.bedework.util.jmx.ConfBase;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 
 import org.jolokia.client.BasicAuthenticator;
 import org.jolokia.client.J4pClient;
@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * User: mike Date: 12/3/15 Time: 00:32
  */
-public class JolokiaClient extends Logged {
+public class JolokiaClient implements Logged {
   private final String url;
   private final String id;
   private final String pw;

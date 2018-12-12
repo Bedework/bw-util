@@ -18,7 +18,7 @@
 */
 package org.bedework.util.config;
 
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.ToString;
 import org.bedework.util.misc.Util;
 import org.bedework.util.xml.XmlEmit;
@@ -108,7 +108,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * @param <T>
  */
 public class ConfigBase<T extends ConfigBase>
-        extends Logged implements Comparable<T>, Serializable {
+        implements Logged, Comparable<T>, Serializable {
   /** The default namespace for the XML elements.
    *
    */

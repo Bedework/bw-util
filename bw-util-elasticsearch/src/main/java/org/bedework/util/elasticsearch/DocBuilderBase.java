@@ -19,7 +19,7 @@
 package org.bedework.util.elasticsearch;
 
 import org.bedework.util.indexing.IndexException;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -33,7 +33,7 @@ import java.util.Collection;
  * @author Mike Douglass douglm - rpi.edu
  *
  */
-public class DocBuilderBase extends Logged {
+public class DocBuilderBase implements Logged {
   public static final String docTypeUpdateTracker = "updateTracker";
 
   public static final String updateTrackerId = "updateTracker";
@@ -59,7 +59,7 @@ public class DocBuilderBase extends Logged {
     try {
       XContentBuilder builder = XContentFactory.jsonBuilder();
 
-      if (debug) {
+      if (debug()) {
         builder = builder.prettyPrint();
       }
 

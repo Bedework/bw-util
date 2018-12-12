@@ -18,7 +18,7 @@
 */
 package org.bedework.util.servlet;
 
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.SLogged;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +32,11 @@ import javax.servlet.http.HttpServletRequest;
  * @author Mike Douglass
  *
  */
-public class HttpServletUtils {
+public class HttpServletUtils implements SLogged {
+  static {
+    SLogged.setLoggerClass(HttpServletUtils.class);
+  }
+
   /** Had to have this because it's subclassed.
    *
    * @throws Exception
@@ -152,8 +156,7 @@ public class HttpServletUtils {
       // Presumably portlet - see what happens with uri
       return request.getRequestURI();
     } catch (Throwable t) {
-      Logger.getLogger(HttpServletUtils.class).warn(
-          "Unable to get url from " + request, t);
+      SLogged.warn("Unable to get url from " + request);
       return "BogusURL.this.is.probably.a.portal";
     }
   }
@@ -242,13 +245,12 @@ public class HttpServletUtils {
   /** Print all the headers
    *
    * @param   req    Incoming HttpServletRequest object
-   * @param log
    */
-  public static void dumpHeaders(final HttpServletRequest req, final Logger log) {
+  public static void dumpHeaders(final HttpServletRequest req) {
     Enumeration en = req.getHeaderNames();
     while (en.hasMoreElements()) {
       String name = (String) en.nextElement();
-      log.debug(name + ": " + req.getHeader(name));
+      SLogged.debug(name + ": " + req.getHeader(name));
     }
   }
 

@@ -1,7 +1,7 @@
 package org.bedework.util.timezones;
 
 import org.bedework.util.http.HttpUtil;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.timezones.model.CapabilitiesType;
 import org.bedework.util.timezones.model.TimezoneListType;
 
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** CLass to allow us to call the server
  */
-public class TzServer extends Logged implements AutoCloseable {
+public class TzServer implements Logged, AutoCloseable {
   private static String tzserverUri;
 
   final boolean oldVersion = false;
@@ -225,7 +225,7 @@ public class TzServer extends Logged implements AutoCloseable {
                   HttpUtil.getFirstHeaderValue(hresp,
                                                "location");
           if (newLoc != null) {
-            if (debug) {
+            if (debug()) {
               debug("Got redirected to " + newLoc +
                             " from " + url);
             }
@@ -274,7 +274,7 @@ public class TzServer extends Logged implements AutoCloseable {
       } catch (final TimezonesException tze) {
         throw tze;
       } catch (final Throwable t) {
-        if (debug) {
+        if (debug()) {
           error(t);
         }
 
@@ -282,7 +282,7 @@ public class TzServer extends Logged implements AutoCloseable {
       }
     }
 
-    if (debug) {
+    if (debug()) {
       error("Too many redirects: Got response " + status +
                     ", from " + realUrl);
     }

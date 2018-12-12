@@ -18,6 +18,7 @@
 */
 package org.bedework.util.http;
 
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 
 import org.apache.http.Header;
@@ -56,7 +57,6 @@ import org.apache.http.pool.PoolStats;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -75,11 +75,8 @@ import javax.servlet.http.HttpServletResponse;
 *
 * @author Mike Douglass  douglm @ rpi.edu
 */
-public class BasicHttpClient extends DefaultHttpClient {
-  protected boolean debug;
-
-  private transient Logger log;
-
+public class BasicHttpClient extends DefaultHttpClient 
+        implements Logged {
   private static PoolingClientConnectionManager connManager;
 
   public static class IdleConnectionMonitorThread extends Thread {
@@ -236,8 +233,6 @@ public class BasicHttpClient extends DefaultHttpClient {
                          final boolean followRedirects) throws HttpException {
     super(connManager, null);
     setKeepAliveStrategy(kas);
-
-    debug = getLogger().isDebugEnabled();
 
     if (sslDisabled) {
       warn("*******************************************************");
@@ -485,12 +480,12 @@ public class BasicHttpClient extends DefaultHttpClient {
       sz = content.length;
     }
 
-    if (debug) {
-      debugMsg("About to send request: method=" + methodName +
-               " url=" + url +
-               " contentLen=" + contentLen +
-               " content.length=" + sz +
-               " contentType=" + contentType);
+    if (debug()) {
+      debug("About to send request: method=" + methodName +
+                    " url=" + url +
+                    " contentLen=" + contentLen +
+                    " content.length=" + sz +
+                    " contentType=" + contentType);
     }
 
     try {
@@ -512,8 +507,8 @@ public class BasicHttpClient extends DefaultHttpClient {
         u = baseURI.resolve(u);
       }
 
-      if (debug) {
-        debugMsg("      url resolves to " + u);
+      if (debug()) {
+        debug("      url resolves to " + u);
       }
 
       method = findMethod(methodName, u);
@@ -782,7 +777,7 @@ public class BasicHttpClient extends DefaultHttpClient {
   public int sendRequest(final String method, final String url,
                          final Header[] hdrs,
                          final NameValuePair[] parameters) throws Throwable {
-    if (debug) {
+    if (debug()) {
        debugMsg("About to send request: method=" + method +
                 " url=" + url + parameters);
     }
@@ -823,8 +818,8 @@ public class BasicHttpClient extends DefaultHttpClient {
                                0,
                                null);    //content
 
-    if (debug) {
-      debugMsg("response code " + respCode);
+    if (debug()) {
+      debug("response code " + respCode);
     }
 
     return respCode;
@@ -862,8 +857,8 @@ public class BasicHttpClient extends DefaultHttpClient {
                                content.length(),
                                content.getBytes());    //content
 
-    if (debug) {
-      debugMsg("response code " + respCode);
+    if (debug()) {
+      debug("response code " + respCode);
     }
 
     return respCode;
@@ -1026,8 +1021,8 @@ public class BasicHttpClient extends DefaultHttpClient {
                                      0, // contentLen
                                      null);    //content
 
-    if (debug) {
-      debugMsg("getFile: response code " + respCode);
+    if (debug()) {
+      debug("getFile: response code " + respCode);
     }
 
     if (respCode != HttpServletResponse.SC_OK) {
@@ -1062,40 +1057,5 @@ public class BasicHttpClient extends DefaultHttpClient {
       release();
     } catch (final Throwable ignored) {
     }
-  }
-
-  /** ===================================================================
-   *                   Logging methods
-   *  =================================================================== */
-
-  /**
-   * @return Logger
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  protected void debugMsg(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  protected void logIt(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
   }
 }

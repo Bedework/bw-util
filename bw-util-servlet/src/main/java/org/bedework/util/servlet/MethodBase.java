@@ -18,9 +18,10 @@
 */
 package org.bedework.util.servlet;
 
+import org.bedework.util.logging.Logged;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,12 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Base class for servlet methods.
  */
-public abstract class MethodBase {
-  protected boolean debug;
-
+public abstract class MethodBase implements Logged {
   protected boolean dumpContent;
-
-  protected transient Logger log;
 
   /** Called at each request
    *
@@ -306,7 +303,7 @@ public abstract class MethodBase {
       return getMapper().readValue(is, cl);
     } catch (Throwable t) {
       resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      if (debug) {
+      if (debug()) {
         error(t);
       }
       throw new ServletException(t);
@@ -332,7 +329,7 @@ public abstract class MethodBase {
       return getMapper().readValue(is, tr);
     } catch (final Throwable t) {
       resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      if (debug) {
+      if (debug()) {
         error(t);
       }
       throw new ServletException(t);
@@ -358,8 +355,8 @@ public abstract class MethodBase {
       os.close();
     } catch (final Throwable ignored) {
       // Pretty much screwed if we get here
-      if (debug) {
-        debugMsg("Unable to send error: " + msg);
+      if (debug()) {
+        debug("Unable to send error: " + msg);
       }
     }
   }
@@ -396,45 +393,6 @@ public abstract class MethodBase {
     synchronized (httpDateFormatter) {
       return httpDateFormatter.format(val) + "GMT";
     }
-  }
-
-  /** ===================================================================
-   *                   Logging methods
-   *  =================================================================== */
-
-  /**
-   * @return Logger
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  protected void debugMsg(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  protected void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  protected void logIt(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
   }
 }
 

@@ -3,12 +3,10 @@
 */
 package org.bedework.util.elasticsearch;
 
-import org.bedework.util.misc.Logged;
-
 /**
  * User: mike Date: 9/1/17 Time: 22:55
  */
-public class ESQueryFilterBase extends Logged {
+public class ESQueryFilterBase {
 
   public enum OperationType {
     compare,

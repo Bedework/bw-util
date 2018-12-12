@@ -21,7 +21,7 @@ package org.bedework.util.jms.listeners;
 import org.bedework.util.jms.JmsConnectionHandler;
 import org.bedework.util.jms.NotificationException;
 import org.bedework.util.jms.events.SysEvent;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 
 import java.io.InvalidClassException;
 import java.util.Properties;
@@ -37,8 +37,8 @@ import javax.jms.ObjectMessage;
  *
  * @author Mike Douglass
  */
-public abstract class JmsSysEventListener extends Logged
-    implements MessageListener, ExceptionListener {
+public abstract class JmsSysEventListener
+    implements Logged, MessageListener, ExceptionListener {
   private JmsConnectionHandler conn;
 
   private MessageConsumer consumer;

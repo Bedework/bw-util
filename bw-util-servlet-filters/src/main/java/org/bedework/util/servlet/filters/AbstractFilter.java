@@ -18,14 +18,10 @@
 */
 package org.bedework.util.servlet.filters;
 
-import org.bedework.util.misc.Logged;
-
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.Logged;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Serializable;
-import java.io.StringReader;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -46,7 +42,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author  Mike Douglass douglm@rpi.edu
  */
-public abstract class AbstractFilter extends Logged implements Filter {
+public abstract class AbstractFilter implements Logged, Filter {
   protected ServletContext ctx;
 
   /** One per session
@@ -68,8 +64,7 @@ public abstract class AbstractFilter extends Logged implements Filter {
   /**
    */
   public AbstractFilter() {
-    debug = getLogger().isDebugEnabled();
-  }
+    }
 
   /** Get the globals from the session
    *
@@ -91,12 +86,12 @@ public abstract class AbstractFilter extends Logged implements Filter {
       fg = newFilterGlobals();
       sess.setAttribute(globalsName, fg);
 
-      if (debug) {
-        getLogger().debug("Created new FilterGlobals from session " + sess.getId());
+      if (debug()) {
+        debug("Created new FilterGlobals from session " + sess.getId());
       }
     } else {
       fg = (FilterGlobals)o;
-      //if (debug) {
+      //if (debug()) {
       //  getLogger().debug("Obtained FilterGlobals from session with id " +
       //                    sess.getId());
       //}
@@ -128,7 +123,7 @@ public abstract class AbstractFilter extends Logged implements Filter {
 
   @Override
   public void destroy() {
-    if ((debug) && (ctx != null)) {
+    if ((debug()) && (ctx != null)) {
       ctx.log("Destroying filter...");
     }
   }
@@ -175,45 +170,5 @@ public abstract class AbstractFilter extends Logged implements Filter {
    */
   public boolean getDontFilter(final HttpServletRequest req) {
     return getGlobals(req).dontFilter;
-  }
-
-  /**
-   * @param val
-   */
-  public void setDebug(final boolean val) {
-    debug = val;
-  }
-
-  /**
-   * @return boolean debug state
-   */
-  public boolean getDebug() {
-    return debug;
-  }
-
-  /** A debugging dump routine
-   *
-   * @param val
-   * @param log
-   */
-  public static void dumpIt(final String val, final Logger log) {
-    StringReader dsr = new StringReader(val);
-    LineNumberReader dlnr = new LineNumberReader(dsr);
-    int i = 1;
-
-    try {
-      while (dlnr.ready()) {
-        String s = dlnr.readLine();
-
-        if (s == null) {
-          break;
-        }
-
-        log.debug(i + ": " + s);
-        i++;
-      }
-    } catch (Exception e) {
-      log.debug(e.getMessage());
-    }
   }
 }

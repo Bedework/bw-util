@@ -20,27 +20,22 @@ package org.bedework.util.jms;
 
 import org.bedework.util.jms.events.SysEvent;
 import org.bedework.util.jms.listeners.SysEventListener;
-
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.Logged;
 
 /**
  * This is the implementation of a notifications handler.
  *
  * @author Mike Douglass douglm - rpi.edu
  */
-class NotificationsHandlerImpl extends NotificationsHandler {
-  private transient Logger log;
-
-  private final boolean debug;
-
+class NotificationsHandlerImpl extends NotificationsHandler
+        implements Logged {
   NotificationsHandlerImpl() {
-    debug = getLogger().isDebugEnabled();
   }
 
   @Override
   public void post(final SysEvent ev) throws NotificationException {
-    if (debug) {
-      trace(ev.toString());
+    if (debug()) {
+      debug(ev.toString());
     }
   }
 
@@ -55,30 +50,5 @@ class NotificationsHandlerImpl extends NotificationsHandler {
   public void removeListener(final SysEventListener l)
                                                       throws NotificationException {
 
-  }
-
-  /*
-   * ====================================================================
-   * Protected methods
-   * ====================================================================
-   */
-
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  /*
-   * Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 }

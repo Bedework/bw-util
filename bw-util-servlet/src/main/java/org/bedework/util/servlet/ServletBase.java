@@ -19,12 +19,11 @@
 package org.bedework.util.servlet;
 
 import org.bedework.util.jmx.ConfBase;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.servlet.MethodBase.MethodInfo;
 import org.bedework.util.servlet.io.CharArrayWrappedResponse;
 import org.bedework.util.xml.XmlEmit;
 import org.bedework.util.xml.tagdefs.WebdavTags;
-
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -51,12 +50,8 @@ import javax.xml.namespace.QName;
  * @version 1.0
  */
 public abstract class ServletBase extends HttpServlet
-        implements HttpSessionListener, ServletContextListener {
-  protected boolean debug;
-
+        implements Logged, HttpSessionListener, ServletContextListener {
   protected boolean dumpContent;
-
-  protected transient Logger log;
 
   /** Table of methods - set at init
    */
@@ -88,10 +83,10 @@ public abstract class ServletBase extends HttpServlet
     boolean serverError = false;
 
     try {
-      debug = getLogger().isDebugEnabled();
+      setLoggerClass(this.getClass());
 
-      if (debug) {
-        debugMsg("entry: " + req.getMethod());
+      if (debug()) {
+        debug("entry: " + req.getMethod());
         dumpRequest(req);
       }
 
@@ -99,14 +94,13 @@ public abstract class ServletBase extends HttpServlet
 
       if (req.getCharacterEncoding() == null) {
         req.setCharacterEncoding("UTF-8");
-        if (debug) {
-          debugMsg("No charset specified in request; forced to UTF-8");
+        if (debug()) {
+          debug("No charset specified in request; forced to UTF-8");
         }
       }
 
-      if (debug && dumpContent) {
-        resp = new CharArrayWrappedResponse(resp,
-                                            getLogger());
+      if (debug() && dumpContent) {
+        resp = new CharArrayWrappedResponse(resp);
       }
 
       String methodName = req.getHeader("X-HTTP-Method-Override");
@@ -118,7 +112,7 @@ public abstract class ServletBase extends HttpServlet
       final MethodBase method = getMethod(methodName);
 
       if (method == null) {
-        logIt("No method for '" + methodName + "'");
+        info("No method for '" + methodName + "'");
 
         // ================================================================
         //     Set the correct response
@@ -133,7 +127,7 @@ public abstract class ServletBase extends HttpServlet
         tryWait(req, false);
       } catch (Throwable t) {}
 
-      if (debug && dumpContent &&
+      if (debug() && dumpContent &&
               (resp instanceof CharArrayWrappedResponse)) {
         /* instanceof check because we might get a subsequent exception before
          * we wrap the response
@@ -141,17 +135,17 @@ public abstract class ServletBase extends HttpServlet
         CharArrayWrappedResponse wresp = (CharArrayWrappedResponse)resp;
 
         if (wresp.getUsedOutputStream()) {
-          debugMsg("------------------------ response written to output stream -------------------");
+          debug("------------------------ response written to output stream -------------------");
         } else {
           String str = wresp.toString();
 
-          debugMsg("------------------------ Dump of response -------------------");
-          debugMsg(str);
-          debugMsg("---------------------- End dump of response -----------------");
+          debug("------------------------ Dump of response -------------------");
+          debug(str);
+          debug("---------------------- End dump of response -----------------");
 
           byte[] bs = str.getBytes();
           resp = (HttpServletResponse)wresp.getResponse();
-          debugMsg("contentLength=" + bs.length);
+          debug("contentLength=" + bs.length);
           resp.setContentLength(bs.length);
           resp.getOutputStream().write(bs);
         }
@@ -176,7 +170,7 @@ public abstract class ServletBase extends HttpServlet
     }
 
     try {
-      getLogger().error(this, t);
+      error(t);
       sendError(t, resp);
       return true;
     } catch (Throwable t1) {
@@ -188,8 +182,8 @@ public abstract class ServletBase extends HttpServlet
   private void sendError(final Throwable t,
                          final HttpServletResponse resp) {
     try {
-      if (debug) {
-        debugMsg("setStatus(" + HttpServletResponse.SC_INTERNAL_SERVER_ERROR + ")");
+      if (debug()) {
+        debug("setStatus(" + HttpServletResponse.SC_INTERNAL_SERVER_ERROR + ")");
       }
       resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      t.getMessage());
@@ -253,7 +247,7 @@ public abstract class ServletBase extends HttpServlet
 
       return mb;
     } catch (final Throwable t) {
-      if (debug) {
+      if (debug()) {
         error(t);
       }
       throw new Exception(t);
@@ -292,8 +286,8 @@ public abstract class ServletBase extends HttpServlet
 
       wtr.waiting++;
       while (wtr.active) {
-        if (debug) {
-          log.debug("in: waiters=" + wtr.waiting);
+        if (debug()) {
+          debug("in: waiters=" + wtr.waiting);
         }
 
         wtr.wait();
@@ -325,43 +319,41 @@ public abstract class ServletBase extends HttpServlet
    * @param req
    */
   public void dumpRequest(final HttpServletRequest req) {
-    Logger log = getLogger();
-
     try {
       Enumeration names = req.getHeaderNames();
 
       String title = "Request headers";
 
-      log.debug(title);
+      debug(title);
 
       while (names.hasMoreElements()) {
         String key = (String)names.nextElement();
         String val = req.getHeader(key);
-        log.debug("  " + key + " = \"" + val + "\"");
+        debug("  " + key + " = \"" + val + "\"");
       }
 
       names = req.getParameterNames();
 
       title = "Request parameters";
 
-      log.debug(title + " - global info and uris");
-      log.debug("getRemoteAddr = " + req.getRemoteAddr());
-      log.debug("getRequestURI = " + req.getRequestURI());
-      log.debug("getRemoteUser = " + req.getRemoteUser());
-      log.debug("getRequestedSessionId = " + req.getRequestedSessionId());
-      log.debug("HttpUtils.getRequestURL(req) = " + req.getRequestURL());
-      log.debug("contextPath=" + req.getContextPath());
-      log.debug("query=" + req.getQueryString());
-      log.debug("contentlen=" + req.getContentLength());
-      log.debug("request=" + req);
-      log.debug("parameters:");
+      debug(title + " - global info and uris");
+      debug("getRemoteAddr = " + req.getRemoteAddr());
+      debug("getRequestURI = " + req.getRequestURI());
+      debug("getRemoteUser = " + req.getRemoteUser());
+      debug("getRequestedSessionId = " + req.getRequestedSessionId());
+      debug("HttpUtils.getRequestURL(req) = " + req.getRequestURL());
+      debug("contextPath=" + req.getContextPath());
+      debug("query=" + req.getQueryString());
+      debug("contentlen=" + req.getContentLength());
+      debug("request=" + req);
+      debug("parameters:");
 
-      log.debug(title);
+      debug(title);
 
       while (names.hasMoreElements()) {
         String key = (String)names.nextElement();
         String val = req.getParameter(key);
-        log.debug("  " + key + " = \"" + val + "\"");
+        debug("  " + key + " = \"" + val + "\"");
       }
     } catch (Throwable t) {
     }
@@ -381,36 +373,5 @@ public abstract class ServletBase extends HttpServlet
   @Override
   public void contextDestroyed(final ServletContextEvent sce) {
     getConfigurator().stop();
-  }
-
-  /**
-   * @return LOgger
-   */
-  public Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  /** Debug
-   *
-   * @param msg
-   */
-  public void debugMsg(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  /** Info messages
-   *
-   * @param msg
-   */
-  public void logIt(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
   }
 }

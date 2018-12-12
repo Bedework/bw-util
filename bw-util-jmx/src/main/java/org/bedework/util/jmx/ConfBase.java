@@ -22,10 +22,9 @@ import org.bedework.util.config.ConfigBase;
 import org.bedework.util.config.ConfigException;
 import org.bedework.util.config.ConfigurationFileStore;
 import org.bedework.util.config.ConfigurationStore;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.BwLogger;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
-
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileReader;
@@ -105,8 +104,8 @@ import javax.management.ObjectName;
  * @param <T>
  *
  */
-public abstract class ConfBase<T extends ConfigBase> extends Logged
-        implements ConfBaseMBean {
+public abstract class ConfBase<T extends ConfigBase>
+        implements Logged, ConfBaseMBean {
   public static final String statusDone = "Done";
   public static final String statusFailed = "Failed";
   public static final String statusRunning = "Running";
@@ -644,7 +643,7 @@ public abstract class ConfBase<T extends ConfigBase> extends Logged
       getRegisteredMBeans().add(key);
     } catch (Throwable e) {
       warn("Failed to register MBean: " + key + ": " + e.getLocalizedMessage());
-      if (debug) {
+      if (debug()) {
         error(e);
       }
     }
@@ -660,7 +659,7 @@ public abstract class ConfBase<T extends ConfigBase> extends Logged
         getManagementContext().unregisterMBean(key);
       } catch (Throwable e) {
         warn("Failed to unregister MBean: " + key);
-        if (debug) {
+        if (debug()) {
           error(e);
         }
       }
@@ -698,13 +697,15 @@ public abstract class ConfBase<T extends ConfigBase> extends Logged
       Object o = Class.forName(className).newInstance();
 
       if (o == null) {
-        Logger.getLogger(ConfBase.class).error("Class " + className + " not found");
+        new BwLogger().setLoggedClass(ConfBase.class)
+                      .error("Class " + className + " not found");
         return null;
       }
 
       return o;
     } catch (Throwable t) {
-      Logger.getLogger(ConfBase.class).error("Unable to make object ", t);
+      new BwLogger().setLoggedClass(ConfBase.class)
+                    .error("Unable to make object ", t);
       return null;
     }
   }

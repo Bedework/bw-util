@@ -18,11 +18,10 @@
 */
 package org.bedework.util.servlet.filters;
 
+import org.bedework.util.logging.Logged;
 import org.bedework.util.servlet.HttpServletUtils;
 import org.bedework.util.servlet.io.ByteArrayWrappedResponse;
 import org.bedework.util.servlet.io.PooledBufferedOutputStream;
-
-import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -53,7 +52,7 @@ import javax.xml.transform.stream.StreamSource;
  *  object can be carried out by overriding init.
  *  <p>Loosely based on some public example of filter code.</p>
  */
-public class XSLTFilter extends AbstractFilter {
+public class XSLTFilter extends AbstractFilter implements Logged {
   /** A transformer is identified by a path like key of locale + browser +
    * skin name (with path delimiters).
    *
@@ -162,7 +161,7 @@ public class XSLTFilter extends AbstractFilter {
   public Transformer getXmlTransformer(final String ideal)
       throws TransformerException, ServletException, FileNotFoundException {
     String url = lookupPath(ideal);
-    if (debug) {
+    if (debug()) {
       debug("getXmlTransformer: ideal = " + ideal +
                         " actual = " + url);
     }
@@ -223,7 +222,7 @@ public class XSLTFilter extends AbstractFilter {
 
     configUrl = filterConfig.getInitParameter("xslt");
 
-    if ((configUrl != null) && debug) {
+    if ((configUrl != null) && debug()) {
       debug("Filter " + filterConfig.getFilterName() +
                                         " using xslt " + configUrl);
     }
@@ -244,7 +243,7 @@ public class XSLTFilter extends AbstractFilter {
 
     PooledBufferedOutputStream pbos = new PooledBufferedOutputStream();
 
-    WrappedResponse wrappedResp = new WrappedResponse(resp, hreq, getLogger());
+    WrappedResponse wrappedResp = new WrappedResponse(resp, hreq);
 
     filterChain.doFilter(req, wrappedResp);
 
@@ -252,7 +251,7 @@ public class XSLTFilter extends AbstractFilter {
 
     glob.reason = null;
 
-    if (debug) {
+    if (debug()) {
       debug("XSLTFilter: Accessing filter for " +
                                 HttpServletUtils.getReqLine(hreq) + " " +
                                 hreq.getMethod() +
@@ -280,7 +279,7 @@ public class XSLTFilter extends AbstractFilter {
     //byte[] bytes = wrappedResp.toByteArray();
 
     if (wrappedResp.size() == 0) {
-      if (debug) {
+      if (debug()) {
         debug("No content");
       }
 
@@ -291,7 +290,7 @@ public class XSLTFilter extends AbstractFilter {
 
     try {
       if ((!glob.dontFilter) && (wrappedResp.getTransformNeeded())) {
-        if (debug) {
+        if (debug()) {
           debug("+*+*+*+*+*+*+*+*+*+*+* about to transform: len=" +
               wrappedResp.size());
         }
@@ -352,7 +351,7 @@ public class XSLTFilter extends AbstractFilter {
             glob.contentType = "text/html";
           }
 
-          if (debug) {
+          if (debug()) {
             Properties pr = xmlt.getOutputProperties();
             if (pr != null) {
               Enumeration en = pr.propertyNames();
@@ -381,7 +380,7 @@ public class XSLTFilter extends AbstractFilter {
             String mtype = pr.getProperty("media-type");
 
             if (mtype != null) {
-              if (debug) {
+              if (debug()) {
                 debug("Stylesheet set media-type to " + mtype);
               }
               if (encoding != null) {
@@ -396,11 +395,11 @@ public class XSLTFilter extends AbstractFilter {
         resp.setContentLength(pbos.size());
         pbos.writeTo(resp.getOutputStream());
 
-        if (debug) {
+        if (debug()) {
           debug("XML -> HTML conversion completed");
         }
       } else {
-        if (debug) {
+        if (debug()) {
           if (glob.dontFilter) {
             glob.reason = "dontFilter";
           }
@@ -453,12 +452,10 @@ public class XSLTFilter extends AbstractFilter {
     /**
      * @param response
      * @param req
-     * @param log
      */
     public WrappedResponse(final HttpServletResponse response,
-                           final HttpServletRequest req,
-                           final Logger log) {
-      super(response, log);
+                           final HttpServletRequest req) {
+      super(response);
       this.req = req;
     }
 
@@ -484,13 +481,13 @@ public class XSLTFilter extends AbstractFilter {
         transformNeeded = true;
       } else if ((type.startsWith("text/xml")) ||
                  (type.startsWith("application/xml"))) {
-        if (debug) {
+        if (debug()) {
           debug("XSLTFilter: Converting xml to html");
         }
         transformNeeded = true;
       } else {
         super.setContentType(type);
-        if (debug) {
+        if (debug()) {
           glob.reason = "Content-type = " + type;
         }
       }

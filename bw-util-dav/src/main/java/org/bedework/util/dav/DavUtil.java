@@ -19,7 +19,7 @@
 package org.bedework.util.dav;
 
 import org.bedework.util.http.BasicHttpClient;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.xml.XmlEmit;
 import org.bedework.util.xml.XmlEmit.NameSpace;
@@ -56,7 +56,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 *
 * @author Mike Douglass  douglm - rpi.edu
 */
-public class DavUtil extends Logged implements Serializable {
+public class DavUtil implements Logged, Serializable {
   /** */
   public static final Header depth0 = new BasicHeader("depth", "0");
   /** */
@@ -375,7 +375,7 @@ public class DavUtil extends Logged implements Serializable {
 
     final int SC_MULTI_STATUS = 207; // not defined for some reason
     if (res != SC_MULTI_STATUS) {
-      if (debug) {
+      if (debug()) {
         debug("Got response " + res + " for path " + path);
       }
 
@@ -483,7 +483,7 @@ public class DavUtil extends Logged implements Serializable {
 
     final int SC_MULTI_STATUS = 207; // not defined for some reason
     if (res != SC_MULTI_STATUS) {
-      if (debug) {
+      if (debug()) {
         debug("Got response " + res + " for path " + path);
       }
 

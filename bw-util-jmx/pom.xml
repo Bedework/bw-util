@@ -22,20 +22,13 @@
 
     <dependency>
       <groupId>org.bedework</groupId>
-      <artifactId>bw-util-misc</artifactId>
-      <version>${project.version}</version>
+      <artifactId>bw-util-logging</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-util-misc</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

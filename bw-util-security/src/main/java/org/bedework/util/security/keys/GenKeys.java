@@ -74,7 +74,7 @@ public class GenKeys extends ConfBase<GenKeysConfigImpl>
     final Msg infoLines = new Msg();
 
     try {
-      final PKITools pki = new PKITools(true);
+      final PKITools pki = new PKITools();
 
       if (getPrivKeyFileName() == null) {
         infoLines.add("Must provide a -privkey <file> parameter");

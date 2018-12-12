@@ -18,7 +18,7 @@
 */
 package org.bedework.util.servlet.io;
 
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.Logged;
 
 import java.io.IOException;
 
@@ -27,90 +27,58 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 /** This class provides a useful form of the wrapped response.
  */
-public class WrappedResponse extends HttpServletResponseWrapper {
-  protected boolean debug = false;
-
-  private transient Logger log;
-
+public class WrappedResponse extends HttpServletResponseWrapper
+        implements Logged {
   /** Constructor
    *
-   * @param response
+   * @param response an http response
    */
   public WrappedResponse(final HttpServletResponse response) {
-    this(response, null);
-  }
-
-  /** Constructor
-   *
-   * @param response
-   * @param log
-   */
-  public WrappedResponse(final HttpServletResponse response,
-                         final Logger log) {
     super(response);
-    this.log = log;
-    debug = getLogger().isDebugEnabled();
+    setLoggerClass();
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.http.HttpServletResponse#sendError(int)
-   */
   @Override
   public void sendError(final int sc) throws IOException {
     super.sendError(sc);
-    if (debug) {
-      getLogger().debug("sendError(" + sc + ")");
+    if (debug()) {
+      debug("sendError(" + sc + ")");
     }
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.http.HttpServletResponse#setStatus(int)
-   */
   @Override
   public void setStatus(final int sc) {
     super.setStatus(sc);
-    if (debug) {
-      getLogger().debug("setStatus(" + sc + ")");
+    if (debug()) {
+      debug("setStatus(" + sc + ")");
     }
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.http.HttpServletResponse#addHeader(java.lang.String, java.lang.String)
-   */
   @Override
   public void addHeader(final String name, final String value) {
     super.addHeader(name, value);
-    if (debug) {
-      getLogger().debug("addHeader(\"" + name + "\", \"" + value + "\")");
+    if (debug()) {
+      debug("addHeader(\"" + name + "\", \"" + value + "\")");
     }
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.http.HttpServletResponse#setHeader(java.lang.String, java.lang.String)
-   */
   @Override
   public void setHeader(final String name, final String value) {
     super.setHeader(name, value);
-    if (debug) {
-      getLogger().debug("setHeader(\"" + name + "\", \"" + value + "\")");
+    if (debug()) {
+      debug("setHeader(\"" + name + "\", \"" + value + "\")");
     }
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.ServletResponse#getBufferSize()
-   */
   @Override
   public int getBufferSize() {
     return 0;
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.ServletResponse#flushBuffer()
-   */
   @Override
   public void flushBuffer() {
-    if (debug) {
-      getLogger().debug("flushBuffer called");
+    if (debug()) {
+      debug("flushBuffer called");
     }
   }
 
@@ -132,18 +100,6 @@ public class WrappedResponse extends HttpServletResponseWrapper {
    *
    */
   public void close() {
-  }
-
-  /** Get a logger for messages
-   *
-   * @return Logger
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 }
 

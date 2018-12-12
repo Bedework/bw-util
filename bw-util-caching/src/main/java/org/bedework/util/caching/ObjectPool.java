@@ -18,7 +18,7 @@
 */
 package org.bedework.util.caching;
 
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
@@ -34,7 +34,7 @@ import java.util.WeakHashMap;
  *
  * @param <T>
  */
-public class ObjectPool<T> extends Logged implements Serializable {
+public class ObjectPool<T> implements Serializable, Logged {
   private final WeakHashMap<T, SoftReference<T>> pool =
     new WeakHashMap<>();
 
@@ -46,7 +46,7 @@ public class ObjectPool<T> extends Logged implements Serializable {
    * @return value in pool
    */
   public T get(T val) {
-    if (debug &&
+    if (debug() &&
         ((refs % 500) == 0)) {
       debug("pool refs " + refs + ": hits " + hits);
     }

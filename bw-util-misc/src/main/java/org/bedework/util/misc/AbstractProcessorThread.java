@@ -18,18 +18,15 @@
 */
 package org.bedework.util.misc;
 
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.Logged;
 
 /** Something to help the handling and graceful shutdown of processes.
  *
  * @author douglm
  *
  */
-public abstract class AbstractProcessorThread extends Thread {
-  private transient Logger log;
-
-  protected boolean debug;
-
+public abstract class AbstractProcessorThread extends Thread
+    implements Logged {
   protected boolean running;
 
   private boolean showedTrace;
@@ -40,8 +37,6 @@ public abstract class AbstractProcessorThread extends Thread {
    */
   public AbstractProcessorThread(final String name) {
     super(name);
-
-    debug = getLogger().isDebugEnabled();
   }
 
   /** Called to initialise at start of run. We've already output the
@@ -166,36 +161,6 @@ public abstract class AbstractProcessorThread extends Thread {
     proc.info("************************************************************");
 
     return ok;
-  }
-
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  protected void debug(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  /* Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 }
 

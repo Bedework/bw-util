@@ -18,10 +18,10 @@
 */
 package org.bedework.util.struts;
 
+import org.bedework.util.logging.SLogged;
 import org.bedework.util.servlet.HttpServletUtils;
 import org.bedework.util.servlet.MessageEmit;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
@@ -35,10 +35,14 @@ import javax.servlet.http.HttpSession;
  *
  * @author Mike Douglass
  */
-public class StrutsUtil extends HttpServletUtils {
+public class StrutsUtil extends HttpServletUtils implements SLogged {
+  static {
+    SLogged.setLoggerClass(StrutsUtil.class);
+  }
+
   private StrutsUtil() throws Exception {} // No instantiation
 
-  /** ================ Properties methods ============== */
+  /* ================ Properties methods ============== */
 
   /** Return a property value or the default
    *
@@ -70,7 +74,7 @@ public class StrutsUtil extends HttpServletUtils {
                                       final String pname) throws Throwable {
     String p = getProperty(msg, pname, null);
     if (p == null) {
-      getLogger().error("No definition for property " + pname);
+      SLogged.error("No definition for property " + pname);
 
       throw new Exception(": No definition for property " + pname);
     }
@@ -125,7 +129,7 @@ public class StrutsUtil extends HttpServletUtils {
    * the session.
    *
    * @param id       Identifying string for messages
-   * @param caller   Used for log4j identification
+   * @param caller   Used for log identification
    * @param request  Needed to locate session
    * @param messages MessageResources object for creating new object
    * @param errorObjAttrName  name of session attribute
@@ -150,7 +154,7 @@ public class StrutsUtil extends HttpServletUtils {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      getLogger().error("No session!!!!!!!");
+      SLogged.error("No session!!!!!!!");
       return null;
     }
 
@@ -198,7 +202,7 @@ public class StrutsUtil extends HttpServletUtils {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      getLogger().error("No session!!!!!!!");
+      SLogged.error("No session!!!!!!!");
       return null;
     }
 
@@ -219,7 +223,7 @@ public class StrutsUtil extends HttpServletUtils {
    * the session.
    *
    * @param id                Identifying string for messages
-   * @param caller            Used for log4j identification
+   * @param caller            Used for log identification
    * @param request           Needed to locate session
    * @param messages           MessageResources object for creating new object
    * @param messageObjAttrName  name of session attribute
@@ -242,7 +246,7 @@ public class StrutsUtil extends HttpServletUtils {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      getLogger().error("No session!!!!!!!");
+      SLogged.error("No session!!!!!!!");
       return null;
     }
 
@@ -286,7 +290,7 @@ public class StrutsUtil extends HttpServletUtils {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      getLogger().error("No session!!!!!!!");
+      SLogged.error("No session!!!!!!!");
       return null;
     }
 
@@ -296,13 +300,6 @@ public class StrutsUtil extends HttpServletUtils {
     }
 
     return null;
-  }
-
-  /**
-   * @return Logger
-   */
-  public static Logger getLogger() {
-    return Logger.getLogger(StrutsUtil.class);
   }
 }
 

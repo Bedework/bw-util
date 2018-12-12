@@ -18,6 +18,8 @@
 */
 package org.bedework.util.servlet;
 
+import org.bedework.util.logging.Logged;
+
 import java.io.Serializable;
 
 /** This object allows context free error message generation.
@@ -34,7 +36,7 @@ import java.io.Serializable;
  * @author Mike Douglass douglm@rpi.edu
  * @version 1.0
  */
-public interface MessageEmit extends Serializable {
+public interface MessageEmit extends Serializable, Logged {
   /** We define a number of message emit methods.
    */
 

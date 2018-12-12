@@ -71,7 +71,7 @@ public class Ldif extends Directory {
   public boolean search(final String dn,
                         final String filter,
                         final int scope) throws NamingException {
-    if (debug) {
+    if (debug()) {
       debug("Ldif: About to open " + dn);
     }
 

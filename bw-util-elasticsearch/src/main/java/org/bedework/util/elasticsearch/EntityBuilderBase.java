@@ -19,7 +19,7 @@
 package org.bedework.util.elasticsearch;
 
 import org.bedework.util.indexing.IndexException;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 
 import org.elasticsearch.index.get.GetField;
@@ -38,7 +38,7 @@ import java.util.TreeSet;
  * @author Mike Douglass douglm - rpi.edu
  *
  */
-public class EntityBuilderBase extends Logged {
+public class EntityBuilderBase implements Logged {
   private final Deque<Map<String, Object>> fieldStack = new ArrayDeque<>();
 
   private final long version;

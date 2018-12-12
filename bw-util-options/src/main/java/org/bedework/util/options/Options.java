@@ -18,10 +18,10 @@
 */
 package org.bedework.util.options;
 
+import org.bedework.util.logging.Logged;
 import org.bedework.util.xml.XmlEmit;
 import org.bedework.util.xml.XmlUtil;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -47,7 +47,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * @author Mike Douglass    douglm @ rpi.edu
  *
  */
-public class Options implements OptionsI {
+public class Options implements OptionsI, Logged {
   /** Global properties have this prefix.
    */
   private String globalPrefix;
@@ -131,7 +131,7 @@ public class Options implements OptionsI {
     } catch (OptionsException cee) {
       throw cee;
     } catch (Throwable t) {
-      Logger.getLogger(Options.class).error("getEnv error", t);
+      error("getEnv error", t);
       throw new OptionsException(t.getMessage());
     }
   }
@@ -250,7 +250,7 @@ public class Options implements OptionsI {
       if (meth != null) {
         Class[] parClasses = meth.getParameterTypes();
         if (parClasses.length != 1) {
-          error("Invalid toOptionsXml method");
+          //error("Invalid toOptionsXml method");
           throw new OptionsException("org.bedework.calenv.invalid.toxml");
         }
 
@@ -286,7 +286,7 @@ public class Options implements OptionsI {
 
       Class[] parClasses = meth.getParameterTypes();
       if (parClasses.length != 0) {
-        error("Invalid getter method " + methodName);
+        //error("Invalid getter method " + methodName);
         throw new OptionsException("org.bedework.calenv.invalid.getter");
       }
 
@@ -878,14 +878,6 @@ public class Options implements OptionsI {
     }
   }
 
-  private static void error(final String msg) {
-    Logger.getLogger(Options.class).error(msg);
-  }
-
-  private static void info(final String msg) {
-    Logger.getLogger(Options.class).info(msg);
-  }
-
   /* We've been dealing with property names - convert the dotted notation to a path
    */
   private static String[] makePathElements(final String val) {
@@ -912,9 +904,9 @@ public class Options implements OptionsI {
     }
 
     if (meth == null) {
-      Logger.getLogger(Options.class).error("No setter method for property " +
-                                               name + " for class " +
-                                               val.getClass().getName());
+      //Logger.getLogger(Options.class).error("No setter method for property " +
+      //                                         name + " for class " +
+      //                                         val.getClass().getName());
       return null;
     }
 
@@ -940,9 +932,9 @@ public class Options implements OptionsI {
     }
 
     if (meth == null) {
-      Logger.getLogger(Options.class).error("No getter method for property " +
-                                               name + " for class " +
-                                               val.getClass().getName());
+      //Logger.getLogger(Options.class).error("No getter method for property " +
+      //                                         name + " for class " +
+      //                                         val.getClass().getName());
       throw new OptionsException("No getters for " +
                                 val.getClass().getName() + "." + name);
     }
@@ -967,9 +959,9 @@ public class Options implements OptionsI {
     }
 
     if (meth == null) {
-      Logger.getLogger(Options.class).error("No method " + methodName +
-                                               " for class " +
-                                               val.getClass().getName());
+      //Logger.getLogger(Options.class).error("No method " + methodName +
+      //                                         " for class " +
+      //                                         val.getClass().getName());
       throw new OptionsException("org.bedework.calenv.no.method");
     }
 

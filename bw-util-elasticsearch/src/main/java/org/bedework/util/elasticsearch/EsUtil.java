@@ -6,7 +6,7 @@ package org.bedework.util.elasticsearch;
 import org.bedework.util.indexing.IndexException;
 import org.bedework.util.jmx.ConfBase;
 import org.bedework.util.jmx.MBeanUtil;
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.timezones.DateTimeUtil;
 
@@ -59,7 +59,7 @@ import javax.management.ObjectName;
 /**
  * User: mike Date: 3/13/16 Time: 23:28
  */
-public class EsUtil extends Logged {
+public class EsUtil implements Logged {
   private final String host;
   private int port = 9300;
 
@@ -280,7 +280,7 @@ public class EsUtil extends Logged {
       req.setVersion(di.getVersion()).setVersionType(VersionType.EXTERNAL);
     }
 
-    if (debug) {
+    if (debug()) {
       debug("Indexing to index " + targetIndex +
                     " with DocInfo " + di);
     }

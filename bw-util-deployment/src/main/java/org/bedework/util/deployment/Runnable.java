@@ -170,7 +170,7 @@ public class Runnable {
     return true;
   }
 
-  /** Used by the runnable version with no log4j
+  /** Used by the runnable version with no log
    *
    */
   private static class Logger implements Log {

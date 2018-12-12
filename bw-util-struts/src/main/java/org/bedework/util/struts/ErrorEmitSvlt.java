@@ -20,7 +20,6 @@ package org.bedework.util.struts;
 
 import org.bedework.util.servlet.MessageEmit;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
@@ -34,10 +33,6 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class ErrorEmitSvlt implements MessageEmit {
-  private transient Logger log;
-
-  protected boolean debug;
-
   transient protected String id;
   transient protected Object caller;
   transient protected MessageResources messages;
@@ -161,7 +156,7 @@ public class ErrorEmitSvlt implements MessageEmit {
    *  application
    *
    * @param id       An identifying name
-   * @param caller   Used for log4j identification
+   * @param caller   Used for log identification
    * @param messages Resources
    * @param errors   Error message will be appended on failure.
    * @param exceptionPname Property name for exceptions
@@ -179,8 +174,6 @@ public class ErrorEmitSvlt implements MessageEmit {
     this.errors = errors;
     this.exceptionPname = exceptionPname;
 
-    debug = getLogger().isDebugEnabled();
-
     if (clear) {
       msgList.clear();
     }
@@ -195,7 +188,7 @@ public class ErrorEmitSvlt implements MessageEmit {
 
   @Override
   public void emit(final String pname) {
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, null, null);
     }
 
@@ -208,13 +201,13 @@ public class ErrorEmitSvlt implements MessageEmit {
     try {
       errors.add(id, new ActionMessage(pname));
     } catch (Throwable t) {
-      logError(className() + ": exception adding Action message", t);
+      error(className() + ": exception adding Action message", t);
     }
   }
 
   @Override
   public void emit(final String pname, final int num) {
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, "int", String.valueOf(num));
     }
 
@@ -228,7 +221,7 @@ public class ErrorEmitSvlt implements MessageEmit {
 
   @Override
   public void emit(final Throwable t) {
-    if (debug) {
+    if (debug()) {
       debugMsg(exceptionPname, "Throwable", String.valueOf(t.getMessage()));
     }
 
@@ -237,14 +230,14 @@ public class ErrorEmitSvlt implements MessageEmit {
       msg = "<No-message>";
     }
 
-    Logger.getLogger(caller.getClass()).error(msg, t);
+    error(msg, t);
 
     emit(exceptionPname, t.getMessage());
   }
 
   @Override
   public void emit(final String pname, final Object o){
-    if (debug) {
+    if (debug()) {
       if (o == null) {
         debugMsg(pname, "null object", "null");
       } else {
@@ -265,13 +258,13 @@ public class ErrorEmitSvlt implements MessageEmit {
     try {
       errors.add(id, new ActionMessage(pname, o));
     } catch (Throwable t) {
-      logError(className() + ": exception adding Action error", t);
+      error(className() + ": exception adding Action error", t);
     }
   }
 
   @Override
   public void emit(final String pname, final Object o1, final Object o2){
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
                String.valueOf(o2));
@@ -286,13 +279,13 @@ public class ErrorEmitSvlt implements MessageEmit {
     try {
       errors.add(id, new ActionMessage(pname, o1, o2));
     } catch (Throwable t) {
-      logError(className() + ": exception adding Action error", t);
+      error(className() + ": exception adding Action error", t);
     }
   }
 
   @Override
   public void emit(final String pname, final Object o1, final Object o2, final Object o3){
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
                String.valueOf(o2) + "; " +
@@ -308,7 +301,7 @@ public class ErrorEmitSvlt implements MessageEmit {
     try {
       errors.add(id, new ActionMessage(pname, o1, o2, o3));
     } catch (Throwable t) {
-      logError(className() + ":exception adding Action error" + pname, t);
+      error(className() + ":exception adding Action error" + pname, t);
     }
   }
 
@@ -331,26 +324,6 @@ public class ErrorEmitSvlt implements MessageEmit {
     return errors;
   }
 
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(caller.getClass());
-    }
-
-    return log;
-  }
-
-  /** Debugging
-   *
-   * @param msg debug msg
-   */
-  public void debugOut(final String msg) {
-    if (!debug) {
-      return;
-    }
-
-    getLogger().debug(msg);
-  }
-
   protected boolean haveOutputObject() {
     return errors != null;
   }
@@ -359,14 +332,12 @@ public class ErrorEmitSvlt implements MessageEmit {
     return "ErrorEmitSvlt";
   }
 
-  protected void debugMsg(final String pname, final String ptype, final String pval) {
-    debugOut("Emitted: property=" + pname +
-             " ptype=" + ptype +
-             " val(s)=" + pval);
-  }
-
-  protected void logError(final String msg, final Throwable t) {
-    getLogger().error(msg, t);
+  protected void debugMsg(final String pname, 
+                          final String ptype, 
+                          final String pval) {
+    debug("Emitted: property=" + pname +
+                  " ptype=" + ptype +
+                  " val(s)=" + pval);
   }
 }
 

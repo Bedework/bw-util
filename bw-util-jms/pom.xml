@@ -12,13 +12,13 @@
   <dependencies>
     <dependency>
       <groupId>org.bedework</groupId>
-      <artifactId>bw-util-misc</artifactId>
-      <version>${project.version}</version>
+      <artifactId>bw-util-logging</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-util-misc</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

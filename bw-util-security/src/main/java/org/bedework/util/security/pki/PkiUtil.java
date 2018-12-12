@@ -18,20 +18,16 @@
 */
 package org.bedework.util.security.pki;
 
+import org.bedework.util.logging.Logged;
+
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 
 /**
  * This program helps create keys and encrypt/decrypt data
  *
  * @author Mike Douglass
  */
-public class PkiUtil {
-  private boolean debug = false;
-  private boolean verbose = false;
-
-  protected transient Logger log;
-
+public class PkiUtil implements Logged {
   private boolean genKeys = false; // generate keys
   private boolean encrypt = false; // Encrypt a file
   private boolean decrypt = false; // Decrypt a file
@@ -80,10 +76,6 @@ public class PkiUtil {
     return outFileName;
   }
 
-  boolean getDebug() {
-    return debug;
-  }
-
   boolean getGenKeys() {
     return genKeys;
   }
@@ -110,18 +102,10 @@ public class PkiUtil {
       } else if (args[i].equals("-decrypt")) {
         encrypt = false;
         decrypt = true;
-      } else if (args[i].equals("-verbose")) {
-        verbose = true;
-      } else if (args[i].equals("-nverbose")) {
-        verbose = false;
       } else if (args[i].equals("-append")) {
         append = true;
       } else if (args[i].equals("-nappend")) {
         append= false;
-      } else if (args[i].equals("-debug")) {
-        debug = true;
-      } else if (args[i].equals("-ndebug")) {
-        debug = false;
       } else if (args[i].equals("-dumppublic")) {
         dumppublic = true;
       } else if (argpar("-in", args, i)) {
@@ -184,8 +168,8 @@ public class PkiUtil {
 
     int numKeys = pki.countKeys(privKeyFileName);
 
-    if (debug) {
-      debugMsg("Number of keys: " + numKeys);
+    if (debug()) {
+      debug("Number of keys: " + numKeys);
     }
 
     System.out.println("test with---->" + testText);
@@ -204,7 +188,7 @@ public class PkiUtil {
   boolean doit(final String[] args) throws Throwable {
     processArgs(args);
 
-    pki = new PKITools(verbose);
+    pki = new PKITools();
 
     if (getGenKeys()) {
       return doGenKeys();
@@ -308,33 +292,6 @@ public class PkiUtil {
     } catch (Throwable t) {
       t.printStackTrace();
     }
-  }
-
-  /**
-   * @return Logger
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  protected void debugMsg(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
   }
 }
 

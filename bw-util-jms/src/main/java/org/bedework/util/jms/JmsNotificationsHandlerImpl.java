@@ -20,8 +20,7 @@ package org.bedework.util.jms;
 
 import org.bedework.util.jms.events.SysEvent;
 import org.bedework.util.jms.listeners.SysEventListener;
-
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.Logged;
 
 import java.util.Properties;
 
@@ -35,9 +34,8 @@ import javax.jms.ObjectMessage;
  *
  * @author Mike Douglass douglm - rpi.edu
  */
-public class JmsNotificationsHandlerImpl extends NotificationsHandler  {
-  private transient Logger log;
-
+public class JmsNotificationsHandlerImpl extends NotificationsHandler
+        implements Logged {
   /* Default sysevents queue - everything goes here */
 
   private final JmsConnectionHandler conn;
@@ -49,18 +47,14 @@ public class JmsNotificationsHandlerImpl extends NotificationsHandler  {
    * events and send them on to another queue.
    */
 
-  private final boolean debug;
-
   /**
    *
    * @param queueName our queue
    * @param pr jms properties
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public JmsNotificationsHandlerImpl(final String queueName,
                                      final Properties pr) throws NotificationException {
-    debug = getLogger().isDebugEnabled();
-
     conn = new JmsConnectionHandler(pr);
 
     conn.open(queueName);
@@ -75,8 +69,8 @@ public class JmsNotificationsHandlerImpl extends NotificationsHandler  {
 
   @Override
   public void post(final SysEvent ev) throws NotificationException {
-    if (debug) {
-      trace(ev.toString());
+    if (debug()) {
+      debug(ev.toString());
     }
 
     try {
@@ -112,30 +106,5 @@ public class JmsNotificationsHandlerImpl extends NotificationsHandler  {
   public void removeListener(final SysEventListener l)
           throws NotificationException {
 
-  }
-
-  /*
-   * ====================================================================
-   * Protected methods
-   * ====================================================================
-   */
-
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  /*
-   * Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 }

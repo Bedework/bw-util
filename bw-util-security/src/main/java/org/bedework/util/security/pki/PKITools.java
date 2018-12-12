@@ -18,8 +18,9 @@
 */
 package org.bedework.util.security.pki;
 
+import org.bedework.util.logging.Logged;
+
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -58,12 +59,8 @@ import javax.crypto.Cipher;
  *  @author Mike Douglass (douglm rpi.edu)
  *  @version 1.02
  */
-public class PKITools {
-  private boolean debug;
-  private boolean verbose;
+public class PKITools implements Logged {
   private Base64 b64 = new Base64();
-
-  protected transient Logger log;
 
   private static class Schema {
     Provider p;
@@ -109,20 +106,9 @@ public class PKITools {
 
   /**
    * Constructor
+   *
    */
   public PKITools() {
-    this(true);
-  }
-
-  /**
-   * Constructor
-   *
-   * @param verbose
-   */
-  public PKITools(final boolean verbose) {
-    this.verbose = verbose;
-    debug = getLogger().isDebugEnabled();
-
     curSchema = schemas[0];
     if (curSchema.p != null) {
       Security.addProvider(curSchema.p);
@@ -180,7 +166,7 @@ public class PKITools {
       // write the encoded key to a file
       writeFile(pubKeyFile, b64.encode(keys.publicKey), append);
 
-      if (debug & verbose) {
+      if (trace()) {
         trace("Saving Private Key...");
       }
 
@@ -214,20 +200,20 @@ public class PKITools {
 
       rsaKeyGen.initialize(1024, secureRandom);
 
-      if (verbose) {
+      if (trace()) {
         trace("Generating keys...");
       }
 
       KeyPair rsaKeyPair = rsaKeyGen.generateKeyPair();
 
-      if (verbose) {
+      if (trace()) {
         trace("Saving Public Key...");
       }
 
       keys.privateKey = rsaKeyPair.getPrivate().getEncoded();
       keys.publicKey = rsaKeyPair.getPublic().getEncoded();
 
-      if (verbose) {
+      if (trace()) {
         trace("Done...");
       }
 
@@ -248,7 +234,7 @@ public class PKITools {
                                    final String item,
                                    final int keyNum) throws PKIException {
     try {
-      if (verbose) {
+      if (trace()) {
         trace("Reading Public Key from file...");
       }
 
@@ -485,31 +471,4 @@ public class PKITools {
 
     return bytes;
   }*/
-
-  /**
-   * @return Logger
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  protected void debugMsg(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  protected void error(final String msg) {
-    getLogger().error(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
-  }
 }

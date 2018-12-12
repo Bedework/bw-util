@@ -18,7 +18,7 @@
 */
 package org.bedework.util.timezones;
 
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 import org.bedework.util.timezones.model.TimezoneListType;
 
 import net.fortuna.ical4j.model.TimeZone;
@@ -33,7 +33,7 @@ import java.util.Collection;
  * @author Mike Douglass
  *
  */
-public abstract class Timezones extends Logged implements Serializable {
+public abstract class Timezones implements Logged, Serializable {
   private final static ThreadLocal<String> threadTzid =
     new ThreadLocal<>();
 

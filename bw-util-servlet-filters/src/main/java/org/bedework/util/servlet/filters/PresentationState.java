@@ -18,7 +18,7 @@
 */
 package org.bedework.util.servlet.filters;
 
-import org.bedework.util.misc.Logged;
+import org.bedework.util.logging.Logged;
 
 import java.io.Serializable;
 
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Mike Douglass douglm   rpi.edu
  * @version 1.2 April 15th 2005
  */
-public class PresentationState extends Logged implements Serializable {
+public class PresentationState implements Logged, Serializable {
   /** Applications will save this in the session and request with this name
    */
   public static final String presentationAttrName =

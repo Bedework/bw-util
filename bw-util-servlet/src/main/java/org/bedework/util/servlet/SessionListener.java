@@ -18,7 +18,7 @@
 */
 package org.bedework.util.servlet;
 
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.Logged;
 
 import java.util.HashMap;
 
@@ -30,14 +30,14 @@ import javax.servlet.http.HttpSessionListener;
 /** A class to listen for session start and end. Note this may not work too
  * well in a clustered environment because the counts should be shared.
  */
-public class SessionListener implements HttpSessionListener {
+public class SessionListener implements HttpSessionListener, Logged {
   private static class Counts {
     int activeSessions = 0;
     long totalSessions = 0;
   }
 
   private static volatile HashMap<String, Counts> countsMap =
-    new HashMap<String, Counts>();
+    new HashMap<>();
   private static boolean logActive = true;
 
   /** Name of the init parameter holding our name */
@@ -47,9 +47,6 @@ public class SessionListener implements HttpSessionListener {
    */
   public SessionListener() {}
 
-  /* (non-Javadoc)
-   * @see javax.servlet.http.HttpSessionListener#sessionCreated(javax.servlet.http.HttpSessionEvent)
-   */
   public void sessionCreated(final HttpSessionEvent se) {
     HttpSession session = se.getSession();
     ServletContext sc = session.getServletContext();
@@ -117,7 +114,6 @@ public class SessionListener implements HttpSessionListener {
    */
   protected void logSessionCounts(final HttpSession sess,
                                   final boolean start) {
-    Logger log = Logger.getLogger(this.getClass());
     StringBuffer sb;
     String appname = getAppName(sess);
     Counts ct = getCounts(appname);
@@ -141,7 +137,7 @@ public class SessionListener implements HttpSessionListener {
     sb.append(Runtime.getRuntime().totalMemory()/(1024 * 1024));
     sb.append("M");
 
-    log.info(sb.toString());
+    info(sb.toString());
   }
 
   private Counts getCounts(final String name) {

@@ -18,8 +18,6 @@
 */
 package org.bedework.util.servlet.io;
 
-import org.apache.log4j.Logger;
-
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,20 +33,10 @@ public class CharArrayWrappedResponse extends WrappedResponse {
 
   /** Constructor
    *
-   * @param response
+   * @param response an http response
    */
   public CharArrayWrappedResponse(final HttpServletResponse response) {
     super(response);
-  }
-
-  /** Constructor
-   *
-   * @param response
-   * @param log
-   */
-  public CharArrayWrappedResponse(final HttpServletResponse response,
-                                  final Logger log) {
-    super(response, log);
   }
 
   /**
@@ -58,40 +46,27 @@ public class CharArrayWrappedResponse extends WrappedResponse {
     return  usedOutputStream;
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.ServletResponse#getWriter()
-   */
   @Override
   public PrintWriter getWriter() {
-    if (debug) {
-      getLogger().debug("getWriter called");
+    if (debug()) {
+      debug("getWriter called");
     }
 
     return new PrintWriter(caw);
   }
 
-  /* (non-Javadoc)
-   * @see javax.servlet.ServletResponse#getOutputStream()
-   */
   @Override
   public ServletOutputStream getOutputStream() throws IOException {
-    if (debug) {
-      getLogger().debug("getOutputStream called");
+    if (debug()) {
+      debug("getOutputStream called");
     }
 
     usedOutputStream = true;
     return getResponse().getOutputStream();
   }
 
-  /* (non-Javadoc)
-   * @see java.lang.Object#toString()
-   */
   @Override
   public String toString() {
-    if (caw == null) {
-      return null;
-    }
-
     return caw.toString();
   }
 }

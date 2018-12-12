@@ -18,6 +18,8 @@
 */
 package org.bedework.util.struts;
 
+import org.bedework.util.logging.Logged;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -28,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Mike Douglass  douglm@rpi.edu
  */
-public interface HttpAppLogger extends AppLogger {
+public interface HttpAppLogger extends Logged {
   /**
    *
    */

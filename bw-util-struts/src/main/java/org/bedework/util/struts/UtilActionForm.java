@@ -21,7 +21,6 @@ package org.bedework.util.struts;
 import org.bedework.util.misc.Util;
 import org.bedework.util.servlet.MessageEmit;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.util.MessageResources;
 
@@ -58,8 +57,6 @@ public class UtilActionForm extends ActionForm {
   /** Is nocache on?
    */
   protected boolean nocache;
-
-  protected transient Logger log;
 
   /** An error object reinitialised at each entry to the abstract action
    */
@@ -275,24 +272,6 @@ public class UtilActionForm extends ActionForm {
    */
   public void setMres(MessageResources val) {
     mres = val;
-  }
-
-  /**
-   * @param val
-   */
-  public void setLog(Logger val) {
-    log = val;
-  }
-
-  /**
-   * @return Logger
-   */
-  public Logger getLog() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
   }
 
   /**
@@ -696,13 +675,6 @@ public class UtilActionForm extends ActionForm {
   public String getCurShortDateTime() {
     return new TimeDateFormatter(TimeDateFormatter.dateTimeShort,
                                  getCurrentLocale()).format(new Date());
-  }
-
-  /**
-   * @param val
-   */
-  public void debugMsg(String val) {
-    getLog().debug(val);
   }
 }
 

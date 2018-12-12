@@ -41,7 +41,7 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
    *  application
    *
    * @param id       An identifying name
-   * @param caller   Used for log4j identification
+   * @param caller   Used for log identification
    * @param messages Resources
    * @param msgs     Error message will be appended on failure.
    * @param exceptionPname Property name for exceptions
@@ -59,7 +59,7 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
 
   @Override
   public void emit(final String pname) {
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, null, null);
     }
 
@@ -72,13 +72,13 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     try {
       msgs.add(id, new ActionMessage(pname));
     } catch (Throwable t) {
-      logError(className() + ": exception adding Action message", t);
+      error(className() + ": exception adding Action message", t);
     }
   }
 
   @Override
   public void emit(final String pname, final Object o){
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, "object", String.valueOf(o));
     }
 
@@ -91,13 +91,13 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     try {
       msgs.add(id, new ActionMessage(pname, o));
     } catch (Throwable t) {
-      logError(className() + ": exception adding Action message", t);
+      error(className() + ": exception adding Action message", t);
     }
   }
 
   @Override
   public void emit(final String pname, final Object o1, final Object o2){
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
                String.valueOf(o2));
@@ -112,13 +112,13 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     try {
       msgs.add(id, new ActionMessage(pname, o1, o2));
     } catch (Throwable t) {
-      logError(className() + ": exception adding Action message", t);
+      error(className() + ": exception adding Action message", t);
     }
   }
 
   @Override
   public void emit(final String pname, final Object o1, final Object o2, final Object o3){
-    if (debug) {
+    if (debug()) {
       debugMsg(pname, "2objects",
                String.valueOf(o1) + "; " +
                String.valueOf(o2) + "; " +
@@ -134,7 +134,7 @@ public class MessageEmitSvlt extends ErrorEmitSvlt {
     try {
       msgs.add(id, new ActionMessage(pname, o1, o2, o3));
     } catch (Throwable t) {
-      logError(className() + ": exception adding Action message", t);
+      error(className() + ": exception adding Action message", t);
     }
   }
 

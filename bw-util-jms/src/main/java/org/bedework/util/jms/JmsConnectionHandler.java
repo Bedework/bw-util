@@ -18,7 +18,7 @@
 */
 package org.bedework.util.jms;
 
-import org.apache.log4j.Logger;
+import org.bedework.util.logging.Logged;
 
 import java.util.Properties;
 
@@ -38,18 +38,14 @@ import javax.naming.NamingException;
  *
  * @author Mike Douglass
  */
-public class JmsConnectionHandler {
+public class JmsConnectionHandler implements Logged {
   /** */
   public static int ackMode = Session.AUTO_ACKNOWLEDGE;
 
   /** */
   public static final boolean useTransactions = false;
 
-  private final boolean debug;
-
   private final Properties pr;
-
-  private transient Logger log;
 
   private Connection connection;
 
@@ -62,7 +58,6 @@ public class JmsConnectionHandler {
   /**
    */
   public JmsConnectionHandler(final Properties pr) {
-    debug = getLogger().isDebugEnabled();
     this.pr = pr;
   }
 
@@ -99,7 +94,7 @@ public class JmsConnectionHandler {
         connection = connFactory.createConnection();
 
       } catch (final Throwable t) {
-        if (debug) {
+        if (debug()) {
           error(t);
         }
         throw new NotificationException(t);
@@ -124,7 +119,7 @@ public class JmsConnectionHandler {
           ourQueue =  (Queue)ctx.lookup(qn);
         }
       } catch (final Throwable t) {
-        if (debug) {
+        if (debug()) {
           error(t);
         }
         throw new NotificationException(t);
@@ -132,7 +127,7 @@ public class JmsConnectionHandler {
     } catch (final NotificationException ne) {
       throw ne;
     } catch (final Throwable t) {
-      if (debug) {
+      if (debug()) {
         error(t);
       }
       throw new NotificationException(t);
@@ -207,38 +202,4 @@ public class JmsConnectionHandler {
       throw new NotificationException(je);
     }
   }
-
-  /* ====================================================================
-   *                   Protected methods
-   * ==================================================================== */
-
-  protected void info(final String msg) {
-    getLogger().info(msg);
-  }
-
-  protected void trace(final String msg) {
-    getLogger().debug(msg);
-  }
-
-  protected void warn(final String msg) {
-    getLogger().warn(msg);
-  }
-
-  protected void error(final Throwable t) {
-    getLogger().error(this, t);
-  }
-
-  /* Get a logger for messages
-   */
-  protected Logger getLogger() {
-    if (log == null) {
-      log = Logger.getLogger(this.getClass());
-    }
-
-    return log;
-  }
-
-  /* ====================================================================
-   *                   Protected methods
-   * ==================================================================== */
 }

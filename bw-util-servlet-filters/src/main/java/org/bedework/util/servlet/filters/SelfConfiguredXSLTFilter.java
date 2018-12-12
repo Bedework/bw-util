@@ -94,9 +94,6 @@ public class SelfConfiguredXSLTFilter extends ConfiguredXSLTFilter {
 
     temp = config.getInitParameter("noxslt");
     pstate.setNoXSLTSticky("yes".equals(temp));
-
-    temp = config.getInitParameter("rpidebug");
-    debug = !("0".equals(temp));
   }
 
   public void updateConfigInfo(HttpServletRequest request,
@@ -108,7 +105,7 @@ public class SelfConfiguredXSLTFilter extends ConfiguredXSLTFilter {
       return;
     }
 
-    /** First set default browser type from user-agent */
+    /* First set default browser type from user-agent */
     pstate.setBrowserType(HttpServletUtils.getBrowserType(request));
 
     pstate.checkBrowserType(request);
