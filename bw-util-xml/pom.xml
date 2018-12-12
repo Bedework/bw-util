@@ -18,5 +18,10 @@
       <artifactId>bw-util-misc</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.bedework</groupId>
+      <artifactId>bw-util-logging</artifactId>
+    </dependency>
   </dependencies>
 </project>
