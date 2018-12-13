@@ -18,7 +18,7 @@
 */
 package org.bedework.util.struts;
 
-import org.bedework.util.logging.SLogged;
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.servlet.HttpServletUtils;
 import org.bedework.util.servlet.MessageEmit;
 
@@ -35,10 +35,9 @@ import javax.servlet.http.HttpSession;
  *
  * @author Mike Douglass
  */
-public class StrutsUtil extends HttpServletUtils implements SLogged {
-  static {
-    SLogged.setLoggerClass(StrutsUtil.class);
-  }
+public class StrutsUtil extends HttpServletUtils {
+  private static BwLogger logger =
+          new BwLogger().setLoggedClass(HttpServletUtils.class);
 
   private StrutsUtil() throws Exception {} // No instantiation
 
@@ -74,7 +73,7 @@ public class StrutsUtil extends HttpServletUtils implements SLogged {
                                       final String pname) throws Throwable {
     String p = getProperty(msg, pname, null);
     if (p == null) {
-      SLogged.error("No definition for property " + pname);
+      logger.error("No definition for property " + pname);
 
       throw new Exception(": No definition for property " + pname);
     }
@@ -154,7 +153,7 @@ public class StrutsUtil extends HttpServletUtils implements SLogged {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      SLogged.error("No session!!!!!!!");
+      logger.error("No session!!!!!!!");
       return null;
     }
 
@@ -202,7 +201,7 @@ public class StrutsUtil extends HttpServletUtils implements SLogged {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      SLogged.error("No session!!!!!!!");
+      logger.error("No session!!!!!!!");
       return null;
     }
 
@@ -246,7 +245,7 @@ public class StrutsUtil extends HttpServletUtils implements SLogged {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      SLogged.error("No session!!!!!!!");
+      logger.error("No session!!!!!!!");
       return null;
     }
 
@@ -290,7 +289,7 @@ public class StrutsUtil extends HttpServletUtils implements SLogged {
     HttpSession sess = request.getSession(false);
 
     if (sess == null) {
-      SLogged.error("No session!!!!!!!");
+      logger.error("No session!!!!!!!");
       return null;
     }
 

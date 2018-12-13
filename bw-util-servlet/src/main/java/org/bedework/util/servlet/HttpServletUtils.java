@@ -18,7 +18,7 @@
 */
 package org.bedework.util.servlet;
 
-import org.bedework.util.logging.SLogged;
+import org.bedework.util.logging.BwLogger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,10 +32,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author Mike Douglass
  *
  */
-public class HttpServletUtils implements SLogged {
-  static {
-    SLogged.setLoggerClass(HttpServletUtils.class);
-  }
+public class HttpServletUtils {
+  private static BwLogger logger =
+          new BwLogger().setLoggedClass(HttpServletUtils.class);
 
   /** Had to have this because it's subclassed.
    *
@@ -156,7 +155,7 @@ public class HttpServletUtils implements SLogged {
       // Presumably portlet - see what happens with uri
       return request.getRequestURI();
     } catch (Throwable t) {
-      SLogged.warn("Unable to get url from " + request);
+      logger.warn("Unable to get url from " + request);
       return "BogusURL.this.is.probably.a.portal";
     }
   }
@@ -250,7 +249,7 @@ public class HttpServletUtils implements SLogged {
     Enumeration en = req.getHeaderNames();
     while (en.hasMoreElements()) {
       String name = (String) en.nextElement();
-      SLogged.debug(name + ": " + req.getHeader(name));
+      logger.debug(name + ": " + req.getHeader(name));
     }
   }
 
