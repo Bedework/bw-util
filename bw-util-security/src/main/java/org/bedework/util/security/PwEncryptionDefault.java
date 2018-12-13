@@ -18,6 +18,7 @@
 */
 package org.bedework.util.security;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 import org.bedework.util.security.pki.PKITools;
 
@@ -103,5 +104,20 @@ public class PwEncryptionDefault implements PwEncryptionIntf, Logged {
   @Override
   public PrivateKey getPrivateKey() throws Throwable {
     return pki.getPrivateKey(privKeys);
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

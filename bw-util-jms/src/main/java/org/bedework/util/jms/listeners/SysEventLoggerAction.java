@@ -20,6 +20,7 @@ package org.bedework.util.jms.listeners;
 
 import org.bedework.util.jms.NotificationException;
 import org.bedework.util.jms.events.SysEvent;
+import org.bedework.util.logging.BwLogger;
 
 /** This is the implementation of a notifications action class which logs
  * system events.
@@ -35,5 +36,20 @@ public class SysEventLoggerAction extends SysEventActionClass {
   @Override
   public void action(final SysEvent ev) throws NotificationException {
     trace(ev.toString());
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

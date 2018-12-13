@@ -21,6 +21,7 @@ package org.bedework.util.directory.ldap;
 import org.bedework.util.directory.common.BasicDirRecord;
 import org.bedework.util.directory.common.DirRecord;
 import org.bedework.util.directory.common.Directory;
+import org.bedework.util.logging.BwLogger;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -310,5 +311,20 @@ public class LdapDirectory extends Directory {
     }
 
     return val;
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

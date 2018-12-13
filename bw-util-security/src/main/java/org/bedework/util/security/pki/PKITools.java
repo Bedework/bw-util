@@ -18,6 +18,7 @@
 */
 package org.bedework.util.security.pki;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 import org.apache.commons.codec.binary.Base64;
@@ -471,4 +472,19 @@ public class PKITools implements Logged {
 
     return bytes;
   }*/
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
+  }
 }

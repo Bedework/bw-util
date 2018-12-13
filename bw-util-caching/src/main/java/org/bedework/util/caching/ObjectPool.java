@@ -18,6 +18,7 @@
 */
 package org.bedework.util.caching;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 import java.io.Serializable;
@@ -65,5 +66,20 @@ public class ObjectPool<T> implements Serializable, Logged {
       pool.put(val, new SoftReference<T>(val));
       return val;
     }
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

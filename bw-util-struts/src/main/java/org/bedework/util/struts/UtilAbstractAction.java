@@ -18,6 +18,7 @@
 */
 package org.bedework.util.struts;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.servlet.HttpServletUtils;
@@ -1396,5 +1397,20 @@ public abstract class UtilAbstractAction extends Action
       }
     } catch (final Throwable ignored) {
     }
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

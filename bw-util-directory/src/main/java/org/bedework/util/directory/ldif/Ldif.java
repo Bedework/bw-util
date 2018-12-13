@@ -2,6 +2,7 @@ package org.bedework.util.directory.ldif;
 
 import org.bedework.util.directory.common.DirRecord;
 import org.bedework.util.directory.common.Directory;
+import org.bedework.util.logging.BwLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -241,4 +242,18 @@ public class Ldif extends Directory {
     }
   }
 
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
+  }
 }

@@ -19,6 +19,7 @@
 package org.bedework.util.timezones;
 
 import org.bedework.util.caching.FlushMap;
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.timezones.DateTimeUtil.BadDateException;
 import org.bedework.util.timezones.model.TimezoneListType;
 import org.bedework.util.timezones.model.TimezoneType;
@@ -500,5 +501,20 @@ public class TimezonesImpl extends Timezones {
       sb.append("0");
     }
     sb.append(val);
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

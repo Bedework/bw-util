@@ -18,6 +18,7 @@
 */
 package org.bedework.util.struts;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.servlet.MessageEmit;
 
 import org.apache.struts.action.ActionErrors;
@@ -338,6 +339,21 @@ public class ErrorEmitSvlt implements MessageEmit {
     debug("Emitted: property=" + pname +
                   " ptype=" + ptype +
                   " val(s)=" + pval);
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }
 

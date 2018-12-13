@@ -1,6 +1,7 @@
 package org.bedework.util.timezones;
 
 import org.bedework.util.http.HttpUtil;
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 import org.bedework.util.timezones.model.CapabilitiesType;
 import org.bedework.util.timezones.model.TimezoneListType;
@@ -348,5 +349,20 @@ public class TzServer implements Logged, AutoCloseable {
     client = HttpUtil.getClient(true);
 
     return client;
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

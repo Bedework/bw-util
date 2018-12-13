@@ -20,6 +20,7 @@ package org.bedework.util.http.service;
 
 import org.bedework.util.http.BasicHttpClient;
 import org.bedework.util.jmx.ConfBase;
+import org.bedework.util.logging.BwLogger;
 
 import org.apache.http.pool.PoolStats;
 
@@ -151,5 +152,20 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
   private void refresh() {
     BasicHttpClient.setMaxConnections(getConfig().getMaxConnections());
     BasicHttpClient.setDefaultMaxPerRoute(getConfig().getDefaultMaxPerRoute());
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

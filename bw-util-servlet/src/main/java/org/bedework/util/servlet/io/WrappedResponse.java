@@ -18,6 +18,7 @@
 */
 package org.bedework.util.servlet.io;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 import java.io.IOException;
@@ -100,6 +101,21 @@ public class WrappedResponse extends HttpServletResponseWrapper
    *
    */
   public void close() {
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }
 

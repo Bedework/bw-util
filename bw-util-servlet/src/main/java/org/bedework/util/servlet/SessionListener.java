@@ -18,6 +18,7 @@
 */
 package org.bedework.util.servlet;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 import java.util.HashMap;
@@ -183,6 +184,21 @@ public class SessionListener implements HttpSessionListener, Logged {
     } catch (Throwable t) {
       return "SESSION-ID-EXCEPTION";
     }
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }
 

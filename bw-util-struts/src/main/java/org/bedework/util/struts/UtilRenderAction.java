@@ -18,6 +18,7 @@
 */
 package org.bedework.util.struts;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.servlet.filters.PresentationState;
 
 import org.apache.struts.util.MessageResources;
@@ -54,6 +55,21 @@ public class UtilRenderAction extends UtilAbstractAction {
     }
 
     return contentName;
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }
 

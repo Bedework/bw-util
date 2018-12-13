@@ -18,6 +18,7 @@
 */
 package org.bedework.util.servlet.filters;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 import java.io.Serializable;
@@ -691,6 +692,21 @@ public class PresentationState implements Logged, Serializable {
     debug("ForceXSLTRefreshAlways: " + forceXSLTRefreshAlways);
 
     debug("----------------------------------------");
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }
 

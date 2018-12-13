@@ -19,6 +19,7 @@
 package org.bedework.util.elasticsearch;
 
 import org.bedework.util.jmx.ConfBase;
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.misc.Util;
 
 import java.util.List;
@@ -203,5 +204,20 @@ public class EsCtl extends ConfBase<IndexPropertiesImpl>
     esUtil = new EsUtil(getConfig());
 
     return esUtil;
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }

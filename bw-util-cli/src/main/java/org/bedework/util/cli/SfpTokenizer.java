@@ -18,6 +18,7 @@
 */
 package org.bedework.util.cli;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 import java.io.IOException;
@@ -256,5 +257,20 @@ public class SfpTokenizer extends StreamTokenizer implements Logged {
     while (true) {
       assertToken(StreamTokenizer.TT_EOL);
     }
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }
