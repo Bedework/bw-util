@@ -18,6 +18,7 @@
 */
 package org.bedework.util.misc;
 
+import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 /** Something to help the handling and graceful shutdown of processes.
@@ -161,6 +162,21 @@ public abstract class AbstractProcessorThread extends Thread
     proc.info("************************************************************");
 
     return ok;
+  }
+
+  /* ====================================================================
+   *                   Logged methods
+   * ==================================================================== */
+
+  private BwLogger logger = new BwLogger();
+
+  @Override
+  public BwLogger getLogger() {
+    if ((logger.getLoggedClass() == null) && (logger.getLoggedName() == null)) {
+      logger.setLoggedClass(getClass());
+    }
+
+    return logger;
   }
 }
 
