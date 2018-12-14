@@ -10,7 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="bw-util-misc" />
-    <orderEntry type="module" module-name="bw-util-logging" />
+    <orderEntry type="library" name="Maven: org.bedework:bw-util-logging:4.0.0" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.3" level="project" />
   </component>
 </module>
