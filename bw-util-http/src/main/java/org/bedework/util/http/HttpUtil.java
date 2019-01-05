@@ -63,6 +63,24 @@ public class HttpUtil implements Serializable {
     return bldr.build();
   }
 
+  public static CloseableHttpResponse doDelete(final CloseableHttpClient cl,
+                                               final URI uri,
+                                               final Headers hdrs,
+                                               final String acceptContentType)
+          throws IOException {
+    final Headers headers = ensureHeaders(hdrs);
+
+    if (acceptContentType != null) {
+      headers.add("Accept", acceptContentType);
+    }
+
+    final HttpDelete method = new HttpDelete(uri);
+
+    method.setHeaders(headers.asArray());
+
+    return cl.execute(method);
+  }
+
   public static CloseableHttpResponse doGet(final CloseableHttpClient cl,
                                             final URI uri,
                                             final Headers hdrs,
@@ -115,9 +133,10 @@ public class HttpUtil implements Serializable {
 
     httpPost.setHeaders(hdrs.asArray());
 
-    final StringEntity entity = new StringEntity(content);
-    httpPost.setEntity(entity);
-
+    if (content != null) {
+      final StringEntity entity = new StringEntity(content);
+      httpPost.setEntity(entity);
+    }
 
     return cl.execute(httpPost);
   }
@@ -148,8 +167,7 @@ public class HttpUtil implements Serializable {
    *
    * @param name of the method
    * @param uri target
-   * @return method object
-   * @throws HttpException
+   * @return method object or null for unknown
    */
   public static HttpRequestBase findMethod(final String name,
                                            final URI uri) {

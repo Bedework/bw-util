@@ -454,28 +454,6 @@ public class BasicHttpClient extends DefaultHttpClient
                          final List<Header> hdrs,
                          final String contentType, final int contentLen,
                          final byte[] content) throws HttpException {
-    return sendRequest(methodName, url, hdrs,
-                       contentType, contentLen, content, null);
-  }
-
-  /** Send a request to the server
-   *
-   * @param methodName
-   * @param url
-   * @param hdrs
-   * @param contentType
-   * @param contentLen
-   * @param content
-   * @param params
-   * @return int    status code
-   * @throws HttpException
-   */
-  public int sendRequest(final String methodName,
-                         final String url,
-                         final List<Header> hdrs,
-                         String contentType, final int contentLen,
-                         final byte[] content,
-                         final HttpParams params) throws HttpException {
     int sz = 0;
     if (content != null) {
       sz = content.length;
@@ -527,17 +505,13 @@ public class BasicHttpClient extends DefaultHttpClient
       }
 
       if (method instanceof HttpEntityEnclosingRequestBase) {
-        if (contentType == null) {
-          contentType = "text/xml";
-        }
-
         if (content != null) {
-          setContent(content, contentType);
+          if (contentType == null) {
+            setContent(content, "text/xml");
+          } else {
+            setContent(content, contentType);
+          }
         }
-      }
-
-      if (params != null) {
-        method.setParams(params);
       }
 
       response = execute(method);
