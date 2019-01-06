@@ -95,7 +95,6 @@
     <module>bw-util-struts</module>
     <module>bw-util-timezones</module>
     <module>bw-util-xml</module>
-    <module>bw-util-bw-deploy</module>
   </modules>
 
   <developers>
