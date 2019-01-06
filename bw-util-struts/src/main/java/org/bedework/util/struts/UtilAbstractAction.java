@@ -21,7 +21,7 @@ package org.bedework.util.struts;
 import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
-import org.bedework.util.servlet.HttpServletUtils;
+import org.bedework.util.servlet.HttpAppLogger;
 import org.bedework.util.servlet.filters.PresentationState;
 
 import org.apache.struts.action.Action;
@@ -470,148 +470,8 @@ public abstract class UtilAbstractAction extends Action
    *               Log request
    * ==================================================================== */
 
-  class LogEntryImpl extends LogEntry {
-    final HttpServletRequest request;
-    StringBuffer sb;
-    HttpAppLogger logger;
-
-    LogEntryImpl(final HttpServletRequest request,
-                 final StringBuffer sb,
-                 final HttpAppLogger logger){
-      this.request = request;
-      this.sb = sb;
-      this.logger = logger;
-
-      sb.append(":");
-      sb.append(getSessionId(request));
-      sb.append(":");
-      sb.append(getLogPrefix(request));
-      sb.append(":charset=");
-      sb.append(request.getCharacterEncoding());
-    }
-
-    /** Append to a log entry. Value should not contain colons or should be
-     * the last element.
-     *
-     * @param val    String element to append
-     */
-    @Override
-    public void append(final String val) {
-      sb.append(":");
-      sb.append(val);
-    }
-
-    /** Concatenate some info without a delimiter.
-     *
-     * @param val    String to concat
-     */
-    @Override
-    public void concat(final String val) {
-      sb.append(val);
-    }
-
-    @Override
-    public void header(final String name) {
-      String val = request.getHeader(name);
-      if (val == null) {
-        val = "NONE";
-      }
-
-      sb.append(" - ");
-      sb.append(name);
-      sb.append(":");
-      sb.append(val);
-    }
-
-    /** Emit the log entry
-     */
-    @Override
-    public void emit() {
-      info(sb.toString());
-    }
-  }
-
-  /** Return a LogEntry containing the start of a log entry.
-   *
-   * @param request    HttpServletRequest
-   * @param logname    String name for the log entry
-   * @return LogEntry    containing prefix
-   */
   @Override
-  public LogEntry getLogEntry(final HttpServletRequest request,
-                              final String logname) {
-    return new LogEntryImpl(request, new StringBuffer(logname), this);
-  }
-
-  /** Log some information.
-   *
-   * @param request    HttpServletRequest
-   * @param logname    String name for the log entry
-   * @param info       String information to log
-   */
-  @Override
-  public void logInfo(final HttpServletRequest request,
-                      final String logname,
-                      final String info) {
-    LogEntry le = getLogEntry(request, logname);
-
-    le.append(info);
-
-    le.emit();
-  }
-
-  @Override
-  public void logRequest(final HttpServletRequest request) throws Throwable {
-    LogEntry le = getLogEntry(request, "REQUEST");
-
-    le.append(request.getRemoteAddr());
-    le.append(HttpServletUtils.getUrl(request));
-
-    String q = request.getQueryString();
-
-    if (q != null) {
-      le.concat("?");
-      le.concat(q);
-    }
-
-    le.header("Referer");
-    le.header("X-Forwarded-For");
-
-    le.emit();
-  }
-
-  /** Log the session counters for applications that maintain them.
-   *
-   * @param request    HttpServletRequest
-   * @param start      true for session start
-   * @param sessionNum long number of session
-   * @param sessions   long number of concurrent sessions
-   */
-  @Override
-  public void logSessionCounts(final HttpServletRequest request,
-                               final boolean start,
-                               final long sessionNum,
-                               final long sessions) {
-    LogEntry le;
-
-    if (start) {
-      le = getLogEntry(request, "SESSION-START");
-    } else {
-      le = getLogEntry(request, "SESSION-END");
-    }
-
-    le.append(String.valueOf(sessionNum));
-    le.append(String.valueOf(sessions));
-
-    le.emit();
-  }
-
-  /** Get a prefix for the loggers.
-   *
-   * @param request    HttpServletRequest
-   * @return  String    log prefix
-   */
-  protected String getLogPrefix(final HttpServletRequest request) {
+  public String getLogPrefix(final HttpServletRequest request) {
     try {
       if (logPrefix == null) {
         logPrefix = StrutsUtil.getProperty(getMessages(),
@@ -623,26 +483,6 @@ public abstract class UtilAbstractAction extends Action
     } catch (Throwable t) {
       error(t);
       return "LOG-PREFIX-EXCEPTION";
-    }
-  }
-
-  /** Get the session id for the loggers.
-   *
-   * @param request
-   * @return  String    session id
-   */
-  private String getSessionId(final HttpServletRequest request) {
-    try {
-      HttpSession sess = request.getSession(false);
-
-      if (sess == null) {
-        return "NO-SESSIONID";
-      } else {
-        return sess.getId();
-      }
-    } catch (Throwable t) {
-      error(t);
-      return "SESSION-ID-EXCEPTION";
     }
   }
 

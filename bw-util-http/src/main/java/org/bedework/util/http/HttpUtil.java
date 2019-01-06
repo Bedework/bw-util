@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Provide a way to get named values.
@@ -293,5 +294,24 @@ public class HttpUtil implements Serializable {
    */
   public static String makeOKHttpStatus() {
     return makeHttpStatus(HttpServletResponse.SC_OK, "OK");
+  }
+
+  /** Returns the String url from the request.
+   *
+   *  @param   request     incoming request
+   *  @return  String      url from the request
+   */
+  public static String getUrl(final HttpServletRequest request) {
+    try {
+      final StringBuffer sb = request.getRequestURL();
+      if (sb != null) {
+        return sb.toString();
+      }
+
+      // Presumably portlet - see what happens with uri
+      return request.getRequestURI();
+    } catch (Throwable t) {
+      return "BogusURL.this.is.probably.a.portal";
+    }
   }
 }
