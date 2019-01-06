@@ -33,6 +33,12 @@
 
     <dependency>
       <groupId>org.bedework</groupId>
+      <artifactId>bw-util-http</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bedework</groupId>
       <artifactId>bw-util-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
