@@ -72,4 +72,13 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
   * BasicHttpClient wasn't sending headers
   * Move SerializableProperties into util class
   * Tidy up directory classes
+
+#### 4.0.20
+  * Move all logging api references to a single module - bw-util-logging
+
+#### 4.0.21
+  * Add pooled http client
+  * Add a defaulted class for configs
+  * Remove bw-util-deploy module. No longer needed
+  
   
