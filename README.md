@@ -81,4 +81,7 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
   * Add a defaulted class for configs
   * Remove bw-util-deploy module. No longer needed
   
+#### 4.0.22
+  * Fix HttpUtils post method. Setting Accept - not Content-type
+  * Move deployment classes into new bw-util-deploy module
   
