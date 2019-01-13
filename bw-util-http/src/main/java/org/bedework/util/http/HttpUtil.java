@@ -121,13 +121,13 @@ public class HttpUtil implements Serializable {
   public static CloseableHttpResponse doPost(final CloseableHttpClient cl,
                                              final URI uri,
                                              final Headers hdrs,
-                                             final String acceptContentType,
+                                             final String contentType,
                                              final String content)
           throws IOException {
     final Headers headers = ensureHeaders(hdrs);
 
-    if (acceptContentType != null) {
-      headers.add("Accept", acceptContentType);
+    if (contentType != null) {
+      headers.add("Content-type", contentType);
     }
 
     final HttpPost httpPost = new HttpPost(uri);
