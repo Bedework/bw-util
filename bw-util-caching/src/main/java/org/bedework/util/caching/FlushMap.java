@@ -47,6 +47,7 @@ public class FlushMap<K,V> extends HashMap<K,V> {
    *
    * @param size  initial size
    */
+  @SuppressWarnings("unused")
   public FlushMap(final int size) {
     super(size);
 
@@ -127,16 +128,7 @@ public class FlushMap<K,V> extends HashMap<K,V> {
   @SuppressWarnings("unchecked")
   @Override
   public V get(final Object key) {
-    V val = super.get(key);
-
-    if (val == null) {
-      return null;
-    }
-
-    if (testFlush()) {
-      super.put((K)key, val);
-    }
-
-    return val;
+    testFlush();
+    return super.get(key);
   }
 }
