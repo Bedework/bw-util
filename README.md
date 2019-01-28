@@ -85,3 +85,5 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
   * Fix HttpUtils post method. Setting Accept - not Content-type
   * Move deployment classes into new bw-util-deploy module
   
+#### 4.0.23
+  * Fix FlushMap in utils. Current fetched value was not discarded.
