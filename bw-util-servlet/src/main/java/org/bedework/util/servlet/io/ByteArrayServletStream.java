@@ -21,6 +21,7 @@ package org.bedework.util.servlet.io;
 import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 /** Useful I/O classes for filtering etc.
  *
@@ -53,6 +54,16 @@ public class ByteArrayServletStream extends ServletOutputStream {
     try {
       super.close();
     } catch (Exception sce) {}
+  }
+
+  @Override
+  public boolean isReady() {
+    return false;
+  }
+
+  @Override
+  public void setWriteListener(final WriteListener writeListener) {
+    throw new IllegalStateException();
   }
 }
 
