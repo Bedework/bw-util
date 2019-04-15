@@ -87,3 +87,7 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
   
 #### 4.0.23
   * Fix FlushMap in utils. Current fetched value was not discarded.
+  
+#### 4.0.24
+  * Update jackson version
+  * Update servlet-api
