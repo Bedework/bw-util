@@ -23,7 +23,7 @@ import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 
-import org.elasticsearch.index.get.GetField;
+import org.elasticsearch.common.document.DocumentField;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -104,8 +104,8 @@ public class EntityBuilderBase implements Logged {
       return (List<Object>)val;
     }
 
-    if (val instanceof GetField) {
-      return ((GetField)val).getValues();
+    if (val instanceof DocumentField) {
+      return ((DocumentField)val).getValues();
     }
 
     final List<Object> vals = new ArrayList<>();
@@ -155,8 +155,8 @@ public class EntityBuilderBase implements Logged {
 
     final List vals;
 
-    if (val instanceof GetField) {
-      vals = ((GetField)val).getValues();
+    if (val instanceof DocumentField) {
+      vals = ((DocumentField)val).getValues();
     } else if (val instanceof List) {
       vals = (List)val;
     } else {

@@ -33,7 +33,7 @@
     <http-osgi.version>4.5.3</http-osgi.version>
     <commons-codec.version>1.5</commons-codec.version>
     <commons-lang.version>2.3</commons-lang.version>
-    <elasticsearch.version>1.5.2</elasticsearch.version>
+    <elasticsearch.version>7.2.0</elasticsearch.version>
     <jackson.version>2.9.8</jackson.version>
     <jms.version>2.0</jms.version>
     <jolokia.version>1.3.1</jolokia.version>
@@ -144,6 +144,12 @@
       <dependency>
         <groupId>org.elasticsearch</groupId>
         <artifactId>elasticsearch</artifactId>
+        <version>${elasticsearch.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>elasticsearch-rest-high-level-client</artifactId>
         <version>${elasticsearch.version}</version>
       </dependency>
 

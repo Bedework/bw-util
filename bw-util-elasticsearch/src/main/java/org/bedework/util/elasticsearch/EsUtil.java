@@ -11,49 +11,41 @@ import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.timezones.DateTimeUtil;
 
+import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.ActionFuture;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
-import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequestBuilder;
-import org.elasticsearch.action.admin.indices.alias.get.GetAliasesResponse;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.admin.indices.status.IndicesStatusRequestBuilder;
-import org.elasticsearch.action.admin.indices.status.IndicesStatusResponse;
-import org.elasticsearch.action.get.GetRequestBuilder;
+import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
+import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
+import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.client.IndicesAdminClient;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.GetAliasesResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
-import org.elasticsearch.common.io.Streams;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.VersionType;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.rest.RestStatus;
 
-import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import javax.management.ObjectName;
 
@@ -61,22 +53,11 @@ import javax.management.ObjectName;
  * User: mike Date: 3/13/16 Time: 23:28
  */
 public class EsUtil implements Logged {
-  private final String host;
-  private int port = 9300;
+  private static class HostPort {
+    private final String host;
+    private int port = 9300;
 
-  private static Client theClient;
-  private static final Object clientSyncher = new Object();
-
-  private final IndexProperties idxpars;
-  
-  public EsUtil(final IndexProperties idxpars) {
-    this.idxpars = idxpars;
-
-    final String url = idxpars.getIndexerURL();
-
-    if (url == null) {
-      host = "localhost";
-    } else {
+    HostPort(final String url) {
       final int pos = url.indexOf(":");
 
       if (pos < 0) {
@@ -85,6 +66,38 @@ public class EsUtil implements Logged {
         host = url.substring(0, pos);
         if (pos < url.length()) {
           port = Integer.valueOf(url.substring(pos + 1));
+        }
+      }
+    }
+
+    String getHost() {
+      return host;
+    }
+
+    int getPort() {
+      return port;
+    }
+  }
+
+  private final List<HostPort> esHosts = new ArrayList<>();
+  private static RestHighLevelClient theClient;
+  private static final Object clientSyncher = new Object();
+
+  private final IndexProperties idxpars;
+  
+  public EsUtil(final IndexProperties idxpars) {
+    this.idxpars = idxpars;
+
+    final String urls = idxpars.getIndexerURL();
+
+    if (urls == null) {
+      esHosts.add(new HostPort("localhost"));
+    } else {
+      final String[] urlsSplit = urls.split(",");
+
+      for (final String url : urlsSplit) {
+        if ((url != null) && (url.length() > 0)) {
+          esHosts.add(new HostPort(url));
         }
       }
     }
@@ -172,7 +185,7 @@ public class EsUtil implements Logged {
     return esCtl;
   }
 
-  public Client getClient() throws IndexException {
+  public RestHighLevelClient getClient() throws IndexException {
     if (theClient != null) {
       return theClient;
     }
@@ -182,48 +195,14 @@ public class EsUtil implements Logged {
         return theClient;
       }
 
-      if (idxpars.getEmbeddedIndexer()) {
-        /* Start up a node and get a client from it.
-         */
-        final ImmutableSettings.Builder settings =
-                ImmutableSettings.settingsBuilder();
+      final HttpHost[] hosts = new HttpHost[esHosts.size()];
 
-        if (idxpars.getNodeName() != null) {
-          settings.put("node.name", idxpars.getNodeName());
-        }
-
-        settings.put("path.data", idxpars.getDataDir());
-
-        if (idxpars.getHttpEnabled()) {
-          warn("*************************************************************");
-          warn("*************************************************************");
-          warn("*************************************************************");
-          warn("http is enabled for the indexer. This is a security risk.    ");
-          warn("Turn it off in the indexer configuration.                    ");
-          warn("*************************************************************");
-          warn("*************************************************************");
-          warn("*************************************************************");
-        }
-        settings.put("http.enabled", idxpars.getHttpEnabled());
-        final NodeBuilder nbld = NodeBuilder.nodeBuilder()
-                                            .settings(settings);
-
-        if (idxpars.getClusterName() != null) {
-          nbld.clusterName(idxpars.getClusterName());
-        }
-
-        final Node theNode = nbld.data(true).local(true).node();
-
-        theClient = theNode.client();
-      } else {
-        /* Not embedded - use the URL */
-        TransportClient tClient = new TransportClient();
-
-        tClient = tClient.addTransportAddress(
-                new InetSocketTransportAddress(host, port));
-
-        theClient = tClient;
+      for (int i = 0; i < esHosts.size(); i++) {
+        final HostPort hp = esHosts.get(i);
+        hosts[i] = new HttpHost(hp.getHost(), hp.getPort());
       }
+
+      theClient = new RestHighLevelClient(RestClient.builder(hosts));
 
       /* Ensure status is at least yellow */
 
@@ -231,37 +210,38 @@ public class EsUtil implements Logged {
       int yellowTries = 0;
 
       for (;;) {
-        final ClusterHealthRequestBuilder chrb =
-                theClient.admin().cluster().prepareHealth();
+        try {
+          ClusterHealthRequest request = new ClusterHealthRequest();
+          final ClusterHealthResponse chr =
+                  theClient.cluster().health(request, RequestOptions.DEFAULT);
 
-        final ClusterHealthResponse chr = chrb.execute().actionGet();
-
-        if (chr.getStatus() == ClusterHealthStatus.GREEN) {
-          break;
-        }
-
-        if (chr.getStatus() == ClusterHealthStatus.YELLOW) {
-          yellowTries++;
-
-          if (yellowTries > 60) {
-            warn("Going ahead anyway on YELLOW status");
+          if (chr.getStatus() == ClusterHealthStatus.GREEN) {
+            break;
           }
 
-          break;
-        }
+          if (chr.getStatus() == ClusterHealthStatus.YELLOW) {
+            yellowTries++;
 
-        tries++;
+            if (yellowTries > 60) {
+              warn("Going ahead anyway on YELLOW status");
+            }
 
-        if (tries % 5 == 0) {
-          warn("Cluster status for " + chr.getClusterName() +
-                       " is still " + chr.getStatus() +
-                       " after " + tries + " tries");
-        }
+            break;
+          }
 
-        try {
+          tries++;
+
+          if (tries % 5 == 0) {
+            warn("Cluster status for " + chr.getClusterName() +
+                         " is still " + chr.getStatus() +
+                         " after " + tries + " tries");
+          }
+
           Thread.sleep(1000);
         } catch(final InterruptedException ex) {
           throw new IndexException("Interrupted out of getClient");
+        } catch (final Throwable t) {
+          throw new IndexException(t);
         }
       }
 
@@ -271,14 +251,14 @@ public class EsUtil implements Logged {
 
   public IndexResponse indexDoc(final EsDocInfo di,
                                 final String targetIndex) throws IndexException {
-    //batchCurSize++;
-    final IndexRequestBuilder req = getClient().
-                 prepareIndex(targetIndex, di.getType(), di.getId());
-
-    req.setSource(di.getSource());
+    final IndexRequest req =
+            new IndexRequest(targetIndex)
+                    .id(di.getId())
+                    .source(di.getSource())
+                    .versionType(VersionType.EXTERNAL);
 
     if (di.getVersion() != 0) {
-      req.setVersion(di.getVersion()).setVersionType(VersionType.EXTERNAL);
+      req.version(di.getVersion());
     }
 
     if (debug()) {
@@ -286,22 +266,29 @@ public class EsUtil implements Logged {
                     " with DocInfo " + di);
     }
 
-    return req.execute().actionGet();
+    try {
+      return getClient().index(req, RequestOptions.DEFAULT);
+    } catch (final Throwable t) {
+      throw new IndexException(t);
+    }
   }
   
   public GetResponse get(final String index,
                          final String docType,
                          final String id) throws IndexException {
-    final GetRequestBuilder grb = getClient().prepareGet(index,
-                                                         docType,
-                                                         id);
-    final GetResponse gr = grb.execute().actionGet();
+    final GetRequest req = new GetRequest(index,
+                                         id);
+    try {
+      final GetResponse resp = getClient().get(req, RequestOptions.DEFAULT);
 
-    if (!gr.isExists()) {
-      return null;
+      if (!resp.isExists()) {
+        return null;
+      }
+
+      return resp;
+    } catch (final Throwable t) {
+      throw new IndexException(t);
     }
-
-    return gr;
   }
 
   /** create a new index and return its name. No alias will point to 
@@ -317,23 +304,14 @@ public class EsUtil implements Logged {
     try {
       final String newName = name + newIndexSuffix();
 
-      final IndicesAdminClient idx = getAdminIdx();
+      final CreateIndexRequest req = new CreateIndexRequest(newName);
 
-      final CreateIndexRequestBuilder cirb = idx.prepareCreate(newName);
+      final String mappingStr = fileToString(mappingPath);
 
-      final File f = new File(mappingPath);
+      req.source(mappingStr, XContentType.JSON);
 
-      final byte[] sbBytes = Streams.copyToByteArray(f);
-
-      cirb.setSource(sbBytes);
-
-      final CreateIndexRequest cir = cirb.request();
-
-      final ActionFuture<CreateIndexResponse> af = idx.create(cir);
-
-      /*resp = */af.actionGet();
-
-      //index(new UpdateInfo());
+      final CreateIndexResponse resp =
+              getClient().indices().create(req, RequestOptions.DEFAULT);
 
       info("Index created");
 
@@ -354,30 +332,25 @@ public class EsUtil implements Logged {
     final Set<IndexInfo> res = new TreeSet<>();
 
     try {
-      final IndicesAdminClient idx = getAdminIdx();
+      GetAliasesRequest req = new GetAliasesRequest();
 
-      final IndicesStatusRequestBuilder isrb =
-              idx.prepareStatus(Strings.EMPTY_ARRAY);
+      final GetAliasesResponse resp =
+              getClient().indices().getAlias(req, RequestOptions.DEFAULT);
 
-      final ActionFuture<IndicesStatusResponse> sr = idx.status(
-              isrb.request());
-      final IndicesStatusResponse sresp  = sr.actionGet();
+      Map<String, Set<AliasMetaData>> aliases = resp.getAliases();
 
-      for (final String inm: sresp.getIndices().keySet()) {
+      for (final String inm: aliases.keySet()) {
         final IndexInfo ii = new IndexInfo(inm);
         res.add(ii);
 
-        final ClusterStateRequest clusterStateRequest = Requests
-                .clusterStateRequest()
-                .routingTable(true)
-                .nodes(true)
-                .indices(inm);
+        final Set<AliasMetaData> amds = aliases.get(inm);
 
-        final Iterator<String> it =
-                getAdminCluster().state(clusterStateRequest).
-                        actionGet().getState().getMetaData().aliases().keysIt();
-        while (it.hasNext()) {
-          ii.addAlias(it.next());
+        if (amds == null) {
+          continue;
+        }
+
+        for (final AliasMetaData amd: amds) {
+          ii.addAlias(amd.alias());
         }
       }
 
@@ -387,15 +360,77 @@ public class EsUtil implements Logged {
     }
   }
 
-  /** Remove any index that doesn't have an alias and starts with 
-   * the given prefix
+  /** Changes the given alias to refer to the supplied index name
    * 
-   * @param prefixes Ignore indexes that have names that don't start 
+   * @param index the index we were building 
+   * @param alias to refer to this index
+   * @return 0 fir ok <0 for not ok
+   * @throws IndexException on fatal error
+   */
+  public int swapIndex(final String index,
+                       final String alias) throws IndexException {
+    //IndicesAliasesResponse resp = null;
+    try {
+      /* index is the index we were just indexing into
+       */
+
+      GetAliasesRequest req = new GetAliasesRequest(alias);
+
+      final GetAliasesResponse resp =
+              getClient().indices().getAlias(req, RequestOptions.DEFAULT);
+
+      if (resp.status() == RestStatus.OK) {
+        final Map<String, Set<AliasMetaData>> aliases =
+                resp.getAliases();
+        for (final String inm: aliases.keySet()) {
+          final Set<AliasMetaData> amds = aliases.get(inm);
+
+          if (amds == null) {
+            continue;
+          }
+
+          for (final AliasMetaData amd: amds) {
+            final IndicesAliasesRequest ireq = new IndicesAliasesRequest();
+            final AliasActions removeAction =
+                    new AliasActions(AliasActions.Type.REMOVE)
+                            .index(inm)
+                            .alias(amd.alias());
+            ireq.addAliasAction(removeAction);
+            AcknowledgedResponse ack =
+                    getClient().indices().updateAliases(ireq, RequestOptions.DEFAULT);
+        }
+      }
+
+      final IndicesAliasesRequest ireq = new IndicesAliasesRequest();
+      final AliasActions addAction =
+              new AliasActions(AliasActions.Type.ADD)
+                      .index(index)
+                      .alias(alias);
+      ireq.addAliasAction(addAction);
+      AcknowledgedResponse ack =
+              getClient().indices().updateAliases(ireq, RequestOptions.DEFAULT);          }
+
+      return 0;
+    } catch (final ElasticsearchException ese) {
+      // Failed somehow
+      error(ese);
+      return -1;
+    } catch (final IndexException ie) {
+      throw ie;
+    } catch (final Throwable t) {
+      throw new IndexException(t);
+    }
+  }
+
+  /** Remove any index that doesn't have an alias and starts with
+   * the given prefix
+   *
+   * @param prefixes Ignore indexes that have names that don't start
    *                 with any of these
    * @return list of purged indexes
-   * @throws IndexException
+   * @throws IndexException on fatal error
    */
-  public List<String> purgeIndexes(final Set<String> prefixes) 
+  public List<String> purgeIndexes(final Set<String> prefixes)
           throws IndexException {
     final Set<IndexInfo> indexes = getIndexInfo();
     final List<String> purged = new ArrayList<>();
@@ -426,82 +461,12 @@ public class EsUtil implements Logged {
     return purged;
   }
 
-  /** Changes the givenm alias to refer tot eh supplied index name
-   * 
-   * @param index the index we were building 
-   * @param alias to refer to this index
-   * @return 0 fir ok <0 for not ok
-   * @throws IndexException
-   */
-  public int swapIndex(final String index,
-                       final String alias) throws IndexException {
-    //IndicesAliasesResponse resp = null;
-    try {
-      /* index is the index we were just indexing into
-       */
-
-      final IndicesAdminClient idx = getAdminIdx();
-
-      final GetAliasesRequestBuilder igarb = idx.prepareGetAliases(
-              alias);
-
-      final ActionFuture<GetAliasesResponse> getAliasesAf =
-              idx.getAliases(igarb.request());
-      final GetAliasesResponse garesp = getAliasesAf.actionGet();
-
-      final ImmutableOpenMap<String, List<AliasMetaData>> aliasesmeta =
-              garesp.getAliases();
-
-      final IndicesAliasesRequestBuilder iarb = idx.prepareAliases();
-
-      final Iterator<String> it = aliasesmeta.keysIt();
-
-      while (it.hasNext()) {
-        final String indexName = it.next();
-
-        for (final AliasMetaData amd: aliasesmeta.get(indexName)) {
-          if(amd.getAlias().equals(alias)) {
-            iarb.removeAlias(indexName, alias);
-          }
-        }
-      }
-
-      iarb.addAlias(index, alias);
-
-      final ActionFuture<IndicesAliasesResponse> af =
-              idx.aliases(iarb.request());
-
-      /*resp = */af.actionGet();
-
-      return 0;
-    } catch (final ElasticsearchException ese) {
-      // Failed somehow
-      error(ese);
-      return -1;
-    } catch (final IndexException ie) {
-      throw ie;
-    } catch (final Throwable t) {
-      throw new IndexException(t);
-    }
-  }
-
-  public IndicesAdminClient getAdminIdx() throws IndexException {
-    return getClient().admin().indices();
-  }
-
-  public ClusterAdminClient getAdminCluster() throws IndexException {
-    return getClient().admin().cluster();
-  }
-
   private void deleteIndexes(final List<String> names) throws IndexException {
     try {
-      final IndicesAdminClient idx = getAdminIdx();
-      final DeleteIndexRequestBuilder dirb = getAdminIdx().prepareDelete(
-              names.toArray(new String[names.size()]));
+      final DeleteIndexRequest request = new DeleteIndexRequest(names.toArray(new String[names.size()]));
 
-      final ActionFuture<DeleteIndexResponse> dr = idx.delete(
-              dirb.request());
-      /*DeleteIndexResponse dir = */dr.actionGet();
+      final AcknowledgedResponse deleteIndexResponse =
+              getClient().indices().delete(request, RequestOptions.DEFAULT);
     } catch (final Throwable t) {
       throw new IndexException(t);
     }
@@ -535,6 +500,18 @@ public class EsUtil implements Logged {
     }
 
     return suffix.toString();
+  }
+
+  private String fileToString(final String path) throws IndexException {
+    final StringBuilder content = new StringBuilder();
+    try (Stream<String> stream = Files.lines(Paths.get(path),
+                                             StandardCharsets.UTF_8)) {
+      stream.forEach(s -> content.append(s).append("\n"));
+    } catch (final Throwable t) {
+      throw new IndexException(t);
+    }
+
+    return content.toString();
   }
 
   /* ====================================================================

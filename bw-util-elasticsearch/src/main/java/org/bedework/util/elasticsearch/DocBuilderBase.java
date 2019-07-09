@@ -77,23 +77,14 @@ public class DocBuilderBase implements Logged {
   }
 
   public static class UpdateInfo {
-    private String dtstamp;
     private Long count = 0L;
+    private boolean updated;
 
     public UpdateInfo() {
     }
 
-    public UpdateInfo(final String dtstamp,
-                      final Long count) {
-      this.dtstamp = dtstamp;
+    public UpdateInfo(final Long count) {
       this.count = count;
-    }
-
-    /**
-     * @return dtstamp last time this object type saved
-     */
-    public String getDtstamp() {
-      return dtstamp;
     }
 
     /**
@@ -103,22 +94,43 @@ public class DocBuilderBase implements Logged {
       return count;
     }
 
+    /** flag current transaction
+     *
+     * @param val true for update
+     */
+    public void setUpdated(final boolean val) {
+      updated = val;
+    }
+
+    /**
+     * @return flag current transaction as update
+     */
+    public boolean getUpdated() {
+      return updated;
+    }
+
     /**
      * @return a change token for the index.
      */
     public String getChangeToken() {
-      return dtstamp + ";" + count;
+      return String.valueOf(count);
     }
   }
 
-  public static UpdateInfo makeUpdateInfo(final String timestamp,
-                                          Long l) {
-    if (l == null) {
-      l = 0L;
-    }
+  /* Return the docinfo for an update record */
+  public EsDocInfo makeUpdateInfoDoc(final String entityType) throws IndexException {
+    try {
+      startObject();
 
-    return new UpdateInfo(timestamp,
-                          l);
+      builder.field("esUpdateCount", 0L);
+
+      endObject();
+
+      return makeDocInfo(entityType, 0,
+                         updateTrackerId);
+    } catch (final Throwable t) {
+      throw new IndexException(t);
+    }
   }
 
   protected void startObject() throws IndexException {
