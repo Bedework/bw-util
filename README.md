@@ -5,7 +5,7 @@ This project provides a number of utility classes and methods for
 
 ### Requirements
 
-1. JDK 8
+1. JDK 11
 2. Maven 3
 
 ### Building Locally
