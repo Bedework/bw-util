@@ -6,6 +6,8 @@ package org.bedework.util.jolokia;
 import org.bedework.util.cli.Cli;
 import org.bedework.util.cli.CommandInterpreter;
 
+import java.util.Objects;
+
 /**
  * User: mike
  * Date: 5/5/15
@@ -20,18 +22,15 @@ public abstract class JolokiaCli extends Cli {
                     final boolean debug) throws Throwable {
     super(debug);
 
-    if (url == null) {
-      this.url = "http://localhost:8080/hawtio/jolokia";
-    } else {
-      this.url = url;
-    }
+    this.url = Objects.requireNonNullElse(url,
+                                          "http://localhost:8080/hawtio/jolokia");
 
     register(new CmdMemory());
   }
 
-  public abstract JolokiaClient makeClient(final String uri) throws Throwable;
+  public abstract JolokiaClient makeClient(final String uri);
 
-  public JolokiaClient getClient() throws Throwable {
+  public JolokiaClient getClient() {
     if (client == null) {
       client = makeClient(url);
     }

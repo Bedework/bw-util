@@ -22,6 +22,7 @@ import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
 import org.bedework.util.servlet.HttpAppLogger;
+import org.bedework.util.servlet.HttpServletUtils;
 import org.bedework.util.servlet.filters.PresentationState;
 
 import org.apache.struts.action.Action;
@@ -215,7 +216,7 @@ public abstract class UtilAbstractAction extends Action
 
       form.setMres(messages);
       form.setBrowserType(StrutsUtil.getBrowserType(request));
-      form.assignCurrentUser(request.getRemoteUser());
+      form.assignCurrentUser(HttpServletUtils.remoteUser(request));
       form.setUrl(StrutsUtil.getUrl(request));
       form.setSchemeHostPort(StrutsUtil.getURLshp(request));
       form.setContext(StrutsUtil.getContext(request));
@@ -511,7 +512,7 @@ public abstract class UtilAbstractAction extends Action
   protected String checkLogOut(final HttpServletRequest request,
                                final UtilActionForm form)
                throws Throwable {
-    final String reqUser = request.getRemoteUser();
+    final String reqUser = HttpServletUtils.remoteUser(request);
 
     final boolean forceLogout =
             !Util.equalsString(reqUser, form.getCurrentUser());

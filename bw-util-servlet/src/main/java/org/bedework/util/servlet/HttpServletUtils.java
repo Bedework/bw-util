@@ -44,6 +44,30 @@ public class HttpServletUtils {
     throw new Exception("Dont instantiate");
   }
 
+  /** Use environment variable BEDEWORK_MIXEDCASE_ACCOUNTS=true to
+   * allow mixed case account names.
+   *
+   * @param request to extract remote user
+   * @return null for none or possibly lowercased version
+   */
+  public static String remoteUser(final HttpServletRequest request) {
+    final String user = request.getRemoteUser();
+
+    if (user == null) {
+      return null;
+    }
+
+    final String mixedStr = System.getenv("BEDEWORK_MIXEDCASE_ACCOUNTS");
+
+    final boolean mixed = (mixedStr != null) && (mixedStr.equalsIgnoreCase("true"));
+
+    if (mixed) {
+      return user;
+    }
+
+    return user.toLowerCase();
+  }
+
   /** Return the browser type for the given request. We attempt to reduce the
    *  set of browsers to a more manageable number. The returned value is one of:
    * <ul>
