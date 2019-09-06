@@ -50,6 +50,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author douglm
  */
 public class HttpUtil implements Serializable {
+  public interface HeadersFetcher {
+    public Headers get();
+  }
+
   private HttpUtil() {
   }
 
@@ -66,7 +70,7 @@ public class HttpUtil implements Serializable {
 
   public static CloseableHttpResponse doDelete(final CloseableHttpClient cl,
                                                final URI uri,
-                                               final Headers hdrs,
+                                               final HeadersFetcher hdrs,
                                                final String acceptContentType)
           throws IOException {
     final Headers headers = ensureHeaders(hdrs);
@@ -84,7 +88,7 @@ public class HttpUtil implements Serializable {
 
   public static CloseableHttpResponse doGet(final CloseableHttpClient cl,
                                             final URI uri,
-                                            final Headers hdrs,
+                                            final HeadersFetcher hdrs,
                                             final String acceptContentType)
           throws IOException {
     final Headers headers = ensureHeaders(hdrs);
@@ -102,7 +106,7 @@ public class HttpUtil implements Serializable {
 
   public static CloseableHttpResponse doHead(final CloseableHttpClient cl,
                                              final URI uri,
-                                             final Headers hdrs,
+                                             final HeadersFetcher hdrs,
                                              final String acceptContentType)
           throws IOException {
     final Headers headers = ensureHeaders(hdrs);
@@ -120,7 +124,7 @@ public class HttpUtil implements Serializable {
 
   public static CloseableHttpResponse doPost(final CloseableHttpClient cl,
                                              final URI uri,
-                                             final Headers hdrs,
+                                             final HeadersFetcher hdrs,
                                              final String contentType,
                                              final String content)
           throws IOException {
@@ -132,7 +136,7 @@ public class HttpUtil implements Serializable {
 
     final HttpPost httpPost = new HttpPost(uri);
 
-    httpPost.setHeaders(hdrs.asArray());
+    httpPost.setHeaders(headers.asArray());
 
     if (content != null) {
       final StringEntity entity = new StringEntity(content);
@@ -142,11 +146,18 @@ public class HttpUtil implements Serializable {
     return cl.execute(httpPost);
   }
 
-  private static Headers ensureHeaders(final Headers hdrs) {
+  private static Headers ensureHeaders(final HeadersFetcher hdrs) {
     if (hdrs == null) {
       return new Headers();
     }
-    return hdrs;
+
+    final Headers headers = hdrs.get();
+
+    if (headers == null) {
+      return new Headers();
+    }
+
+    return headers;
   }
 
   /**

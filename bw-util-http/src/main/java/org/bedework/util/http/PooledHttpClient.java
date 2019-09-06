@@ -3,6 +3,7 @@
 */
 package org.bedework.util.http;
 
+import org.bedework.util.http.HttpUtil.HeadersFetcher;
 import org.bedework.util.misc.Util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -34,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * User: mikeD
  */
-public abstract class PooledHttpClient {
+public class PooledHttpClient {
   private static final PoolingHttpClientConnectionManager connManager;
 
   public static class IdleConnectionMonitorThread extends Thread {
@@ -99,9 +100,14 @@ public abstract class PooledHttpClient {
   private final CloseableHttpClient http;
   private final ObjectMapper om;
   private final URI baseUri;
+  private HeadersFetcher headersFetcher;
 
-  PooledHttpClient(final URI uri,
-                   final ObjectMapper om) throws HttpException {
+  public PooledHttpClient(final URI uri) throws HttpException {
+    this(uri, null);
+  }
+
+  public PooledHttpClient(final URI uri,
+                          final ObjectMapper om) throws HttpException {
     this.om = om;
     baseUri = uri;
 
@@ -110,11 +116,15 @@ public abstract class PooledHttpClient {
                       .build();
   }
 
+  public void setHeadersFetcher(final HeadersFetcher headersFetcher) {
+    this.headersFetcher = headersFetcher;
+  }
+
   /**
    *
    * @return headers for the request
    */
-  public abstract Headers getHeaders();
+  //public abstract Headers getHeaders();
 
   /**
    * @return current active
@@ -155,7 +165,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
-                                getHeaders(),
+                                headersFetcher,
                                 "application/json")) {
       final InputStream is = hresp.getEntity().getContent();
 
@@ -184,7 +194,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
-                                getHeaders(),
+                                headersFetcher,
                                 "application/json")) {
       final InputStream is = hresp.getEntity().getContent();
 
@@ -204,7 +214,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
-                                getHeaders(),
+                                headersFetcher,
                                 "text/text")) {
       final InputStream is = hresp.getEntity().getContent();
 
@@ -241,7 +251,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
-                                getHeaders(),
+                                headersFetcher,
                                 "application/binary")) {
       final InputStream is = hresp.getEntity().getContent();
 
@@ -272,7 +282,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
-                                getHeaders(),
+                                headersFetcher,
                                 contentType)) {
       final InputStream is = hresp.getEntity().getContent();
 
@@ -333,7 +343,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doPost(http,
                                  resolve(path),
-                                 getHeaders(),
+                                 headersFetcher,
                                  "application/json",
                                  content)) {
       final int status = HttpUtil.getStatus(hresp);
@@ -387,7 +397,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doPost(http,
                                  resolve(path),
-                                 getHeaders(),
+                                 headersFetcher,
                                  "application/json",
                                  content)) {
       return HttpUtil.getStatus(hresp);
@@ -429,7 +439,7 @@ public abstract class PooledHttpClient {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doPost(http,
                                  resolve(path),
-                                 getHeaders(),
+                                 headersFetcher,
                                  "application/x-www-form-urlencoded",
                                  scontent)) {
       final int status = HttpUtil.getStatus(hresp);
@@ -465,9 +475,9 @@ public abstract class PooledHttpClient {
 
     try (CloseableHttpResponse hresp =
                  HttpUtil.doDelete(http,
-                          resolve(path),
-                          getHeaders(),
-                          "application/json")) {
+                                   resolve(path),
+                                   headersFetcher,
+                                   "application/json")) {
       final int status = HttpUtil.getStatus(hresp);
 
       if (status != HttpServletResponse.SC_OK) {
