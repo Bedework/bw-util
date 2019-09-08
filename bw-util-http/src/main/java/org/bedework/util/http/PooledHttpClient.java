@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -303,7 +304,37 @@ public class PooledHttpClient {
         baos.write(buf, 0, len);
       }
 
-      return baos.toString("UTF-8");
+      return baos.toString(StandardCharsets.UTF_8);
+    } catch (final HttpException he) {
+      throw he;
+    } catch (final Throwable t) {
+      throw new HttpException(t.getMessage(), t);
+    }
+  }
+
+  /** Do a get on a url - no content expected
+   *
+   * @param request to be resolved
+   * @param contentType of response
+   * @return Response for status
+   * @throws HttpException on fatal error
+   */
+  public ResponseHolder get(final String request,
+                            final String contentType) throws HttpException {
+    try (CloseableHttpResponse hresp =
+                 HttpUtil.doGet(http,
+                                resolve(request),
+                                headersFetcher,
+                                contentType)) {
+      final int status = HttpUtil.getStatus(hresp);
+
+      if (status != HttpServletResponse.SC_OK) {
+        return new ResponseHolder(status,
+                                  "Failed response from server");
+      }
+
+      //noinspection unchecked
+      return new ResponseHolder(null);
     } catch (final HttpException he) {
       throw he;
     } catch (final Throwable t) {
