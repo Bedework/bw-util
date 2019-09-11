@@ -8,13 +8,16 @@ import org.bedework.util.misc.Util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
@@ -103,25 +106,54 @@ public class PooledHttpClient {
   private final URI baseUri;
   private HeadersFetcher headersFetcher;
 
-  public PooledHttpClient(final URI uri) throws HttpException {
+  public interface ProcessResponse {
+    /**
+     *
+     * @param path from call
+     * @param resp from request
+     * @return http status code
+     */
+    ResponseHolder process(String path,
+                           CloseableHttpResponse resp);
+  }
+
+  public PooledHttpClient(final URI uri) {
     this(uri, null);
   }
 
   public PooledHttpClient(final URI uri,
-                          final ObjectMapper om) throws HttpException {
+                          final ObjectMapper om) {
     this.om = om;
     baseUri = uri;
 
     http = HttpClients.custom()
                       .setConnectionManager(connManager)
+                      .setConnectionManagerShared(true)
                       .build();
+  }
+
+  public PooledHttpClient(final URI uri,
+                          final ObjectMapper om,
+                          final CredentialsProvider credsProvider) {
+    this.om = om;
+    baseUri = uri;
+
+    HttpClientBuilder builder = HttpClients.custom()
+                                   .setConnectionManager(connManager)
+                                   .setConnectionManagerShared(true);
+
+    if (credsProvider != null) {
+      builder.setDefaultCredentialsProvider(credsProvider);
+    }
+
+    http = builder.build();
   }
 
   public void setHeadersFetcher(final HeadersFetcher headersFetcher) {
     this.headersFetcher = headersFetcher;
   }
 
-  /**
+  /*
    *
    * @return headers for the request
    */
@@ -139,6 +171,27 @@ public class PooledHttpClient {
    */
   public static void setDefaultMaxPerRoute(final int val) {
     connManager.setDefaultMaxPerRoute(val);
+  }
+
+  /**
+   * @return current default
+   */
+  public static int getDefaultMaxPerRoute() {
+    return connManager.getDefaultMaxPerRoute();
+  }
+
+  /**
+   * @param val maximum allowable overall
+   */
+  public static void setMaxConnections(final int val) {
+    connManager.setMaxTotal(val);
+  }
+
+  /**
+   * @return maximim allowable overall
+   */
+  public static int getMaxConnections() {
+    return connManager.getMaxTotal();
   }
 
   /**
@@ -175,8 +228,6 @@ public class PooledHttpClient {
       }
 
       return om.readValue(is, valueTypeRef);
-    } catch (final HttpException he) {
-      throw he;
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
@@ -204,8 +255,6 @@ public class PooledHttpClient {
       }
 
       return om.readValue(is, valueType);
-    } catch (final HttpException he) {
-      throw he;
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
@@ -240,8 +289,6 @@ public class PooledHttpClient {
       }
 
       return Long.valueOf(new String(buf, 0, pos));
-    } catch (final HttpException he) {
-      throw he;
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
@@ -271,20 +318,18 @@ public class PooledHttpClient {
       }
 
       return true;
-    } catch (final HttpException he) {
-      throw he;
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
   }
 
   public String getString(final String request,
-                          final String contentType) throws HttpException {
+                          final String acceptContentType) throws HttpException {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
                                 headersFetcher,
-                                contentType)) {
+                                acceptContentType)) {
       final InputStream is = hresp.getEntity().getContent();
 
       if (is == null) {
@@ -305,27 +350,27 @@ public class PooledHttpClient {
       }
 
       return baos.toString(StandardCharsets.UTF_8);
-    } catch (final HttpException he) {
-      throw he;
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
   }
 
-  /** Do a get on a url - no content expected
+  /** Do a get on a url
    *
    * @param request to be resolved
-   * @param contentType of response
+   * @param acceptContentType of response
+   * @param responseProcessor handle response
    * @return Response for status
    * @throws HttpException on fatal error
    */
   public ResponseHolder get(final String request,
-                            final String contentType) throws HttpException {
+                            final String acceptContentType,
+                            final ProcessResponse responseProcessor) throws HttpException {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
                                 headersFetcher,
-                                contentType)) {
+                                acceptContentType)) {
       final int status = HttpUtil.getStatus(hresp);
 
       if (status != HttpServletResponse.SC_OK) {
@@ -333,16 +378,17 @@ public class PooledHttpClient {
                                   "Failed response from server");
       }
 
-      //noinspection unchecked
-      return new ResponseHolder(null);
-    } catch (final HttpException he) {
-      throw he;
+      if (responseProcessor == null) {
+        return new ResponseHolder(null);
+      }
+
+      return responseProcessor.process(request, hresp);
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
   }
 
-  public class ResponseHolder<T> {
+  public static class ResponseHolder<T> {
     public boolean failed;
 
     public int status;
@@ -355,22 +401,22 @@ public class PooledHttpClient {
      *
      * @param status - http status
      */
-    ResponseHolder(final int status,
-                   final String message) {
+    public ResponseHolder(final int status,
+                          final String message) {
       this.status = status;
       this.message = message;
       failed = true;
     }
 
-    ResponseHolder(final T response) {
+    public ResponseHolder(final T response) {
       this.response = response;
       failed = false;
     }
   }
 
-  public <T> ResponseHolder<T> post(final String path,
-                                    final String content,
-                                    final Class<T> resultType) throws HttpException {
+  public <T> ResponseHolder<T> postJson(final String path,
+                                        final String content,
+                                        final Class<T> resultType) throws HttpException {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doPost(http,
                                  resolve(path),
@@ -380,26 +426,64 @@ public class PooledHttpClient {
       final int status = HttpUtil.getStatus(hresp);
 
       if (status != HttpServletResponse.SC_OK) {
-        return new ResponseHolder<T>(status, "Failed response from server");
+        return new ResponseHolder<>(status, "Failed response from server");
       }
 
       final InputStream is = hresp.getEntity().getContent();
 
       if (is == null) {
-        return new ResponseHolder<T>(status, "No content");
+        return new ResponseHolder<>(status, "No content");
       }
 
-      return new ResponseHolder<T>(om.readValue(is, resultType));
-    } catch (final HttpException he) {
-      throw he;
+      return new ResponseHolder<>(om.readValue(is, resultType));
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
   }
 
-  public <T> ResponseHolder<T> post(final String path,
-                                    final Object content,
-                                    final Class<T> resultType) throws HttpException {
+  public ResponseHolder postXml(final String path,
+                                final String xml) throws HttpException {
+    try (CloseableHttpResponse hresp =
+                 HttpUtil.doPost(http,
+                                 resolve(path),
+                                 headersFetcher,
+                                 "application/xml",
+                                 xml)) {
+      final int status = HttpUtil.getStatus(hresp);
+
+      if (status != HttpServletResponse.SC_OK) {
+        return new ResponseHolder(status,
+                                  "Failed response from server");
+      }
+
+      //noinspection unchecked
+      return new ResponseHolder(null);
+    } catch (final Throwable t) {
+      throw new HttpException(t.getMessage(), t);
+    }
+  }
+
+  public ResponseHolder post(final String path,
+                             final HttpEntity entity,
+                             final ProcessResponse responseProcessor) throws HttpException {
+    try (CloseableHttpResponse hresp =
+                 HttpUtil.doPost(http,
+                                 resolve(path),
+                                 headersFetcher,
+                                 entity)) {
+      if (responseProcessor == null) {
+        return new ResponseHolder(null);
+      }
+
+      return responseProcessor.process(path, hresp);
+    } catch (final Throwable t) {
+      throw new HttpException(t.getMessage(), t);
+    }
+  }
+
+  public <T> ResponseHolder<T> postJson(final String path,
+                                        final Object content,
+                                        final Class<T> resultType) throws HttpException {
     final String scontent;
     if (content == null) {
       scontent = null;
@@ -413,7 +497,7 @@ public class PooledHttpClient {
       scontent = sw.toString();
     }
 
-    return post(path, scontent, resultType);
+    return postJson(path, scontent, resultType);
   }
 
   /**
@@ -423,8 +507,8 @@ public class PooledHttpClient {
    * @return status
    * @throws HttpException on fatal error
    */
-  public int post(final String path,
-                  final String content) throws HttpException {
+  public int postJson(final String path,
+                      final String content) throws HttpException {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doPost(http,
                                  resolve(path),
@@ -432,8 +516,29 @@ public class PooledHttpClient {
                                  "application/json",
                                  content)) {
       return HttpUtil.getStatus(hresp);
-    } catch (final HttpException he) {
-      throw he;
+    } catch (final Throwable t) {
+      throw new HttpException(t.getMessage(), t);
+    }
+  }
+
+  /**
+   *
+   * @param path of resource
+   * @param content to put
+   * @param contentType of content
+   * @return status
+   * @throws HttpException on fatal error
+   */
+  public int put(final String path,
+                 final String content,
+                 final String contentType) throws HttpException {
+    try (CloseableHttpResponse hresp =
+                 HttpUtil.doPut(http,
+                                 resolve(path),
+                                 headersFetcher,
+                                 contentType,
+                                 content)) {
+      return HttpUtil.getStatus(hresp);
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
@@ -476,18 +581,52 @@ public class PooledHttpClient {
       final int status = HttpUtil.getStatus(hresp);
 
       if (status != HttpServletResponse.SC_OK) {
-        return new ResponseHolder<T>(status, "Failed response from server");
+        return new ResponseHolder<>(status, "Failed response from server");
       }
 
       final InputStream is = hresp.getEntity().getContent();
 
       if (is == null) {
-        return new ResponseHolder<T>(status, "No content");
+        return new ResponseHolder<>(status, "No content");
       }
 
-      return new ResponseHolder<T>(om.readValue(is, resultType));
-    } catch (final HttpException he) {
-      throw he;
+      return new ResponseHolder<>(om.readValue(is, resultType));
+    } catch (final Throwable t) {
+      throw new HttpException(t.getMessage(), t);
+    }
+  }
+
+  public ResponseHolder report(final String path,
+                               final String depth,
+                               final String content,
+                               final ProcessResponse responseProcessor) throws HttpException {
+    try (CloseableHttpResponse hresp =
+                 HttpUtil.doReport(http,
+                                 resolve(path),
+                                 headersFetcher,
+                                 depth,
+                                 "text/xml",
+                                 content)) {
+
+      return responseProcessor.process(path, hresp);
+    } catch (final Throwable t) {
+      throw new HttpException(t.getMessage(), t);
+    }
+  }
+
+  public ResponseHolder propfind(final String path,
+                                 final String depth,
+                                 final String content,
+                                 final ProcessResponse responseProcessor) throws HttpException {
+    try (CloseableHttpResponse hresp =
+                 HttpUtil.doPropfind(http,
+                                     resolve(path),
+                                     headersFetcher,
+                                     depth,
+                                     "text/xml",
+                                     content)) {
+
+      return responseProcessor.process(path, hresp);
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
@@ -518,30 +657,28 @@ public class PooledHttpClient {
 
       //noinspection unchecked
       return new ResponseHolder(null);
-    } catch (final HttpException he) {
-      throw he;
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
   }
 
-  public void release() throws HttpException {
+  public void release() {
     try {
       http.close();
     } catch (final Throwable t) {
-      throw new HttpException(t.getMessage(), t);
+      throw new RuntimeException(t.getMessage(), t);
     }
   }
 
   private String encode(final String val) throws HttpException {
     try {
-      return URLEncoder.encode(val, "UTF-8");
+      return URLEncoder.encode(val, StandardCharsets.UTF_8);
     } catch (final Throwable t) {
       throw new HttpException(t.getMessage(), t);
     }
   }
 
-  private URI resolve(final String request) throws HttpException {
+  private URI resolve(final String request) {
     return URIUtils.resolve(baseUri, request);
   }
 

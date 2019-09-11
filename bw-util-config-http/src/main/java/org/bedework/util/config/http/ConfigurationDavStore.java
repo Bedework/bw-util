@@ -23,16 +23,23 @@ import org.bedework.util.config.ConfigException;
 import org.bedework.util.config.ConfigurationStore;
 import org.bedework.util.dav.DavUtil;
 import org.bedework.util.dav.DavUtil.DavChild;
-import org.bedework.util.http.BasicHttpClient;
+import org.bedework.util.http.HttpUtil;
+import org.bedework.util.http.PooledHttpClient;
+import org.bedework.util.http.PooledHttpClient.ResponseHolder;
+import org.bedework.util.misc.Util;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static org.apache.http.HttpStatus.SC_OK;
 
 /** A configuration DAV store interacts with a DAV server to access
  * configurations. The remote end must support enough DAV to allow GET/PUT of
@@ -42,14 +49,14 @@ import java.util.ResourceBundle;
  */
 public class ConfigurationDavStore implements ConfigurationStore {
   private String url;
-  private BasicHttpClient client;
+  private PooledHttpClient client;
   private DavUtil du = new DavUtil();
 
   private String path;
 
   /**
-   * @param url
-   * @throws ConfigException
+   * @param url of configs
+   * @throws ConfigException on fatal error
    */
   public ConfigurationDavStore(final String url) throws ConfigException {
     try {
@@ -59,10 +66,9 @@ public class ConfigurationDavStore implements ConfigurationStore {
         this.url += "/";
       }
 
-      URL u = new URL(url);
+      URI u = new URI(url);
 
-      client = new BasicHttpClient(u.getHost(), u.getPort(), u.getProtocol(),
-                                   30 * 1000);
+      client = new PooledHttpClient(u);
 
       path = u.getPath();
     } catch (Throwable t) {
@@ -76,7 +82,7 @@ public class ConfigurationDavStore implements ConfigurationStore {
   }
 
   @Override
-  public String getLocation() throws ConfigException {
+  public String getLocation() {
     return url;
   }
 
@@ -87,9 +93,9 @@ public class ConfigurationDavStore implements ConfigurationStore {
 
       config.toXml(sw);
 
-      client.putObject(path + config.getName() + ".xml",
-                       sw.toString(),
-                       "application/xml");
+      client.put(path + config.getName() + ".xml",
+                 sw.toString(),
+                 "application/xml");
     } catch (ConfigException ce) {
       throw ce;
     } catch (Throwable t) {
@@ -105,24 +111,47 @@ public class ConfigurationDavStore implements ConfigurationStore {
   @Override
   public ConfigBase getConfig(final String name,
                               final Class cl) throws ConfigException {
-    InputStream is = null;
-
     try {
-      is = client.get(path + "/" + name + ".xml");
+      ResponseHolder resp = client.get(path + "/" + name + ".xml",
+                                       "text/xml",
+                                       this::processGetResponse);
 
-      ConfigBase config = new ConfigBase().fromXml(is, cl);
+      if (resp.failed) {
+        return null;
+      }
 
-      return config;
+      final String xml = (String)resp.response;
+      final ByteArrayInputStream bais =
+              new ByteArrayInputStream(xml.getBytes());
+
+      return new ConfigBase().fromXml(bais, cl);
     } catch (ConfigException ce) {
       throw ce;
     } catch (Throwable t) {
       throw new ConfigException(t);
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (Throwable t) {}
+    }
+  }
+
+  final ResponseHolder processGetResponse(final String path,
+                                          final CloseableHttpResponse resp) {
+    try {
+      final int status = HttpUtil.getStatus(resp);
+
+      if (status != SC_OK) {
+        return new ResponseHolder(status,
+                                  "Failed response from server");
       }
+
+      if (resp.getEntity() == null) {
+        return new ResponseHolder(status,
+                                  "No content in response from server");
+      }
+
+      final InputStream is = resp.getEntity().getContent();
+
+      return new ResponseHolder(Util.streamToString(is));
+    } catch (final Throwable t) {
+      return new ResponseHolder(t);
     }
   }
 
@@ -130,7 +159,7 @@ public class ConfigurationDavStore implements ConfigurationStore {
   public List<String> getConfigs() throws ConfigException {
     try {
       Collection<DavChild> dcs = du.getChildrenUrls(client, path, null);
-      List<String> names = new ArrayList<String>();
+      List<String> names = new ArrayList<>();
 
       URI parentUri = new URI(url);
       for (DavChild dc: dcs) {

@@ -18,7 +18,9 @@
 */
 package org.bedework.util.dav;
 
-import org.bedework.util.http.BasicHttpClient;
+import org.bedework.util.http.HttpUtil;
+import org.bedework.util.http.PooledHttpClient;
+import org.bedework.util.http.PooledHttpClient.ResponseHolder;
 import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 import org.bedework.util.misc.Util;
@@ -28,6 +30,7 @@ import org.bedework.util.xml.XmlUtil;
 import org.bedework.util.xml.tagdefs.WebdavTags;
 
 import org.apache.http.Header;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.w3c.dom.Document;
@@ -58,6 +61,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 * @author Mike Douglass  douglm - rpi.edu
 */
 public class DavUtil implements Logged, Serializable {
+  public static final int SC_MULTI_STATUS = 207; // not defined for some reason
+
   /** */
   public static final Header depth0 = new BasicHeader("depth", "0");
   /** */
@@ -317,7 +322,7 @@ public class DavUtil implements Logged, Serializable {
    * @return Collection of DavChild or null for not found
    * @throws Throwable
    */
-  public Collection<DavChild> syncReport(final BasicHttpClient cl,
+  public Collection<DavChild> syncReport(final PooledHttpClient cl,
                                          final String path,
                                          final String syncToken,
                                          final Collection<QName> props) throws Throwable {
@@ -362,37 +367,45 @@ public class DavUtil implements Logged, Serializable {
     xml.closeTag(WebdavTags.prop);
     xml.closeTag(WebdavTags.syncCollection);
 
-    final byte[] content = sw.toString().getBytes();
+    final ResponseHolder resp = cl.report(path, "0", sw.toString(),
+                                          this::processSyncResponse);
 
-    final int res = sendRequest(cl, "REPORT", path,
-                                depth0,
-                                "text/xml", // contentType,
-                                content.length, // contentLen,
-                                content);
-
-    if (res == HttpServletResponse.SC_NOT_FOUND) {
+    if (resp.failed) {
       return null;
     }
 
-    final int SC_MULTI_STATUS = 207; // not defined for some reason
-    if (res != SC_MULTI_STATUS) {
-      if (debug()) {
-        debug("Got response " + res + " for path " + path);
+    return (Collection<DavChild>)resp.response;
+  }
+
+  final ResponseHolder processSyncResponse(final String path,
+                                           CloseableHttpResponse resp) {
+    try {
+      final int status = HttpUtil.getStatus(resp);
+
+      if (status != SC_MULTI_STATUS) {
+        return new ResponseHolder(status,
+                                  "Failed response from server");
       }
 
-      //throw new Exception("Got response " + res + " for path " + path);
-      return null;
+      if (resp.getEntity() == null) {
+        return new ResponseHolder(status,
+                                  "No content in response from server");
+      }
+
+      final InputStream is = resp.getEntity().getContent();
+
+      final Document doc = parseContent(is);
+
+      final Element root = doc.getDocumentElement();
+
+      /*    <!ELEMENT multistatus (response+, responsedescription?) > */
+
+      expect(root, WebdavTags.multistatus);
+
+      return new ResponseHolder(processResponses(getChildren(root), null));
+    } catch (final Throwable t) {
+      return new ResponseHolder(t);
     }
-
-    final Document doc = parseContent(cl.getResponseBodyAsStream());
-
-    final Element root = doc.getDocumentElement();
-
-    /*    <!ELEMENT multistatus (response+, responsedescription?) > */
-
-    expect(root, WebdavTags.multistatus);
-
-    return processResponses(getChildren(root), null);
   }
 
   /** Return the DavChild element for the targeted node.
@@ -403,28 +416,28 @@ public class DavUtil implements Logged, Serializable {
    * @return DavChild or null for not found
    * @throws Throwable
    */
-  public DavChild getProps(final BasicHttpClient cl,
+  public DavChild getProps(final PooledHttpClient cl,
                            final String path,
                            final Collection<QName> props) throws Throwable {
     return makeDavChild(propfind(cl,
                                  normalizePath(path),
                                  props,
-                                 depth0));
+                                 "0"));
   }
 
   /**
    * @param cl the client
-   * @param parentPath the path
+   * @param parentPath the path - "" for empty path
    * @param props   null for a default set
    * @return Collection<DavChild> - empty for no children - null for path not found.
    * @throws Throwable
    */
-  public Collection<DavChild> getChildrenUrls(final BasicHttpClient cl,
+  public Collection<DavChild> getChildrenUrls(final PooledHttpClient cl,
                                               final String parentPath,
                                               final Collection<QName> props) throws Throwable {
     final String path = normalizePath(parentPath);
 
-    return processResponses(propfind(cl, path, props, depth1),
+    return processResponses(propfind(cl, path, props, "1"),
                             new URI(path));
   }
 
@@ -432,14 +445,14 @@ public class DavUtil implements Logged, Serializable {
    * @param cl the client
    * @param path to resource
    * @param props   null for a default set
-   * @param depthHeader to set depth of operation
+   * @param depth to set depth of operation
    * @return List<Element> from multi-status response
    * @throws Throwable
    */
-  public List<Element> propfind(final BasicHttpClient cl,
-                                      final String path,
-                                      final Collection<QName> props,
-                                      final Header depthHeader) throws Throwable {
+  public List<Element> propfind(final PooledHttpClient cl,
+                                final String path,
+                                final Collection<QName> props,
+                                final String depth) throws Throwable {
     final StringWriter sw = new StringWriter();
     final XmlEmit xml = getXml();
 
@@ -470,82 +483,50 @@ public class DavUtil implements Logged, Serializable {
     xml.closeTag(WebdavTags.prop);
     xml.closeTag(WebdavTags.propfind);
 
-    final byte[] content = sw.toString().getBytes();
-
-    final int res = sendRequest(cl, "PROPFIND", path,
-                                depthHeader,
-                                "text/xml", // contentType,
-                                content.length, // contentLen,
-                                content);
-
-    if (res == HttpServletResponse.SC_NOT_FOUND) {
-      return null;
-    }
-
-    final int SC_MULTI_STATUS = 207; // not defined for some reason
-    if (res != SC_MULTI_STATUS) {
+    final ResponseHolder resp = cl.propfind(path,
+                                            depth,
+                                            sw.toString(),
+                                            this::processPropfindResponse);
+    if (resp.failed) {
       if (debug()) {
-        debug("Got response " + res + " for path " + path);
+        debug("Failed: status = " + resp.status + " msg=" + resp.message);
       }
 
-      //throw new Exception("Got response " + res + " for path " + path);
       return null;
     }
 
-    final Document doc = parseContent(cl.getResponseBodyAsStream());
-
-    final Element root = doc.getDocumentElement();
-
-    /*    <!ELEMENT multistatus (response+, responsedescription?) > */
-
-    expect(root, WebdavTags.multistatus);
-
-    return getChildren(root);
+    return (List<Element>)resp.response;
   }
 
-  /**
-   * @param cl the client
-   * @param methodName
-   * @param url
-   * @param header
-   * @param contentType
-   * @param contentLen
-   * @param content
-   * @return
-   * @throws Throwable
-   */
-  public int sendRequest(final BasicHttpClient cl,
-                         final String methodName,
-                         final String url,
-                         final Header header,
-                         final String contentType,
-                         final int contentLen,
-                         final byte[] content) throws Throwable {
-    int hdrSize = 0;
+  final ResponseHolder processPropfindResponse(final String path,
+                                               final CloseableHttpResponse resp) {
+    try {
+      final int status = HttpUtil.getStatus(resp);
 
-    if (header != null) {
-      hdrSize = 1;
-    }
-
-    if (!Util.isEmpty(extraHeaders)) {
-      hdrSize += extraHeaders.size();
-    }
-
-    List<Header> hdrs = null;
-
-    if (hdrSize > 0) {
-      hdrs = new ArrayList<>(hdrSize);
-      if (header != null) {
-        hdrs.add(header);
+      if (status != SC_MULTI_STATUS) {
+        return new ResponseHolder(status,
+                                  "Failed response from server");
       }
 
-      if (!Util.isEmpty(extraHeaders)) {
-        hdrs.addAll(extraHeaders);
+      if (resp.getEntity() == null) {
+        return new ResponseHolder(status,
+                                  "No content in response from server");
       }
-    }
 
-    return cl.sendRequest(methodName, url, hdrs,
-                          contentType, contentLen, content);
+      final InputStream is = resp.getEntity().getContent();
+
+      final Document doc = parseContent(is);
+
+      final Element root = doc.getDocumentElement();
+
+      /*    <!ELEMENT multistatus (response+, responsedescription?) > */
+
+      expect(root, WebdavTags.multistatus);
+
+      return new ResponseHolder(getChildren(root));
+    } catch (final Throwable t) {
+      return new ResponseHolder(t);
+    }
   }
 
   /* ====================================================================

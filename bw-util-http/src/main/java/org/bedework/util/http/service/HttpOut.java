@@ -18,7 +18,7 @@
 */
 package org.bedework.util.http.service;
 
-import org.bedework.util.http.BasicHttpClient;
+import org.bedework.util.http.PooledHttpClient;
 import org.bedework.util.jmx.ConfBase;
 import org.bedework.util.logging.BwLogger;
 
@@ -49,29 +49,29 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
   @Override
   public void setMaxConnections(final int val) {
     getConfig().setMaxConnections(val);
-    BasicHttpClient.setMaxConnections(val);
+    PooledHttpClient.setMaxConnections(val);
   }
 
   @Override
   public int getMaxConnections() {
-    return BasicHttpClient.getMaxConnections();
+    return PooledHttpClient.getMaxConnections();
   }
 
   @Override
   public void setDefaultMaxPerRoute(final int val) {
     getConfig().setDefaultMaxPerRoute(val);
-    BasicHttpClient.setDefaultMaxPerRoute(val);
+    PooledHttpClient.setDefaultMaxPerRoute(val);
   }
 
   @Override
   public int getDefaultMaxPerRoute() {
-    return BasicHttpClient.getDefaultMaxPerRoute();
+    return PooledHttpClient.getDefaultMaxPerRoute();
   }
 
   @Override
   public void disableSSL() {
 /*    try {
-      new BasicHttpClient(0).disableSSL();
+      new PooledHttpClient(0).disableSSL();
     } catch (Throwable t) {
       error(t);
     }*/
@@ -80,7 +80,7 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
   /*
   @Override
   public void setDefaultMaxPerHost(final int val) {
-    BasicHttpClient.setDefaultMaxPerHost(val);
+    PooledHttpClient.setDefaultMaxPerHost(val);
   }
 
   /* *
@@ -88,22 +88,22 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
    * /
   @Override
   public int getDefaultMaxPerHost() {
-    return BasicHttpClient.getDefaultMaxPerHost();
+    return PooledHttpClient.getDefaultMaxPerHost();
   }
 
   @Override
   public long getCreated() {
-    return BasicHttpClient.getCreated();
+    return PooledHttpClient.getCreated();
   }
 
   @Override
   public long getDeleted() {
-    return BasicHttpClient.getDeleted();
+    return PooledHttpClient.getDeleted();
   }
 
   @Override
   public List<String> getLimits() {
-    return BasicHttpClient.getCurrentLimits();
+    return PooledHttpClient.getCurrentLimits();
   }
   */
 
@@ -113,18 +113,18 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
 
   @Override
   public PoolStats getConnStats() {
-    return BasicHttpClient.getConnStats();
+    return PooledHttpClient.getConnStats();
   }
 
   /*
   @Override
   public void setHostLimit(final String host, final int max) {
-    BasicHttpClient.setHostLimit(fromUrl(host), max);
+    PooledHttpClient.setHostLimit(fromUrl(host), max);
   }
 
   @Override
   public int getHostLimit(final String host) {
-    return BasicHttpClient.getHostLimit(fromUrl(host));
+    return PooledHttpClient.getHostLimit(fromUrl(host));
   }
 
   @Override
@@ -150,8 +150,8 @@ public class HttpOut extends ConfBase<HttpConfigImpl>
    * ==================================================================== */
 
   private void refresh() {
-    BasicHttpClient.setMaxConnections(getConfig().getMaxConnections());
-    BasicHttpClient.setDefaultMaxPerRoute(getConfig().getDefaultMaxPerRoute());
+    PooledHttpClient.setMaxConnections(getConfig().getMaxConnections());
+    PooledHttpClient.setDefaultMaxPerRoute(getConfig().getDefaultMaxPerRoute());
   }
 
   /* ====================================================================

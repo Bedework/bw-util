@@ -19,6 +19,7 @@
 package org.bedework.util.http;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -51,7 +52,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpUtil implements Serializable {
   public interface HeadersFetcher {
-    public Headers get();
+    Headers get();
   }
 
   private HttpUtil() {
@@ -128,22 +129,114 @@ public class HttpUtil implements Serializable {
                                              final String contentType,
                                              final String content)
           throws IOException {
+    final StringEntity entity;
+    if (content != null) {
+      entity = new StringEntity(content);
+    } else {
+      entity = null;
+    }
+
+    return doPost(cl, uri, hdrs, entity);
+  }
+
+  public static CloseableHttpResponse doPost(final CloseableHttpClient cl,
+                                             final URI uri,
+                                             final HeadersFetcher hdrs,
+                                             final HttpEntity entity)
+          throws IOException {
+    final Headers headers = ensureHeaders(hdrs);
+
+    final HttpPost httpPost = new HttpPost(uri);
+
+    httpPost.setHeaders(headers.asArray());
+
+    if (entity != null) {
+      httpPost.setEntity(entity);
+    }
+
+    return cl.execute(httpPost);
+  }
+
+  public static CloseableHttpResponse doPut(final CloseableHttpClient cl,
+                                            final URI uri,
+                                            final HeadersFetcher hdrs,
+                                            final String contentType,
+                                            final String content)
+          throws IOException {
     final Headers headers = ensureHeaders(hdrs);
 
     if (contentType != null) {
       headers.add("Content-type", contentType);
     }
 
-    final HttpPost httpPost = new HttpPost(uri);
+    final HttpPut httpPut = new HttpPut(uri);
 
-    httpPost.setHeaders(headers.asArray());
+    httpPut.setHeaders(headers.asArray());
 
     if (content != null) {
       final StringEntity entity = new StringEntity(content);
-      httpPost.setEntity(entity);
+      httpPut.setEntity(entity);
     }
 
-    return cl.execute(httpPost);
+    return cl.execute(httpPut);
+  }
+
+  public static CloseableHttpResponse doReport(final CloseableHttpClient cl,
+                                               final URI uri,
+                                               final HeadersFetcher hdrs,
+                                               final String depth,
+                                               final String contentType,
+                                               final String content)
+          throws IOException {
+    final Headers headers = ensureHeaders(hdrs);
+
+    if (depth != null) {
+      headers.add("depth", depth);
+    }
+
+    if (contentType != null) {
+      headers.add("Content-type", contentType);
+    }
+
+    final HttpReport httpReport = new HttpReport(uri);
+
+    httpReport.setHeaders(headers.asArray());
+
+    if (content != null) {
+      final StringEntity entity = new StringEntity(content);
+      httpReport.setEntity(entity);
+    }
+
+    return cl.execute(httpReport);
+  }
+
+  public static CloseableHttpResponse doPropfind(final CloseableHttpClient cl,
+                                                 final URI uri,
+                                                 final HeadersFetcher hdrs,
+                                                 final String depth,
+                                                 final String contentType,
+                                                 final String content)
+          throws IOException {
+    final Headers headers = ensureHeaders(hdrs);
+
+    if (depth != null) {
+      headers.add("depth", depth);
+    }
+
+    if (contentType != null) {
+      headers.add("Content-type", contentType);
+    }
+
+    final HttpPropfind httpPropfind = new HttpPropfind(uri);
+
+    httpPropfind.setHeaders(headers.asArray());
+
+    if (content != null) {
+      final StringEntity entity = new StringEntity(content);
+      httpPropfind.setEntity(entity);
+    }
+
+    return cl.execute(httpPropfind);
   }
 
   private static Headers ensureHeaders(final HeadersFetcher hdrs) {
@@ -157,7 +250,11 @@ public class HttpUtil implements Serializable {
       return new Headers();
     }
 
-    return headers;
+    // Return a copy so we can change it.
+    final Headers nheaders = new Headers();
+    nheaders.addAll(headers);
+
+    return nheaders;
   }
 
   /**

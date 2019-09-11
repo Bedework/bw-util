@@ -18,10 +18,12 @@
 */
 package org.bedework.util.misc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -200,6 +202,28 @@ public class Util {
 
     return paths[idx];
   }
+
+  /** Read all the content into a string
+   *
+   * @param is input stream
+   * @return a string
+   */
+  public static String streamToString(final InputStream is) {
+    final ByteArrayOutputStream result = new ByteArrayOutputStream();
+    final byte[] buffer = new byte[1024];
+    int length;
+
+    try {
+      while ((length = is.read(buffer)) != -1) {
+        result.write(buffer, 0, length);
+      }
+
+      return result.toString(StandardCharsets.UTF_8);
+    } catch (final Throwable t) {
+      throw new RuntimeException(t);
+    }
+  }
+
 
   /** make a locale from the standard underscore separated parts - no idea why
    * this isn't in Locale
