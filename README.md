@@ -91,3 +91,11 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 #### 4.0.24
   * Update jackson version
   * Update servlet-api
+  
+#### 4.0.25
+  * Update javadoc plugin config
+  * ES 7.2 changes
+  
+#### 4.0.26
+  * Lowercase account unless mixed case environment variable BEDEWORK_MIXEDCASE_ACCOUNTS is set to true
+  * Switch to PooledHttpClient
