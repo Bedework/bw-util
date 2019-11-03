@@ -215,7 +215,7 @@ public class PooledHttpClient {
    * @throws HttpException on fatal error
    */
   public <T> T getJson(final String request,
-                       final TypeReference valueTypeRef) throws HttpException {
+                       final TypeReference<T> valueTypeRef) throws HttpException {
     try (CloseableHttpResponse hresp =
                  HttpUtil.doGet(http,
                                 resolve(request),
