@@ -39,7 +39,6 @@
     <jtidy.version>4aug2000r7-dev</jtidy.version>
     <junit.version>4.8.2</junit.version>
     <servlet-api.version>4.0.0</servlet-api.version>
-    <struts.version>1.3.10</struts.version>
   </properties>
 
   <organization>
@@ -85,7 +84,6 @@
     <module>bw-util-security</module>
     <module>bw-util-servlet</module>
     <module>bw-util-servlet-filters</module>
-    <module>bw-util-struts</module>
     <module>bw-util-timezones</module>
     <module>bw-util-xml</module>
   </modules>
@@ -217,12 +215,6 @@
         <groupId>javax.jms</groupId>
         <artifactId>javax.jms-api</artifactId>
         <version>${jms.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.struts</groupId>
-        <artifactId>struts-core</artifactId>
-        <version>${struts.version}</version>
       </dependency>
 
       <!-- Test Dependencies -->
