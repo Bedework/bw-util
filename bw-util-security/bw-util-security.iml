@@ -11,6 +11,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="bw-util-jmx" />
     <orderEntry type="module" module-name="bw-util-config" />
+    <orderEntry type="library" name="Maven: org.bedework:bw-util-jmx:4.0.27-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.bedework:bw-util-config:4.0.27-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="bw-util-xml" />
     <orderEntry type="module" module-name="bw-util-misc" />
     <orderEntry type="library" name="Maven: org.bedework:bw-util-logging:4.0.4" level="project" />
