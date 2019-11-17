@@ -18,13 +18,9 @@
     <bw-util-logging.version>4.0.4</bw-util-logging.version>
 
     <!-- Third Party Library Versions -->
-    <http-client.version>4.5.3</http-client.version>
-    <http-core.version>4.4.8</http-core.version>
     <commons-codec.version>1.5</commons-codec.version>
-    <elasticsearch.version>7.2.0</elasticsearch.version>
     <jackson.version>2.10.0</jackson.version>
     <jms.version>2.0</jms.version>
-    <jtidy.version>4aug2000r7-dev</jtidy.version>
     <junit.version>4.8.2</junit.version>
   </properties>
 
@@ -56,12 +52,9 @@
   <modules>
     <module>bw-util-caching</module>
     <module>bw-util-directory</module>
-    <module>bw-util-elasticsearch</module>
-    <module>bw-util-indexing</module>
     <module>bw-util-jms</module>
     <module>bw-util-json</module>
     <module>bw-util-misc</module>
-    <module>bw-util-security</module>
     <module>bw-util-xml</module>
   </modules>
 
@@ -103,17 +96,6 @@
       </dependency>
 
       <!-- Third Party Libraries -->
-      <dependency>
-        <groupId>org.elasticsearch</groupId>
-        <artifactId>elasticsearch</artifactId>
-        <version>${elasticsearch.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.elasticsearch.client</groupId>
-        <artifactId>elasticsearch-rest-high-level-client</artifactId>
-        <version>${elasticsearch.version}</version>
-      </dependency>
 
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -137,24 +119,6 @@
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
         <version>${commons-codec.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${http-client.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore</artifactId>
-        <version>${http-core.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>jtidy</groupId>
-        <artifactId>jtidy</artifactId>
-        <version>${jtidy.version}</version>
       </dependency>
 
       <dependency>
