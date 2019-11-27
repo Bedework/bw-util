@@ -27,12 +27,12 @@ import java.util.Stack;
  *
  * @author Mike Douglass  douglm@rpi.edu
  */
-class XmlEmitNamespaces {
+public class XmlEmitNamespaces {
   private boolean mustEmitNS; // Emit this scopes namespaces.
 
   private int scopeLevel; // So we can pop namespaces
 
-  private Stack<XmlEmit.NameSpace> namespaces = new Stack<XmlEmit.NameSpace>();
+  private Stack<XmlEmit.NameSpace> namespaces = new Stack<>();
 
   /** We need to map the namespaces onto a set of reasonable abbreviations
    * for the generated xml. New set created each request
