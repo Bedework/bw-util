@@ -444,6 +444,14 @@ public final class XmlUtil implements Serializable {
     return false;
   }
 
+  public static void clear(final Node nd) {
+    NodeList children = nd.getChildNodes();
+
+    for (int i = 0; i < children.getLength(); i++) {
+      nd.removeChild(children.item(i));
+    }
+  }
+
   /** See if this node is empty
    *
    * @param el
