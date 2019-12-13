@@ -24,7 +24,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -118,11 +117,9 @@ public final class XmlUtil implements Serializable {
    * @param el          Node
    * @param name        String tag name of required node
    * @return Node     node value or null
-   * @throws SAXException
    */
   public static Node getOneTaggedNode(final Node el,
-                                      final String name)
-          throws SAXException {
+                                      final String name) {
     if (!el.hasChildNodes()) {
       return null;
     }
@@ -147,10 +144,9 @@ public final class XmlUtil implements Serializable {
    * @param el          Node whose value we want
    * @param name        String name to make exception messages more readable
    * @return String     node value or null
-   * @throws SAXException
    */
-  public static String getOneNodeVal(final Node el, final String name)
-      throws SAXException {
+  public static String getOneNodeVal(final Node el,
+                                     final String name) {
     /* We expect one child of type text */
 
     if (!el.hasChildNodes()) {
@@ -159,7 +155,7 @@ public final class XmlUtil implements Serializable {
 
     NodeList children = el.getChildNodes();
     if (children.getLength() > 1){
-      throw new SAXException("Multiple property values: " + name);
+      throw new RuntimeException("Multiple property values: " + name);
     }
 
     Node child = children.item(0);
@@ -172,9 +168,8 @@ public final class XmlUtil implements Serializable {
    *
    * @param el          Node whose value we want
    * @return String     node value or null
-   * @throws SAXException
    */
-  public static String getOneNodeVal(final Node el) throws SAXException {
+  public static String getOneNodeVal(final Node el) {
     return getOneNodeVal(el, el.getNodeName());
   }
 
@@ -184,14 +179,13 @@ public final class XmlUtil implements Serializable {
    * @param el          Node whose value we want
    * @param name        String name to make exception messages more readable
    * @return String     node value
-   * @throws SAXException
    */
-  public static String getReqOneNodeVal(final Node el, final String name)
-      throws SAXException {
+  public static String getReqOneNodeVal(final Node el,
+                                        final String name) {
     String str = getOneNodeVal(el, name);
 
     if ((str == null) || (str.length() == 0)) {
-      throw new SAXException("Missing property value: " + name);
+      throw new RuntimeException("Missing property value: " + name);
     }
 
     return str;
@@ -202,9 +196,8 @@ public final class XmlUtil implements Serializable {
    *
    * @param el          Node whose value we want
    * @return String     node value
-   * @throws SAXException
    */
-  public static String getReqOneNodeVal(final Node el) throws SAXException {
+  public static String getReqOneNodeVal(final Node el) {
     return getReqOneNodeVal(el, el.getNodeName());
   }
 
@@ -213,10 +206,9 @@ public final class XmlUtil implements Serializable {
    * @param el          Element
    * @param name        String name of desired attribute
    * @return String     attribute value or null
-   * @throws SAXException
    */
-  public static String getAttrVal(final Element el, final String name)
-      throws SAXException {
+  public static String getAttrVal(final Element el,
+                                  final String name) {
     Attr at = el.getAttributeNode(name);
     if (at == null) {
       return null;
@@ -230,14 +222,13 @@ public final class XmlUtil implements Serializable {
    * @param el          Element
    * @param name        String name of desired attribute
    * @return String     attribute value
-   * @throws SAXException
    */
-  public static String getReqAttrVal(final Element el, final String name)
-      throws SAXException {
+  public static String getReqAttrVal(final Element el,
+                                     final String name) {
     String str = getAttrVal(el, name);
 
     if ((str == null) || (str.length() == 0)) {
-      throw new SAXException("Missing attribute value: " + name);
+      throw new RuntimeException("Missing attribute value: " + name);
     }
 
     return str;
@@ -249,7 +240,8 @@ public final class XmlUtil implements Serializable {
    * @param name        String name of desired attribute
    * @return String     attribute value or null
    */
-  public static String getAttrVal(final NamedNodeMap nnm, final String name) {
+  public static String getAttrVal(final NamedNodeMap nnm,
+                                  final String name) {
     Node nmAttr = nnm.getNamedItem(name);
 
     if ((nmAttr == null) || (absent(nmAttr.getNodeValue()))) {
@@ -265,10 +257,9 @@ public final class XmlUtil implements Serializable {
    * @param nnm         NamedNodeMap
    * @param name        String name of desired attribute
    * @return Boolean    attribute value or null
-   * @throws SAXException
    */
-  public static Boolean getYesNoAttrVal(final NamedNodeMap nnm, final String name)
-      throws SAXException {
+  public static Boolean getYesNoAttrVal(final NamedNodeMap nnm,
+                                        final String name) {
     String val = getAttrVal(nnm, name);
 
     if (val == null) {
@@ -276,14 +267,14 @@ public final class XmlUtil implements Serializable {
     }
 
     if ((!"yes".equals(val)) && (!"no".equals(val))) {
-      throw new SAXException("Invalid attribute value: " + val);
+      throw new RuntimeException("Invalid attribute value: " + val);
     }
 
-    return new Boolean("yes".equals(val));
+    return "yes".equals(val);
   }
 
   /**
-   * @param nd
+   * @param nd the node
    * @return int number of attributes
    */
   public static int numAttrs(final Node nd) {
@@ -298,11 +289,10 @@ public final class XmlUtil implements Serializable {
 
   /** All the children must be elements or white space text nodes.
    *
-   * @param nd
+   * @param nd the node
    * @return Collection   element nodes. Always non-null
-   * @throws SAXException
    */
-  public static List<Element> getElements(final Node nd) throws SAXException {
+  public static List<Element> getElements(final Node nd) {
     final List<Element> al = new ArrayList<>();
 
     NodeList children = nd.getChildNodes();
@@ -316,37 +306,34 @@ public final class XmlUtil implements Serializable {
         if (val != null) {
           for (int vi= 0; vi < val.length(); vi++) {
             if (!Character.isWhitespace(val.charAt(vi))) {
-              throw new SAXException("Non-whitespace text in element body for " +
-                                     nd.getLocalName() +
-                                     "\n text=" + val);
+              throw new RuntimeException("Non-whitespace text in element body for " +
+                                                 nd.getLocalName() +
+                                                 "\n text=" + val);
             }
           }
         }
-      } else if (curnode.getNodeType() == Node.COMMENT_NODE) {
-        // Ignore
       } else if (curnode.getNodeType() == Node.ELEMENT_NODE) {
         al.add((Element)curnode);
-      } else {
-        throw new SAXException("Unexpected child node " + curnode.getLocalName() +
-                               " for " + nd.getLocalName());
+      } else if (curnode.getNodeType() != Node.COMMENT_NODE) {
+        throw new RuntimeException("Unexpected child node " + curnode.getLocalName() +
+                                           " for " + nd.getLocalName());
       }
     }
 
     return al;
   }
 
-  /** Return the content for the current element. All leading and trailing
+  /** Return the content for the given element. All leading and trailing
    * whitespace and embedded comments will be removed.
    *
    * <p>This is only intended for an element with no child elements.
    *
-   * @param el
+   * @param el the element
    * @param trim true to trim surrounding white-space
    * @return element content
-   * @throws SAXException
    */
   public static String getElementContent(final Element el,
-                                         final boolean trim) throws SAXException {
+                                         final boolean trim) {
     StringBuilder sb = new StringBuilder();
 
     NodeList children = el.getChildNodes();
@@ -358,11 +345,9 @@ public final class XmlUtil implements Serializable {
         sb.append(curnode.getNodeValue());
       } else if (curnode.getNodeType() == Node.CDATA_SECTION_NODE) {
         sb.append(curnode.getNodeValue());
-      } else if (curnode.getNodeType() == Node.COMMENT_NODE) {
-        // Ignore
-      } else {
-        throw new SAXException("Unexpected child node " + curnode.getLocalName() +
-                               " for " + el.getLocalName());
+      } else if (curnode.getNodeType() != Node.COMMENT_NODE) {
+        throw new RuntimeException("Unexpected child node " + curnode.getLocalName() +
+                                           " for " + el.getLocalName());
       }
     }
 
@@ -377,10 +362,9 @@ public final class XmlUtil implements Serializable {
    *
    * @param n element
    * @param s string content
-   * @throws SAXException
    */
   public static void setElementContent(final Node n,
-                                       final String s) throws SAXException {
+                                       final String s) {
     NodeList children = n.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
@@ -396,26 +380,24 @@ public final class XmlUtil implements Serializable {
     n.appendChild(textNode);
   }
 
-  /** Return the content for the current element. All leading and trailing
+  /** Return the content for the given element. All leading and trailing
    * whitespace and embedded comments will be removed.
    *
    * <p>This is only intended for an element with no child elements.
    *
-   * @param el
+   * @param el the element
    * @return element content
-   * @throws SAXException
    */
-  public static String getElementContent(final Element el) throws SAXException {
+  public static String getElementContent(final Element el) {
     return getElementContent(el, true);
   }
 
   /** Return true if the current element has non zero length content.
    *
-   * @param el
+   * @param el the element
    * @return boolean
-   * @throws SAXException
    */
-  public static boolean hasContent(final Element el) throws SAXException {
+  public static boolean hasContent(final Element el) {
     String s = getElementContent(el);
 
     return (s != null) && (s.length() > 0);
@@ -423,11 +405,10 @@ public final class XmlUtil implements Serializable {
 
   /** See if this node has any children
    *
-   * @param el
+   * @param el the element
    * @return boolean   true for any child elements
-   * @throws SAXException
    */
-  public static boolean hasChildren(final Element el) throws SAXException {
+  public static boolean hasChildren(final Element el) {
     NodeList children = el.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
@@ -454,20 +435,18 @@ public final class XmlUtil implements Serializable {
 
   /** See if this node is empty
    *
-   * @param el
+   * @param el the element
    * @return boolean   true for empty
-   * @throws SAXException
    */
-  public static boolean isEmpty(final Element el) throws SAXException {
+  public static boolean isEmpty(final Element el) {
     return !hasChildren(el) && !hasContent(el);
   }
 
   /**
-   * @param nd
+   * @param nd the node
    * @return element array from node
-   * @throws SAXException
    */
-  public static Element[] getElementsArray(final Node nd) throws SAXException {
+  public static Element[] getElementsArray(final Node nd) {
     Collection<Element> al = getElements(nd);
 
     return al.toArray(new Element[al.size()]);
@@ -475,8 +454,8 @@ public final class XmlUtil implements Serializable {
 
   /** See if node matches tag
    *
-   * @param nd
-   * @param tag
+   * @param nd the node
+   * @param tag to match
    * @return boolean true for match
    */
   public static boolean nodeMatches(final Node nd, final QName tag) {
@@ -511,7 +490,7 @@ public final class XmlUtil implements Serializable {
 
   /** Return a QName for the node
    *
-   * @param nd
+   * @param nd the node
    * @return boolean true for match
    */
   public static QName fromNode(final Node nd) {
@@ -527,16 +506,16 @@ public final class XmlUtil implements Serializable {
   }
 
   /**
-   * @param nd
+   * @param nd the node
    * @return only child node
-   * @throws SAXException  if not exactly one child elemnt
+   * @throws RuntimeException  if not exactly one child elemnt
    */
-  public static Element getOnlyElement(final Node nd) throws SAXException {
+  public static Element getOnlyElement(final Node nd) {
     Element[] els = getElementsArray(nd);
 
     if (els.length != 1) {
-      throw new SAXException("Expected exactly one child node for " +
-                              nd.getLocalName());
+      throw new RuntimeException("Expected exactly one child node for " +
+                                         nd.getLocalName());
     }
 
     return els[0];

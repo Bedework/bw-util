@@ -175,6 +175,9 @@ public class WebdavTags {
   public static final QName mkcol = makeQName("mkcol");
 
   /** */
+  public static final QName mkcolResponse = makeQName("mkcol-response");
+
+  /** */
   public static final QName multistatus = makeQName("multistatus");
 
   /** */
