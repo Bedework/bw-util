@@ -205,6 +205,9 @@ public class WebdavTags {
   public static final QName notSupportedPrivilege = makeQName("not-supported-privilege");
 
   /** */
+  public static final QName nresults = makeQName("nresults");
+
+  /** */
   public static final QName owner = makeQName("owner");
 
   /** */
