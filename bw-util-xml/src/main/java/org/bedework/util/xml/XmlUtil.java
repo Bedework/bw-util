@@ -291,6 +291,7 @@ public final class XmlUtil implements Serializable {
    *
    * @param nd the node
    * @return Collection   element nodes. Always non-null
+   * @throws RuntimeException on fatal error
    */
   public static List<Element> getElements(final Node nd) {
     final List<Element> al = new ArrayList<>();
