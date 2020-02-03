@@ -287,14 +287,14 @@ public final class XmlUtil implements Serializable {
     return nnm.getLength();
   }
 
-  /** All the children must be elements or white space text nodes.
+  /** All the children must be nodes or white space text nodes.
    *
    * @param nd the node
-   * @return Collection   element nodes. Always non-null
+   * @return Collection   nodes. Always non-null
    * @throws RuntimeException on fatal error
    */
-  public static List<Element> getElements(final Node nd) {
-    final List<Element> al = new ArrayList<>();
+  public static List<Node> getNodes(final Node nd) {
+    final List<Node> al = new ArrayList<>();
 
     NodeList children = nd.getChildNodes();
 
@@ -314,7 +314,7 @@ public final class XmlUtil implements Serializable {
           }
         }
       } else if (curnode.getNodeType() == Node.ELEMENT_NODE) {
-        al.add((Element)curnode);
+        al.add(curnode);
       } else if (curnode.getNodeType() != Node.COMMENT_NODE) {
         throw new RuntimeException("Unexpected child node " + curnode.getLocalName() +
                                            " for " + nd.getLocalName());
@@ -324,16 +324,35 @@ public final class XmlUtil implements Serializable {
     return al;
   }
 
-  /** Return the content for the given element. All leading and trailing
+  /** All the children must be elements or white space text nodes.
+   *
+   * @param nd the node
+   * @return Collection   element nodes. Always non-null
+   * @throws RuntimeException on fatal error
+   */
+  public static List<Element> getElements(final Node nd) {
+    final List<Node> nodes = getNodes(nd);
+
+    for (final Node n: nodes) {
+      if (!(n instanceof Element)) {
+        throw new RuntimeException("Required element. Found " + nd);
+      }
+    }
+
+    //noinspection unchecked
+    return (List<Element>)(Object)nodes;
+  }
+
+  /** Return the content for the given node. All leading and trailing
    * whitespace and embedded comments will be removed.
    *
-   * <p>This is only intended for an element with no child elements.
+   * <p>This is only intended for a node with no child elements.
    *
    * @param el the element
    * @param trim true to trim surrounding white-space
    * @return element content
    */
-  public static String getElementContent(final Element el,
+  public static String getElementContent(final Node el,
                                          final boolean trim) {
     StringBuilder sb = new StringBuilder();
 
@@ -389,27 +408,45 @@ public final class XmlUtil implements Serializable {
    * @param el the element
    * @return element content
    */
-  public static String getElementContent(final Element el) {
+  public static String getElementContent(final Node el) {
     return getElementContent(el, true);
   }
 
-  /** Return true if the current element has non zero length content.
+  /** Return true if the current node has non zero length content.
    *
-   * @param el the element
+   * @param el the node
    * @return boolean
    */
-  public static boolean hasContent(final Element el) {
-    String s = getElementContent(el);
+  public static boolean hasContent(final Node el) {
+    NodeList children = el.getChildNodes();
 
-    return (s != null) && (s.length() > 0);
+    for (int i = 0; i < children.getLength(); i++) {
+      Node curnode = children.item(i);
+
+      if (curnode.getNodeType() == Node.TEXT_NODE) {
+        continue;
+      }
+
+      if (curnode.getNodeType() == Node.CDATA_SECTION_NODE) {
+        continue;
+      }
+
+      if (curnode.getNodeType() == Node.COMMENT_NODE) {
+        continue;
+      }
+
+      return false;
+    }
+
+    return true;
   }
 
   /** See if this node has any children
    *
-   * @param el the element
-   * @return boolean   true for any child elements
+   * @param el the node
+   * @return boolean   true for any child nodes
    */
-  public static boolean hasChildren(final Element el) {
+  public static boolean hasChildren(final Node el) {
     NodeList children = el.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
