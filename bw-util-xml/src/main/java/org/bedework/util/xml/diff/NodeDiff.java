@@ -233,7 +233,14 @@ public class NodeDiff {
       }
 
       // No match either side.
-      result.add(new DiffNode(npathTo, lnw, rnw));
+
+      if (lnw.shallowCompare(rnw) != 0) {
+        result.add(new DiffNode(npathTo, lnw, rnw));
+      } else {
+        // Element itself matches - must be the children
+        skipped.addAll(diff(npathTo, lnw, rnw));
+      }
+
       lefti++;
       righti++;
     } while ((lefti < leftChildren.size()) &&
