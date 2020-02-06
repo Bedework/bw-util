@@ -53,10 +53,8 @@ public class XmlEmit {
    */
   public static abstract class Notifier {
     /** Called on output if isEnabled returns false
-     *
-     * @throws Throwable
      */
-    public abstract void doNotification() throws Throwable;
+    public abstract void doNotification();
 
     /**
      * @return true if doNotification should be called
@@ -161,9 +159,8 @@ public class XmlEmit {
   /** Emit any headers and namespace declarations
    *
    * @param wtr
-   * @throws IOException
    */
-  public void startEmit(final Writer wtr) throws IOException {
+  public void startEmit(final Writer wtr) {
     this.wtr = wtr;
   }
 
@@ -171,9 +168,8 @@ public class XmlEmit {
    *
    * @param wtr
    * @param dtd
-   * @throws IOException
    */
-  public void startEmit(final Writer wtr, final String dtd) throws IOException {
+  public void startEmit(final Writer wtr, final String dtd) {
     this.wtr = wtr;
     this.dtd = dtd;
   }
@@ -624,7 +620,7 @@ public class XmlEmit {
    * ==================================================================== */
 
   private void quote(final String val) throws IOException {
-    if (val.indexOf("\"") < 0) {
+    if (!val.contains("\"")) {
       value(val, "\"");
     } else {
       value(val, "'");
@@ -707,13 +703,7 @@ public class XmlEmit {
 
   private void out(final String val) throws IOException {
     if ((notifier != null) && notifier.isEnabled()){
-      try {
-        notifier.doNotification();
-      } catch (IOException ioe) {
-        throw ioe;
-      } catch (Throwable t) {
-        throw new IOException(t);
-      }
+      notifier.doNotification();
     }
 
     if (!started) {
