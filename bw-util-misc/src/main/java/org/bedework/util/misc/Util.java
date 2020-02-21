@@ -30,10 +30,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -121,7 +123,7 @@ public class Util {
    * <p>The path is constrained to either end or not end with the path separator.
    * The path will be adjusted according to the constraint
    *
-   * @param endWithSep
+   * @param endWithSep true for separator on end
    * @param val - list of elements and path separators.
    * @return completed path
    */
@@ -228,17 +230,17 @@ public class Util {
   /** make a locale from the standard underscore separated parts - no idea why
    * this isn't in Locale
    *
-   * @param val teh locale String e.g. en_US
+   * @param val the locale String e.g. en_US
    * @return a Locale
-   * @throws Throwable
+   * @throws RuntimeException on bad locale
    */
-  public static Locale makeLocale(final String val) throws Throwable {
-    String lang = null;
+  public static Locale makeLocale(final String val) {
+    String lang;
     String country = ""; // NOT null for Locale
     String variant = "";
 
     if (val == null) {
-      throw new Exception("Bad Locale: NULL");
+      throw new RuntimeException("Bad Locale: NULL");
     }
 
     if (val.length() == 2) {
@@ -246,14 +248,14 @@ public class Util {
     } else {
       int pos = val.indexOf('_');
       if (pos != 2) {
-        throw new Exception("Bad Locale: " + val);
+        throw new RuntimeException("Bad Locale: " + val);
       }
 
       lang = val.substring(0, 2);
       pos = val.indexOf("_", 3);
       if (pos < 0) {
         if (val.length() != 5) {
-          throw new Exception("Bad Locale: " + val);
+          throw new RuntimeException("Bad Locale: " + val);
         }
 
         country = val.substring(3);
@@ -328,7 +330,7 @@ public class Util {
    * @throws Exception
    */
   public static Object getObject(final String className,
-                                 final Class cl) throws Exception {
+                                 final Class<?> cl) throws Exception {
     try {
       Object o = Class.forName(className).newInstance();
 
@@ -353,7 +355,7 @@ public class Util {
   public interface PropertyFetcher {
     /** Get the value or null
      *
-     * @param name name for proeprty
+     * @param name name for property
      * @return value or null
      */
     String get(String name);
@@ -421,6 +423,25 @@ public class Util {
     }
 
     return sb.toString();
+  }
+
+  /**
+   *
+   * @param map to sort
+   * @param <K> type of key
+   * @param <V> type of value
+   * @return sorted list of map entries
+   */
+  public static <K, V extends Comparable<V>> List<Map.Entry<K, V>> sortMap(Map<K, V> map) {
+    // We create a list from the elements of the unsorted map
+    List <Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+
+    // Now sort the list
+    Comparator<Map.Entry<K, V>> comparator =
+            Comparator.comparing(Map.Entry<K, V>::getValue);
+    list.sort(comparator.reversed());
+
+    return list;
   }
 
   /** Format a message consisting of a format string
