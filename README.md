@@ -23,12 +23,12 @@ To create a release, you must have:
 
 To perform a new release:
 
-> mvn release:clean release:prepare
+> mvn -P bedework-dev release:clean release:prepare
 
 When prompted, select the desired version; accept the defaults for scm tag and next development version.
 When the build completes, and the changes are committed and pushed successfully, execute:
 
-> mvn release:perform
+> mvn -P bedework-dev release:perform
 
 For full details, see [Sonatype's documentation for using Maven to publish releases](http://central.sonatype.org/pages/apache-maven.html).
 
@@ -99,3 +99,19 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 #### 4.0.26
   * Lowercase account unless mixed case environment variable BEDEWORK_MIXEDCASE_ACCOUNTS is set to true
   * Switch to PooledHttpClient
+  
+#### 4.0.27
+  * Update to jackson version and fix PooledHttClient
+  * Refactor: move cli support out of bw-util into bw-cliutil
+  * Refactor: move bw-util-struts out of bw-util into bw-calendar-client-util
+  * Refactor - move a bunch of modules into new util projects
+  * For dav tester
+    * Make some classes public
+    * Add clear method to clean an XML node
+    * Clean up exceptions
+  * Move response objects out of CalFacade so they can be used within other modules.
+  * Add a node diff class - allows diffing parsed XML but should work for any Document.
+  * Add sortMap method
+  
+  
+  
