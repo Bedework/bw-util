@@ -34,17 +34,27 @@ public class XmlEmit {
 
   private boolean forHtml = false;
 
-  private boolean noHeaders = false;
+  private final boolean noHeaders;
 
   private String dtd;
 
   private boolean started;
 
-  private XmlEmitNamespaces nameSpaces = new XmlEmitNamespaces();
+  private final XmlEmitNamespaces nameSpaces = new XmlEmitNamespaces();
 
   private Notifier notifier;
 
   private Properties props;
+
+  public static class XmlUtilException extends RuntimeException {
+    public XmlUtilException(final Throwable t) {
+      super(t);
+    }
+
+    public XmlUtilException(final String msg) {
+      super(msg);
+    }
+  }
 
   /** Called (frequently) if set. May be used to allow higher level to
    * carry out actions when some output happens, e.g. open surrounding elements.
@@ -75,8 +85,8 @@ public class XmlEmit {
     boolean defaultNs;
 
     /**
-     * @param ns
-     * @param abbrev
+     * @param ns name
+     * @param abbrev abbreviation
      */
     public NameSpace(final String ns, final String abbrev) {
       this.ns = ns;
@@ -90,7 +100,11 @@ public class XmlEmit {
 
     @Override
     public boolean equals(final Object o) {
-      NameSpace that = (NameSpace)o;
+      if (!(o instanceof NameSpace)) {
+        return false;
+      }
+
+      final NameSpace that = (NameSpace)o;
       return ns.equals(that.ns);
     }
   }
@@ -98,9 +112,9 @@ public class XmlEmit {
   /** The following allow us to tidy up the output a little.
    */
   int indent;
-  private String blank = "                                       " +
+  private final String blank = "                                       " +
                                 "                                       ";
-  private int blankLen = blank.length();
+  private final int blankLen = blank.length();
 
   /** construct an object which will be used to collect namespace names
    * during the first phase and emit xml after startEmit is called.
@@ -133,8 +147,8 @@ public class XmlEmit {
    * <p>For example, a parameter "full" with value "true" might indicate a full
    * XML dump is required.
    *
-   * @param name
-   * @param val
+   * @param name of property
+   * @param val of property
    */
   public void setProperty(final String name, final String val) {
     if (props == null) {
@@ -145,7 +159,7 @@ public class XmlEmit {
   }
 
   /**
-   * @param name
+   * @param name of property
    * @return value or null
    */
   public String getProperty(final String name) {
@@ -158,7 +172,7 @@ public class XmlEmit {
 
   /** Emit any headers and namespace declarations
    *
-   * @param wtr
+   * @param wtr a writer
    */
   public void startEmit(final Writer wtr) {
     this.wtr = wtr;
@@ -166,8 +180,8 @@ public class XmlEmit {
 
   /** Emit any headers, dtd and namespace declarations
    *
-   * @param wtr
-   * @param dtd
+   * @param wtr a writer
+   * @param dtd uri
    */
   public void startEmit(final Writer wtr, final String dtd) {
     this.wtr = wtr;
@@ -175,7 +189,7 @@ public class XmlEmit {
   }
 
   /** At the moment fairly primitive - no stacking etc.
-   * @param n
+   * @param n notifier
    */
   public void setNotifier(final Notifier n) {
     notifier = n;
@@ -184,10 +198,10 @@ public class XmlEmit {
   /* ===================================== Tag start ======================== */
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void openTag(final QName tag) throws IOException {
+  public void openTag(final QName tag) {
     blanks();
     openTagSameLine(tag);
     newline();
@@ -196,14 +210,14 @@ public class XmlEmit {
 
   /** open with attribute
    *
-   * @param tag
-   * @param attrName
-   * @param attrVal
-   * @throws IOException
+   * @param tag qname
+   * @param attrName string attribute name
+   * @param attrVal attribute name
+   * @throws XmlUtilException on fatal eror
    */
   public void openTag(final QName tag,
                       final String attrName,
-                      final String attrVal) throws IOException {
+                      final String attrVal) {
     blanks();
     openTagSameLine(tag, attrName, attrVal);
     newline();
@@ -211,34 +225,35 @@ public class XmlEmit {
   }
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void openTagNoNewline(final QName tag) throws IOException {
+  public void openTagNoNewline(final QName tag) {
     blanks();
     openTagSameLine(tag);
     indent += 2;
   }
 
   /**
-   * @param tag
-   * @param attrName
-   * @param attrVal
-   * @throws IOException
+   * @param tag qname
+   * @param attrName string attribute name
+   * @param attrVal attribute name
+   * @throws XmlUtilException on fatal eror
    */
+  @SuppressWarnings("unused")
   public void openTagNoNewline(final QName tag,
                                final String attrName,
-                               final String attrVal) throws IOException {
+                               final String attrVal) {
     blanks();
     openTagSameLine(tag, attrName, attrVal);
     indent += 2;
   }
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void openTagSameLine(final QName tag) throws IOException {
+  public void openTagSameLine(final QName tag) {
     lb();
     emitQName(tag);
     endOpeningTag();
@@ -246,14 +261,14 @@ public class XmlEmit {
 
   /** Emit an opening tag ready for nested values. No new line
    *
-   * @param tag
-   * @param attrName
-   * @param attrVal
-   * @throws IOException
+   * @param tag qname
+   * @param attrName string attribute name
+   * @param attrVal attribute name
+   * @throws XmlUtilException on fatal eror
    */
   public void openTagSameLine(final QName tag,
                               final String attrName,
-                              final String attrVal) throws IOException {
+                              final String attrVal) {
     lb();
     emitQName(tag);
     attribute(attrName, attrVal);
@@ -262,20 +277,20 @@ public class XmlEmit {
 
   /** Start tag ready for attributes
    *
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void startTag(final QName tag) throws IOException {
+  public void startTag(final QName tag) {
     blanks();
     startTagSameLine(tag);
   }
 
   /** Start tag ready for attributes - new line and indent
    *
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void startTagIndent(final QName tag) throws IOException {
+  public void startTagIndent(final QName tag) {
     blanks();
     startTagSameLine(tag);
     indent += 2;
@@ -283,19 +298,19 @@ public class XmlEmit {
 
   /** Start a tag ready for some attributes. No new line
    *
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void startTagSameLine(final QName tag) throws IOException {
+  public void startTagSameLine(final QName tag) {
     lb();
     emitQName(tag);
   }
 
   /** End a tag we are opening
    *
-   * @throws IOException
+   * @throws XmlUtilException on fatal eror
    */
-  public void endOpeningTag() throws IOException {
+  public void endOpeningTag() {
     scopeIn();
     rb();
   }
@@ -304,11 +319,11 @@ public class XmlEmit {
 
   /** Add an attribute
    *
-   * @param attrName
-   * @param attrVal
-   * @throws IOException
+   * @param attrName string attribute name
+   * @param attrVal attribute name
+   * @throws XmlUtilException on fatal eror
    */
-  public void attribute(final String attrName, final String attrVal) throws IOException {
+  public void attribute(final String attrName, final String attrVal) {
     out(" ");
     out(attrName);
     out("=");
@@ -317,11 +332,11 @@ public class XmlEmit {
 
   /** Add an attribute
    *
-   * @param attr
-   * @param attrVal
-   * @throws IOException
+   * @param attr qname attribute name
+   * @param attrVal attribute name
+   * @throws XmlUtilException on fatal eror
    */
-  public void attribute(final QName attr, final String attrVal) throws IOException {
+  public void attribute(final QName attr, final String attrVal) {
     out(" ");
 
     emitQName(attr);
@@ -335,10 +350,10 @@ public class XmlEmit {
   /* ===================================== Tag end ========================== */
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void closeTag(final QName tag) throws IOException {
+  public void closeTag(final QName tag) {
     indent -= 2;
     if (indent < 0) {
       indent = 0;
@@ -349,10 +364,10 @@ public class XmlEmit {
   }
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void closeTagNoblanks(final QName tag) throws IOException {
+  public void closeTagNoblanks(final QName tag) {
     indent -= 2;
     if (indent < 0) {
       indent = 0;
@@ -362,10 +377,10 @@ public class XmlEmit {
   }
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void closeTagSameLine(final QName tag) throws IOException {
+  public void closeTagSameLine(final QName tag) {
     lb();
     out("/");
     emitQName(tag);
@@ -375,9 +390,9 @@ public class XmlEmit {
 
   /** End an empty tag
    *
-   * @throws IOException
+   * @throws XmlUtilException on fatal eror
    */
-  public void endEmptyTag() throws IOException {
+  public void endEmptyTag() {
     out(" /");
     rb();
   }
@@ -385,24 +400,24 @@ public class XmlEmit {
   /* ===================================== Tag start and end ================ */
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void emptyTag(final QName tag) throws IOException {
+  public void emptyTag(final QName tag) {
     blanks();
     emptyTagSameLine(tag);
     newline();
   }
 
   /**
-   * @param tag
-  * @param attrName
-  * @param attrVal
-   * @throws IOException
+   * @param tag qname
+  * @param attrName String attribute name
+  * @param attrVal attribute name
+   * @throws XmlUtilException on fatal eror
    */
   public void emptyTag(final QName tag,
                        final String attrName,
-                       final String attrVal) throws IOException {
+                       final String attrVal) {
     blanks();
     lb();
     emitQName(tag);
@@ -413,10 +428,10 @@ public class XmlEmit {
   }
 
   /**
-   * @param tag
-   * @throws IOException
+   * @param tag qname
+   * @throws XmlUtilException on fatal eror
    */
-  public void emptyTagSameLine(final QName tag) throws IOException {
+  public void emptyTagSameLine(final QName tag) {
     lb();
     emitQName(tag);
     out("/");
@@ -426,11 +441,11 @@ public class XmlEmit {
   /** Create the sequence<br>
    *  <tag>val</tag>
    *
-   * @param tag
-   * @param val
-   * @throws IOException
+   * @param tag qname
+   * @param val string val
+   * @throws XmlUtilException on fatal eror
    */
-  public void property(final QName tag, final String val) throws IOException {
+  public void property(final QName tag, final String val) {
     blanks();
     openTagSameLine(tag);
     value(val);
@@ -441,11 +456,11 @@ public class XmlEmit {
   /** Create the sequence<br>
    *  <tag>val</tag>
    *
-   * @param tag
-   * @param val
-   * @throws IOException
+   * @param tag qname
+   * @param val string val
+   * @throws XmlUtilException on fatal eror
    */
-  public void cdataProperty(final QName tag, final String val) throws IOException {
+  public void cdataProperty(final QName tag, final String val) {
     blanks();
     openTagSameLine(tag);
     cdataValue(val);
@@ -456,11 +471,11 @@ public class XmlEmit {
   /** Create the sequence<br>
    *  <tag>val</tag> where val is represented by a Reader
    *
-   * @param tag
-   * @param val
-   * @throws IOException
+   * @param tag qname
+   * @param val Reader
+   * @throws XmlUtilException on fatal eror
    */
-  public void property(final QName tag, final Reader val) throws IOException {
+  public void property(final QName tag, final Reader val) {
     blanks();
     openTagSameLine(tag);
     writeContent(val, wtr);
@@ -471,12 +486,11 @@ public class XmlEmit {
   /** Create the sequence<br>
    *  <tag><tagVal></tag>
    *
-   * @param tag
-   * @param tagVal
-   * @throws IOException
+   * @param tag qname
+   * @param tagVal qname
    */
   public void propertyTagVal(final QName tag,
-                             final QName tagVal) throws IOException {
+                             final QName tagVal) {
     blanks();
     openTagSameLine(tag);
     emptyTagSameLine(tagVal);
@@ -489,10 +503,10 @@ public class XmlEmit {
   /** Create the sequence<br>
    *  <tag>val</tag>
    *
-   * @param val
-   * @throws IOException
+   * @param val to write
+   * @throws XmlUtilException on fatal eror
    */
-  public void cdataValue(final String val) throws IOException {
+  public void cdataValue(final String val) {
     if (val == null) {
       return;
     }
@@ -500,9 +514,9 @@ public class XmlEmit {
     int start = 0;
 
     while (start < val.length()) {
-      int end = val.indexOf("]]", start);
-      boolean lastSeg = end < 0;
-      String seg;
+      final int end = val.indexOf("]]", start);
+      final boolean lastSeg = end < 0;
+      final String seg;
 
       if (lastSeg) {
         seg = val.substring(start);
@@ -525,21 +539,21 @@ public class XmlEmit {
 
   /** Write out a value
    *
-   * @param val
-   * @throws IOException
+   * @param val to write
+   * @throws XmlUtilException on fatal eror
    */
-  public void value(final String val) throws IOException {
+  public void value(final String val) {
     value(val, null);
   }
 
   /** Write out a value
    *
-   * @param val
-   * @param quoteChar
-   * @throws IOException
+   * @param val to write
+   * @param quoteChar for quoting
+   * @throws XmlUtilException on fatal eror
    */
   private void value(final String val,
-                     final String quoteChar) throws IOException {
+                     final String quoteChar) {
     if (val == null) {
       return;
     }
@@ -574,25 +588,29 @@ public class XmlEmit {
   }
 
   /**
-   * @throws IOException
+   * @throws XmlUtilException on fatal eror
    */
-  public void flush() throws IOException {
-    wtr.flush();
+  public void flush() {
+    try {
+      wtr.flush();
+    } catch (final IOException ie) {
+      throw new XmlUtilException(ie);
+    }
   }
 
   /** Called before we start to emit any tags.
    *
-   * @param val
+   * @param val namespace
    * @param makeDefaultNs - true => make this the default
-   * @throws IOException
+   * @throws XmlUtilException on fatal eror
    */
   public void addNs(final NameSpace val,
-                    final boolean makeDefaultNs) throws IOException {
+                    final boolean makeDefaultNs) {
     nameSpaces.addNs(val, makeDefaultNs);
   }
 
   /**
-   * @param ns
+   * @param ns name
    * @return NameSpace if present
    */
   public NameSpace getNameSpace(final String ns) {
@@ -600,7 +618,7 @@ public class XmlEmit {
   }
 
   /**
-   * @param ns
+   * @param ns name
    * @return namespace abrev
    */
   public String getNsAbbrev(final String ns) {
@@ -609,9 +627,9 @@ public class XmlEmit {
 
   /** Write a new line
    *
-   * @throws IOException
+   * @throws XmlUtilException on fatal eror
    */
-  public void newline() throws IOException {
+  public void newline() {
     out("\n");
   }
 
@@ -619,7 +637,7 @@ public class XmlEmit {
    *                         Private methods
    * ==================================================================== */
 
-  private void quote(final String val) throws IOException {
+  private void quote(final String val) {
     if (!val.contains("\"")) {
       value(val, "\"");
     } else {
@@ -633,7 +651,7 @@ public class XmlEmit {
    * @param tag
    * @throws IOException
    */
-  private void emitQName(final QName tag) throws IOException {
+  private void emitQName(final QName tag) {
     nameSpaces.emitNsAbbr(tag.getNamespaceURI(), wtr);
 
     out(tag.getLocalPart());
@@ -641,7 +659,7 @@ public class XmlEmit {
     emitNs();
   }
 
-  private void emitNs() throws IOException {
+  private void emitNs() {
     if (forHtml) {
       return;
     }
@@ -649,7 +667,7 @@ public class XmlEmit {
     nameSpaces.emitNs(wtr);
   }
 
-  private void blanks() throws IOException {
+  private void blanks() {
     if (indent >= blankLen) {
       out(blank);
     } else {
@@ -657,11 +675,11 @@ public class XmlEmit {
     }
   }
 
-  private void lb() throws IOException {
+  private void lb() {
     out("<");
   }
 
-  private void rb() throws IOException {
+  private void rb() {
     out(">");
   }
 
@@ -669,27 +687,24 @@ public class XmlEmit {
    */
   private static final int bufferSize = 4096;
 
-  private void writeContent(final Reader in, final Writer out) throws IOException {
+  private void writeContent(final Reader in, final Writer out) {
     try {
-      char[] buff = new char[bufferSize];
-      int len;
+      try (in; out) {
+        final char[] buff = new char[bufferSize];
+        int len;
 
-      while (true) {
-        len = in.read(buff);
+        while (true) {
+          len = in.read(buff);
 
-        if (len < 0) {
-          break;
+          if (len < 0) {
+            break;
+          }
+
+          out.write(buff, 0, len);
         }
-
-        out.write(buff, 0, len);
       }
-    } finally {
-      try {
-        in.close();
-      } catch (Throwable t) {}
-      try {
-        out.close();
-      } catch (Throwable t) {}
+    } catch (final IOException ie) {
+      throw new XmlUtilException(ie);
     }
   }
 
@@ -701,39 +716,48 @@ public class XmlEmit {
     nameSpaces.endScope();
   }
 
-  private void out(final String val) throws IOException {
+  private void out(final String val) {
     if ((notifier != null) && notifier.isEnabled()){
       notifier.doNotification();
     }
 
-    if (!started) {
-      started = true;
+    try {
+      if (!started) {
+        started = true;
 
-      if (!noHeaders) {
-        writeHeader(dtd);
-        wtr.write("\n");
+        if (!noHeaders) {
+          writeHeader(dtd);
+          wtr.write("\n");
+        }
       }
-    }
 
-    wtr.write(val);
+      wtr.write(val);
+    } catch (final IOException ie) {
+      throw new XmlUtilException(ie);
+    }
   }
 
   /* Write out the xml header
    */
-  private void writeHeader(final String dtd) throws IOException {
-    if (forHtml){
-      wtr.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-      return;
-    }
-    
-    wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+  private void writeHeader(final String dtd) {
+    try {
+      if (forHtml) {
+        wtr.write(
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
+        return;
+      }
 
-    if (dtd == null) {
-      return;
-    }
+      wtr.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 
-    wtr.write("<!DOCTYPE properties SYSTEM \"");
-    wtr.write(dtd);
-    wtr.write("\">\n");
+      if (dtd == null) {
+        return;
+      }
+
+      wtr.write("<!DOCTYPE properties SYSTEM \"");
+      wtr.write(dtd);
+      wtr.write("\">\n");
+    } catch (final IOException ie) {
+      throw new XmlUtilException(ie);
+    }
   }
 }

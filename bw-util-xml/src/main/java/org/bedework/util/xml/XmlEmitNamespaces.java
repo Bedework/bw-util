@@ -18,6 +18,9 @@
 */
 package org.bedework.util.xml;
 
+import org.bedework.util.xml.XmlEmit.NameSpace;
+import org.bedework.util.xml.XmlEmit.XmlUtilException;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
@@ -32,12 +35,12 @@ public class XmlEmitNamespaces {
 
   private int scopeLevel; // So we can pop namespaces
 
-  private Stack<XmlEmit.NameSpace> namespaces = new Stack<>();
+  private final Stack<NameSpace> namespaces = new Stack<>();
 
   /** We need to map the namespaces onto a set of reasonable abbreviations
    * for the generated xml. New set created each request
    */
-  private HashMap<String, XmlEmit.NameSpace> nsMap;
+  private final HashMap<String, NameSpace> nsMap;
 
   private int nsIndex;
 
@@ -47,17 +50,17 @@ public class XmlEmitNamespaces {
    * during the first phase and emit xml after startEmit is called.
    */
   public XmlEmitNamespaces() {
-    nsMap = new HashMap<String, XmlEmit.NameSpace>();
+    nsMap = new HashMap<>();
   }
 
   /**
    *
-   * @param val
+   * @param val name space
    * @param makeDefaultNs - true => make this the default
-   * @throws IOException
+   * @throws XmlUtilException on fatal error
    */
-  public void addNs(final XmlEmit.NameSpace val,
-                    final boolean makeDefaultNs) throws IOException {
+  public void addNs(final NameSpace val,
+                    final boolean makeDefaultNs) {
     if (val.abbrev == null) {
       val.abbrev = "ns" + nsIndex;
       nsIndex++;
@@ -66,13 +69,13 @@ public class XmlEmitNamespaces {
     val.level = scopeLevel;
     val.defaultNs = makeDefaultNs;
 
-    for (XmlEmit.NameSpace ns: nsMap.values()) {
+    for (final NameSpace ns: nsMap.values()) {
       if (val.equals(ns)) {
         continue;
       }
 
       if ((val.level == ns.level) && val.abbrev.equals(ns.abbrev)) {
-        throw new IOException("Duplicate namespace alias for " + val.ns);
+        throw new XmlUtilException("Duplicate namespace alias for " + val.ns);
       }
     }
 
@@ -91,7 +94,7 @@ public class XmlEmitNamespaces {
 
   public void endScope() {
     while (!namespaces.empty()) {
-      XmlEmit.NameSpace ns = namespaces.peek();
+      final NameSpace ns = namespaces.peek();
 
       if (ns.level < scopeLevel) {
         //popped enough
@@ -105,7 +108,7 @@ public class XmlEmitNamespaces {
     nsMap.clear();
 
     for (int i = 0; i < namespaces.size(); i++) {
-      XmlEmit.NameSpace ns = namespaces.elementAt(i);
+      final NameSpace ns = namespaces.elementAt(i);
 
       nsMap.put(ns.ns, ns);
     }
@@ -114,19 +117,19 @@ public class XmlEmitNamespaces {
   }
 
   /**
-   * @param ns
+   * @param ns string name
    * @return NameSpace if present
    */
-  public XmlEmit.NameSpace getNameSpace(final String ns) {
+  public NameSpace getNameSpace(final String ns) {
     return nsMap.get(ns);
   }
 
   /**
-   * @param ns
-   * @return namespace abrev
+   * @param ns string name
+   * @return namespace abbrev
    */
   public String getNsAbbrev(final String ns) {
-    XmlEmit.NameSpace n = nsMap.get(ns);
+    final NameSpace n = nsMap.get(ns);
 
     if (n == null) {
       return null;
@@ -137,52 +140,60 @@ public class XmlEmitNamespaces {
 
   /**
    * @param ns - full namespace from qname
-   * @param wtr
-   * @throws IOException
+   * @param wtr - the writer
+   * @throws XmlUtilException on fatal error
    */
   public void emitNsAbbr(final String ns,
-                         final Writer wtr) throws IOException {
+                         final Writer wtr) {
     if ((ns == null) || ns.equals(defaultNs)) {
       return;
     }
 
-    String abbr = getNsAbbrev(ns);
+    final String abbr = getNsAbbrev(ns);
 
     if (abbr != null) {
-      wtr.write(abbr);
-      wtr.write(":");
+      try {
+        wtr.write(abbr);
+        wtr.write(":");
+      } catch (final IOException ie) {
+        throw new XmlUtilException(ie);
+      }
     }
   }
 
   /**
-   * @param wtr
-   * @throws IOException
+   * @param wtr the writer
+   * @throws XmlUtilException on fatal eror
    */
-  public void emitNs(final Writer wtr) throws IOException {
+  public void emitNs(final Writer wtr) {
     if (!mustEmitNS) {
       return;
     }
 
-    /* First tag so emit the name space declarations.
-     */
-    String delim = "";
+    try {
+      /* First tag so emit the name space declarations.
+       */
+      String delim = "";
 
-    for (String nsp: nsMap.keySet()) {
-      wtr.write(delim);
-      delim = "\n             ";
+      for (final String nsp: nsMap.keySet()) {
+        wtr.write(delim);
+        delim = "\n             ";
 
-      wtr.write(" xmlns");
+        wtr.write(" xmlns");
 
-      String abbr = getNsAbbrev(nsp);
+        final String abbr = getNsAbbrev(nsp);
 
-      if ((abbr != null) && !nsp.equals(defaultNs)) {
-        wtr.write(":");
-        wtr.write(abbr);
+        if ((abbr != null) && !nsp.equals(defaultNs)) {
+          wtr.write(":");
+          wtr.write(abbr);
+        }
+
+        wtr.write("=\"");
+        wtr.write(nsp);
+        wtr.write("\"");
       }
-
-      wtr.write("=\"");
-      wtr.write(nsp);
-      wtr.write("\"");
+    } catch (final IOException ie) {
+      throw new XmlUtilException(ie);
     }
 
     mustEmitNS = false;
