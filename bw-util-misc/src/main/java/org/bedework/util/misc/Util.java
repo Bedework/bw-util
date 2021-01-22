@@ -24,11 +24,11 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -444,47 +444,6 @@ public class Util {
     return list;
   }
 
-  /** Format a message consisting of a format string
-   *
-   * @param fmt
-   * @param arg
-   * @return String formatted message
-   */
-  public static String fmtMsg(final String fmt, final String arg) {
-    Object[] o = new Object[1];
-    o[0] = arg;
-
-    return MessageFormat.format(fmt, o);
-  }
-
-  /** Format a message consisting of a format string plus two string parameters
-   *
-   * @param fmt
-   * @param arg1
-   * @param arg2
-   * @return String formatted message
-   */
-  public static String fmtMsg(final String fmt, final String arg1, final String arg2) {
-    Object[] o = new Object[2];
-    o[0] = arg1;
-    o[1] = arg2;
-
-    return MessageFormat.format(fmt, o);
-  }
-
-  /** Format a message consisting of a format string plus one integer parameter
-   *
-   * @param fmt
-   * @param arg
-   * @return String formatted message
-   */
-  public static String fmtMsg(final String fmt, final int arg) {
-    Object[] o = new Object[1];
-    o[0] = new Integer(arg);
-
-    return MessageFormat.format(fmt, o);
-  }
-
   private static final char[] randChars = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -511,14 +470,21 @@ public class Util {
 
     maxVal = Math.min(maxVal, 35);
 
-    StringBuffer res = new StringBuffer();
-    Random rand = new Random();
+    final StringBuilder res = new StringBuilder();
+    final Random rand = new Random();
 
     for (int i = 0; i <= length; i++) {
       res.append(randChars[rand.nextInt(maxVal + 1)]);
     }
 
     return res.toString();
+  }
+
+  public static String makeDataUri(final String val,
+                                   final String contentType) {
+    return "data:" + contentType + ";base64," +
+            Base64.getEncoder().
+                    encodeToString(val.getBytes());
   }
 
   /** Add a string to a string array of a given maximum length. Truncates
