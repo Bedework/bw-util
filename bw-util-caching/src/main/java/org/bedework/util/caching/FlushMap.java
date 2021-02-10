@@ -30,8 +30,8 @@ import java.util.HashMap;
  */
 public class FlushMap<K,V> extends HashMap<K,V> {
   private long lastFlush;
-  private long flushTime;
-  private int maxSize;
+  private final long flushTime;
+  private final int maxSize;
 
   private final static int defaultMaxSize = 1000;
   private final static long defaultFlushTime = 60 * 1000 * 10;  // 10 minutes

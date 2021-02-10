@@ -31,4 +31,35 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.bedework</groupId>
+        <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
+
+        <configuration>
+          <localRepository>${settings.localRepository}</localRepository>
+          <moduleName>org.bedework.util.directory</moduleName>
+          <debug>true</debug>
+          <wildflyPath>${org.bedework.deployment.basedir}/wildfly</wildflyPath>
+
+          <jarDependencies>
+            <jarDependency>
+              <moduleName>org.bedework.commons-codec</moduleName>
+              <groupId>commons-codec</groupId>
+              <artifactId>commons-codec</artifactId>
+              <version>${commons-codec.version}</version>
+              <type>jar</type>
+            </jarDependency>
+          </jarDependencies>
+
+          <moduleDependencies>
+            <dependency>org.bedework.util.misc</dependency>
+            <dependency>org.bedework.logging</dependency>
+          </moduleDependencies>
+          <deployModules>${org.bedework.deploy.modules}</deployModules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

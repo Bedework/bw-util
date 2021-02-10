@@ -26,4 +26,26 @@
       <artifactId>javax.jms-api</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.bedework</groupId>
+        <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
+
+        <configuration>
+          <localRepository>${settings.localRepository}</localRepository>
+          <moduleName>org.bedework.util.jms</moduleName>
+          <debug>true</debug>
+          <wildflyPath>${org.bedework.deployment.basedir}/wildfly</wildflyPath>
+
+          <moduleDependencies>
+            <dependency>javax.jms.api</dependency>
+            <dependency>org.bedework.logging</dependency>
+          </moduleDependencies>
+          <deployModules>${org.bedework.deploy.modules}</deployModules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

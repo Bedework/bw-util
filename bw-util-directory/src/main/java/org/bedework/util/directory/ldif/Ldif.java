@@ -40,27 +40,28 @@ public class Ldif extends Directory {
 
   /** Constructor required so we can instantiate object dynamically
    */
+  @SuppressWarnings("unused")
   public Ldif() throws Exception {
   }
 
-  public Ldif(String fileName) throws Exception {
+  public Ldif(final String fileName) throws Exception {
     this(new FileInputStream(fileName));
   }
 
-  public Ldif(File f) throws Exception {
+  public Ldif(final File f) throws Exception {
     this(new FileInputStream(f));
   }
 
-  public Ldif(InputStream in) throws Exception {
+  public Ldif(final InputStream in) throws Exception {
     super(null, null);
     this.in = in;
   }
 
-  public void reInit() throws NamingException {
+  public void reInit() {
     // Nothing to do here
   }
 
-  public void destroy(String dn) throws NamingException {
+  public void destroy(final String dn) throws NamingException {
     throw new NamingException("Cannot delete an ldif stream record");
   }
 
@@ -99,7 +100,7 @@ public class Ldif extends Directory {
       return null;
     }
 
-    LdifRecord ldr = new LdifRecord();
+    final LdifRecord ldr = new LdifRecord();
 
     if (!ldr.read(inp)) {
       return null;
@@ -108,43 +109,52 @@ public class Ldif extends Directory {
     return ldr;
   }
 
-  public boolean create(DirRecord rec) throws NamingException {
+  public boolean create(final DirRecord rec) throws NamingException {
     throw new NamingException("ldif create not implemented");
   }
 
-  public void replace(String dn, String attrName, Object val) throws NamingException {
+  public void replace(final String dn,
+                      final String attrName,
+                      final Object val) throws NamingException {
     throw new NamingException("ldif replace not implemented");
   }
 
-  public void replace(String dn, String attrName, Object[] val)
+  public void replace(final String dn,
+                      final String attrName,
+                      final Object[] val)
       throws NamingException {
     throw new NamingException("ldif replace not implemented");
   }
 
-  public void replace(String dn, String attrName, Object oldval, Object newval)
+  public void replace(final String dn,
+                      final String attrName,
+                      final Object oldval,
+                      final Object newval)
       throws NamingException {
     throw new NamingException("ldif replace not implemented");
   }
 
-  public void modify(String dn, ModificationItem[] mods) throws NamingException {
+  public void modify(final String dn,
+                     final ModificationItem[] mods) throws NamingException {
     throw new NamingException("ldif modify not implemented");
   }
 
   /** dumpLdif write the entire record as ldif.
    */
-  public static void dumpLdif(LdifOut lo, DirRecord rec) throws NamingException {
+  public static void dumpLdif(final LdifOut lo,
+                              final DirRecord rec) throws NamingException {
     if (rec == null) {
       throw new NamingException("dumpLdif: No record supplied");
     }
 
-    String dn = rec.getDn();
+    final String dn = rec.getDn();
     if (dn == null) {
       throw new NamingException("Unable to get dn");
     }
 
     lo.out("dn: " + dn);
 
-    int ctype = rec.getChangeType();
+    final int ctype = rec.getChangeType();
 
     if (!rec.getIsContent()) {
       // Emit a changetype attribute
@@ -152,11 +162,11 @@ public class Ldif extends Directory {
     }
 
     if ((rec.getIsContent()) || (ctype == DirRecord.changeTypeAdd)) {
-      Attributes as = rec.getAttributes();
+      final Attributes as = rec.getAttributes();
 
       if (as == null) throw new NamingException("No attributes");
 
-      Enumeration e = as.getAll();
+      final Enumeration<?> e = as.getAll();
 
       while (e.hasMoreElements()) {
         dumpAttr(lo, (Attribute)e.nextElement());
@@ -167,16 +177,15 @@ public class Ldif extends Directory {
       lo.out("changetype: modify");
 
       // Dump changes
-      ModificationItem[] mods = rec.getMods();
+      final ModificationItem[] mods = rec.getMods();
 
       if (mods == null) {
         lo.out("# Invalid record - no mods");
       } else {
-        for (int i = 0; i < mods.length; i ++) {
-          ModificationItem m = mods[i];
-          int op = m.getModificationOp();
-          Attribute a = m.getAttribute();
-          String aid = a.getID();
+        for (final ModificationItem m: mods) {
+          final int op = m.getModificationOp();
+          final Attribute a = m.getAttribute();
+          final String aid = a.getID();
 
           if (op == DirContext.ADD_ATTRIBUTE) {
             lo.out("add: " + aid);
@@ -196,12 +205,13 @@ public class Ldif extends Directory {
     lo.out(""); // null terminator
   }
 
-  public static void dumpAttr(LdifOut lo, Attribute a) throws NamingException {
-    String aid = a.getID();
+  public static void dumpAttr(final LdifOut lo,
+                              final Attribute a) throws NamingException {
+    final String aid = a.getID();
 
-    Enumeration av = a.getAll();
+    final Enumeration<?> av = a.getAll();
     while (av != null && av.hasMoreElements()) {
-      Object o = av.nextElement();
+      final Object o = av.nextElement();
       final StringBuilder sb = new StringBuilder(aid);
 
       sb.append(':');
@@ -211,7 +221,7 @@ public class Ldif extends Directory {
         sb.append((char[])o);
       } else {
         sb.append(' ');
-        sb.append(String.valueOf(o));
+        sb.append(o);
       }
 
       // Dump in 80 byte segments
@@ -219,7 +229,7 @@ public class Ldif extends Directory {
       int pos = 0;
       int seglen = 80;
       while (pos < sb.length()) {
-        int len = Math.min(seglen, sb.length() - pos);
+        final int len = Math.min(seglen, sb.length() - pos);
         if (pos == 0) {
           lo.out(sb.substring(pos, pos + len));
         } else {
@@ -235,7 +245,7 @@ public class Ldif extends Directory {
     if (in != null) {
       try {
         in.close();
-      } catch (Throwable ignored) {};
+      } catch (final Throwable ignored) {}
 
       in = null;
       inp = null;
@@ -246,7 +256,7 @@ public class Ldif extends Directory {
    *                   Logged methods
    * ==================================================================== */
 
-  private BwLogger logger = new BwLogger();
+  private final BwLogger logger = new BwLogger();
 
   @Override
   public BwLogger getLogger() {

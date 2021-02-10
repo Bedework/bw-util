@@ -46,16 +46,16 @@ public class ObjectPool<T> implements Serializable, Logged {
    * @param val key
    * @return value in pool
    */
-  public T get(T val) {
+  public T get(final T val) {
     if (debug() &&
         ((refs % 500) == 0)) {
       debug("pool refs " + refs + ": hits " + hits);
     }
     refs++;
-    SoftReference<T> poolVal = pool.get(val);
+    final SoftReference<T> poolVal = pool.get(val);
 
     if (poolVal != null) {
-      T tval = poolVal.get();
+      final T tval = poolVal.get();
       if (tval != null) {
         hits++;
         return tval;
@@ -63,7 +63,7 @@ public class ObjectPool<T> implements Serializable, Logged {
     }
 
     synchronized (pool) {
-      pool.put(val, new SoftReference<T>(val));
+      pool.put(val, new SoftReference<>(val));
       return val;
     }
   }
@@ -72,7 +72,7 @@ public class ObjectPool<T> implements Serializable, Logged {
    *                   Logged methods
    * ==================================================================== */
 
-  private BwLogger logger = new BwLogger();
+  private final BwLogger logger = new BwLogger();
 
   @Override
   public BwLogger getLogger() {
