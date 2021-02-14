@@ -31,19 +31,9 @@
         <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
 
         <configuration>
-          <localRepository>${settings.localRepository}</localRepository>
           <moduleName>org.bedework.util.json</moduleName>
-          <debug>true</debug>
-          <wildflyPath>${org.bedework.deployment.basedir}/wildfly</wildflyPath>
-          <jarDependencies>
-            <jarDependency>
-              <moduleName>org.bedework.com.fasterxml.jackson.core</moduleName>
-              <groupId>com.fasterxml.jackson.core</groupId>
-              <artifactId>jackson-core</artifactId>
-              <version>${jackson.version}</version>
-              <type>jar</type>
-            </jarDependency>
 
+          <jarDependencies>
             <jarDependency>
               <moduleName>org.bedework.com.fasterxml.jackson.core.annotations</moduleName>
               <groupId>com.fasterxml.jackson.core</groupId>
@@ -59,12 +49,11 @@
               <version>${jackson.version}</version>
               <type>jar</type>
               <moduleDependencies>
-                <dependency>org.bedework.com.fasterxml.jackson.core</dependency>
+                <dependency>
+                  com.fasterxml.jackson.core</dependency>
               </moduleDependencies>
             </jarDependency>
           </jarDependencies>
-
-          <deployModules>${org.bedework.deploy.modules}</deployModules>
         </configuration>
       </plugin>
     </plugins>

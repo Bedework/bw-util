@@ -235,12 +235,6 @@
               </goals>
             </execution>
           </executions>
-          <configuration>
-            <localRepository>${settings.localRepository}</localRepository>
-            <debug>true</debug>
-            <wildflyPath>${project.basedir}/../wildfly</wildflyPath>
-            <deployModules>${org.bedework.deploy.modules}</deployModules>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

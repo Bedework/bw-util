@@ -38,10 +38,7 @@
         <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
 
         <configuration>
-          <localRepository>${settings.localRepository}</localRepository>
           <moduleName>org.bedework.util.directory</moduleName>
-          <debug>true</debug>
-          <wildflyPath>${org.bedework.deployment.basedir}/wildfly</wildflyPath>
 
           <jarDependencies>
             <jarDependency>

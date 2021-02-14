@@ -32,16 +32,12 @@
         <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
 
         <configuration>
-          <localRepository>${settings.localRepository}</localRepository>
           <moduleName>org.bedework.util.xml</moduleName>
-          <debug>true</debug>
-          <wildflyPath>${org.bedework.deployment.basedir}/wildfly</wildflyPath>
 
           <moduleDependencies>
             <dependency>org.bedework.util.misc</dependency>
             <dependency>org.bedework.logging</dependency>
           </moduleDependencies>
-          <deployModules>${org.bedework.deploy.modules}</deployModules>
         </configuration>
       </plugin>
     </plugins>
