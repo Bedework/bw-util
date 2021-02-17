@@ -38,9 +38,15 @@
           <moduleName>org.bedework.util.jms</moduleName>
 
           <moduleDependencies>
-            <dependency>javax.jms.api</dependency>
-            <dependency>org.bedework.logging</dependency>
-            <dependency>org.bedework.util.misc</dependency>
+            <moduleDependency>
+              <name>javax.jms.api</name>
+            </moduleDependency>
+            <moduleDependency>
+              <name>org.bedework.logging</name>
+            </moduleDependency>
+            <moduleDependency>
+              <name>org.bedework.util.misc</name>
+            </moduleDependency>
           </moduleDependencies>
         </configuration>
       </plugin>

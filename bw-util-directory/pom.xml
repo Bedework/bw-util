@@ -51,10 +51,13 @@
           </jarDependencies>
 
           <moduleDependencies>
-            <dependency>org.bedework.util.misc</dependency>
-            <dependency>org.bedework.logging</dependency>
+            <moduleDependency>
+              <name>org.bedework.util.misc</name>
+            </moduleDependency>
+            <moduleDependency>
+              <name>org.bedework.logging</name>
+            </moduleDependency>
           </moduleDependencies>
-          <deployModules>${org.bedework.deploy.modules}</deployModules>
         </configuration>
       </plugin>
     </plugins>

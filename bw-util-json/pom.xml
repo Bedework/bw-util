@@ -49,8 +49,9 @@
               <version>${jackson.version}</version>
               <type>jar</type>
               <moduleDependencies>
-                <dependency>
-                  com.fasterxml.jackson.core</dependency>
+                <moduleDependency>
+                  <name>com.fasterxml.jackson.core</name>
+                </moduleDependency>
               </moduleDependencies>
             </jarDependency>
           </jarDependencies>

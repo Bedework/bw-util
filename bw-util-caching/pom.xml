@@ -30,7 +30,9 @@
           <moduleName>org.bedework.util.caching</moduleName>
 
           <moduleDependencies>
-            <dependency>org.bedework.logging</dependency>
+            <moduleDependency>
+              <name>org.bedework.logging</name>
+            </moduleDependency>
           </moduleDependencies>
         </configuration>
       </plugin>
