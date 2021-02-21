@@ -487,6 +487,23 @@ public class Util {
                     encodeToString(val.getBytes());
   }
 
+  public static String toBase64(final String val) {
+    return Base64.getEncoder().encodeToString(val.getBytes());
+  }
+
+  public static String toBase64UrlVal(final String val) {
+    return toBase64UrlVal(val.getBytes());
+  }
+
+  public static String toBase64UrlVal(final byte[] val) {
+    return Base64.getUrlEncoder().encodeToString(val);
+  }
+
+  public static String fromBase64(final String val) {
+    final var bytes = Base64.getDecoder().decode(val);
+    return new String(bytes, StandardCharsets.US_ASCII);
+  }
+
   /** Add a string to a string array of a given maximum length. Truncates
    * the string array if required.
    *
@@ -550,13 +567,13 @@ public class Util {
       return null;
     }
 
-    int len = val.length;
+    final int len = val.length;
 
     if (len == 0) {
       return "";
     }
 
-    StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
 
     for (int i = 0; i < len; i++) {
       if (i > 0) {
@@ -569,15 +586,17 @@ public class Util {
         if (s == null) {
           sb.append("\t");
         } else {
-          sb.append(URLEncoder.encode(s, "UTF-8"));
+          sb.append(URLEncoder.encode(s, StandardCharsets.UTF_8));
         }
-      } catch (Throwable t) {
+      } catch (final Throwable t) {
         throw new RuntimeException(t);
       }
     }
 
     return sb.toString();
   }
+
+
 
   /** Return a StringArray resulting from decoding the given String which
    * should have been encoded by encodeArray
@@ -615,7 +634,7 @@ public class Util {
         if (s.equals("\t")) {
           al.add(null);
         } else {
-          al.add(URLDecoder.decode(s, "UTF-8"));
+          al.add(URLDecoder.decode(s, StandardCharsets.UTF_8));
         }
       } catch (Throwable t) {
         throw new RuntimeException(t);

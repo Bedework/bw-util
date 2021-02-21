@@ -1,8 +1,7 @@
 package org.bedework.util.directory.ldif;
 
 import org.bedework.util.directory.common.BasicDirRecord;
-
-import org.apache.commons.codec.binary.Base64;
+import org.bedework.util.misc.Util;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
@@ -511,7 +510,7 @@ public class LdifRecord extends BasicDirRecord {
         Do we need to set locale?????
      */
     if (encoded) {
-      return new String(new Base64().decode(val));
+      return Util.fromBase64(val);
     }
 
     if (url) {
