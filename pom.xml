@@ -16,9 +16,12 @@
 
     <!-- Bedework Versions -->
     <bw-util-logging.version>4.0.5</bw-util-logging.version>
+    <bw-xml.version>4.0.10</bw-xml.version>
     <bw-util-deploy.version>4.0.28-SNAPSHOT</bw-util-deploy.version>
 
     <!-- Third Party Library Versions -->
+    <commons.io.version>2.0.1</commons.io.version>
+    <dom4j-version>1.6.1</dom4j-version>
     <jackson.version>2.10.0</jackson.version>
     <jms.version>2.0</jms.version>
     <junit.version>4.13.1</junit.version>
@@ -50,12 +53,14 @@
   </issueManagement>
 
   <modules>
+    <module>bw-util-args</module>
     <module>bw-util-caching</module>
     <module>bw-util-directory</module>
     <module>bw-util-jms</module>
     <module>bw-util-json</module>
     <module>bw-util-misc</module>
     <module>bw-util-xml</module>
+    <module>bw-util-xmltools</module>
   </modules>
 
   <developers>
@@ -95,7 +100,25 @@
         <version>${bw-util-logging.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.bedework</groupId>
+        <artifactId>bw-xml-bwlicense</artifactId>
+        <version>${bw-xml.version}</version>
+      </dependency>
+
       <!-- Third Party Libraries -->
+
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons.io.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>${dom4j-version}</version>
+      </dependency>
 
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -251,6 +274,7 @@
               </execution>
             </executions>
           </plugin>
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
