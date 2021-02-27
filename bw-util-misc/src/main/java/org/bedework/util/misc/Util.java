@@ -18,6 +18,8 @@
 */
 package org.bedework.util.misc;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -129,9 +131,9 @@ public class Util {
    */
   public static String buildPath(final boolean endWithSep,
                                  final String... val) {
-    StringBuilder path = new StringBuilder();
+    final StringBuilder path = new StringBuilder();
 
-    for (String s: val) {
+    for (final String s: val) {
       if (s != null) {
         path.append(s);
       }
@@ -235,7 +237,7 @@ public class Util {
    * @throws RuntimeException on bad locale
    */
   public static Locale makeLocale(final String val) {
-    String lang;
+    final String lang;
     String country = ""; // NOT null for Locale
     String variant = "";
 
@@ -281,18 +283,16 @@ public class Util {
    *
    * @param name    String resource name
    * @return Properties populated from the resource
-   * @throws Throwable
+   * @throws RuntimeException on fatal error
    */
-  public static Properties getPropertiesFromResource(final String name) throws Throwable {
-    Properties pr = new Properties();
+  public static Properties getPropertiesFromResource(final String name) {
+    final Properties pr = new Properties();
     InputStream is = null;
 
+      // The jboss?? way - should work for others as well.
+      final ClassLoader cl = Thread.currentThread().getContextClassLoader();
     try {
-      try {
-        // The jboss?? way - should work for others as well.
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        is = cl.getResourceAsStream(name);
-      } catch (Throwable clt) {}
+      is = cl.getResourceAsStream(name);
 
       if (is == null) {
         // Try another way
@@ -300,7 +300,8 @@ public class Util {
       }
 
       if (is == null) {
-        throw new Exception("Unable to load properties file" + name);
+        throw new RuntimeException(
+                "Unable to load properties file" + name);
       }
 
       pr.load(is);
@@ -311,11 +312,17 @@ public class Util {
       //      "file.encoding=" + System.getProperty("file.encoding"));
       //}
       return pr;
+    } catch (final Throwable t) {
+      if (t instanceof RuntimeException) {
+        throw (RuntimeException)t;
+      }
+
+      throw new RuntimeException(t);
     } finally {
       if (is != null) {
         try {
           is.close();
-        } catch (Throwable t1) {}
+        } catch (final Throwable ignored) {}
       }
     }
   }
@@ -327,28 +334,33 @@ public class Util {
    * @param className String class name
    * @param cl   Class expected
    * @return     Object checked to be an instance of that class
-   * @throws Exception
+   * @throws RuntimeException on fatal error
    */
   public static Object getObject(final String className,
-                                 final Class<?> cl) throws Exception {
+                                 final Class<?> cl) {
     try {
-      Object o = Class.forName(className).newInstance();
+      final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-      if (o == null) {
-        throw new Exception("Class " + className + " not found");
+      final Class<?> clazz = loader.loadClass(className);
+
+      if (clazz == null) {
+        throw new RuntimeException("Class " + className + " not found");
       }
 
+      final Object o = clazz.getDeclaredConstructor().newInstance();
+
       if (!cl.isInstance(o)) {
-        throw new Exception("Class " + className +
-                            " is not a subclass of " +
-                            cl.getName());
+        throw new RuntimeException(
+                "Class " + clazz +
+                        " is not a subclass of " +
+                        cl.getName());
       }
 
       return o;
-    } catch (Exception e) {
-      throw e;
-    } catch (Throwable t) {
-      throw new Exception(t);
+    } catch (final RuntimeException re) {
+      throw re;
+    } catch (final Throwable t) {
+      throw new RuntimeException(t);
     }
   }
 
@@ -432,12 +444,13 @@ public class Util {
    * @param <V> type of value
    * @return sorted list of map entries
    */
-  public static <K, V extends Comparable<V>> List<Map.Entry<K, V>> sortMap(Map<K, V> map) {
+  public static <K, V extends Comparable<V>> List<Map.Entry<K, V>> sortMap(
+          final Map<K, V> map) {
     // We create a list from the elements of the unsorted map
-    List <Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+    final List <Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
 
     // Now sort the list
-    Comparator<Map.Entry<K, V>> comparator =
+    final Comparator<Map.Entry<K, V>> comparator =
             Comparator.comparing(Map.Entry<K, V>::getValue);
     list.sort(comparator.reversed());
 
@@ -502,6 +515,10 @@ public class Util {
   public static String fromBase64(final String val) {
     final var bytes = Base64.getDecoder().decode(val);
     return new String(bytes, StandardCharsets.US_ASCII);
+  }
+
+  public static String escapeJava(final String val) {
+    return StringEscapeUtils.escapeJava(val);
   }
 
   /** Add a string to a string array of a given maximum length. Truncates

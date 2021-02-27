@@ -17,6 +17,11 @@
       <groupId>org.bedework</groupId>
       <artifactId>bw-util-logging</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -27,6 +32,15 @@
 
         <configuration>
           <moduleName>org.bedework.util.misc</moduleName>
+
+          <jarDependencies>
+            <jarDependency>
+              <moduleName>org.bedework.org.apache.commons.commons-text</moduleName>
+              <groupId>org.apache.commons</groupId>
+              <artifactId>commons-text</artifactId>
+              <version>${commons.text.version}</version>
+            </jarDependency>
+          </jarDependencies>
 
           <moduleDependencies>
             <moduleDependency>
