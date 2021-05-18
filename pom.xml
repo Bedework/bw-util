@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bedework</groupId>
   <artifactId>bw-util</artifactId>
-  <version>4.0.28</version>
+  <version>4.0.28-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>bw-util</name>
   <description>This project provides a number of utility classes and methods</description>
@@ -44,7 +44,7 @@
     <connection>scm:git:git@github.com:Bedework/bw-util.git</connection>
     <developerConnection>scm:git:git@github.com:Bedework/bw-util.git</developerConnection>
     <url>https://github.com/Bedework/bw-util</url>
-    <tag>bw-util-4.0.28</tag>
+    <tag>bw-util-4.0.9</tag>
   </scm>
 
   <issueManagement>
