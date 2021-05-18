@@ -9,10 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>bw-util-xmltidy</artifactId>
-
-  <properties>
-  </properties>
+  <artifactId>bw-util-xmltools</artifactId>
 
   <dependencies>
     <dependency>
