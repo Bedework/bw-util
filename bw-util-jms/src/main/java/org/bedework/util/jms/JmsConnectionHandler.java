@@ -66,7 +66,7 @@ public class JmsConnectionHandler implements Logged {
    * consumer.
    *
    * @param queueName the queue
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public void open(final String queueName) throws NotificationException {
     try {
@@ -157,7 +157,7 @@ public class JmsConnectionHandler implements Logged {
 
   /**
    * @return a message producer
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public MessageProducer getProducer() throws NotificationException {
     try {
@@ -173,7 +173,7 @@ public class JmsConnectionHandler implements Logged {
 
   /**
    * @return a message consumer
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public MessageConsumer getConsumer() throws NotificationException {
     try {
@@ -189,7 +189,7 @@ public class JmsConnectionHandler implements Logged {
 
   /**
    * @return next message
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public Message receive() throws NotificationException {
     try {
@@ -208,7 +208,7 @@ public class JmsConnectionHandler implements Logged {
    *                   Logged methods
    * ==================================================================== */
 
-  private BwLogger logger = new BwLogger();
+  private final BwLogger logger = new BwLogger();
 
   @Override
   public BwLogger getLogger() {

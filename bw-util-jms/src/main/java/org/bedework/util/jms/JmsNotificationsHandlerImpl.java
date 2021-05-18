@@ -98,14 +98,12 @@ public class JmsNotificationsHandlerImpl extends NotificationsHandler
 
   @Override
   public void registerListener(final SysEventListener l,
-                               final boolean persistent)
-          throws NotificationException {
+                               final boolean persistent) {
 
   }
 
   @Override
-  public void removeListener(final SysEventListener l)
-          throws NotificationException {
+  public void removeListener(final SysEventListener l) {
 
   }
 
@@ -113,7 +111,7 @@ public class JmsNotificationsHandlerImpl extends NotificationsHandler
    *                   Logged methods
    * ==================================================================== */
 
-  private BwLogger logger = new BwLogger();
+  private final BwLogger logger = new BwLogger();
 
   @Override
   public BwLogger getLogger() {

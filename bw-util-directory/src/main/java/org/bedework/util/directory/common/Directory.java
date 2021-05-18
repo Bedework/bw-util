@@ -48,19 +48,19 @@ public abstract class Directory implements Logged {
     this(null, null);
   }
 
-  public Directory(String mngrDN,
+  public Directory(final String mngrDN,
                    String pw) throws NamingException {
   }
 
   /** If possible, reInit should allow reuse after a close
    *
-   * @throws NamingException
+   * @throws NamingException on fatal error
    */
   public abstract void reInit() throws NamingException;
 
   /**
    * @param dn
-   * @throws NamingException
+   * @throws NamingException on fatal error
    */
   public abstract void destroy(String dn) throws NamingException;
 
@@ -76,8 +76,8 @@ public abstract class Directory implements Logged {
 
   /** Carry out a subtree search
    *
-   * @param base
-   * @param filter
+   * @param base for search
+   * @param filter ldap filter
    * @return DirSearchResult
    * @throws NamingException
    */
@@ -88,10 +88,10 @@ public abstract class Directory implements Logged {
   /** Carry out a base level search. This should be the default if the scope
    *  is not specified.
    *
-   * @param base
-   * @param filter
+   * @param base for search
+   * @param filter ldap filter
    * @return DirSearchResult or null
-   * @throws NamingException
+   * @throws NamingException on fatal error
    */
   public boolean searchBase(String base, String filter) throws NamingException {
     return search(base, filter, scopeBase);
@@ -99,24 +99,27 @@ public abstract class Directory implements Logged {
 
   /** Carry out a one level search
    *
-   * @param base
-   * @param filter
+   * @param base for search
+   * @param filter ldap filter
    * @return DirSearchResult
-   * @throws NamingException
+   * @throws NamingException on fatal error
    */
-  public boolean searchOne(String base, String filter) throws NamingException {
+  public boolean searchOne(final String base,
+                           final String filter) throws NamingException {
     return search(base, filter, scopeOne);
   }
 
   /** Carry out a search with specified scope.
    *
-   * @param base
-   * @param filter
+   * @param base for search
+   * @param filter ldap filter
    * @param scope
    * @return  false means no record(s) found.
    *          true  means it's safe to call nextRecord.
    */
-  public abstract boolean search(String base, String filter, int scope)
+  public abstract boolean search(String base,
+                                 String filter,
+                                 int scope)
       throws NamingException;
 
   public abstract DirRecord nextRecord() throws NamingException;
@@ -126,18 +129,18 @@ public abstract class Directory implements Logged {
    *
    * @param entryDn
    * @return DirRecord
-   * @throws NamingException
+   * @throws NamingException on fatal error
    */
-  public DirRecord newRecord(String entryDn) throws NamingException {
-    DirRecord rec = new BasicDirRecord();
+  public DirRecord newRecord(final String entryDn) throws NamingException {
+    final DirRecord rec = new BasicDirRecord();
     rec.setDn(entryDn);
     return rec;
   }
 
   /**
-   * @param rec
+   * @param rec directory record
    * @return boolean true if created, false if already exists
-   * @throws NamingException
+   * @throws NamingException on fatal error
    */
   public abstract boolean create(DirRecord rec) throws NamingException;
 
@@ -146,39 +149,42 @@ public abstract class Directory implements Logged {
 
   /** Replace an entire attribute with one containing only the given value
    *
-   * @param dn
-   * @param attrName
-   * @param val
-   * @throws NamingException
+   * @param dn for record
+   * @param attrName name of attribute
+   * @param val new value
+   * @throws NamingException on fatal error
    */
   public abstract void replace(String dn, String attrName, Object val) throws NamingException;
 
   /** Replace an entire attribute with one containing only the given values
    *
-   * @param dn
-   * @param attrName
-   * @param val
-   * @throws NamingException
+   * @param dn for record
+   * @param attrName name of attribute
+   * @param val new value
+   * @throws NamingException on fatal error
    */
   public abstract void replace(String dn, String attrName, Object[] val) throws NamingException;
 
   /** Replace a single given attribute value with the given value
    *
-   * @param dn
-   * @param attrName
-   * @param oldval
-   * @param newval
-   * @throws NamingException
+   * @param dn for record
+   * @param attrName name of attribute
+   * @param oldval current value
+   * @param newval new value
+   * @throws NamingException on fatal error
    */
-  public abstract void replace(String dn, String attrName, Object oldval,
+  public abstract void replace(String dn,
+                               String attrName,
+                               Object oldval,
                                Object newval) throws NamingException;
 
   /**
-   * @param dn
-   * @param mods
-   * @throws NamingException
+   * @param dn for record
+   * @param mods list of changes
+   * @throws NamingException on fatal error
    */
-  public abstract void modify(String dn, ModificationItem[] mods) throws NamingException;
+  public abstract void modify(String dn,
+                              ModificationItem[] mods) throws NamingException;
 
   /**
    *

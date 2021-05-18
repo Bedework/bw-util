@@ -18,7 +18,6 @@
  */
 package org.bedework.util.jms.events;
 
-import org.bedework.util.jms.NotificationException;
 import org.bedework.util.misc.ToString;
 import org.bedework.util.misc.Util;
 
@@ -182,10 +181,9 @@ public class SysEvent implements Serializable, Comparable<SysEvent> {
    * @param label a useful label
    * @param millisecs - time for stats
    * @return SysEvent
-   * @throws NotificationException
    */
   public static SysEvent makeTimedEvent(final String label,
-                                        final long millisecs) throws NotificationException {
+                                        final long millisecs) {
     return new TimedEvent(syscodeTimedEvent,
                           label, millisecs);
   }
@@ -206,11 +204,9 @@ public class SysEvent implements Serializable, Comparable<SysEvent> {
    * @param name for the event
    * @param longValue a value - often a time
    * @return SysEvent
-   * @throws NotificationException
    */
   public static SysEvent makeStatsEvent(final String name,
-                                        final Long longValue)
-          throws NotificationException {
+                                        final Long longValue) {
     return new StatsEvent(name, longValue);
   }
 

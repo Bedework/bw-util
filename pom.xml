@@ -15,7 +15,7 @@
     <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
 
     <!-- Bedework Versions -->
-    <bw-util-logging.version>4.0.5</bw-util-logging.version>
+    <bw-util-logging.version>4.0.6</bw-util-logging.version>
     <bw-xml.version>4.0.10</bw-xml.version>
     <bw-util-deploy.version>4.0.28-SNAPSHOT</bw-util-deploy.version>
 

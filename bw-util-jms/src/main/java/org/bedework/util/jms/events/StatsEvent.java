@@ -38,7 +38,7 @@ public class StatsEvent extends NamedEvent {
   private String strValue;
 
   /** */
-  public static enum StatType {
+  public enum StatType {
     /** */
     valueLess,
     /** */
@@ -62,7 +62,7 @@ public class StatsEvent extends NamedEvent {
   /** Calendar refresh elapsed millis */
   public static final String refreshTime = "REFRESHTIME";
 
-  private static Map<String, StatType> statTypes = new HashMap<String, StatType>();
+  private static final Map<String, StatType> statTypes = new HashMap<>();
 
   static {
     statTypes.put(deleteTime, StatType.lnum);
@@ -72,8 +72,8 @@ public class StatsEvent extends NamedEvent {
   }
 
   /**
-   * @param name
-   * @param strValue
+   * @param name of event
+   * @param strValue string value
    */
   public StatsEvent(final String name,
                     final String strValue) {
@@ -83,8 +83,8 @@ public class StatsEvent extends NamedEvent {
   }
 
   /**
-   * @param name
-   * @param longValue
+   * @param name of event
+   * @param longValue long value
    */
   public StatsEvent(final String name,
                     final Long longValue) {
@@ -110,7 +110,7 @@ public class StatsEvent extends NamedEvent {
   }
 
   /**
-   * @param name
+   * @param name of event
    * @return type or null
    */
   public static StatType getStatType(final String name) {

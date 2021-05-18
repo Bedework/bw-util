@@ -27,29 +27,4 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
-
-        <configuration>
-          <moduleName>org.bedework.util.jms</moduleName>
-
-          <moduleDependencies>
-            <moduleDependency>
-              <name>javax.jms.api</name>
-            </moduleDependency>
-            <moduleDependency>
-              <name>org.bedework.logging</name>
-            </moduleDependency>
-            <moduleDependency>
-              <name>org.bedework.util.misc</name>
-            </moduleDependency>
-          </moduleDependencies>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

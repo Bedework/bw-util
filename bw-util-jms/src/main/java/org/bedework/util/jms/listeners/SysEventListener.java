@@ -30,28 +30,28 @@ public abstract class SysEventListener {
   /** Set name of action class.
    *
    * @param className
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract void setActionClassName(String className) throws NotificationException;
 
   /** Supply action object - will set class name.
    *
    * @param actionObject
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract void setActionObject(SysEventActionClass actionObject) throws NotificationException;
 
   /** Called whenever a matching event occurs. Will call the action class.
    *
    * @param ev
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract void action(SysEvent ev) throws NotificationException;
 
   /** Create a string representation.
    *
    * @return String
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract String toXml() throws NotificationException;
 }

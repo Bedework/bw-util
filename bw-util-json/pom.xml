@@ -23,43 +23,4 @@
       <artifactId>jackson-annotations</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
-
-        <configuration>
-          <moduleName>org.bedework.util.json</moduleName>
-
-          <jarDependencies>
-            <jarDependency>
-              <moduleName>org.bedework.com.fasterxml.jackson.core.annotations</moduleName>
-              <groupId>com.fasterxml.jackson.core</groupId>
-              <artifactId>jackson-annotations</artifactId>
-              <version>${jackson.version}</version>
-              <type>jar</type>
-            </jarDependency>
-
-            <jarDependency>
-              <moduleName>org.bedework.com.fasterxml.jackson.core.databind</moduleName>
-              <groupId>com.fasterxml.jackson.core</groupId>
-              <artifactId>jackson-databind</artifactId>
-              <version>${jackson.version}</version>
-              <type>jar</type>
-              <moduleDependencies>
-                <moduleDependency>
-                  <name>com.fasterxml.jackson.core.jackson-core</name>
-                </moduleDependency>
-                <moduleDependency>
-                  <name>org.bedework.com.fasterxml.jackson.core.annotations</name>
-                </moduleDependency>
-              </moduleDependencies>
-            </jarDependency>
-          </jarDependencies>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

@@ -49,7 +49,7 @@ public abstract class JmsSysEventListener
   /**
    * @param queueName queue to listen on
    * @param pr        jms properties
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public void open(final String queueName,
                    final Properties pr) throws NotificationException {
@@ -67,7 +67,7 @@ public abstract class JmsSysEventListener
     if (consumer != null) {
       try {
         consumer.close();
-      } catch (Throwable t) {
+      } catch (final Throwable t) {
         warn(t.getMessage());
       }
     }
@@ -80,7 +80,7 @@ public abstract class JmsSysEventListener
    * synchronously for incoming messages.
    *
    * @param asynch true if we just want to set the listener
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public void process(final boolean asynch)
           throws NotificationException {
@@ -108,14 +108,14 @@ public abstract class JmsSysEventListener
   public void onMessage(final Message message) {
     try {
       if (message instanceof ObjectMessage) {
-        SysEvent ev = (SysEvent)((ObjectMessage)message).getObject();
+        final SysEvent ev = (SysEvent)((ObjectMessage)message).getObject();
 
         action(ev);
       }
-    } catch (NotificationException ne) {
+    } catch (final NotificationException ne) {
       ne.printStackTrace();
-    } catch (JMSException je) {
-      Throwable t = je.getCause();
+    } catch (final JMSException je) {
+      final Throwable t = je.getCause();
 
       if (t instanceof InvalidClassException) {
         /* Probably an old message - just ignore it. */
@@ -131,8 +131,8 @@ public abstract class JmsSysEventListener
   /**
    * Called whenever a matching event occurs.
    *
-   * @param ev
-   * @throws NotificationException
+   * @param ev the event
+   * @throws NotificationException on fatal error
    */
   public abstract void action(SysEvent ev)
           throws NotificationException;
@@ -141,7 +141,7 @@ public abstract class JmsSysEventListener
    *                   Logged methods
    * ==================================================================== */
 
-  private BwLogger logger = new BwLogger();
+  private final BwLogger logger = new BwLogger();
 
   @Override
   public BwLogger getLogger() {

@@ -38,9 +38,9 @@ public class NotificationException extends Throwable {
   private String extra;
 
   /**
-   * @param code
+   * @param code an identifier
    */
-  public NotificationException(String code) {
+  public NotificationException(final String code) {
     super(code);
   }
 
@@ -48,15 +48,15 @@ public class NotificationException extends Throwable {
    * @param code  - retrieve with getMessage(), property ame
    * @param extra String extra text
    */
-  public NotificationException(String code, String extra) {
+  public NotificationException(final String code, final String extra) {
     super(code);
     this.extra = extra;
   }
 
   /**
-   * @param t
+   * @param t the exception
    */
-  public NotificationException(Throwable t) {
+  public NotificationException(final Throwable t) {
     super(t);
   }
 

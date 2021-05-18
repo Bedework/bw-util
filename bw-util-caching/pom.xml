@@ -19,23 +19,4 @@
       <artifactId>bw-util-logging</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
-
-        <configuration>
-          <moduleName>org.bedework.util.caching</moduleName>
-
-          <moduleDependencies>
-            <moduleDependency>
-              <name>org.bedework.logging</name>
-            </moduleDependency>
-          </moduleDependencies>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

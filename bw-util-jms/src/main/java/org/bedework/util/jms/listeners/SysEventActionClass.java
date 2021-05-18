@@ -33,7 +33,7 @@ public abstract class SysEventActionClass implements Serializable,
   /** Called whenever a matching event occurs.
    *
    * @param ev the system event
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract void action(SysEvent ev) throws NotificationException;
 }

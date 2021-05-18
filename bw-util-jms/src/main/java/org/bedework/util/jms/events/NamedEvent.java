@@ -27,11 +27,11 @@ import org.bedework.util.misc.ToString;
 public class NamedEvent extends SysEvent {
   private static final long serialVersionUID = 1L;
 
-  private String name;
+  private final String name;
 
   /**
-   * @param code
-   * @param name
+   * @param code identifier
+   * @param name of event
    */
   public NamedEvent(final String code,
                     final String name) {

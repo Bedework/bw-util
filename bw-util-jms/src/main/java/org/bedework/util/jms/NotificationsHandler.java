@@ -36,7 +36,7 @@ public abstract class NotificationsHandler {
    * Called to notify container that an event occurred.
    *
    * @param ev the event
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract void post(SysEvent ev) throws NotificationException;
 
@@ -47,7 +47,7 @@ public abstract class NotificationsHandler {
    * @param persistent
    *          true if this listener is to be stored in the database and
    *          reregistered at each system startup.
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract void registerListener(SysEventListener l, boolean persistent)
                                                                                throws NotificationException;
@@ -56,7 +56,7 @@ public abstract class NotificationsHandler {
    * Remove a listener. If persistent it will be deleted from the database.
    *
    * @param l the listener
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public abstract void removeListener(SysEventListener l)
                                                          throws NotificationException;

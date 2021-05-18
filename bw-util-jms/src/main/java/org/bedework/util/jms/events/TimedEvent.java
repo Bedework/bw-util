@@ -27,14 +27,14 @@ import org.bedework.util.misc.ToString;
 public class TimedEvent extends SysEvent implements MillisecsEvent {
   private static final long serialVersionUID = 1L;
 
-  private String label;
+  private final String label;
 
-  private long millis;
+  private final long millis;
 
   /** Constructor
    *
-   * @param code
-   * @param label
+   * @param code identifier
+   * @param label for event
    * @param millis - time for stats - e.g. time to process login
    */
   public TimedEvent(final String code,

@@ -38,7 +38,7 @@ public class NotificationsHandlerFactory {
    * @param queueName our queue
    * @param pr jms properties
    * @return NotificationsHandler
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   private static NotificationsHandler getHandler(final String queueName,
                                                  final Properties pr) throws NotificationException {
@@ -61,7 +61,7 @@ public class NotificationsHandlerFactory {
    * @param ev the system event
    * @param queueName our queue
    * @param pr jms properties
-   * @throws NotificationException
+   * @throws NotificationException on fatal error
    */
   public static void post(final SysEvent ev,
                           final String queueName,

@@ -30,7 +30,7 @@ public class HttpOutEvent extends HttpEvent implements MillisecsEvent {
   long millis;
 
   /**
-   * @param code
+   * @param code identifier
    * @param millis - time request took
    */
   public HttpOutEvent(final String code,

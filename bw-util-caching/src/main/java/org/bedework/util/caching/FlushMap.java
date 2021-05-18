@@ -125,7 +125,6 @@ public class FlushMap<K,V> extends HashMap<K,V> {
     return super.put(key, val);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public V get(final Object key) {
     testFlush();

@@ -38,7 +38,7 @@ public class JsonUtil {
    *
    * <p>I assume we also need to do the whitespace characters
    *
-   * @param val
+   * @param val to encode
    * @return encoded String
    */
   public static String jsonEncode(final String val) {
@@ -46,7 +46,7 @@ public class JsonUtil {
       return "\"\"";
     }
 
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
 
     /* \n    newline
      * \t   tab
@@ -60,7 +60,7 @@ public class JsonUtil {
     sb.append('"');
 
     for (int i = 0; i < val.length(); i++) {
-      char ch = val.charAt(i);
+      final char ch = val.charAt(i);
 
       switch (ch) {
       case '\n':
@@ -96,7 +96,7 @@ public class JsonUtil {
 
       default:
         if (Character.isISOControl(ch)) {
-          String str = Integer.toHexString(ch);
+          final String str = Integer.toHexString(ch);
           sb.append("\\u");
           sb.append("0000".substring(str.length() - 4));
           sb.append(str);
@@ -120,7 +120,7 @@ public class JsonUtil {
   public static String jsonNameVal(final String indent, 
                                    final String name, 
                                    final String val) {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
 
     sb.append(indent);
     sb.append("\"");
@@ -135,46 +135,46 @@ public class JsonUtil {
   }
 
   public static String must(final String name,
-                            final Map theVals) throws Exception {
-    Object val = theVals.get(name);
+                            final Map<String, String> theVals) throws Exception {
+    final String val = theVals.get(name);
 
     if (val == null) {
       throw new Exception("missing value: " + name);
     }
 
-    return (String)val;
+    return val;
   }
 
   public static String may(final String name,
-                           final Map theVals) throws Exception {
-    Object val = theVals.get(name);
+                           final Map<String, String> theVals) throws Exception {
+    final String val = theVals.get(name);
 
     if (val == null) {
       return null;
     }
 
-    return (String)val;
+    return val;
   }
 
-  public static List mustList(final String name,
-                              final Map theVals) throws Exception {
-    Object val = theVals.get(name);
+  public static List<?> mustList(final String name,
+                              final Map<String, List<?>> theVals) throws Exception {
+    final List<?> val = theVals.get(name);
 
     if (val == null) {
       throw new Exception("missing value: " + name);
     }
 
-    return (List)val;
+    return val;
   }
 
-  public static List mayList(final String name,
-                             final Map theVals) throws Exception {
-    Object val = theVals.get(name);
+  public static List<?> mayList(final String name,
+                             final Map<String, List<?>> theVals) throws Exception {
+    final List<?> val = theVals.get(name);
 
     if (val == null) {
       return null;
     }
 
-    return (List)val;
+    return val;
   }
 }
