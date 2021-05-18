@@ -112,6 +112,10 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
   * Move response objects out of CalFacade so they can be used within other modules.
   * Add a node diff class - allows diffing parsed XML but should work for any Document.
   * Add sortMap method
-  
+
+#### 4.0.28
+  * Minor fix to check for null. Resulted in many changes to remove throws clauses from the xml emit utility class methods. This of course resulted in many changes up the call hierarchy
+  * Add datauri convenience method.
+  * Update commons-codec version
   
   
