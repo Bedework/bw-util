@@ -17,7 +17,6 @@
     <!-- Bedework Versions -->
     <bw-util-logging.version>4.0.6</bw-util-logging.version>
     <bw-xml.version>4.0.10</bw-xml.version>
-    <bw-util-deploy.version>4.0.28-SNAPSHOT</bw-util-deploy.version>
 
     <!-- Third Party Library Versions -->
     <commons.io.version>2.0.1</commons.io.version>
@@ -227,37 +226,6 @@
           <version>2.3</version>
           <configuration>
           </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.5</version>
-          <executions>
-            <execution>
-              <id>default-descriptor</id>
-              <phase>process-classes</phase>
-            </execution>
-          </executions>
-          <configuration>
-            <goalPrefix>bw-util-deployment</goalPrefix>
-            <!--
-            <outputDirectory>target/dir</outputDirectory>-->
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.bedework</groupId>
-          <artifactId>bw-util-maven-deploy-wfmodule</artifactId>
-          <version>${bw-util-deploy.version}</version>
-          <executions>
-            <execution>
-              <phase>install</phase>
-              <goals>
-                <goal>bw-deploy-wfmodule</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
