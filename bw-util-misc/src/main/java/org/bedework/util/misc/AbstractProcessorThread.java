@@ -21,6 +21,8 @@ package org.bedework.util.misc;
 import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
+import javax.naming.NameNotFoundException;
+
 /** Something to help the handling and graceful shutdown of processes.
  *
  * @author douglm
@@ -28,6 +30,16 @@ import org.bedework.util.logging.Logged;
  */
 public abstract class AbstractProcessorThread extends Thread
     implements Logged {
+  public static final String statusDone = "Done";
+  public static final String statusFailed = "Failed";
+  public static final String statusRunning = "Running";
+  public static final String statusStopped = "Stopped";
+
+  /** cannot stop the thread */
+  public static final String statusUnstoppable = "Unstoppable";
+
+  private String status = statusStopped;
+
   protected boolean running;
 
   private boolean showedTrace;
@@ -45,8 +57,13 @@ public abstract class AbstractProcessorThread extends Thread
    */
   public abstract void runInit();
 
+  /** called at end - allows output of termination messsages
+   * @param msg an info message
+   */
+  public abstract void end(String msg);
+
   /** Do whatever we're supposed to be doing.
-   * @throws Throwable
+   * @throws Throwable on fatal error
    */
   public abstract void runProcess() throws Throwable;
 
@@ -59,9 +76,25 @@ public abstract class AbstractProcessorThread extends Thread
    * @param val the exception
    * @return false if we did nothing
    */
-  public boolean handleException(
-          @SuppressWarnings("UnusedParameters") final Throwable val) {
+  public boolean handleException(final Throwable val) {
+    final Throwable t = val.getCause();
+    if (t instanceof NameNotFoundException) {
+      // jmx shutting down?
+      error("Looks like JMX shut down.");
+      error(t);
+      running = false;
+      return true;
+    }
+
     return false;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(final String val) {
+    status = val;
   }
 
   /** Set the running flag
@@ -78,6 +111,37 @@ public abstract class AbstractProcessorThread extends Thread
    */
   public boolean getRunning() {
     return running;
+  }
+
+  /** Check for processor started
+   *
+   * @param processor to check
+   * @return status string.
+   */
+  public static String checkStarted(final AbstractProcessorThread processor) {
+    if (processor == null) {
+      return statusStopped;
+    }
+
+    if (!processor.isAlive()) {
+      return statusStopped;
+    }
+
+    if (processor.running) {
+      return statusRunning;
+    }
+
+    /* Kill it and return false */
+    processor.interrupt();
+    try {
+      processor.join(5000);
+    } catch (final Throwable ignored) {}
+
+    if (!processor.isAlive()) {
+      return statusStopped;
+    }
+
+    return statusUnstoppable;
   }
 
   @Override
@@ -138,6 +202,10 @@ public abstract class AbstractProcessorThread extends Thread
    * @return false for exception or timeout
    */
   public static boolean stopProcess(final AbstractProcessorThread proc) {
+    if (proc == null) {
+      return true;
+    }
+
     proc.info("************************************************************");
     proc.info(" * Stopping " + proc.getName());
     proc.info("************************************************************");
