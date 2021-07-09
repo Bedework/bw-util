@@ -403,7 +403,7 @@ public class Util {
 
     while (true) {
       if (pos > 0) {
-        sb.append(val.substring(segStart, pos));
+        sb.append(val, segStart, pos);
       }
 
       final int end = val.indexOf("}", pos);
@@ -500,18 +500,6 @@ public class Util {
                     encodeToString(val.getBytes());
   }
 
-  public static String toBase64(final String val) {
-    return Base64.getEncoder().encodeToString(val.getBytes());
-  }
-
-  public static String toBase64UrlVal(final String val) {
-    return toBase64UrlVal(val.getBytes());
-  }
-
-  public static String toBase64UrlVal(final byte[] val) {
-    return Base64.getUrlEncoder().encodeToString(val);
-  }
-
   public static String fromBase64(final String val) {
     final var bytes = Base64.getDecoder().decode(val);
     return new String(bytes, StandardCharsets.US_ASCII);
@@ -542,23 +530,21 @@ public class Util {
     }
 
     if (sarray.length > maxEntries) {
-      String[] neb = new String[maxEntries];
+      final String[] neb = new String[maxEntries];
       System.arraycopy(sarray, sarray.length - maxEntries,
                        neb, 0, maxEntries);
       sarray = neb;
       sarray[sarray.length - 1] = val;
-      neb = null;
       return sarray;
     }
 
     if (sarray.length < maxEntries) {
-      int newLen = sarray.length + 1;
-      String[] neb = new String[newLen];
+      final int newLen = sarray.length + 1;
+      final String[] neb = new String[newLen];
       System.arraycopy(sarray, 0,
                        neb, 0, sarray.length);
       sarray = neb;
       sarray[sarray.length - 1] = val;
-      neb = null;
 
       return sarray;
     }
@@ -597,7 +583,7 @@ public class Util {
         sb.append(" ");
       }
 
-      String s = val[i];
+      final String s = val[i];
 
       try {
         if (s == null) {
@@ -626,19 +612,19 @@ public class Util {
       return null;
     }
 
-    int len = val.length();
+    final int len = val.length();
 
     if (len == 0) {
       return new String[0];
     }
 
-    ArrayList<String> al = new ArrayList<String>();
+    final ArrayList<String> al = new ArrayList<>();
     int i = 0;
 
     while (i < len) {
-      int end = val.indexOf(" ", i);
+      final int end = val.indexOf(" ", i);
 
-      String s;
+      final String s;
       if (end < 0) {
         s = val.substring(i);
         i = len;
@@ -653,21 +639,22 @@ public class Util {
         } else {
           al.add(URLDecoder.decode(s, StandardCharsets.UTF_8));
         }
-      } catch (Throwable t) {
+      } catch (final Throwable t) {
         throw new RuntimeException(t);
       }
     }
 
-    return al.toArray(new String[al.size()]);
+    return al.toArray(new String[0]);
   }
 
   /** Return true if Strings are equal including possible null
    *
-   * @param thisStr
-   * @param thatStr
+   * @param thisStr compare this
+   * @param thatStr with that
    * @return boolean true for equal
    */
-  public static boolean equalsString(final String thisStr, final String thatStr) {
+  public static boolean equalsString(final String thisStr,
+                                     final String thatStr) {
     if ((thisStr == null) && (thatStr == null)) {
       return true;
     }
@@ -741,17 +728,17 @@ public class Util {
    * @throws Throwable for invalid list
    */
   public static List<String> getList(final String val, final boolean emptyOk) throws Throwable {
-    List<String> l = new LinkedList<String>();
+    final List<String> l = new LinkedList<>();
 
     if ((val == null) || (val.length() == 0)) {
       return l;
     }
 
-    StringTokenizer st = new StringTokenizer(val, ",", false);
+    final StringTokenizer st = new StringTokenizer(val, ",", false);
     while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
+      final String token = st.nextToken().trim();
 
-      if ((token == null) || (token.length() == 0)) {
+      if (token.length() == 0) {
         if (!emptyOk) {
           // No empty strings
 
@@ -769,12 +756,12 @@ public class Util {
 
   /** Compare two possibly null objects
    *
-   * @param thisone
-   * @param thatone
+   * @param thisone compare this
+   * @param thatone with that
    * @return int -1, 0, 1,
    */
-  @SuppressWarnings("unchecked")
-  public static int cmpObjval(final Comparable thisone, final Comparable thatone) {
+  public static int cmpObjval(final Comparable thisone,
+                              final Comparable thatone) {
     if (thisone == null) {
       if (thatone == null) {
         return 0;
@@ -792,12 +779,13 @@ public class Util {
 
   /** Compare two possibly null objects
    *
-   * @param thisone
-   * @param thatone
+   * @param thisone compare this
+   * @param thatone with that
    * @return int -1, 0, 1,
    */
-  public static int cmpObjval(final Collection<? extends Comparable> thisone,
-                              final Collection<? extends Comparable> thatone) {
+  public static int cmpObjval(
+          final Collection<? extends Comparable<?>> thisone,
+          final Collection<? extends Comparable<?>> thatone) {
     if (thisone == null) {
       if (thatone == null) {
         return 0;
@@ -810,16 +798,17 @@ public class Util {
       return 1;
     }
 
-    int thisLen = thisone.size();
-    int thatLen = thatone.size();
+    final int thisLen = thisone.size();
+    final int thatLen = thatone.size();
 
     int res = cmpIntval(thisLen, thatLen);
     if (res != 0) {
       return res;
     }
 
-    Iterator<? extends Comparable> thatIt = thatone.iterator();
-    for (Comparable c: thisone) {
+    final Iterator<? extends Comparable<?>> thatIt =
+            thatone.iterator();
+    for (final Comparable<?> c: thisone) {
       res = cmpObjval(c, thatIt.next());
 
       if (res != 0) {
@@ -832,8 +821,8 @@ public class Util {
 
   /** Compare two boolean objects
    *
-   * @param thisone
-   * @param thatone
+   * @param thisone compare this
+   * @param thatone with that
    * @return int -1, 0, 1,
    */
   public static int cmpBoolval(final boolean thisone, final boolean thatone) {
@@ -850,26 +839,19 @@ public class Util {
 
   /** Compare two int objects
    *
-   * @param thisone
-   * @param thatone
+   * @param thisone compare this
+   * @param thatone with that
    * @return int -1, 0, 1,
    */
   public static int cmpIntval(final int thisone, final int thatone) {
-    if (thisone == thatone) {
-      return 0;
-    }
+    return Integer.compare(thisone, thatone);
 
-    if (thisone < thatone) {
-      return -1;
-    }
-
-    return 1;
   }
 
   /** Compare two char arrays
    *
-   * @param thisone
-   * @param thatone
+   * @param thisone compare this
+   * @param thatone with that
    * @return int -1, 0, 1,
    */
   public static int compare(final char[] thisone, final char[] thatone) {
@@ -894,8 +876,8 @@ public class Util {
     }
 
     for (int i = 0; i < thisone.length; i++) {
-      char thisc = thisone[i];
-      char thatc = thatone[i];
+      final char thisc = thisone[i];
+      final char thatc = thatone[i];
 
       if (thisc < thatc) {
         return -1;
@@ -911,10 +893,10 @@ public class Util {
 
   /** Return true for null or empty
    *
-   * @param val
+   * @param val collection or null
    * @return boolean
    */
-  public static boolean isEmpty(final Collection val) {
+  public static boolean isEmpty(final Collection<?> val) {
     if (val == null) {
       return true;
     }
@@ -924,13 +906,13 @@ public class Util {
 
   /** Test for a valid URI and return the URI object.
    *
-   * @param val
+   * @param val possible uri
    * @return null for invalid or a URI object
    */
   public static URI validURI(final String val) {
     try {
       return new URI(val);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       return null;
     }
   }

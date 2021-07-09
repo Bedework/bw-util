@@ -130,7 +130,7 @@ public class ToString {
    */
   public ToString append(final Object value) {
     delimit();
-    sb.append(String.valueOf(value));
+    sb.append(value);
 
     return this;
   }
@@ -194,7 +194,8 @@ public class ToString {
    * @param value - list of values
    * @return this object
    */
-  public ToString append(final String name, final Collection value) {
+  public ToString append(final String name,
+                         final Collection<?> value) {
     nameEquals(name);
     if (value == null) {
       sb.append("null");

@@ -337,7 +337,7 @@ public final class GeoUri {
         sb.append(c);
       } else {
         sb.append('%');
-        sb.append(Integer.toString((int) c, 16));
+        sb.append(Integer.toString(c, 16));
       }
     }
     return sb.toString();
@@ -368,7 +368,7 @@ public final class GeoUri {
 
     private Builder() {
       //for internal use
-      parameters = new LinkedHashMap<String, String>(0); //set initial size to 0 because parameters are rarely used
+      parameters = new LinkedHashMap<>(0); //set initial size to 0 because parameters are rarely used
     }
 
     /**
@@ -393,7 +393,7 @@ public final class GeoUri {
       this.coordC = original.coordC;
       this.crs = original.crs;
       this.uncertainty = original.uncertainty;
-      this.parameters = new LinkedHashMap<String, String>(original.parameters);
+      this.parameters = new LinkedHashMap<>(original.parameters);
     }
 
     /**

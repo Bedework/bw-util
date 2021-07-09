@@ -36,7 +36,7 @@ public class Uid {
     int ipadd;
     try {
       ipadd = toInt(InetAddress.getLocalHost().getAddress());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       ipadd = 0;
     }
     IP = ipadd;
@@ -45,7 +45,7 @@ public class Uid {
   private static short counter = (short) 0;
   private static final int JVM = (int) ( System.currentTimeMillis() >>> 8 );
 
-  private static String sep = "-";
+  private static final String sep = "-";
 
   /*  ---------------- UID gen fields -------------------- */
 
@@ -56,11 +56,11 @@ public class Uid {
    */
   public static String getUid() {
     /* Unique down to millisecond */
-    short hiTime = (short)(System.currentTimeMillis() >>> 32);
+    final short hiTime = (short)(System.currentTimeMillis() >>> 32);
 
-    int loTime = (int)System.currentTimeMillis();
+    final int loTime = (int)System.currentTimeMillis();
 
-    int ct;
+    final int ct;
 
     synchronized(Uid.class) {
       if (counter < 0) {
@@ -79,17 +79,17 @@ public class Uid {
             toString();
   }
 
-  private static String format(int intval) {
-    String formatted = Integer.toHexString(intval);
-    StringBuilder buf = new StringBuilder("00000000");
+  private static String format(final int intval) {
+    final String formatted = Integer.toHexString(intval);
+    final StringBuilder buf = new StringBuilder("00000000");
     buf.replace(8 - formatted.length(), 8, formatted);
 
     return buf.toString();
   }
 
-  private static String format(short shortval) {
-    String formatted = Integer.toHexString(shortval);
-    StringBuilder buf = new StringBuilder("0000");
+  private static String format(final short shortval) {
+    final String formatted = Integer.toHexString(shortval);
+    final StringBuilder buf = new StringBuilder("0000");
     buf.replace(4 - formatted.length(), 4, formatted);
 
     return buf.toString();
@@ -97,10 +97,10 @@ public class Uid {
 
   /** From hibernate.util
    *
-   * @param bytes
+   * @param bytes to convert
    * @return int
    */
-  public static int toInt(byte[] bytes ) {
+  public static int toInt(final byte[] bytes ) {
     int result = 0;
     for (int i = 0; i < 4; i++) {
       result = (result << 8) - Byte.MIN_VALUE + (int)bytes[i];
