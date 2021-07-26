@@ -331,16 +331,16 @@ public class Util {
    * The class parameter is used to check that the
    * named class is an instance of that class.
    *
+   * @param loader class loader to use
    * @param className String class name
    * @param cl   Class expected
    * @return     Object checked to be an instance of that class
    * @throws RuntimeException on fatal error
    */
-  public static Object getObject(final String className,
+  public static Object getObject(ClassLoader loader,
+                                 final String className,
                                  final Class<?> cl) {
     try {
-      final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
       final Class<?> clazz = loader.loadClass(className);
 
       if (clazz == null) {
@@ -362,6 +362,22 @@ public class Util {
     } catch (final Throwable t) {
       throw new RuntimeException(t);
     }
+  }
+
+  /** Given a class name return an object of that class.
+   * The class parameter is used to check that the
+   * named class is an instance of that class.
+   *
+   * @param className String class name
+   * @param cl   Class expected
+   * @return     Object checked to be an instance of that class
+   * @throws RuntimeException on fatal error
+   */
+  public static Object getObject(final String className,
+                                 final Class<?> cl) {
+    return getObject(Thread.currentThread().getContextClassLoader(),
+                     className,
+                     cl);
   }
 
   public interface PropertyFetcher {
