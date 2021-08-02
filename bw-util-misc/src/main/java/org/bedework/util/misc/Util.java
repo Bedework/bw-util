@@ -337,7 +337,7 @@ public class Util {
    * @return     Object checked to be an instance of that class
    * @throws RuntimeException on fatal error
    */
-  public static Object getObject(ClassLoader loader,
+  public static Object getObject(final ClassLoader loader,
                                  final String className,
                                  final Class<?> cl) {
     try {
