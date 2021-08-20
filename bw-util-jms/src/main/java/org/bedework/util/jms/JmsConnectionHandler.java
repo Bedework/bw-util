@@ -195,7 +195,8 @@ public class JmsConnectionHandler implements Logged {
     try {
       return consumer.receive();
     } catch (final JMSException je) {
-      if (je.getCause() instanceof InterruptedException) {
+      if (je.getCause().getClass().getCanonicalName().equals(
+              InterruptedException.class.getCanonicalName())) {
         warn("Received interrupted exception");
         return null;
       }
