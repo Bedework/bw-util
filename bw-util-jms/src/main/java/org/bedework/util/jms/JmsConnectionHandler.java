@@ -20,6 +20,7 @@ package org.bedework.util.jms;
 
 import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
+import org.bedework.util.misc.Util;
 
 import java.util.Properties;
 
@@ -195,7 +196,7 @@ public class JmsConnectionHandler implements Logged {
     try {
       return consumer.receive();
     } catch (final JMSException je) {
-      if (je.getCause().getClass().getCanonicalName().equals(
+      if (Util.getRootCause(je).getCause().getClass().getCanonicalName().equals(
               InterruptedException.class.getCanonicalName())) {
         warn("Received interrupted exception");
         return null;
