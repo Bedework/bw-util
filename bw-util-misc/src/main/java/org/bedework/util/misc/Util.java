@@ -38,6 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -514,6 +515,17 @@ public class Util {
     return "data:" + contentType + ";base64," +
             Base64.getEncoder().
                     encodeToString(val.getBytes());
+  }
+
+  public static Throwable getRootCause(final Throwable t) {
+    Objects.requireNonNull(t);
+    Throwable rootCause = t;
+    while ((rootCause.getCause() != null) &&
+            (rootCause.getCause() != rootCause)) {
+      rootCause = rootCause.getCause();
+    }
+
+    return rootCause;
   }
 
   public static String fromBase64(final String val) {
