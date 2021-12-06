@@ -528,6 +528,24 @@ public class Util {
     return rootCause;
   }
 
+  public static boolean causeIs(final Throwable t,
+                                final Class<?> possibleCause) {
+    Objects.requireNonNull(t);
+    Throwable rootCause = t;
+    if (possibleCause.isAssignableFrom(rootCause.getClass())) {
+      return true;
+    }
+    while ((rootCause.getCause() != null) &&
+            (rootCause.getCause() != rootCause)) {
+      rootCause = rootCause.getCause();
+      if (possibleCause.isAssignableFrom(rootCause.getClass())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public static String fromBase64(final String val) {
     final var bytes = Base64.getDecoder().decode(val);
     return new String(bytes, StandardCharsets.US_ASCII);

@@ -77,11 +77,10 @@ public abstract class AbstractProcessorThread extends Thread
    * @return false if we did nothing
    */
   public boolean handleException(final Throwable val) {
-    final Throwable t = val.getCause();
-    if (t instanceof NameNotFoundException) {
+    if (Util.causeIs(val, NameNotFoundException.class)) {
       // jmx shutting down?
       error("Looks like JMX shut down.");
-      error(t);
+      error(val);
       running = false;
       return true;
     }
