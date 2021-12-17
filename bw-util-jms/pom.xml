@@ -3,11 +3,12 @@
   <parent>
     <artifactId>bw-util</artifactId>
     <groupId>org.bedework</groupId>
-    <version>4.0.32-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>bw-util-jms</artifactId>
+  <name>Bedework: util to handle jms</name>
 
   <dependencies>
     <dependency>
