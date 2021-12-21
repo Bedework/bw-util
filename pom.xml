@@ -15,6 +15,13 @@
   <description>This project provides a number of utility classes and methods</description>
   <url>https://github.com/Bedework/bw-util</url>
 
+  <scm>
+    <connection>scm:git:git@github.com:Bedework/bw-util.git</connection>
+    <developerConnection>scm:git:git@github.com:Bedework/bw-util.git</developerConnection>
+    <url>https://github.com/Bedework/bw-util</url>
+    <tag>bw-util-4.0.9</tag>
+  </scm>
+
   <modules>
     <module>bw-util-args</module>
     <module>bw-util-caching</module>
@@ -25,21 +32,4 @@
     <module>bw-util-xml</module>
     <module>bw-util-xmltools</module>
   </modules>
-
-  <dependencyManagement>
-    <dependencies>
-      <!-- Bedework: Logging -->
-      <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-util-logging</artifactId>
-        <version>${bw-util-logging.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.bedework</groupId>
-        <artifactId>bw-xml-bwlicense</artifactId>
-        <version>${bw-xml.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 </project>
