@@ -304,6 +304,9 @@ public class XcalTags {
   public static final QName _class = new QName(namespace, "class");
 
   /** VEVENT VTODO VJOURNAL VFREEBUSY VTIMEZONE */
+  public static final QName color = new QName(namespace, "color");
+
+  /** VEVENT VTODO VJOURNAL VFREEBUSY VTIMEZONE */
   public static final QName comment = new QName(namespace, "comment");
 
   /**     *  VTODO */
