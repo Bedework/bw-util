@@ -477,4 +477,8 @@ public class XcalTags {
 
   /**   */
   public static final QName xBedeworkContact = new QName(namespace, "x-bedework-contact");
+
+  /**   */
+  public static final QName xBedeworkPrimaryCollection =
+          new QName(namespace, "x-bedework-primary-collection");
 }
