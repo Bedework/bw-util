@@ -117,5 +117,25 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
   * Minor fix to check for null. Resulted in many changes to remove throws clauses from the xml emit utility class methods. This of course resulted in many changes up the call hierarchy
   * Add datauri convenience method.
   * Update commons-codec version
-  
+
+#### 4.0.29
+* Remove last traces of util-deploy-wfmodule
+* Update library versions
+
+#### 4.0.30
+* Update AbstractProcessorThread.java for category server
+
+#### 4.0.31
+* Pass class loader as parameter when creating new objects. JMX interactions were failing.
+* Try comparing names as classloader differences cause this to fail.
+* Try to get better handling of interrupted exceptions
+
+#### 5.0.1
+* Use bedework-parent for builds
+* Upgrade library versions
+
+#### 5.0.2
+* Upgrade library versions
+
+
   
