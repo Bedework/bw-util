@@ -132,10 +132,14 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 
 #### 5.0.1
 * Use bedework-parent for builds
-* Upgrade library versions
+*  Upgrade library versions
 
 #### 5.0.2
 * Upgrade library versions
+
+#### 5.0.3
+* Upgrade library versions
+* Delete misplaced copy in xmltools
 
 
   
