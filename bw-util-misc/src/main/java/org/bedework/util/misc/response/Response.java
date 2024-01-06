@@ -21,6 +21,7 @@ package org.bedework.util.misc.response;
 import org.bedework.util.misc.ToString;
 
 import java.io.Serializable;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import javax.xml.namespace.QName;
 
@@ -61,12 +62,26 @@ public class Response implements Serializable {
   private Status status = ok;
   private String message;
   private QName errorTag;
+  private final ConcurrentLinkedDeque<String> warnings =
+          new ConcurrentLinkedDeque<>();
 
   // For internal use to pass exception up.
   private Throwable exception;
 
   /* Copied from the request */
   private int id;
+
+  public boolean hasWarning() {
+    return warnings.isEmpty();
+  }
+
+  public void warning(final String val) {
+    warnings.add(val);
+  }
+
+  public Iterable<String> getWarnings() {
+    return warnings;
+  }
 
   /**
    *
