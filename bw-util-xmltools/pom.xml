@@ -30,11 +30,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.bedework</groupId>
-      <artifactId>bw-xml-bwlicense</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
