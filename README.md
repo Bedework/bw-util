@@ -142,7 +142,7 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 * Delete misplaced copy in xmltools
 * Add warnings support to GetResponse class.
 
-#### 5.0.4-SNAPSHOT
+#### 5.0.4
 * Upgrade library versions
 * Remove licence processing code. Predated other options e.g. maven. Only affects runnable utility. 
   
