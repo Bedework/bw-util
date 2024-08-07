@@ -451,7 +451,7 @@ public class Util {
       }
     }
 
-    return sb.toString();
+    return propertyReplace(sb.toString(), props);
   }
 
   /**
