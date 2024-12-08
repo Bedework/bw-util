@@ -272,6 +272,20 @@ public class ToString {
 
   /**
    * @param name of field
+   * @param value an object
+   * @return this object
+   */
+  public ToString appendNotNull(final String name,
+                         final Object value) {
+    if (value != null) {
+      return append(name, value);
+    }
+
+    return this;
+  }
+
+  /**
+   * @param name of field
    * @param value Long
    * @return this object
    */
@@ -279,6 +293,20 @@ public class ToString {
                          final Long value) {
     nameEquals(name);
     sb.append(value);
+
+    return this;
+  }
+
+  /**
+   * @param name of field
+   * @param value Long
+   * @return this object
+   */
+  public ToString appendNotNull(final String name,
+                                final Long value) {
+    if (value != null) {
+      return append(name, value);
+    }
 
     return this;
   }
@@ -307,6 +335,20 @@ public class ToString {
     sb.append("]");
 
     delim = saveDelim;
+
+    return this;
+  }
+
+  /**
+   * @param name of field
+   * @param value - list of values
+   * @return this object
+   */
+  public ToString appendNotNull(final String name,
+                                final Collection<?> value) {
+    if (value != null) {
+      return append(name, value);
+    }
 
     return this;
   }

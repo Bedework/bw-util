@@ -24,13 +24,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Utility routines associated with handling xml
@@ -112,6 +116,55 @@ public final class XmlUtil implements Serializable {
     return i;
   }*/
 
+  public static DocumentBuilderFactory getSafeDocumentBuilderFactory(
+          final boolean namespaceAware) {
+    try {
+      final DocumentBuilderFactory factory =
+              DocumentBuilderFactory.newInstance();
+      factory.setNamespaceAware(namespaceAware);
+      factory.setFeature(
+              "http://javax.xml.XMLConstants/feature/secure-processing",
+              true);
+      factory.setFeature(
+              "http://xml.org/sax/features/external-general-entities",
+              false);
+      factory.setFeature(
+              "http://xml.org/sax/features/external-parameter-entities",
+              false);
+      factory.setAttribute(
+              "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+              false);
+      return factory;
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static DocumentBuilder getSafeDocumentBuilder(
+          final boolean namespaceAware) {
+    try {
+      return getSafeDocumentBuilderFactory(
+                      namespaceAware).newDocumentBuilder();
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Document safeNewDocument(
+          final boolean namespaceAware) {
+    return getSafeDocumentBuilder(namespaceAware).newDocument();
+  }
+
+  public static Document safeParseDocument(
+          final boolean namespaceAware, final Reader reader) {
+    try {
+      return getSafeDocumentBuilder(namespaceAware).parse(
+              new InputSource(reader));
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   /** Get the single named element.
    *
    * @param el          Node
@@ -153,12 +206,12 @@ public final class XmlUtil implements Serializable {
       return null;
     }
 
-    NodeList children = el.getChildNodes();
+    final NodeList children = el.getChildNodes();
     if (children.getLength() > 1){
       throw new RuntimeException("Multiple property values: " + name);
     }
 
-    Node child = children.item(0);
+    final Node child = children.item(0);
     return child.getNodeValue();
   }
 
@@ -182,9 +235,9 @@ public final class XmlUtil implements Serializable {
    */
   public static String getReqOneNodeVal(final Node el,
                                         final String name) {
-    String str = getOneNodeVal(el, name);
+    final String str = getOneNodeVal(el, name);
 
-    if ((str == null) || (str.length() == 0)) {
+    if ((str == null) || (str.isEmpty())) {
       throw new RuntimeException("Missing property value: " + name);
     }
 
@@ -209,7 +262,7 @@ public final class XmlUtil implements Serializable {
    */
   public static String getAttrVal(final Element el,
                                   final String name) {
-    Attr at = el.getAttributeNode(name);
+    final Attr at = el.getAttributeNode(name);
     if (at == null) {
       return null;
     }
@@ -225,9 +278,9 @@ public final class XmlUtil implements Serializable {
    */
   public static String getReqAttrVal(final Element el,
                                      final String name) {
-    String str = getAttrVal(el, name);
+    final String str = getAttrVal(el, name);
 
-    if ((str == null) || (str.length() == 0)) {
+    if ((str == null) || (str.isEmpty())) {
       throw new RuntimeException("Missing attribute value: " + name);
     }
 
@@ -242,7 +295,7 @@ public final class XmlUtil implements Serializable {
    */
   public static String getAttrVal(final NamedNodeMap nnm,
                                   final String name) {
-    Node nmAttr = nnm.getNamedItem(name);
+    final Node nmAttr = nnm.getNamedItem(name);
 
     if ((nmAttr == null) || (absent(nmAttr.getNodeValue()))) {
       return null;
@@ -260,7 +313,7 @@ public final class XmlUtil implements Serializable {
    */
   public static Boolean getYesNoAttrVal(final NamedNodeMap nnm,
                                         final String name) {
-    String val = getAttrVal(nnm, name);
+    final String val = getAttrVal(nnm, name);
 
     if (val == null) {
       return null;
@@ -278,7 +331,7 @@ public final class XmlUtil implements Serializable {
    * @return int number of attributes
    */
   public static int numAttrs(final Node nd) {
-    NamedNodeMap nnm = nd.getAttributes();
+    final NamedNodeMap nnm = nd.getAttributes();
 
     if (nnm == null) {
       return 0;
@@ -296,13 +349,13 @@ public final class XmlUtil implements Serializable {
   public static List<Node> getNodes(final Node nd) {
     final List<Node> al = new ArrayList<>();
 
-    NodeList children = nd.getChildNodes();
+    final NodeList children = nd.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
-      Node curnode = children.item(i);
+      final Node curnode = children.item(i);
 
       if (curnode.getNodeType() == Node.TEXT_NODE) {
-        String val = curnode.getNodeValue();
+        final String val = curnode.getNodeValue();
 
         if (val != null) {
           for (int vi= 0; vi < val.length(); vi++) {
@@ -354,12 +407,12 @@ public final class XmlUtil implements Serializable {
    */
   public static String getElementContent(final Node el,
                                          final boolean trim) {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
 
-    NodeList children = el.getChildNodes();
+    final NodeList children = el.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
-      Node curnode = children.item(i);
+      final Node curnode = children.item(i);
 
       if (curnode.getNodeType() == Node.TEXT_NODE) {
         sb.append(curnode.getNodeValue());
@@ -385,15 +438,15 @@ public final class XmlUtil implements Serializable {
    */
   public static void setElementContent(final Node n,
                                        final String s) {
-    NodeList children = n.getChildNodes();
+    final NodeList children = n.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
-      Node curnode = children.item(i);
+      final Node curnode = children.item(i);
 
       n.removeChild(curnode);
     }
 
-    Document d = n.getOwnerDocument();
+    final Document d = n.getOwnerDocument();
 
     final Node textNode = d.createTextNode(s);
 
@@ -418,10 +471,10 @@ public final class XmlUtil implements Serializable {
    * @return boolean
    */
   public static boolean hasContent(final Node el) {
-    NodeList children = el.getChildNodes();
+    final NodeList children = el.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
-      Node curnode = children.item(i);
+      final Node curnode = children.item(i);
 
       if (curnode.getNodeType() == Node.TEXT_NODE) {
         continue;
@@ -447,12 +500,12 @@ public final class XmlUtil implements Serializable {
    * @return boolean   true for any child nodes
    */
   public static boolean hasChildren(final Node el) {
-    NodeList children = el.getChildNodes();
+    final NodeList children = el.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
-      Node curnode = children.item(i);
+      final Node curnode = children.item(i);
 
-      short ntype =  curnode.getNodeType();
+      final short ntype =  curnode.getNodeType();
       if ((ntype != Node.TEXT_NODE) &&
           (ntype != Node.CDATA_SECTION_NODE) &&
           (ntype != Node.COMMENT_NODE)) {
@@ -464,7 +517,7 @@ public final class XmlUtil implements Serializable {
   }
 
   public static void clear(final Node nd) {
-    NodeList children = nd.getChildNodes();
+    final NodeList children = nd.getChildNodes();
 
     for (int i = 0; i < children.getLength(); i++) {
       nd.removeChild(children.item(i));
@@ -485,7 +538,7 @@ public final class XmlUtil implements Serializable {
    * @return element array from node
    */
   public static Element[] getElementsArray(final Node nd) {
-    Collection<Element> al = getElements(nd);
+    final Collection<Element> al = getElements(nd);
 
     return al.toArray(new Element[al.size()]);
   }
@@ -501,7 +554,7 @@ public final class XmlUtil implements Serializable {
       return false;
     }
 
-    String ns = nd.getNamespaceURI();
+    final String ns = nd.getNamespaceURI();
 
     if (ns == null) {
       /* It appears a node can have a NULL namespace but a QName has a zero length
@@ -513,7 +566,7 @@ public final class XmlUtil implements Serializable {
       return false;
     }
 
-    String ln = nd.getLocalName();
+    final String ln = nd.getLocalName();
 
     if (ln == null) {
       if (tag.getLocalPart() != null) {
@@ -549,7 +602,7 @@ public final class XmlUtil implements Serializable {
    * @throws RuntimeException  if not exactly one child elemnt
    */
   public static Element getOnlyElement(final Node nd) {
-    Element[] els = getElementsArray(nd);
+    final Element[] els = getElementsArray(nd);
 
     if (els.length != 1) {
       throw new RuntimeException("Expected exactly one child node for " +
@@ -560,7 +613,7 @@ public final class XmlUtil implements Serializable {
   }
 
   private static boolean absent(final String val) {
-    return (val == null) || (val.length() == 0);
+    return (val == null) || (val.isEmpty());
   }
 }
 
