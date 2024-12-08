@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>bw-util</artifactId>
-  <version>5.0.8</version>
+  <version>5.0.9-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bedework: general utility classes</name>
