@@ -162,7 +162,7 @@ public class Util {
    * @return name split into path and name part
    */
   public static String[] splitName(final String href) {
-    if ((href == null) || (href.length() == 0)) {
+    if ((href == null) || (href.isEmpty())) {
       return null;
     }
 
@@ -196,7 +196,7 @@ public class Util {
 
     int idx = index;
 
-    if ((paths[0] == null) || (paths[0].length() == 0)) {
+    if ((paths[0] == null) || (paths[0].isEmpty())) {
       // skip empty first part - leading "/"
       idx++;
     }
@@ -557,7 +557,7 @@ public class Util {
 
   /** Add a string to a string array of a given maximum length. Truncates
    * the string array if required.
-   *
+   * <p>
    * New entries go at the end. old get dropped off the front.
    *
    * @param  sarray     String[] to be updated
@@ -748,7 +748,7 @@ public class Util {
     }
 
     val = val.trim();
-    if (val.length() == 0) {
+    if (val.isEmpty()) {
       return null;
     }
 
@@ -776,7 +776,7 @@ public class Util {
   public static List<String> getList(final String val, final boolean emptyOk) throws Throwable {
     final List<String> l = new LinkedList<>();
 
-    if ((val == null) || (val.length() == 0)) {
+    if ((val == null) || (val.isEmpty())) {
       return l;
     }
 
@@ -784,7 +784,7 @@ public class Util {
     while (st.hasMoreTokens()) {
       final String token = st.nextToken().trim();
 
-      if (token.length() == 0) {
+      if (token.isEmpty()) {
         if (!emptyOk) {
           // No empty strings
 
@@ -961,5 +961,78 @@ public class Util {
     } catch (final Throwable t) {
       return null;
     }
+  }
+
+  /** Return a path, broken into its elements, after "." and ".." are removed.
+   * If the parameter path attempts to go above the root we return null.
+   *
+   * Other than the backslash thing why not use URI?
+   *
+   * @param path      String path to be fixed
+   * @return String[]   fixed path broken into elements
+   * @throws RuntimeException on bad uri
+   */
+  public static List<String> fixPath(final String path) {
+    if (path == null) {
+      return null;
+    }
+
+    String decoded;
+    try {
+      decoded = URLDecoder.decode(path,
+                                  StandardCharsets.UTF_8);
+    } catch (final Throwable t) {
+      throw new RuntimeException("Undecodable path: " + path);
+    }
+
+    if (decoded == null) {
+      return null;
+    }
+
+    /* Make any backslashes into forward slashes.
+     */
+    if (decoded.indexOf('\\') >= 0) {
+      decoded = decoded.replace('\\', '/');
+    }
+
+    /* Ensure a leading '/'
+     */
+    if (!decoded.startsWith("/")) {
+      decoded = "/" + decoded;
+    }
+
+    /* Remove all instances of '//'.
+     */
+    while (decoded.contains("//")) {
+      decoded = decoded.replaceAll("//", "/");
+    }
+
+    /* Somewhere we may have /./ or /../
+     */
+
+    final StringTokenizer st = new StringTokenizer(decoded, "/");
+
+    final ArrayList<String> al = new ArrayList<>();
+    while (st.hasMoreTokens()) {
+      final String s = st.nextToken();
+
+      if (s.equals(".")) {
+        continue;
+      }
+
+      if (s.equals("..")) {
+        // Back up 1
+        if (al.isEmpty()) {
+          // back too far
+          throw new RuntimeException("Path attempting to back up past root: " + path);
+        }
+
+        al.remove(al.size() - 1);
+      } else {
+        al.add(s);
+      }
+    }
+
+    return al;
   }
 }
