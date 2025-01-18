@@ -18,7 +18,7 @@
 */
 package org.bedework.util.jms.events;
 
-import org.bedework.util.misc.ToString;
+import org.bedework.base.ToString;
 
 /** An event for some timed activity. The label identifies the event
  *

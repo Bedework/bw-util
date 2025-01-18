@@ -18,7 +18,7 @@
 */
 package org.bedework.util.jms.events;
 
-import org.bedework.util.misc.ToString;
+import org.bedework.base.ToString;
 
 /** System event with a name
  * @author douglm

@@ -18,7 +18,7 @@
 */
 package org.bedework.util.directory.common;
 
-import org.bedework.util.misc.ToString;
+import org.bedework.base.ToString;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
