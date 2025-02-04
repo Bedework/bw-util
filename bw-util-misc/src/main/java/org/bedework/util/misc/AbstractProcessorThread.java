@@ -157,9 +157,13 @@ public abstract class AbstractProcessorThread extends Thread
     int errorCt = 0;
     final int maxErrorCt = 5;
 
+    /* The point of the loop is to restart if we get some
+       sort of exception. Normal returns are termination.
+     */
     while (running) {
       try {
         runProcess();
+        running = false;
       } catch (final InterruptedException ie) {
         running = false;
         break;
@@ -189,9 +193,12 @@ public abstract class AbstractProcessorThread extends Thread
         close();
       }
 
-      info("************************************************************");
+      info("****************************************************");
       info(" * " + getName() + " terminated");
-      info("************************************************************");
+      if (running) {
+        info(" * Will restart the process.");
+      }
+      info("****************************************************");
     }
   }
 
