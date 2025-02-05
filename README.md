@@ -145,4 +145,26 @@ For full details, see [Sonatype's documentation for using Maven to publish relea
 #### 5.0.4
 * Upgrade library versions
 * Remove licence processing code. Predated other options e.g. maven. Only affects runnable utility. 
-  
+
+#### 5.0.5
+* propertyReplace could not handle chained property references
+* Upgrade library versions
+
+#### 5.0.6
+* Fix up toString for access. Add a bunch of features to the ToString class
+* Upgrade library versions
+
+#### 5.0.7
+* Upgrade library versions
+
+#### 5.0.8
+* Add new ToString methods.
+* Upgrade library versions
+
+#### 5.0.9
+* Move fixPath out of util-servlet to make commonly available.
+
+#### 5.0.10
+* Move response classes and ToString into bw-base module.
+* Add an object pool
+* Fix up the shutdown code - was hanging at termination
