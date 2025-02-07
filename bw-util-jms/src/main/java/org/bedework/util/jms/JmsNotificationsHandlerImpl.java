@@ -25,9 +25,9 @@ import org.bedework.util.logging.Logged;
 
 import java.util.Properties;
 
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.ObjectMessage;
 
 /**
  * This is the implementation of a notifications handler which sends jms

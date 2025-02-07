@@ -28,12 +28,12 @@ import org.bedework.util.misc.Util;
 import java.io.InvalidClassException;
 import java.util.Properties;
 
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.ObjectMessage;
 
 /** Listener class which receives messages from JMS.
  *
