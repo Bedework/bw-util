@@ -18,6 +18,8 @@
 */
 package org.bedework.util.xml;
 
+import org.bedework.base.exc.BedeworkException;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -116,12 +118,23 @@ public final class XmlUtil implements Serializable {
     return i;
   }*/
 
+  /** See <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#java">Owasp recommendations</a>
+   *
+   * @param namespaceAware boolean
+   * @return a factory
+   */
   public static DocumentBuilderFactory getSafeDocumentBuilderFactory(
           final boolean namespaceAware) {
     try {
       final DocumentBuilderFactory factory =
               DocumentBuilderFactory.newInstance();
       factory.setNamespaceAware(namespaceAware);
+      // This is supposed to be enough
+      factory.setFeature(
+              "http://apache.org/xml/features/disallow-doctype-decl",
+              true);
+
+      // Do the others anyway
       factory.setFeature(
               "http://javax.xml.XMLConstants/feature/secure-processing",
               true);
@@ -136,7 +149,7 @@ public final class XmlUtil implements Serializable {
               false);
       return factory;
     } catch (final Exception e) {
-      throw new RuntimeException(e);
+      throw new BedeworkException(e);
     }
   }
 
@@ -146,7 +159,7 @@ public final class XmlUtil implements Serializable {
       return getSafeDocumentBuilderFactory(
                       namespaceAware).newDocumentBuilder();
     } catch (final Exception e) {
-      throw new RuntimeException(e);
+      throw new BedeworkException(e);
     }
   }
 
@@ -161,7 +174,7 @@ public final class XmlUtil implements Serializable {
       return getSafeDocumentBuilder(namespaceAware).parse(
               new InputSource(reader));
     } catch (final Exception e) {
-      throw new RuntimeException(e);
+      throw new BedeworkException(e);
     }
   }
 
@@ -208,7 +221,7 @@ public final class XmlUtil implements Serializable {
 
     final NodeList children = el.getChildNodes();
     if (children.getLength() > 1){
-      throw new RuntimeException("Multiple property values: " + name);
+      throw new BedeworkException("Multiple property values: " + name);
     }
 
     final Node child = children.item(0);
@@ -238,7 +251,7 @@ public final class XmlUtil implements Serializable {
     final String str = getOneNodeVal(el, name);
 
     if ((str == null) || (str.isEmpty())) {
-      throw new RuntimeException("Missing property value: " + name);
+      throw new BedeworkException("Missing property value: " + name);
     }
 
     return str;
@@ -281,7 +294,7 @@ public final class XmlUtil implements Serializable {
     final String str = getAttrVal(el, name);
 
     if ((str == null) || (str.isEmpty())) {
-      throw new RuntimeException("Missing attribute value: " + name);
+      throw new BedeworkException("Missing attribute value: " + name);
     }
 
     return str;
@@ -320,7 +333,7 @@ public final class XmlUtil implements Serializable {
     }
 
     if ((!"yes".equals(val)) && (!"no".equals(val))) {
-      throw new RuntimeException("Invalid attribute value: " + val);
+      throw new BedeworkException("Invalid attribute value: " + val);
     }
 
     return "yes".equals(val);
@@ -344,7 +357,7 @@ public final class XmlUtil implements Serializable {
    *
    * @param nd the node
    * @return Collection   nodes. Always non-null
-   * @throws RuntimeException on fatal error
+   * @throws BedeworkException on fatal error
    */
   public static List<Node> getNodes(final Node nd) {
     final List<Node> al = new ArrayList<>();
@@ -360,7 +373,7 @@ public final class XmlUtil implements Serializable {
         if (val != null) {
           for (int vi= 0; vi < val.length(); vi++) {
             if (!Character.isWhitespace(val.charAt(vi))) {
-              throw new RuntimeException("Non-whitespace text in element body for " +
+              throw new BedeworkException("Non-whitespace text in element body for " +
                                                  nd.getLocalName() +
                                                  "\n text=" + val);
             }
@@ -369,7 +382,7 @@ public final class XmlUtil implements Serializable {
       } else if (curnode.getNodeType() == Node.ELEMENT_NODE) {
         al.add(curnode);
       } else if (curnode.getNodeType() != Node.COMMENT_NODE) {
-        throw new RuntimeException("Unexpected child node " + curnode.getLocalName() +
+        throw new BedeworkException("Unexpected child node " + curnode.getLocalName() +
                                            " for " + nd.getLocalName());
       }
     }
@@ -381,14 +394,14 @@ public final class XmlUtil implements Serializable {
    *
    * @param nd the node
    * @return Collection   element nodes. Always non-null
-   * @throws RuntimeException on fatal error
+   * @throws BedeworkException on fatal error
    */
   public static List<Element> getElements(final Node nd) {
     final List<Node> nodes = getNodes(nd);
 
     for (final Node n: nodes) {
       if (!(n instanceof Element)) {
-        throw new RuntimeException("Required element. Found " + nd);
+        throw new BedeworkException("Required element. Found " + nd);
       }
     }
 
@@ -419,7 +432,7 @@ public final class XmlUtil implements Serializable {
       } else if (curnode.getNodeType() == Node.CDATA_SECTION_NODE) {
         sb.append(curnode.getNodeValue());
       } else if (curnode.getNodeType() != Node.COMMENT_NODE) {
-        throw new RuntimeException("Unexpected child node " + curnode.getLocalName() +
+        throw new BedeworkException("Unexpected child node " + curnode.getLocalName() +
                                            " for " + el.getLocalName());
       }
     }
@@ -599,13 +612,13 @@ public final class XmlUtil implements Serializable {
   /**
    * @param nd the node
    * @return only child node
-   * @throws RuntimeException  if not exactly one child elemnt
+   * @throws BedeworkException  if not exactly one child elemnt
    */
   public static Element getOnlyElement(final Node nd) {
     final Element[] els = getElementsArray(nd);
 
     if (els.length != 1) {
-      throw new RuntimeException("Expected exactly one child node for " +
+      throw new BedeworkException("Expected exactly one child node for " +
                                          nd.getLocalName());
     }
 
