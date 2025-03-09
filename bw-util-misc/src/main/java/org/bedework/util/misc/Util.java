@@ -18,6 +18,8 @@
 */
 package org.bedework.util.misc;
 
+import org.bedework.base.ToString;
+
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -67,6 +69,46 @@ public class Util {
     /**  */
     public int numRemoved;
   }
+
+  public record Caller(String className,
+                       String methodName,
+                       String fileName,
+                       int lineNumber) {
+    public String toString() {
+      return new ToString(this)
+              .append("className", className)
+              .append("methodName", methodName)
+              .append("fileName", fileName)
+              .append("lineNumber", lineNumber)
+              .toString();
+    }
+  }
+
+  public static List<Caller> getCallers(final int levels) {
+    final var res = new ArrayList<Caller>();
+    final StackTraceElement[] stackTraceElements =
+            Thread.currentThread().getStackTrace();
+
+    var skipped = 0; // first 2 are this method and the caller.
+    for (var i = 1; i < stackTraceElements.length; i++) {
+      if (skipped < 2) {
+        skipped++;
+        continue;
+      }
+      final StackTraceElement ste =
+              stackTraceElements[i];
+      res.add(new Caller(ste.getClassName(),
+                         ste.getMethodName(),
+                         ste.getFileName(),
+                         ste.getLineNumber()));
+      if (res.size() >= levels) {
+        break;
+      }
+    }
+
+    return res;
+  }
+
 
   private static final DateTimeFormatter icalUTCTimestampFormatter =
           DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
@@ -515,17 +557,6 @@ public class Util {
     return "data:" + contentType + ";base64," +
             Base64.getEncoder().
                     encodeToString(val.getBytes());
-  }
-
-  public static Throwable getRootCause(final Throwable t) {
-    Objects.requireNonNull(t);
-    Throwable rootCause = t;
-    while ((rootCause.getCause() != null) &&
-            (rootCause.getCause() != rootCause)) {
-      rootCause = rootCause.getCause();
-    }
-
-    return rootCause;
   }
 
   public static boolean causeIs(final Throwable t,
