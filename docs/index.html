@@ -5,28 +5,33 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<title>Bedework Indexing modules.</title>
+<title>Bedework Utility modules.</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Bedework Indexing Modules.</h1>
+<h1>Bedework Utility Modules.</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">Introduction</a></li>
-<li><a href="#calendar">1. Util-calendar</a>
+<li><a href="#args">1. Util-args</a>
 <ul class="sectlevel2">
 <li><a href="#_using_this_project">1.1. Using this project</a></li>
 </ul>
 </li>
-<li><a href="#vcard">2. Util-vcard</a>
+<li><a href="#caching">2. Util-caching</a>
 <ul class="sectlevel2">
 <li><a href="#_using_this_project_2">2.1. Using this project</a></li>
 </ul>
 </li>
-<li><a href="#reports">3. Reports</a></li>
+<li><a href="#directory">3. Util-directory</a>
+<ul class="sectlevel2">
+<li><a href="#_dirrecord">3.1. DirRecord</a></li>
+</ul>
+</li>
+<li><a href="#reports">4. Reports</a></li>
 </ul>
 </div>
 </div>
@@ -41,10 +46,10 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="calendar">1. Util-calendar</h2>
+<h2 id="args">1. Util-args</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Provides generic utility classes for indexing in services such as opensearch.</p>
+<p>Provides utility class to help handling of Main method arguments.</p>
 </div>
 <div class="sect2">
 <h3 id="_using_this_project">1.1. Using this project</h3>
@@ -55,7 +60,7 @@
 <div class="content">
 <pre class="highlight"><code>      &lt;dependency&gt;
         &lt;groupId&gt;org.bedework&lt;/groupId&gt;
-        &lt;artifactId&gt;bw-util2-calendar&lt;/artifactId&gt;
+        &lt;artifactId&gt;bw-util-args&lt;/artifactId&gt;
       &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -63,10 +68,23 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="vcard">2. Util-vcard</h2>
+<h2 id="caching">2. Util-caching</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Provides generic utility classes for indexing in services such as opensearch.</p>
+<p>Provides:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A map which will be flushed after a certain time or when it reaches a certain size</p>
+</li>
+<li>
+<p>Simple and lightweight pool implementation</p>
+</li>
+<li>
+<p>A pool for shareable objects</p>
+</li>
+</ul>
 </div>
 <div class="sect2">
 <h3 id="_using_this_project_2">2.1. Using this project</h3>
@@ -77,7 +95,7 @@
 <div class="content">
 <pre class="highlight"><code>      &lt;dependency&gt;
         &lt;groupId&gt;org.bedework&lt;/groupId&gt;
-        &lt;artifactId&gt;bw-util2-vcard&lt;/artifactId&gt;
+        &lt;artifactId&gt;bw-util-caching&lt;/artifactId&gt;
       &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -85,7 +103,109 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="reports">3. Reports</h2>
+<h2 id="directory">3. Util-directory</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Provide access to directory services.
+ If the Directory object is provided with a Properties object it will be queried for
+ a number of properties. If they are absent or no Properties object is
+ provided they will default to some value. Properties are defined in
+ javax.naming.Context and are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>java.naming.factory.initial</p>
+</li>
+<li>
+<p>java.naming.provider.url   Service provider, e.g. ldap://ldap.example.com:389</p>
+</li>
+<li>
+<p>java.naming.security.authentication    e.g. "simple"</p>
+</li>
+<li>
+<p>java.naming.security.principal         e.g. cn=dirManager</p>
+</li>
+<li>
+<p>java.naming.security.credentials       Usually the password</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The intention is that the Directory class should be able to represent various forms of
+ directory, even a sequential input stream of records.</p>
+</div>
+<div class="sect2">
+<h3 id="_dirrecord">3.1. DirRecord</h3>
+<div class="paragraph">
+<p>This class represents a directory record which may be built from a
+number of attributes, retrieved as a search result or read from some input stream.</p>
+</div>
+<div class="paragraph">
+<p>We will implement some aspects of the ldif as defined in RFC 2849
+within this class. These will be related to the content vs change records.
+    By default, a DirRecord object will be a content record. However, we will
+    allow the creation of change type records. Having this defined here allows
+    applications to pass around DirRecord objects without any idea of the
+    underlying implementation.</p>
+</div>
+<div class="paragraph">
+<p>Currently the following is implemented:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">content records</dt>
+<dd>
+<p>Consist of a dn with an associated set of attributes with values. No attribute options are implemented. Encoded strings may be converted incorrectly (need to check locale specifics)</p>
+</dd>
+<dt class="hdlist1">change records</dt>
+<dd>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">add</dt>
+<dd>
+<p>Implemented. Look just like content records.</p>
+</dd>
+<dt class="hdlist1">delete</dt>
+<dd>
+<p>Implemented. Consist of a dn only.</p>
+</dd>
+<dt class="hdlist1">others</dt>
+<dd>
+<p>all others are unimplemented.
+=== Using this project
+Add the artifact(s) as a dependency to your project:</p>
+</dd>
+</dl>
+</div>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>      &lt;dependency&gt;
+        &lt;groupId&gt;org.bedework&lt;/groupId&gt;
+        &lt;artifactId&gt;bw-util-directory&lt;/artifactId&gt;
+      &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+need to do remaining modules&#8230;&#8203;
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reports">4. Reports</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><a href="reports/dependency-check-report.html">Dependency check</a></p>
@@ -95,7 +215,7 @@
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-22 02:58:32 UTC
+Last updated 2025-10-20 04:14:26 UTC
 </div>
 </div>
 </body>
