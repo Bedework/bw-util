@@ -1,0 +1,8 @@
+[[caching]]
+== Util-caching
+Provides:
+
+- A map which will be flushed after a certain time or when it reaches a certain size
+- Simple and lightweight pool implementation
+- A pool for shareable objects
+

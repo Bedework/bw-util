@@ -25,13 +25,13 @@ import java.io.Serializable;
  * @author Mike Douglass
  */
 public class Args implements Serializable {
-  private String[] args;
+  private final String[] args;
   private int pos;
 
   /**
-   * @param args
+   * @param args command line arguments
    */
-  public Args(String[] args) {
+  public Args(final String[] args) {
     this.args = args;
   }
 
@@ -59,38 +59,40 @@ public class Args implements Serializable {
     return pos < args.length;
   }
 
-  /**
-   * @param numargs
-   * @return true if that may args are available
+  /** Check there are sufficient arguments left.
+   *
+   * @param numargs number of args we need
+   * @return true if that many args are available
    */
-  public boolean test(int numargs) {
+  public boolean test(final int numargs) {
     return (pos + numargs) <= args.length;
   }
 
   /**
-   * @return true if the current arg starts with "-"
+   * @return true, if the current arg starts with "-"
    */
   public boolean isMinusArg() {
     return more() && current().startsWith("-");
   }
 
   /**
-   * @param val
+   * @param val to match
    * @return true if the next arg matches the string
    * @throws Exception
    */
-  public boolean ifMatch(String val) throws Exception {
+  public boolean ifMatch(final String val) throws Exception {
     return ifMatch(val, 1);
   }
 
   /**
-   * @param val
-   * @param numargs
+   * @param val to match
+   * @param numargs number of args we need
    * @return true if the next arg matches the string and has a sufficient number
    *     of parameters
    * @throws Exception
    */
-  public boolean ifMatch(String val, int numargs) throws Exception {
+  public boolean ifMatch(final String val,
+                         final int numargs) throws Exception {
     if (!current().equals(val)) {
       return false;
     }

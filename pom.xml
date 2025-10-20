@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.bedework</groupId>
     <artifactId>bedework-parent</artifactId>
-    <version>202</version>
+    <version>239</version>
   </parent>
 
   <artifactId>bw-util</artifactId>
@@ -55,5 +55,6 @@
     <module>bw-util-misc</module>
     <module>bw-util-xml</module>
     <module>bw-util-xmltools</module>
+    <module>bw-util-asciidocs</module>
   </modules>
 </project>

@@ -1,0 +1,5 @@
+== Introduction
+
+This project provides a number of network (http, DAV,servlet etc) related classes and methods for
+https://www.apereo.org/projects/bedework[Bedework].
+

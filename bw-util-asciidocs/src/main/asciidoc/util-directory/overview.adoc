@@ -1,0 +1,37 @@
+[[directory]]
+== Util-directory
+Provide access to directory services.
+ If the Directory object is provided with a Properties object it will be queried for
+ a number of properties. If they are absent or no Properties object is
+ provided they will default to some value. Properties are defined in
+ javax.naming.Context and are:
+
+- java.naming.factory.initial
+- java.naming.provider.url   Service provider, e.g. ldap://ldap.example.com:389
+- java.naming.security.authentication    e.g. "simple"
+- java.naming.security.principal         e.g. cn=dirManager
+- java.naming.security.credentials       Usually the password
+
+The intention is that the Directory class should be able to represent various forms of
+ directory, even a sequential input stream of records.
+
+=== DirRecord
+This class represents a directory record which may be built from a
+number of attributes, retrieved as a search result or read from some input stream.
+
+We will implement some aspects of the ldif as defined in RFC 2849
+within this class. These will be related to the content vs change records.
+    By default, a DirRecord object will be a content record. However, we will
+    allow the creation of change type records. Having this defined here allows
+    applications to pass around DirRecord objects without any idea of the
+    underlying implementation.
+
+Currently the following is implemented:
+
+content records::  Consist of a dn with an associated set of attributes with values. No attribute options are implemented. Encoded strings may be converted incorrectly (need to check locale specifics)
+
+change records::
+add::: Implemented. Look just like content records.
+delete::: Implemented. Consist of a dn only.
+
+others::: all others are unimplemented.
