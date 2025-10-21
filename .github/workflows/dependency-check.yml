@@ -70,13 +70,20 @@ jobs:
       - name: Copy to docs and push changes
         id: deploy
         run: |
+          # This is needed or we get "check your github settings"
           git config --local user.email "github-actions@users.noreply.github.com"
           git config --local user.name "github-actions"
+          #
+          # Clean out any local commits that might be the result of
+          # failures in previous runs
           git stash push --include-untracked
           git stash drop
+          #
+          # Make sure we're up to date with any changes
           git pull
           cp -r ./target/reports docs/
           cp -r ./target/reports bw-util-asciidocs/src/main/asciidoc/
           git add .
           git commit -m "deploy generated dependency check report"
+          # Could presumably fail here if somebody pushed after our pull 
           git push
