@@ -19,6 +19,7 @@
 package org.bedework.util.misc;
 
 import org.bedework.base.ToString;
+import org.bedework.base.exc.BedeworkException;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -41,7 +42,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -280,13 +280,15 @@ public class Util {
    * @throws RuntimeException on bad locale
    */
   public static Locale makeLocale(final String val) {
+    if (val == null) {
+      throw new BedeworkException("Bad Locale: NULL");
+    }
+
+    return Locale.forLanguageTag(val);
+    /*
     final String lang;
     String country = ""; // NOT null for Locale
     String variant = "";
-
-    if (val == null) {
-      throw new RuntimeException("Bad Locale: NULL");
-    }
 
     if (val.length() == 2) {
       lang = val;
@@ -314,60 +316,7 @@ public class Util {
     }
 
     return new Locale(lang, country, variant);
-  }
-
-  /*
-  public static void main(final String[] args) {
-    System.out.println(buildPath(false, "el1", "/", "///el2///", "abc", ".ics"));
-    System.out.println(buildPath(true, "el1", "/", "///el2///"));
-  }*/
-
-  /** Load a named resource as a Properties object
-   *
-   * @param name    String resource name
-   * @return Properties populated from the resource
-   * @throws RuntimeException on fatal error
-   */
-  public static Properties getPropertiesFromResource(final String name) {
-    final Properties pr = new Properties();
-    InputStream is = null;
-
-      // The jboss?? way - should work for others as well.
-      final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-    try {
-      is = cl.getResourceAsStream(name);
-
-      if (is == null) {
-        // Try another way
-        is = Util.class.getResourceAsStream(name);
-      }
-
-      if (is == null) {
-        throw new RuntimeException(
-                "Unable to load properties file" + name);
-      }
-
-      pr.load(is);
-
-      //if (debug) {
-      //  pr.list(System.out);
-      //  Logger.getLogger(Util.class).debug(
-      //      "file.encoding=" + System.getProperty("file.encoding"));
-      //}
-      return pr;
-    } catch (final Throwable t) {
-      if (t instanceof RuntimeException) {
-        throw (RuntimeException)t;
-      }
-
-      throw new RuntimeException(t);
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (final Throwable ignored) {}
-      }
-    }
+     */
   }
 
   /** Given a class name return an object of that class.
@@ -421,79 +370,6 @@ public class Util {
     return getObject(Thread.currentThread().getContextClassLoader(),
                      className,
                      cl);
-  }
-
-  public interface PropertyFetcher {
-    /** Get the value or null
-     *
-     * @param name name for property
-     * @return value or null
-     */
-    String get(String name);
-  }
-
-  public static class PropertiesPropertyFetcher implements PropertyFetcher {
-    private final Properties props;
-
-    public PropertiesPropertyFetcher(final Properties props) {
-      this.props = props;
-    }
-
-    @Override
-    public String get(final String name) {
-      return props.getProperty(name);
-    }
-  }
-
-  public static String propertyReplace(final String val,
-                                       final PropertyFetcher props) {
-    if (val == null) {
-      return null;
-    }
-
-    int pos = val.indexOf("${");
-
-    if (pos < 0) {
-      return val;
-    }
-
-    final StringBuilder sb = new StringBuilder(val.length());
-    int segStart = 0;
-
-    while (true) {
-      if (pos > 0) {
-        sb.append(val, segStart, pos);
-      }
-
-      final int end = val.indexOf("}", pos);
-
-      if (end < 0) {
-        //No matching close. Just append rest and return.
-        sb.append(val.substring(pos));
-        break;
-      }
-
-      final String pval = props.get(val.substring(pos + 2, end).trim());
-
-      if (pval != null) {
-        sb.append(pval);
-      }
-
-      segStart = end + 1;
-      if (segStart > val.length()) {
-        break;
-      }
-
-      pos = val.indexOf("${", segStart);
-
-      if (pos < 0) {
-        //Done.
-        sb.append(val.substring(segStart));
-        break;
-      }
-    }
-
-    return propertyReplace(sb.toString(), props);
   }
 
   /**
@@ -996,7 +872,7 @@ public class Util {
 
   /** Return a path, broken into its elements, after "." and ".." are removed.
    * If the parameter path attempts to go above the root we return null.
-   *
+   * <br/>
    * Other than the backslash thing why not use URI?
    *
    * @param path      String path to be fixed
@@ -1058,7 +934,7 @@ public class Util {
           throw new RuntimeException("Path attempting to back up past root: " + path);
         }
 
-        al.remove(al.size() - 1);
+        al.removeLast();
       } else {
         al.add(s);
       }

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.bedework</groupId>
     <artifactId>bedework-parent</artifactId>
-    <version>240</version>
+    <version>252</version>
   </parent>
 
   <artifactId>bw-util</artifactId>
@@ -48,13 +48,14 @@
 
   <modules>
     <module>bw-util-args</module>
+    <module>bw-util-asciidocs</module>
     <module>bw-util-caching</module>
     <module>bw-util-directory</module>
     <module>bw-util-jms</module>
     <module>bw-util-json</module>
     <module>bw-util-misc</module>
+    <module>bw-util-properties</module>
     <module>bw-util-xml</module>
     <module>bw-util-xmltools</module>
-    <module>bw-util-asciidocs</module>
   </modules>
 </project>
