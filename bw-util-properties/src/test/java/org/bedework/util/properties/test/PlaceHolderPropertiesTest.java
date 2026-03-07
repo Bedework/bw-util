@@ -18,8 +18,12 @@
 */
 package org.bedework.util.properties.test;
 
+import org.bedework.util.properties.PlaceHolderProperties;
+import org.bedework.util.properties.PropertyFetcher;
+
 import org.junit.jupiter.api.Test;
 
+import static org.bedework.util.properties.PropertyUtil.propertyReplace;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -28,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author Mike Douglass       douglm@bedework.edu
    @version 1.0
  */
-public class MiscTest {
+public class PlaceHolderPropertiesTest {
   private record NamedValue(String name,
                             String val) {}
 
@@ -112,13 +116,36 @@ public class MiscTest {
       for (final var prv: propReplaceValues) {
         final var pfetcher = new Pfetcher(prv.tokens);
         assertEquals(prv.after(),
-                     Util.propertyReplace(prv.before,
+                     propertyReplace(prv.before,
                                           pfetcher),
                      "Invalid replacement");
       }
 
     } catch (final Throwable t) {
       fail("Exception testing propertyReplace: " + t.getMessage());
+    }
+  }
+
+  @Test
+  public void testPropertyParents() {
+    try {
+      final var props = PlaceHolderProperties.loadWithSuperProperties("src/test/resources/child.properties");
+
+      assertEquals("This is property a set by the child",
+                   props.getProperty("a"));
+      assertEquals("b set by grandparent",
+                   props.getProperty("b"));
+      assertEquals("c set by parent",
+                   props.getProperty("c"));
+      assertEquals("d set by parent",
+                   props.getProperty("d"));
+      assertEquals("e set by child",
+                   props.getProperty("e"));
+      assertEquals("f set by grandparent",
+                   props.getProperty("f"));
+    } catch (final Throwable t) {
+      t.printStackTrace();
+      fail("Exception testing propertyParents: " + t.getMessage());
     }
   }
 
