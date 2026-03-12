@@ -22,7 +22,6 @@ import org.bedework.base.exc.BedeworkException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import static java.lang.String.format;
@@ -101,13 +100,19 @@ public class PlaceHolderProperties extends Properties {
       final String path) {
     final var props = new PlaceHolderProperties();
 
-    try (final InputStream stream = new FileInputStream(path)) {
+    try (final var stream = new FileInputStream(path)) {
       props.load(stream);
+      return props;
+    } catch (final IOException ignored) {
+    }
+
+    // Try on the classpath
+    try (final var stream = PlaceHolderProperties.class.getResourceAsStream("/" + path)) {
+      props.load(stream);
+      return props;
     } catch (final IOException e) {
       throw new BedeworkException(e);
     }
-
-    return props;
   }
 
   public void setSuperPropertyName(final String val) {
