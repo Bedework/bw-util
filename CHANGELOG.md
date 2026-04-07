@@ -2,9 +2,13 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased (6.0.1-SNAPSHOT)
+## Unreleased (6.1.1-SNAPSHOT)
 
-Everything below this needs working on...
+## [6.1.0] - 2026-04-07
+### Added
+- Add new properties  module implementing place-holder property files. Moved ome code out of the is properties class Util into this new module.
+
+== Everything below this needs working on...
 
 
 #### 4.0.3
