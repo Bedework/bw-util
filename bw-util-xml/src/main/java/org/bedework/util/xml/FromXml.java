@@ -18,15 +18,17 @@
 */
 package org.bedework.util.xml;
 
+import org.bedework.base.exc.BedeworkException;
 import org.bedework.util.logging.BwLogger;
 import org.bedework.util.logging.Logged;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -48,31 +50,16 @@ public class FromXml implements Logged {
    * @param is input stream
    * @param cl class of object we want to restore
    * @return parsed object or null
-   * @throws SAXException on error
    */
   public <T>T fromXml(final InputStream is,
                       final Class<T> cl,
-                      final FromXmlCallback cb) throws SAXException {
-    try {
-      final Document doc = parseXml(is);
-      
-      return (T)fromXml(doc.getDocumentElement(), cl, cb);
-    } catch (final SAXException se) {
-      if (debug()) {
-        error(se);
-      }
-      throw se;
-    } catch (final Throwable t) {
-      if (debug()) {
-        error(t);
-      }
-      throw new SAXException(t.getMessage());
-    }
+                      final FromXmlCallback cb) {
+    return fromXml(parseXml(is).getDocumentElement(), cl, cb);
   }
 
   public <T>T fromXml(final Element rootEl,
                       final Class<T> cl,
-                      final FromXmlCallback cb) throws SAXException {
+                      final FromXmlCallback cb) {
     try {
       if (cb == null) {
         this.cb = new FromXmlCallback();
@@ -92,45 +79,46 @@ public class FromXml implements Logged {
       }
 
       return (T)o;
-    } catch (final SAXException se) {
-      if (debug()) {
-        error(se);
-      }
-      throw se;
     } catch (final Throwable t) {
       if (debug()) {
         error(t);
       }
-      throw new SAXException(t.getMessage());
+      throw new BedeworkException(t);
     }
   }
 
-  public Document parseXml(final InputStream is) throws Throwable {
+  public static Document parseXml(final InputStream is) {
+    return parseXml(new InputStreamReader(is));
+  }
+
+  public static Document parseXml(final Reader in) {
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
 
-    final DocumentBuilder builder = factory.newDocumentBuilder();
+    try {
+      final DocumentBuilder builder = factory.newDocumentBuilder();
 
-    final Document doc = builder.parse(new InputSource(is));
-
-    if (doc == null) {
-      return null;
+      return builder.parse(new InputSource(in));
+    } catch (final Throwable t) {
+      throw new BedeworkException(t);
     }
-
-    return doc;
   }
 
-  /* ====================================================================
+  /* ========================================================
    *                   Private from xml methods
-   * ==================================================================== */
+   * ======================================================== */
 
-  private Object fromClass(final Class cl) throws Throwable {
+  private Object fromClass(final Class<?> cl) {
     if (cl == null) {
       error("Must supply a class or have type attribute");
       return null;
     }
 
-    return cl.newInstance();
+    try {
+      return cl.getConstructor().newInstance();
+    } catch (final Throwable t) {
+      throw new BedeworkException(t);
+    }
   }
 
   /** Populate either the object o via setters or the Collection col by adding
@@ -140,19 +128,18 @@ public class FromXml implements Logged {
    * @param subroot of XML data
    * @param col a collection
    * @param cl the class
-   * @throws Throwable on error
    */
   private void populate(final Element subroot,
                         final Object o,
                         final Collection<Object> col,
-                        final Class cl) throws Throwable {
+                        final Class<?> cl) {
     if (cb.skipElement(subroot)) {
       return;
     }
     
     Method meth = null;
 
-    Class elClass = cb.forElement(subroot);
+    var elClass = cb.forElement(subroot);
 
     if (col == null) {
       /* We must have a setter */
@@ -166,10 +153,11 @@ public class FromXml implements Logged {
 
       /* We require a single parameter */
 
-      final Class[] parClasses = meth.getParameterTypes();
+      final var parClasses = meth.getParameterTypes();
       if (parClasses.length != 1) {
         error("Invalid setter method " + subroot);
-        throw new SAXException("Invalid setter method " + subroot);
+        throw new BedeworkException(
+            "Invalid setter method " + subroot);
       }
 
       elClass = parClasses[0];
@@ -189,8 +177,9 @@ public class FromXml implements Logged {
       if (val == null) {
         error("Unsupported par class " + elClass +
               " for field " + subroot);
-        throw new SAXException("Unsupported par class " + elClass +
-                                  " for field " + subroot);
+        throw new BedeworkException(
+            "Unsupported par class " + elClass +
+                " for field " + subroot);
       }
 
       assign(val, subroot, col, o, meth);
@@ -205,16 +194,15 @@ public class FromXml implements Logged {
     if (Collection.class.isAssignableFrom(elClass)) {
       final Collection<Object> colVal;
 
-      if (elClass.getName().equals("java.util.Set")) {
-        colVal = new TreeSet<>();
-      } else if (elClass.getName().equals("java.util.List")) {
-        colVal = new ArrayList<>();
-      } else if (elClass.getName().equals("java.util.Collection")) {
-        colVal = new ArrayList<>();
-      } else {
-        error("Unsupported element class " + elClass +
-              " for field " + subroot);
-        return;
+      switch (elClass.getName()) {
+        case "java.util.Set" -> colVal = new TreeSet<>();
+        case "java.util.List", "java.util.Collection" ->
+            colVal = new ArrayList<>();
+        default -> {
+          error("Unsupported element class " + elClass +
+                    " for field " + subroot);
+          return;
+        }
       }
 
       assign(colVal, subroot, col, o, meth);
@@ -233,17 +221,15 @@ public class FromXml implements Logged {
         return;
       }
 
-      final Type gpt = gpts[0];
+      final var gpt = gpts[0];
 
-      if (!(gpt instanceof ParameterizedType)) {
+      if (!(gpt instanceof final ParameterizedType aType)) {
         error("Unsupported type " + elClass +
                       " with name " + subroot);
         return;
       }
 
-      final ParameterizedType aType = (ParameterizedType)gpt;
-
-      final Type[] parameterArgTypes = aType.getActualTypeArguments();
+      final var parameterArgTypes = aType.getActualTypeArguments();
 
       /* Should only be one arg */
       if (parameterArgTypes.length != 1) {
@@ -252,9 +238,9 @@ public class FromXml implements Logged {
         return;
       }
 
-      final Type parameterArgType = parameterArgTypes[0];
+      final var parameterArgType = parameterArgTypes[0];
 
-      final Class colElType = (Class)parameterArgType;
+      final var colElType = (Class<?>)parameterArgType;
       /*/
       ConfInfo ci = meth.getAnnotation(ConfInfo.class);
 
@@ -267,7 +253,7 @@ public class FromXml implements Logged {
       }
       */
 
-      for (final Element el: XmlUtil.getElementsArray(subroot)) {
+      for (final var el: XmlUtil.getElementsArray(subroot)) {
         populate(el, o, colVal, /*Class.forName(colElTypeName)*/colElType);
       }
 
@@ -280,13 +266,13 @@ public class FromXml implements Logged {
 
     assign(val, subroot, col, o, meth);
 
-    for (final Element el: XmlUtil.getElementsArray(subroot)) {
+    for (final var el: XmlUtil.getElementsArray(subroot)) {
       populate(el, val, null, null);
     }
   }
 
   private Method findSetter(final Object val,
-                            final Element el) throws Throwable {
+                            final Element el) {
     String name = cb.getFieldlName(el);
     if (name == null) {
       name = el.getNodeName();
@@ -300,7 +286,7 @@ public class FromXml implements Logged {
     for (final Method m : meths) {
       if (m.getName().equals(methodName)) {
         if (meth != null) {
-          throw new SAXException(
+          throw new BedeworkException(
                   "Multiple setters for field " + el);
         }
         meth = m;
@@ -323,50 +309,39 @@ public class FromXml implements Logged {
    * @param col - if non-null add to this.
    * @param o the object
    * @param meth the method
-   * @throws Throwable on error
    */
   private void assign(final Object val,
                              final Element el,
                              final Collection<Object> col,
                              final Object o,
-                             final Method meth) throws Throwable {
+                             final Method meth)  {
     if (col != null) {
       col.add(val);
     } else if (!cb.save(el, o, val)) {
-      final Object[] pars = new Object[]{val};
-
-      meth.invoke(o, pars);
+      try {
+        meth.invoke(o, val);
+      } catch (final Throwable t) {
+        throw new BedeworkException(t);
+      }
     }
   }
 
-  private Object simpleValue(final Class cl,
-                             final Element el) throws Throwable {
+  private Object simpleValue(final Class<?> cl,
+                             final Element el) {
     if (!XmlUtil.hasChildren(el)) {
       /* A primitive value for which we should have a setter */
       final String ndval = XmlUtil.getElementContent(el);
 
-      if (cl.getName().equals("java.lang.String")) {
-        return ndval;
-      }
+      return switch (cl.getName()) {
+        case "java.lang.String" -> ndval;
+        case "int", "java.lang.Integer" -> Integer.valueOf(ndval);
+        case "long", "java.lang.Long" -> Long.valueOf(ndval);
+        case "boolean", "java.lang.Boolean" -> Boolean.valueOf(ndval);
+        default ->
+          // XXX Should do byte, char, short, float, and double.
+            cb.simpleValue(cl, ndval);
+      };
 
-      if (cl.getName().equals("int") ||
-          cl.getName().equals("java.lang.Integer")) {
-        return Integer.valueOf(ndval);
-      }
-
-      if (cl.getName().equals("long") ||
-          cl.getName().equals("java.lang.Long")) {
-        return Long.valueOf(ndval);
-      }
-
-      if (cl.getName().equals("boolean") ||
-          cl.getName().equals("java.lang.Boolean")) {
-        return Boolean.valueOf(ndval);
-      }
-
-
-      // XXX Should do byte, char, short, float, and double.
-      return cb.simpleValue(cl, ndval);
     }
 
     // Complex value
@@ -377,7 +352,7 @@ public class FromXml implements Logged {
    *                   Logged methods
    * ==================================================================== */
 
-  private BwLogger logger = new BwLogger();
+  private final BwLogger logger = new BwLogger();
 
   @Override
   public BwLogger getLogger() {

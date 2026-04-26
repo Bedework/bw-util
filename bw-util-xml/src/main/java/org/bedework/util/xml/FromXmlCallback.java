@@ -18,7 +18,7 @@ import java.util.TreeSet;
  */
 @SuppressWarnings({"UnusedParameters", "unused"})
 public class FromXmlCallback {
-  private final Map<String, Class> classForName = new HashMap<>();
+  private final Map<String, Class<?>> classForName = new HashMap<>();
 
   private final Set<String> skipThese = new TreeSet<>();
 
@@ -28,14 +28,13 @@ public class FromXmlCallback {
    *
    * @param el element representing object
    * @return Class of object to restore
-   * @throws Throwable on error
    */
-  public Class forElement(final Element el) throws Throwable {
+  public Class<?> forElement(final Element el) {
     return classForName.get(el.getTagName());
   }
 
   public void addClassForName(final String name,
-                              final Class cl) {
+                              final Class<?> cl) {
     classForName.put(name, cl);
   }
 
@@ -53,10 +52,9 @@ public class FromXmlCallback {
    * @param cl of Value we are restoring
    * @param val String representation of the value
    * @return Object of given class or null
-   * @throws Throwable opn error
    */
-  public Object simpleValue(final Class cl,
-                            final String val) throws Throwable {
+  public Object simpleValue(final Class<?> cl,
+                            final String val) {
     return null;
   }
 
@@ -65,9 +63,8 @@ public class FromXmlCallback {
    *
    * @param el the element
    * @return true to skip this one
-   * @throws Throwable on error
    */
-  public boolean skipElement(final Element el) throws Throwable {
+  public boolean skipElement(final Element el) {
     return skipThese.contains(el.getTagName());
   }
 
@@ -81,9 +78,8 @@ public class FromXmlCallback {
    *
    * @param el element representing object
    * @return String name or null for default
-   * @throws Throwable on error
    */
-  public String getFieldlName(final Element el) throws Throwable {
+  public String getFieldlName(final Element el) {
     return mappedField(el.getNodeName());
   }
 
@@ -99,7 +95,7 @@ public class FromXmlCallback {
    */
   public boolean save(final Element el,
                       final Object theObject,
-                      final Object theValue) throws Throwable {
+                      final Object theValue) {
     return false;
   }
 }
