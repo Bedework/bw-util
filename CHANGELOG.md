@@ -2,11 +2,15 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased (6.1.1-SNAPSHOT)
+## Unreleased (6.1.2-SNAPSHOT)
+
+## [6.1.1] - 2026-04-07
+### Changed
+- Allow use of Reader to parse XML and make the parser static.
 
 ## [6.1.0] - 2026-04-07
 ### Added
-- Add new properties  module implementing place-holder property files. Moved ome code out of the is properties class Util into this new module.
+- Add new properties  module implementing place-holder property files. Moved some code out of the is properties class Util into this new module.
 
 == Everything below this needs working on...
 
